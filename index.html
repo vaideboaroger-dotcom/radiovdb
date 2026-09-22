@@ -90,15 +90,13 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .media-container .inactive{opacity:0;z-index:2}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 5: TOP BAR — menu (3 pontinhos) ESQUERDA / timer DIREITA
+   SEÇÃO 5: TOP BAR — menu ESQUERDA / badge AO VIVO + timer DIREITA
    ════════════════════════════════════════════════════════════════ */
 .top-bar{position:fixed;top:0;left:0;right:0;z-index:35;display:flex;align-items:center;justify-content:space-between;padding:6px 8px;padding-top:max(6px,env(safe-area-inset-top));background:linear-gradient(180deg,rgba(0,0,0,.9),transparent);height:52px;gap:6px}
 .top-left{display:flex;align-items:center;gap:6px;min-width:0;flex:1}
 
-/* Menu 3 pontinhos AGORA NA ESQUERDA */
 .menu-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;width:34px;height:34px;border-radius:50%;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;position:relative}
 .menu-btn:active{background:rgba(168,85,247,.35);transform:scale(.92)}
-/* Ponto piscante VERMELHO quando rádio AO VIVO */
 .menu-btn.radio-live::after{content:'';position:absolute;top:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:var(--live-red);animation:pulseLiveTop 1.1s infinite;box-shadow:0 0 14px var(--live-red);border:2px solid #000}
 @keyframes pulseLiveTop{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(1.35)}}
 
@@ -109,12 +107,41 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .btn-fav-topo .fav-badge-topo{position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;border-radius:50%;padding:0 5px;font-size:.55rem;font-weight:900;min-width:16px;height:16px;text-align:center;line-height:16px;border:2px solid #000}
 
 .top-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
+
+/* NOVO: Badge AO VIVO ao lado do timer */
+.badge-ao-vivo{
+  display:none;
+  align-items:center;gap:4px;
+  background:linear-gradient(135deg,var(--live-red),#dc2626);
+  color:#fff;font-size:.6rem;font-weight:900;
+  padding:4px 9px;border-radius:20px;
+  letter-spacing:1px;
+  border:1px solid rgba(255,255,255,.3);
+  box-shadow:0 0 12px rgba(239,68,68,.6);
+  animation:pulseBadgeLive 1.4s ease-in-out infinite;
+  white-space:nowrap;
+}
+.badge-ao-vivo.show{display:flex}
+.badge-ao-vivo::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:#fff;
+  animation:pulseDotLive 1.1s infinite;
+}
+@keyframes pulseBadgeLive{
+  0%,100%{box-shadow:0 0 12px rgba(239,68,68,.6)}
+  50%{box-shadow:0 0 20px rgba(239,68,68,1)}
+}
+@keyframes pulseDotLive{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.4;transform:scale(1.4)}
+}
+
 .timer-lib{font-size:.68rem;font-weight:700;color:var(--secondary);background:rgba(0,0,0,.6);padding:4px 8px;border-radius:20px;white-space:nowrap;border:1px solid rgba(34,211,238,.2);display:flex;align-items:center;gap:4px}
 .timer-lib.lib{color:#00b894;border-color:rgba(0,184,148,.3)}
 .timer-lib i{font-size:.6rem}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 6: LETREIRO — mostra gênero + música; AO VIVO quando rádio
+   SEÇÃO 6: LETREIRO
    ════════════════════════════════════════════════════════════════ */
 .info-scroll{position:fixed;top:52px;left:0;right:0;z-index:30;padding:2px 10px;height:28px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;background:rgba(0,0,0,.25);backdrop-filter:blur(8px)}
 .info-scroll.modo-pesquisa{height:36px;background:rgba(0,0,0,.5)}
@@ -123,7 +150,6 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .letreiro{font-size:.72rem;font-weight:700;white-space:nowrap;animation:scrollText 60s linear infinite;background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6,#fbbf24);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 @keyframes scrollText{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
 
-/* Letreiro AO VIVO (rádio) */
 .letreiro.live{
   background:linear-gradient(90deg,var(--live-red),var(--accent),var(--live-red));
   background-size:300% 100%;
@@ -144,14 +170,14 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 #searchClearLetreiro.visible{display:block}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 7: CORAÇÃO CENTRAL, EQUALIZADOR, CONTROLES, FAB, MENUS
+   SEÇÃO 7: CORAÇÃO CENTRAL / EQUALIZADOR
    ════════════════════════════════════════════════════════════════ */
 .fav-heart-center{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:15;pointer-events:none}
 .fav-heart{font-size:4rem;color:rgba(255,255,255,.5);cursor:pointer;display:inline-block;pointer-events:auto;transition:all .4s;filter:drop-shadow(0 0 15px rgba(0,0,0,.6))}
 .fav-heart.active{color:var(--accent);animation:heartBeat .9s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(244,114,182,.8))}
 @keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
 
-.equalizer{position:fixed;bottom:calc(4px + var(--safe-bottom));left:12px;z-index:19;display:flex;gap:2px;align-items:flex-end;height:20px;pointer-events:none;opacity:.4}
+.equalizer{position:fixed;bottom:calc(95px + var(--safe-bottom));left:12px;z-index:19;display:flex;gap:2px;align-items:flex-end;height:20px;pointer-events:none;opacity:.4}
 .equalizer.on{opacity:1}
 .equalizer .bar{width:3px;background:linear-gradient(180deg,var(--theme-1),var(--theme-2));border-radius:2px}
 .equalizer .bar:nth-child(1){animation:eq1 .8s infinite}
@@ -166,30 +192,52 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 @keyframes eq5{0%,100%{height:8px}50%{height:18px}}
 .equalizer.paused .bar{animation-play-state:paused}
 
-.bottom-controls{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.95);padding:6px 12px calc(10px + var(--safe-bottom));z-index:20;transform:translateY(100%);transition:transform .4s;border-top:1px solid rgba(255,255,255,.04);backdrop-filter:blur(20px)}
-.bottom-controls.visible{transform:translateY(0)}
-.progress-time{display:flex;justify-content:space-between;font-size:.65rem;color:#888}
-.progress-bar{height:4px;background:rgba(255,255,255,.08);cursor:pointer;border-radius:4px;position:relative}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--theme-1),var(--theme-2));width:0%;border-radius:4px;transition:width .2s linear}
-.buttons-row{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:5px}
-.ctrl-btn{background:rgba(255,255,255,.05);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center}
-.play-big{background:linear-gradient(135deg,var(--theme-1),var(--theme-2));width:46px;height:46px;font-size:1.1rem}
-.shuffle-btn{background:rgba(255,255,255,.05);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer}
-.shuffle-btn.active{background:rgba(168,85,247,.2);color:var(--secondary)}
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 8: CONTROLES INFERIORES — SEMPRE VISÍVEIS (NOVO)
+   ════════════════════════════════════════════════════════════════ */
+.bottom-controls{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:rgba(10,10,10,.95);
+  padding:8px 12px calc(12px + var(--safe-bottom));
+  z-index:20;
+  border-top:1px solid rgba(255,255,255,.04);
+  backdrop-filter:blur(20px);
+  /* SEMPRE VISÍVEL — removido o transform */
+}
+.progress-time{display:flex;justify-content:space-between;font-size:.68rem;color:#888;font-weight:600}
+.progress-bar{height:5px;background:rgba(255,255,255,.1);cursor:pointer;border-radius:5px;position:relative;margin:6px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--theme-1),var(--theme-2));width:0%;border-radius:5px;transition:width .2s linear}
+.buttons-row{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:8px}
+.ctrl-btn{background:rgba(255,255,255,.08);border:none;color:#fff;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.ctrl-btn:active{transform:scale(.9);background:rgba(168,85,247,.35)}
+.play-big{background:linear-gradient(135deg,var(--theme-1),var(--theme-2));width:56px;height:56px;font-size:1.3rem;box-shadow:0 4px 20px rgba(168,85,247,.5)}
+.shuffle-btn{background:rgba(255,255,255,.08);border:none;color:#fff;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1rem;transition:all .2s}
+.shuffle-btn:active{transform:scale(.9)}
+.shuffle-btn.active{background:linear-gradient(135deg,var(--theme-1),var(--theme-2));color:#fff;box-shadow:0 0 15px rgba(168,85,247,.6)}
 
-.fab-container{position:fixed;bottom:calc(85px + var(--safe-bottom));right:12px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 9: FAB (botão flutuante)
+   ════════════════════════════════════════════════════════════════ */
+.fab-container{position:fixed;bottom:calc(110px + var(--safe-bottom));right:12px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 .fab-main{background:linear-gradient(135deg,#a855f7,#22d3ee,#a855f7);background-size:200% 200%;animation:fabSuave 6s ease infinite;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:1.15rem;border:none;box-shadow:0 4px 15px rgba(168,85,247,.4)}
 @keyframes fabSuave{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
 .fab-sub{background:rgba(10,10,10,.95);backdrop-filter:blur(16px);border-radius:14px;padding:6px;display:none;flex-direction:column;gap:3px;border:1px solid rgba(255,255,255,.05)}
 .fab-sub.open{display:flex}
 .fab-sub-btn{background:transparent;border:none;color:#ccc;padding:8px 14px;border-radius:12px;font-size:.75rem;cursor:pointer;display:flex;align-items:center;gap:8px;min-height:36px;white-space:nowrap}
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 10: MENU POPUP
+   ════════════════════════════════════════════════════════════════ */
 .menu-popup{position:fixed;top:52px;left:8px;background:rgba(15,15,20,.98);backdrop-filter:blur(24px);border-radius:18px;padding:8px;z-index:36;display:none;flex-direction:column;gap:2px;border:1px solid rgba(168,85,247,.2);min-width:220px;max-height:80vh;overflow-y:auto}
 .menu-popup.open{display:flex}
 .menu-popup button{background:transparent;border:none;color:#ddd;padding:10px 14px;border-radius:12px;font-size:.82rem;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;min-height:40px}
 .menu-popup button i{width:20px;text-align:center;color:var(--primary)}
 .menu-separator{height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,.3),transparent);margin:4px 8px}
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 11: MODAIS
+   ════════════════════════════════════════════════════════════════ */
 .genres-modal{position:fixed;top:0;left:0;right:0;bottom:0;z-index:33;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);padding:60px 16px 20px;display:none;flex-direction:column}
 .genres-modal.open{display:flex}
 .genres-modal .header{text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.06)}
@@ -225,6 +273,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .btn-feedback{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;padding:10px;border-radius:25px;color:#fff;font-weight:700;cursor:pointer;width:100%;margin-top:6px;font-size:.95rem}
 #closeFeedbackBtn{background:transparent;border:none;color:#555;padding:8px;cursor:pointer;font-size:.8rem}
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 12: NOTIFICAÇÕES E OVERLAYS
+   ════════════════════════════════════════════════════════════════ */
 .notification{position:fixed;top:90px;left:50%;transform:translateX(-50%);background:rgba(15,15,20,.85);color:var(--secondary);padding:6px 14px;border-radius:20px;font-size:.7rem;z-index:100003;opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid rgba(168,85,247,.2);font-weight:600;max-width:70vw;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .notification.show{opacity:1}
 
@@ -286,7 +337,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 
 #btnSairModoTV{position:fixed;top:80px;right:12px;z-index:60;background:rgba(0,0,0,.7);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:50%;width:34px;height:34px;font-size:1.1rem;cursor:pointer}
 
-#btnInstalarFixo{position:fixed;bottom:calc(20px + var(--safe-bottom));right:16px;z-index:999999;background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff;border:none;border-radius:30px;padding:14px 22px;font-weight:800;font-size:.95rem;cursor:pointer;display:none;align-items:center;gap:8px}
+#btnInstalarFixo{position:fixed;bottom:calc(130px + var(--safe-bottom));right:16px;z-index:999999;background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff;border:none;border-radius:30px;padding:14px 22px;font-weight:800;font-size:.95rem;cursor:pointer;display:none;align-items:center;gap:8px}
 #btnInstalarFixo.mostrar{display:flex!important}
 #instrucoesInstalar{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:1000002;display:none;align-items:center;justify-content:center;padding:20px}
 #instrucoesInstalar.active{display:flex}
@@ -297,6 +348,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .instrucoes-box .passo .txt{color:#ccc;font-size:.8rem}
 .instrucoes-box .btn-fechar-inst{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;padding:12px;border-radius:20px;color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;width:100%;margin-top:10px}
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 13: BOTTOM SHEETS
+   ════════════════════════════════════════════════════════════════ */
 .bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:rgba(15,15,20,.98);backdrop-filter:blur(20px);border-radius:25px 25px 0 0;padding:14px 12px 18px;transform:translateY(100%);transition:transform .4s;max-height:70vh;overflow:hidden;border-top:1px solid rgba(255,255,255,.05);z-index:34}
 .bottom-sheet.open{transform:translateY(0)}
 .bottom-sheet h3{text-align:center;margin-bottom:10px;font-size:1.1rem;color:var(--theme-2)}
@@ -313,14 +367,12 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .speed-btn{padding:6px 12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#ccc;font-size:.75rem;font-weight:700;cursor:pointer}
 .speed-btn.active{background:linear-gradient(135deg,var(--theme-1),var(--theme-2));color:#fff}
 
-@media(max-width:480px){.fav-heart{font-size:3.4rem}.play-big{width:42px;height:42px}.ctrl-btn{width:34px;height:34px}}
+@media(max-width:480px){.fav-heart{font-size:3.4rem}.play-big{width:52px;height:52px;font-size:1.2rem}.ctrl-btn,.shuffle-btn{width:42px;height:42px}}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     LOADING SCREEN
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- LOADING SCREEN -->
 <div id="loadingScreen">
 <div class="loading-logo-wrapper"><img src="favicon30.png" alt="VDB" class="loading-logo"></div>
 <span class="loading-text">VAI DE BOA! MUSIC</span>
@@ -328,9 +380,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <div class="loading-progress-container"><div class="loading-progress-fill" id="loadingProgressFill"></div></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     BANNER DE SAUDAÇÃO
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- BANNER DE SAUDAÇÃO -->
 <div id="bannerSaudacao" class="banner-saudacao">
 <div class="banner-content">
 <div class="banner-emoji" id="bannerEmoji">☀️</div>
@@ -341,15 +391,11 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     PLAYER CONTAINER
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- PLAYER CONTAINER -->
 <div id="playerContainer">
 <div class="media-container" id="mediaContainer"></div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     TOP BAR — menu (3 pontinhos) à ESQUERDA / timer à DIREITA
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- TOP BAR -->
 <div class="top-bar">
 <div class="top-left">
   <button class="menu-btn" id="menuButton" aria-label="Menu"><i class="fas fa-ellipsis-v"></i></button>
@@ -360,11 +406,12 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
   </button>
 </div>
 <div class="top-right">
+  <span class="badge-ao-vivo" id="badgeAoVivo">🔴 AO VIVO</span>
   <span class="timer-lib" id="timerLib"><i class="fas fa-clock"></i> 24:00:00</span>
 </div>
 </div>
 
-<!-- LETREIRO: mostra gênero + música; AO VIVO quando rádio -->
+<!-- LETREIRO -->
 <div class="info-scroll" id="infoScroll">
 <p class="letreiro" id="scrollText">🎵 VAI DE BOA!</p>
 <div class="search-input-container">
@@ -373,13 +420,10 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
-<!-- Coração central de favoritos -->
 <div class="fav-heart-center"><div class="fav-heart" id="heartBtn"><i class="far fa-heart"></i></div></div>
 <div class="equalizer on" id="equalizer"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     CONTROLES INFERIORES
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- CONTROLES INFERIORES — SEMPRE VISÍVEIS -->
 <div class="bottom-controls" id="bottomControls">
 <div class="progress-time"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
 <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
@@ -391,9 +435,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     FAB (botão flutuante) + SUBMENU
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- FAB -->
 <div class="fab-container">
 <div class="fab-sub" id="fabSub">
 <button class="fab-sub-btn" id="fabGeneros"><i class="fas fa-guitar"></i>Gêneros</button>
@@ -408,9 +450,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <div class="fab-main" id="fabMain"><i class="fas fa-plus"></i></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     MENU POPUP (abre pelo botão 3 pontinhos à esquerda)
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- MENU POPUP -->
 <div class="menu-popup" id="menuPopup">
 <button id="closeMenuBtn"><i class="fas fa-times"></i>Fechar</button>
 <div class="menu-separator"></div>
@@ -431,9 +471,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button id="hardReloadBtn"><i class="fas fa-redo"></i>Forçar Recarregar TUDO</button>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     BLOQUEIO / ADMIN / QR / NOTIFICAÇÕES
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- BLOQUEIO -->
 <div id="blockOverlay" class="active">
 <div class="block-content">
 <img src="favicon30.png" alt="VDB" class="block-logo-img" onerror="this.style.display='none'">
@@ -447,6 +485,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
+<!-- ADMIN -->
 <div id="adminPanel">
 <h2><img src="favicon30.png" alt="VDB">GERENCIADOR DE SENHAS</h2>
 <div class="sub">Gere senhas para seus clientes</div>
@@ -466,6 +505,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button class="btn-fechar" id="adminCloseBtn">✕ Fechar Painel</button>
 </div>
 
+<!-- QR CODE -->
 <div id="qrCodeModal">
 <div class="qr-content">
 <div class="qr-titulo">📱 VAI DE BOA! MUSIC</div>
@@ -483,9 +523,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <audio id="musicPlayer" preload="none"></audio>
 <audio id="backgroundAudio" preload="auto" style="display:none;"></audio>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     MODAIS: GÊNEROS / FAVORITAS / ESCOLHA / FEEDBACK
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- MODAIS -->
 <div class="genres-modal" id="genresModal">
 <div class="header"><div class="titulo">ESTILOS MUSICAIS</div></div>
 <div class="genres-grid" id="genresGrid"></div>
@@ -519,9 +557,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button id="closeFeedbackBtn">Cancelar</button>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     INSTALAÇÃO PWA
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- PWA -->
 <button id="btnInstalarFixo"><i class="fas fa-download"></i> INSTALAR APP</button>
 
 <div id="instrucoesInstalar">
@@ -534,9 +570,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     BOTTOM SHEETS: FILA / RECENTES / VELOCIDADE / SLEEP
-     ═══════════════════════════════════════════════════════════════ -->
+<!-- BOTTOM SHEETS -->
 <div class="bottom-sheet" id="queueSheet"><h3>🎵 PRÓXIMAS NA FILA</h3><div class="queue-list" id="queueList"></div><button class="sheet-close" data-close="queueSheet">✕ FECHAR</button></div>
 <div class="bottom-sheet" id="recentSheet"><h3>🕐 TOCADAS RECENTEMENTE</h3><div class="recent-list" id="recentList"></div><button class="sheet-close" data-close="recentSheet">✕ FECHAR</button></div>
 <div class="bottom-sheet" id="speedSheet"><h3>⚡ VELOCIDADE</h3>
@@ -557,13 +591,14 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button class="sheet-close" data-close="sleepSheet">✕ FECHAR</button></div>
 
 <!-- ═══════════════════════════════════════════════════════════════
-     PARTE 2 (JAVASCRIPT) VEM AQUI
-     ═══════════════════════════════════════════════════════════════ --><script>
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
 (function(){
 'use strict';
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 10: CONFIGURAÇÕES GLOBAIS
+   SEÇÃO 14: CONFIGURAÇÕES
    ════════════════════════════════════════════════════════════════ */
 const CONFIG = {
   WHATSAPP: '5512988461978',
@@ -585,9 +620,6 @@ const VOZ_CONFIG = {
 
 const CACHE_OFFLINE_CONFIG = { ativado: true, maxMusicas: 50 };
 
-/* ════════════════════════════════════════════════════════════════
-   SEÇÃO 11: GÊNEROS MUSICAIS (fácil editar)
-   ════════════════════════════════════════════════════════════════ */
 const GENRE_URLS = {
   'BÔNUS': 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json',
   'FLASHBACK': 'https://raw.githubusercontent.com/radiolojasjc-hub/flashbacktop/refs/heads/main/flashback.json',
@@ -632,9 +664,6 @@ const GENRE_COLORS = {
 };
 const COR_PADRAO = {c1:'#22d3ee', c2:'#a855f7'};
 
-/* ════════════════════════════════════════════════════════════════
-   SEÇÃO 12: MÍDIAS DE FUNDO
-   ════════════════════════════════════════════════════════════════ */
 const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/vdb/main/midias.json';
 const MIDIAS_TV_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/vdb/main/modotv.json';
 const MIDIAS_FALLBACK = [
@@ -647,9 +676,6 @@ const MIDIAS_TV_FALLBACK = [
   {tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/amytv.mp4'}
 ];
 
-/* ════════════════════════════════════════════════════════════════
-   SEÇÃO 13: RÁDIO POR PERÍODO
-   ════════════════════════════════════════════════════════════════ */
 const RADIO_CONFIG = {
   madrugada: { nome: '🌙 VDB MADRUGADA', cor1: '#6366f1', cor2: '#8b5cf6', saudacao: 'Boa madrugada!', generos: ['MODÃO SERTANEJO', 'MODA RAIZ'] },
   manha: { nome: '☀️ VDB MANHÃ', cor1: '#fbbf24', cor2: '#fb923c', saudacao: 'Bom dia!', generos: ['FORRÓ', 'SERTANEJO', 'PAGODE'] },
@@ -665,7 +691,7 @@ const BANNER_CONFIG = {
 };
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 14: HELPERS (utilitários)
+   SEÇÃO 15: HELPERS
    ════════════════════════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
 const now = () => Date.now();
@@ -720,7 +746,7 @@ function getPeriodoAtual() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 15: VOZ (TTS)
+   SEÇÃO 16: VOZ
    ════════════════════════════════════════════════════════════════ */
 let vozJaTocou = false, vozIntervalo = null, vozAtivada = VOZ_CONFIG.ativada;
 
@@ -735,13 +761,11 @@ function falarTexto(texto) {
   if (vozBR) u.voice = vozBR;
   window.speechSynthesis.speak(u);
 }
-
 function formatarHoraFalada(h, m) {
   let texto = h === 0 ? 'meia-noite' : h === 1 ? '1 hora' : h + ' horas';
   if (m > 0) texto += ' e ' + (m === 1 ? '1 minuto' : m + ' minutos');
   return texto;
 }
-
 function fraseAbertura() {
   const agora = new Date(); const h = agora.getHours(); const m = agora.getMinutes();
   let saudacao;
@@ -751,12 +775,10 @@ function fraseAbertura() {
   else saudacao = 'Boa noite!';
   return saudacao + ' Agora são ' + formatarHoraFalada(h, m) + '. Você está ouvindo ' + VOZ_CONFIG.nomeApp + '!';
 }
-
 function frasePeriodica() {
   const agora = new Date();
   return 'Agora são ' + formatarHoraFalada(agora.getHours(), agora.getMinutes()) + '. Você está ouvindo ' + VOZ_CONFIG.nomeApp + '!';
 }
-
 function falarSaudacaoInicial() { if (VOZ_CONFIG.falarAoAbrir) falarTexto(fraseAbertura()); }
 function falarHoraPeriodica() {
   if (!VOZ_CONFIG.falarPeriodicamente) return;
@@ -772,7 +794,7 @@ if ('speechSynthesis' in window) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 16: ESTADO DO APP (com debounce no _save)
+   SEÇÃO 17: ESTADO
    ════════════════════════════════════════════════════════════════ */
 class AppState {
   constructor() {
@@ -807,7 +829,6 @@ class AppState {
     } catch(e) {}
     return { version: this.version, favorites: [], desbloqueado: false, tempoRestante: CONFIG.TEMPO_TESTE_SEGUNDOS, modoTV: false, modoAtual: 'BÔNUS', musicas: [], playlistAtual: [], indiceAtual: 0, shuffleMode: false, historico: [] };
   }
-  // DEBOUNCE: evita salvar toda hora (performance)
   _save() {
     if (this._saveTimer) clearTimeout(this._saveTimer);
     this._saveTimer = setTimeout(() => {
@@ -862,7 +883,7 @@ class AppState {
 const appState = new AppState();
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 17: CACHE (IndexedDB + fetch)
+   SEÇÃO 18: CACHE
    ════════════════════════════════════════════════════════════════ */
 class CacheManager {
   constructor(maxBytes = 5 * 1024 * 1024) { this.maxBytes = maxBytes; this.prefix = 'cache_'; }
@@ -914,16 +935,11 @@ class CacheManager {
 }
 const cacheManager = new CacheManager();
 
-/* ════════════════════════════════════════════════════════════════
-   SEÇÃO 18: CACHE DE MÚSICAS OFFLINE (Service Worker Cache API)
-   ════════════════════════════════════════════════════════════════ */
 const CACHE_MUSICAS = 'vdb-musicas-offline';
-
 async function abrirCacheMusicas() {
   if (!('caches' in window)) return null;
   try { return await caches.open(CACHE_MUSICAS); } catch(e) { return null; }
 }
-
 async function salvarMusicaOffline(url) {
   if (!CACHE_OFFLINE_CONFIG.ativado) return;
   if (!url || !url.startsWith('http')) return;
@@ -935,10 +951,8 @@ async function salvarMusicaOffline(url) {
     const chaves = await cache.keys();
     if (chaves.length >= CACHE_OFFLINE_CONFIG.maxMusicas) await cache.delete(chaves[0]);
     await cache.add(url);
-    console.log('💾 Salva offline:', url.split('/').pop().split('?')[0]);
   } catch(e) {}
 }
-
 async function buscarMusicaOffline(url) {
   try {
     const cache = await abrirCacheMusicas();
@@ -951,7 +965,7 @@ async function buscarMusicaOffline(url) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 19: NOTIFICAÇÕES (filas)
+   SEÇÃO 19: NOTIFICAÇÕES
    ════════════════════════════════════════════════════════════════ */
 class Notifier {
   constructor() { this.queue = []; this.showing = false; this.el = $('notification'); }
@@ -974,7 +988,7 @@ const notifier = new Notifier();
 const notif = (m, d = 2000, t = 'info') => notifier.show(m, d, t);
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 20: DOM (referências)
+   SEÇÃO 20: DOM
    ════════════════════════════════════════════════════════════════ */
 const dom = {
   loadingScreen: $('loadingScreen'), loadingProgressFill: $('loadingProgressFill'),
@@ -1013,7 +1027,8 @@ const dom = {
   equalizer: $('equalizer'), queueMenuBtn: $('queueMenuBtn'), recentMenuBtn: $('recentMenuBtn'),
   speedMenuBtn: $('speedMenuBtn'), queueSheet: $('queueSheet'), recentSheet: $('recentSheet'),
   speedSheet: $('speedSheet'), sleepSheet: $('sleepSheet'), queueList: $('queueList'),
-  recentList: $('recentList'), btnFavTopo: $('btnFavTopo'), favBadgeTopo: $('favBadgeTopo')
+  recentList: $('recentList'), btnFavTopo: $('btnFavTopo'), favBadgeTopo: $('favBadgeTopo'),
+  badgeAoVivo: $('badgeAoVivo')
 };
 
 /* ════════════════════════════════════════════════════════════════
@@ -1063,7 +1078,7 @@ function iniciarTimerCorrido() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 22: ÁUDIO (fade, URLs, tocar)
+   SEÇÃO 22: ÁUDIO
    ════════════════════════════════════════════════════════════════ */
 function fadeOutAudio(d = 400) {
   return new Promise(r => {
@@ -1076,7 +1091,6 @@ function fadeOutAudio(d = 400) {
     }, stt);
   });
 }
-
 function fadeInAudio(d = 600) {
   return new Promise(r => {
     dom.audio.volume = 0;
@@ -1088,7 +1102,6 @@ function fadeInAudio(d = 600) {
     }, stt);
   });
 }
-
 function getUrls(m) {
   const s = m.src || '';
   if (!s) return [];
@@ -1099,19 +1112,21 @@ function getUrls(m) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 23: LETREIRO — Mostra GÊNERO + MÚSICA ou AO VIVO
+   SEÇÃO 23: LETREIRO + BADGE AO VIVO + PONTO NO MENU
    ════════════════════════════════════════════════════════════════ */
+function ehModoRadio() {
+  return appState.modoAtual && appState.modoAtual.indexOf('VDB') > -1;
+}
+
 function atualizarLetreiro(m) {
-  const ehRadio = appState.modoAtual && appState.modoAtual.indexOf('VDB') > -1;
-  if (ehRadio) {
-    // MODO RÁDIO: mostra 🔴 AO VIVO + gênero + música
+  const radio = ehModoRadio();
+  if (radio) {
     dom.scrollText.classList.add('live');
     const texto = m
       ? '🔴 AO VIVO • ' + sanitize(m.title) + ' — ' + sanitize(m.artist) + ' [' + m.genero + '] • ' + CONFIG.LETREIRO
       : '🔴 AO VIVO • ' + CONFIG.LETREIRO;
     dom.scrollText.textContent = texto;
   } else {
-    // MODO NORMAL: gênero + música
     dom.scrollText.classList.remove('live');
     const genero = appState.modoAtual && appState.modoAtual !== 'BÔNUS' ? '[' + appState.modoAtual + '] ' : '';
     const texto = m
@@ -1119,17 +1134,27 @@ function atualizarLetreiro(m) {
       : '🎵 ' + CONFIG.LETREIRO;
     dom.scrollText.textContent = texto;
   }
-  // Reinicia animação
   dom.scrollText.style.animation = 'none';
   void dom.scrollText.offsetHeight;
-  const anim = ehRadio
+  const anim = radio
     ? 'scrollText ' + CONFIG.LETREIRO_DURACAO + 's linear infinite, liveGlow 1.4s ease-in-out infinite'
     : 'scrollText ' + CONFIG.LETREIRO_DURACAO + 's linear infinite';
   dom.scrollText.style.animation = anim;
 }
 
+// NOVO: atualiza badge AO VIVO + ponto no menu
+function atualizarIndicadoresRadio() {
+  if (ehModoRadio()) {
+    if (dom.badgeAoVivo) dom.badgeAoVivo.classList.add('show');
+    if (dom.menuButton) dom.menuButton.classList.add('radio-live');
+  } else {
+    if (dom.badgeAoVivo) dom.badgeAoVivo.classList.remove('show');
+    if (dom.menuButton) dom.menuButton.classList.remove('radio-live');
+  }
+}
+
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 24: TOCAR MÚSICA (coração do player)
+   SEÇÃO 24: TOCAR
    ════════════════════════════════════════════════════════════════ */
 function atualizarPlaylist() {
   if (!appState.playlistAtual.length) return null;
@@ -1150,6 +1175,7 @@ async function tocar() {
   if (!m) { appState.carregandoMusica = false; dom.playBtn.classList.remove('loading'); return; }
 
   atualizarLetreiro(m);
+  atualizarIndicadoresRadio();
   updateHeart(m.id);
   appState.addHistorico(m);
   aplicarTema(m.genero);
@@ -1176,7 +1202,6 @@ async function tocar() {
   const urls = getUrls(m).slice(0, 8);
   let ok = false;
 
-  // Tenta offline primeiro
   if (!navigator.onLine) {
     for (const u of urls) {
       const urlCache = await buscarMusicaOffline(u);
@@ -1185,14 +1210,12 @@ async function tocar() {
           dom.audio.src = urlCache; dom.audio.load();
           await new Promise(r => setTimeout(r, 400));
           ok = true;
-          console.log('📴 Tocando offline');
           break;
         } catch(e) {}
       }
     }
   }
 
-  // Tenta online
   if (!ok) {
     for (const u of urls) {
       try {
@@ -1242,7 +1265,6 @@ function togglePlay() {
     dom.equalizer.classList.add('paused');
     if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
   }
-  showControls();
 }
 
 function next() {
@@ -1250,7 +1272,6 @@ function next() {
   if (appState.carregandoMusica || !appState.playlistAtual.length) return;
   appState.indiceAtual = (appState.indiceAtual + 1) % appState.playlistAtual.length;
   if (appState.isBackgroundActive) setTimeout(tocar, 100);
-  showControls();
 }
 
 function prev() {
@@ -1258,7 +1279,6 @@ function prev() {
   if (appState.carregandoMusica || !appState.playlistAtual.length) return;
   appState.indiceAtual = (appState.indiceAtual - 1 + appState.playlistAtual.length) % appState.playlistAtual.length;
   if (appState.isBackgroundActive) setTimeout(tocar, 100);
-  showControls();
 }
 
 function toggleShuffle() {
@@ -1269,14 +1289,8 @@ function toggleShuffle() {
   notif(appState.shuffleMode ? '🔀 Aleatório ON' : '➡️ Sequencial');
 }
 
-function showControls() {
-  dom.bottomControls.classList.add('visible');
-  clearTimeout(appState.hideControlsTimeout);
-  appState.hideControlsTimeout = setTimeout(() => dom.bottomControls.classList.remove('visible'), 4000);
-}
-
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 25: KEEP-ALIVE (silent audio)
+   SEÇÃO 25: KEEP-ALIVE
    ════════════════════════════════════════════════════════════════ */
 function criarSilentAudio() {
   const sr = 44100, ns = sr * 5;
@@ -1296,7 +1310,6 @@ function getSilentAudioUrl() {
   if (!su) su = URL.createObjectURL(sb);
   return su;
 }
-
 let keepAliveInterval = null;
 function manterAudioAtivo() {
   if (keepAliveInterval) clearInterval(keepAliveInterval);
@@ -1357,13 +1370,11 @@ function updateFavBadge() {
   if (dom.favBadgeTopo) dom.favBadgeTopo.textContent = appState.favorites.length;
   if (dom.choiceBadge) dom.choiceBadge.textContent = appState.favorites.length;
 }
-
 function updateHeart(id) {
   const f = appState.favorites.some(x => x.id === id);
   dom.heartBtn.className = f ? 'fav-heart active' : 'fav-heart';
   dom.heartBtn.innerHTML = f ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>';
 }
-
 function toggleFav(m) {
   vibrar(15);
   if (!m) return;
@@ -1373,7 +1384,6 @@ function toggleFav(m) {
   updateFavBadge();
   updateHeart(m.id);
 }
-
 function renderizarFavoritosModal() {
   dom.favListModal.innerHTML = '';
   const f = appState.getFavorites();
@@ -1387,7 +1397,6 @@ function renderizarFavoritosModal() {
     dom.favListModal.appendChild(it);
   });
 }
-
 function tocarFavoritaEspecifica(id) {
   let m = appState.musicas.find(x => x.id === id);
   if (!m) m = appState.favorites.find(x => x.id === id);
@@ -1442,7 +1451,7 @@ async function selecionarGenero(g) {
   showLoad(false);
   dom.genresModal.classList.remove('open');
   forcarTelaCheia();
-  atualizarPontoRadio();
+  atualizarIndicadoresRadio();
   if (appState.isBackgroundActive) setTimeout(tocar, 300);
   appState._save();
 }
@@ -1450,16 +1459,7 @@ async function selecionarGenero(g) {
 function showLoad(s) { dom.loadingOverlay.classList.toggle('active', s); }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 28: PONTO VERMELHO NO MENU (rádio ao vivo)
-   ════════════════════════════════════════════════════════════════ */
-function atualizarPontoRadio() {
-  const ehRadio = appState.modoAtual && appState.modoAtual.indexOf('VDB') > -1;
-  if (ehRadio) dom.menuButton.classList.add('radio-live');
-  else dom.menuButton.classList.remove('radio-live');
-}
-
-/* ════════════════════════════════════════════════════════════════
-   SEÇÃO 29: MODO RÁDIO
+   SEÇÃO 28: MODO RÁDIO
    ════════════════════════════════════════════════════════════════ */
 async function ativarModoRadio() {
   vibrar(20);
@@ -1493,7 +1493,7 @@ async function ativarModoRadio() {
     if (primeira) { atualizarLetreiro(primeira); updateHeart(primeira.id); }
     showLoad(false);
     forcarTelaCheia();
-    atualizarPontoRadio();
+    atualizarIndicadoresRadio();
     if (appState.isBackgroundActive) setTimeout(tocar, 300);
     appState._save();
     notif('🔴 AO VIVO', 2000);
@@ -1501,13 +1501,11 @@ async function ativarModoRadio() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 30: BANNER DE SAUDAÇÃO (1x por dia)
+   SEÇÃO 29: BANNER DE SAUDAÇÃO (1x por dia)
    ════════════════════════════════════════════════════════════════ */
 function mostrarBannerSaudacao(forcar = false) {
   const banner = document.getElementById('bannerSaudacao');
   if (!banner) return;
-
-  // Verifica se já mostrou hoje
   if (!forcar) {
     const ultimo = parseInt(localStorage.getItem('vdb_banner_ultimo') || '0');
     const agora = now();
@@ -1515,7 +1513,6 @@ function mostrarBannerSaudacao(forcar = false) {
     if (horasPassadas < CONFIG.BANNER_INTERVALO_HORAS) return;
     localStorage.setItem('vdb_banner_ultimo', String(agora));
   }
-
   const periodo = getPeriodoAtual();
   const config = BANNER_CONFIG[periodo];
   const mensagemAleatoria = config.mensagens[Math.floor(Math.random() * config.mensagens.length)];
@@ -1527,7 +1524,6 @@ function mostrarBannerSaudacao(forcar = false) {
   document.getElementById('bannerHora').textContent = String(hora).padStart(2, '0') + ':' + String(minuto).padStart(2, '0');
   banner.classList.add('show');
   banner.classList.remove('hide');
-
   if (!vozJaTocou) {
     vozJaTocou = true;
     setTimeout(() => { falarSaudacaoInicial(); iniciarVozPeriodica(); }, 1200);
@@ -1538,13 +1534,9 @@ function mostrarBannerSaudacao(forcar = false) {
   }, 3500);
 }
 
-/* ════════════════════════════════════════════════════════════════
-   SEÇÃO 31: VERIFICAÇÃO DE MUDANÇA DE PERÍODO (eventos, não timer)
-   ════════════════════════════════════════════════════════════════ */
 function verificarMudancaPeriodo() {
   if (!appState.modoAtual) return;
-  const ehRadio = appState.modoAtual.indexOf('VDB') > -1;
-  if (!ehRadio) return;
+  if (!ehModoRadio()) return;
   const periodoAtual = getPeriodoAtual();
   const configAtual = RADIO_CONFIG[periodoAtual];
   if (appState.modoAtual !== configAtual.nome) {
@@ -1555,7 +1547,7 @@ function verificarMudancaPeriodo() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 32: SENHAS E ADMIN (INTACTO conforme pedido)
+   SEÇÃO 30: SENHAS (INTACTO)
    ════════════════════════════════════════════════════════════════ */
 function gerarSenhaAleatoria() {
   const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -1640,23 +1632,14 @@ function liberarAgora() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 33: ADMIN — Long press no logo (substitui 8 cliques)
+   SEÇÃO 31: ADMIN (long press 2s no logo)
    ════════════════════════════════════════════════════════════════ */
 let longPressTimer = null;
 function setupLongPressAdmin() {
   const logo = dom.logoMacaco;
   if (!logo) return;
-
-  const iniciar = () => {
-    longPressTimer = setTimeout(() => {
-      vibrar(50);
-      abrirAdmin();
-    }, 2000);
-  };
-  const cancelar = () => {
-    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
-  };
-
+  const iniciar = () => { longPressTimer = setTimeout(() => { vibrar(50); abrirAdmin(); }, 2000); };
+  const cancelar = () => { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } };
   logo.addEventListener('touchstart', iniciar, { passive: true });
   logo.addEventListener('touchend', cancelar, { passive: true });
   logo.addEventListener('touchmove', cancelar, { passive: true });
@@ -1664,17 +1647,10 @@ function setupLongPressAdmin() {
   logo.addEventListener('mouseup', cancelar);
   logo.addEventListener('mouseleave', cancelar);
 }
-
 function abrirAdmin() {
   const l = JSON.parse(localStorage.getItem('vdb_admin_lock') || '{"tentativas":0,"bloqueado":false,"ate":0}');
-  if (l.bloqueado && now() < l.ate) {
-    notif('🔒 Bloqueado! ' + Math.ceil((l.ate - now())/1000) + 's', 2500);
-    return;
-  }
-  if (l.bloqueado && now() >= l.ate) {
-    l.bloqueado = false; l.tentativas = 0;
-    localStorage.setItem('vdb_admin_lock', JSON.stringify(l));
-  }
+  if (l.bloqueado && now() < l.ate) { notif('🔒 Bloqueado! ' + Math.ceil((l.ate - now())/1000) + 's', 2500); return; }
+  if (l.bloqueado && now() >= l.ate) { l.bloqueado = false; l.tentativas = 0; localStorage.setItem('vdb_admin_lock', JSON.stringify(l)); }
   const s = prompt('🔐 Digite a senha do painel admin:');
   if (s === null) return;
   if (s === CONFIG.SENHA_ADMIN) {
@@ -1711,13 +1687,12 @@ function carregarHistorico() {
 function atualizarTotalSenhas() { dom.totalSenhas.textContent = appState.getSenhasHistorico().length; }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 34: FUNÇÕES AUXILIARES (WhatsApp, Cadastro, QR, Fila, etc.)
+   SEÇÃO 32: AUXILIARES
    ════════════════════════════════════════════════════════════════ */
 function abrirWhatsAppCompra() {
   const m = encodeURIComponent('Olá! Quero adquirir o VAI DE BOA! MUSIC VITALÍCIO por R$ 39,00');
   window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + m, '_blank');
 }
-
 function abrirCadastro() {
   const mo = document.createElement('div');
   mo.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:10001;display:flex;align-items:center;justify-content:center;padding:20px;';
@@ -1735,13 +1710,11 @@ function abrirCadastro() {
     notif('✅ Cadastro enviado!', 3000);
   };
 }
-
 function gerarQrCode() {
   const u = encodeURIComponent(window.location.href);
   dom.qrCodeImage.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + u + '&margin=20&format=png&bgcolor=ffffff&color=000000';
   dom.qrCodeModal.classList.add('active');
 }
-
 function renderizarFila() {
   dom.queueList.innerHTML = '';
   const t = appState.playlistAtual.length;
@@ -1757,7 +1730,6 @@ function renderizarFila() {
     dom.queueList.appendChild(d);
   }
 }
-
 function renderizarRecentes() {
   dom.recentList.innerHTML = '';
   if (!appState.historico.length) { dom.recentList.innerHTML = '<div style="text-align:center;color:#666;padding:20px">Nada tocado ainda</div>'; return; }
@@ -1776,7 +1748,7 @@ function renderizarRecentes() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 35: TOUCH MANAGER (swipe com throttle)
+   SEÇÃO 33: TOUCH (swipe com throttle)
    ════════════════════════════════════════════════════════════════ */
 class TouchManager {
   constructor() {
@@ -1792,17 +1764,11 @@ class TouchManager {
     document.addEventListener('touchend', this.hte.bind(this), { passive: true });
     document.addEventListener('touchcancel', this.htc.bind(this), { passive: true });
   }
-  hts(e) {
-    const t = e.touches[0];
-    this.tsx = t.clientX; this.tsy = t.clientY;
-    this.is = false; this.d = null;
-  }
+  hts(e) { const t = e.touches[0]; this.tsx = t.clientX; this.tsy = t.clientY; this.is = false; this.d = null; }
   htm(e) {
-    // THROTTLE: só processa a cada 50ms
     const agora = now();
     if (agora - this.lastMove < 50) return;
     this.lastMove = agora;
-
     if (!this.tsx) return;
     const t = e.touches[0];
     const dx = t.clientX - this.tsx;
@@ -1814,15 +1780,8 @@ class TouchManager {
       this.ssf(dx, dy);
     }
   }
-  hte(e) {
-    if (this.is && this.d) this.esa(this.d);
-    this.rsf();
-    this.tsx = 0; this.tsy = 0; this.d = null; this.is = false;
-  }
-  htc() {
-    this.rsf();
-    this.tsx = 0; this.tsy = 0; this.d = null; this.is = false;
-  }
+  hte(e) { if (this.is && this.d) this.esa(this.d); this.rsf(); this.tsx = 0; this.tsy = 0; this.d = null; this.is = false; }
+  htc() { this.rsf(); this.tsx = 0; this.tsy = 0; this.d = null; this.is = false; }
   ssf(dx, dy) {
     let i = document.getElementById('swipeIndicator');
     if (!i) {
@@ -1840,14 +1799,14 @@ class TouchManager {
   }
   rsf() { const i = document.getElementById('swipeIndicator'); if (i) i.remove(); }
   esa(d) {
-    if (d === 'left') { next(); notif('⏭️ Próxima', 800); showControls(); }
-    else if (d === 'right') { prev(); notif('⏮️ Anterior', 800); showControls(); }
+    if (d === 'left') { next(); notif('⏭️ Próxima', 800); }
+    else if (d === 'right') { prev(); notif('⏮️ Anterior', 800); }
   }
 }
 new TouchManager();
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 36: MÍDIAS DE FUNDO (refatorada — uma só função)
+   SEÇÃO 34: MÍDIAS (refatorada)
    ════════════════════════════════════════════════════════════════ */
 async function carregarMidias(url, options = {}) {
   const { fallback = MIDIAS_FALLBACK, duracaoImagem = 5000 } = options;
@@ -1865,7 +1824,6 @@ async function carregarMidias(url, options = {}) {
     if (!ms.length) ms = fallback;
     ms = ms.filter(m => m && (m.tipo === 'video' || m.tipo === 'imagem') && m.src);
     if (!ms.length) ms = fallback;
-
     const els = [];
     ms.forEach((m, i) => {
       let e;
@@ -1888,13 +1846,10 @@ async function carregarMidias(url, options = {}) {
       dom.mediaContainer.appendChild(e);
       els.push(e);
     });
-
-    // Clique em mídia com "clik" no nome → WhatsApp
     dom.mediaContainer.addEventListener('click', function(ev) {
       const t = ev.target.closest('video, img');
       if (t && t.src && t.src.toLowerCase().includes('clik')) abrirWhatsAppCompra();
     });
-
     if (!els.length) return;
     let idx = 0;
     function proximaMidia() {
@@ -1913,7 +1868,6 @@ async function carregarMidias(url, options = {}) {
       idx = pi;
     }
     if (els[0] && els[0].tagName === 'VIDEO') els[0].play().catch(() => {});
-
     function agendar() {
       const at = els[idx];
       if (at.tagName === 'VIDEO') {
@@ -1923,12 +1877,8 @@ async function carregarMidias(url, options = {}) {
       } else setTimeout(() => { proximaMidia(); agendar(); }, duracaoImagem);
     }
     agendar();
-  } catch(e) {
-    console.error('Erro mídias:', e);
-    dom.mediaContainer.innerHTML = '';
-  }
+  } catch(e) { console.error('Erro mídias:', e); dom.mediaContainer.innerHTML = ''; }
 }
-
 async function carregarMidiasPadrao() { await carregarMidias(MIDIAS_PADRAO_URL, { fallback: MIDIAS_FALLBACK, duracaoImagem: 5000 }); }
 async function carregarMidiasTV() {
   await carregarMidias(MIDIAS_TV_URL, { fallback: MIDIAS_TV_FALLBACK, duracaoImagem: 8000 });
@@ -1937,7 +1887,7 @@ async function carregarMidiasTV() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 37: MODO TV
+   SEÇÃO 35: MODO TV
    ════════════════════════════════════════════════════════════════ */
 function mostrarBotaoSairTV() {
   esconderBotaoSairTV();
@@ -1947,10 +1897,7 @@ function mostrarBotaoSairTV() {
   b.onclick = () => toggleModoTV();
   document.body.appendChild(b);
 }
-function esconderBotaoSairTV() {
-  const b = document.getElementById('btnSairModoTV');
-  if (b) b.remove();
-}
+function esconderBotaoSairTV() { const b = document.getElementById('btnSairModoTV'); if (b) b.remove(); }
 async function toggleModoTV() {
   vibrar(20);
   appState.modoTV = !appState.modoTV;
@@ -1967,12 +1914,11 @@ async function toggleModoTV() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 38: INSTALAÇÃO PWA
+   SEÇÃO 36: PWA
    ════════════════════════════════════════════════════════════════ */
 const btnInstalarFixo = $('btnInstalarFixo');
 const instrucoesInstalar = $('instrucoesInstalar');
 let deferredInstallPrompt = null;
-
 function ehMobile() { return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent); }
 function jaEstaInstalado() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
 function mostrarBotaoInstalar() {
@@ -2011,12 +1957,13 @@ if ('serviceWorker' in navigator) {
       .then(r => console.log('✅ SW:', r.scope))
       .catch(e => console.warn('⚠️ SW falhou:', e));
   });
-}/* ════════════════════════════════════════════════════════════════
-   SEÇÃO 39: INICIALIZAÇÃO PRINCIPAL
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 37: INICIALIZAÇÃO
    ════════════════════════════════════════════════════════════════ */
 async function iniciar() {
   try {
-    // Limpa cache de versões antigas
     try {
       const vSalva = localStorage.getItem('vdb_versao_limpeza');
       if (vSalva !== CONFIG.APP_VERSION) {
@@ -2034,17 +1981,14 @@ async function iniciar() {
 
     if (dom.infoDispositivo) dom.infoDispositivo.textContent = '🆔 ' + appState.fingerprint;
 
-    // Prepara letreiro
     dom.scrollText.textContent = CONFIG.LETREIRO;
     dom.scrollText.style.animation = 'none';
     void dom.scrollText.offsetHeight;
     dom.scrollText.style.animation = 'scrollText ' + CONFIG.LETREIRO_DURACAO + 's linear infinite';
 
-    // Carrega mídias de fundo
     await carregarMidiasPadrao();
     updateProgress(30);
 
-    // Verifica estado de bloqueio
     if (localStorage.getItem('vdb_desbloqueado') === 'true' || localStorage.getItem('vdb_senha_permanente') === 'true') {
       appState.desbloqueado = true;
       dom.blockOverlay.classList.remove('active');
@@ -2068,7 +2012,6 @@ async function iniciar() {
     }
     updateProgress(70);
 
-    // Carrega primeiro gênero
     let pronto = false;
     for (const g of GENRE_ORDEM) {
       try {
@@ -2096,24 +2039,19 @@ async function iniciar() {
     renderizarGeneros();
     updateProgress(90);
 
-    // ⚡ SEM DELAY ARTIFICIAL: mostra assim que pronto
     dom.loadingScreen.style.display = 'none';
     dom.playerContainer.classList.add('visible');
     updateProgress(100);
     mostrarBotaoInstalar();
 
-    // Banner de saudação só 1x por dia
     setTimeout(mostrarBannerSaudacao, 300);
 
     updateTimerDisplay();
     forcarTelaCheia();
+    atualizarIndicadoresRadio();
     if (appState.desbloqueado) setTimeout(ativarPlayer, 1500);
 
-    // ═══════════════════════════════════════════════════════════
     // EVENT LISTENERS
-    // ═══════════════════════════════════════════════════════════
-
-    // Player
     dom.playBtn.onclick = togglePlay;
     dom.prevBtn.onclick = prev;
     dom.nextBtn.onclick = next;
@@ -2130,8 +2068,6 @@ async function iniciar() {
       const m = appState.playlistAtual[appState.indiceAtual % appState.playlistAtual.length] || appState.playlistAtual[0];
       if (m) toggleFav(m);
     };
-
-    // Botão FAV no topo
     if (dom.btnFavTopo) {
       dom.btnFavTopo.onclick = () => {
         vibrar(10);
@@ -2139,8 +2075,6 @@ async function iniciar() {
         dom.favModal.classList.add('open');
       };
     }
-
-    // Menu lateral (3 pontinhos)
     dom.menuButton.onclick = e => {
       e.stopPropagation();
       vibrar(10);
@@ -2148,11 +2082,8 @@ async function iniciar() {
     };
     dom.closeMenuBtn.onclick = () => dom.menuPopup.classList.remove('open');
 
-    // Gêneros
     dom.choiceGenres.onclick = () => { dom.choiceMenu.classList.remove('open'); dom.genresModal.classList.add('open'); };
     dom.closeGenresBtn.onclick = () => dom.genresModal.classList.remove('open');
-
-    // Favoritos
     dom.choiceFavorites.onclick = () => {
       dom.choiceMenu.classList.remove('open');
       renderizarFavoritosModal();
@@ -2161,7 +2092,6 @@ async function iniciar() {
     dom.closeFavBtn.onclick = () => dom.favModal.classList.remove('open');
     dom.choiceClose.onclick = () => dom.choiceMenu.classList.remove('open');
 
-    // Bottom sheets
     document.querySelectorAll('.sheet-close').forEach(b => {
       b.onclick = () => {
         const t = b.dataset.close;
@@ -2173,7 +2103,6 @@ async function iniciar() {
     dom.speedMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); dom.speedSheet.classList.add('open'); };
     dom.sleepMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); dom.sleepSheet.classList.add('open'); };
 
-    // Voz on/off
     if (dom.toggleVozBtn) {
       vozAtivada = localStorage.getItem('vdb_voz_ativa') !== 'false';
       atualizarBotaoVoz();
@@ -2181,13 +2110,8 @@ async function iniciar() {
         vozAtivada = !vozAtivada;
         localStorage.setItem('vdb_voz_ativa', vozAtivada);
         atualizarBotaoVoz();
-        if (vozAtivada) {
-          notif('🔊 Voz LIGADA', 1500);
-          falarTexto('Voz ativada');
-        } else {
-          window.speechSynthesis.cancel();
-          notif('🔇 Voz DESLIGADA', 1500);
-        }
+        if (vozAtivada) { notif('🔊 Voz LIGADA', 1500); falarTexto('Voz ativada'); }
+        else { window.speechSynthesis.cancel(); notif('🔇 Voz DESLIGADA', 1500); }
         dom.menuPopup.classList.remove('open');
       };
       function atualizarBotaoVoz() {
@@ -2195,8 +2119,6 @@ async function iniciar() {
         else dom.toggleVozBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>Ligar Voz';
       }
     }
-
-    // Recarregar / atualizar
     dom.hardReloadBtn.onclick = () => { dom.menuPopup.classList.remove('open'); forcarRecarregarTudo(); };
     dom.magicUpdateMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); atualizarAppMagico(); };
     dom.reloadPlaylistBtn.onclick = () => { dom.menuPopup.classList.remove('open'); location.reload(); };
@@ -2207,8 +2129,6 @@ async function iniciar() {
       else await carregarMidiasPadrao();
       notif('✅ Mídias atualizadas!', 2000);
     };
-
-    // Velocidade
     document.querySelectorAll('.speed-btn').forEach(b => {
       b.onclick = () => {
         vibrar(10);
@@ -2218,8 +2138,6 @@ async function iniciar() {
         notif('⚡ ' + b.dataset.speed + 'x', 1500);
       };
     });
-
-    // Sleep timer
     document.querySelectorAll('.sheet-option[data-sleep]').forEach(b => {
       b.onclick = () => {
         vibrar(10);
@@ -2237,8 +2155,6 @@ async function iniciar() {
         dom.sleepSheet.classList.remove('open');
       };
     });
-
-    // FAB
     dom.fabMain.onclick = () => {
       vibrar(10);
       dom.fabSub.classList.toggle('open');
@@ -2257,16 +2173,12 @@ async function iniciar() {
     };
     dom.fabQrCode.onclick = () => { gerarQrCode(); fecharFab(); };
 
-    // Menu superior
     dom.fullscreenMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); forcarTelaCheia(); };
     dom.liberarAgoraBtn.onclick = () => { dom.menuPopup.classList.remove('open'); liberarAgora(); };
     dom.cadastroMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); abrirCadastro(); };
-
-    // QR Code
     dom.qrCloseBtn.onclick = () => dom.qrCodeModal.classList.remove('active');
     dom.qrCodeModal.onclick = e => { if (e.target === dom.qrCodeModal) dom.qrCodeModal.classList.remove('active'); };
 
-    // Feedback
     document.querySelectorAll('.star').forEach(s => {
       s.onclick = () => {
         vibrar(10);
@@ -2284,10 +2196,9 @@ async function iniciar() {
     };
     dom.closeFeedbackBtn.onclick = () => dom.feedbackModal.classList.remove('open');
 
-    // Senha / Admin
     dom.senhaInput.onkeydown = e => { if (e.key === 'Enter') handleLiberar(); };
     dom.btnLiberar.onclick = handleLiberar;
-    setupLongPressAdmin(); // ⚡ long press em vez de 8 cliques
+    setupLongPressAdmin();
 
     dom.adminGerarBtn.onclick = () => {
       const f = dom.adminFingerprintInput.value.trim();
@@ -2320,7 +2231,6 @@ async function iniciar() {
     };
     dom.adminCloseBtn.onclick = () => dom.adminPanel.classList.remove('open');
 
-    // Áudio
     dom.audio.ontimeupdate = () => {
       if (dom.audio.duration) {
         dom.progressFill.style.width = (dom.audio.currentTime / dom.audio.duration * 100) + '%';
@@ -2331,7 +2241,6 @@ async function iniciar() {
     dom.audio.onended = () => { if (!appState.carregandoMusica) next(); };
     dom.audio.onerror = () => { if (!appState.carregandoMusica) setTimeout(next, 500); };
 
-    // Busca no letreiro
     dom.infoScroll.addEventListener('click', function() {
       if (this.classList.contains('modo-pesquisa')) return;
       this.classList.add('modo-pesquisa');
@@ -2380,7 +2289,6 @@ async function iniciar() {
       } else notif('🔍 Nenhuma encontrada', 1500);
     }
 
-    // Teclado
     document.addEventListener('keydown', e => {
       if (e.target.tagName === 'INPUT') return;
       if (e.key === ' ') { e.preventDefault(); togglePlay(); }
@@ -2389,14 +2297,12 @@ async function iniciar() {
       if (e.key === 's' || e.key === 'S') toggleShuffle();
     });
 
-    // Fecha menus ao clicar fora
     document.addEventListener('click', e => {
       if (!dom.menuPopup.contains(e.target) && e.target !== dom.menuButton && !dom.menuButton.contains(e.target)) {
         dom.menuPopup.classList.remove('open');
       }
     });
 
-    // Volta do background
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         if (!appState.desbloqueado) {
@@ -2413,18 +2319,13 @@ async function iniciar() {
           dom.backgroundAudio.volume = .001;
           dom.backgroundAudio.play().catch(() => {});
         }
-        // Verifica mudança de período do rádio ao voltar
         verificarMudancaPeriodo();
       }
     });
 
-    // Antes de sair
     window.addEventListener('beforeunload', () => {
       appState._save();
     });
-
-    // ⚡ Atualiza ponto do rádio no início
-    atualizarPontoRadio();
 
   } catch(e) {
     console.error('❌ Erro:', e);
@@ -2435,7 +2336,7 @@ async function iniciar() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 40: RECARREGAR TUDO / ATUALIZAR APP
+   SEÇÃO 38: RECARREGAR / ATUALIZAR
    ════════════════════════════════════════════════════════════════ */
 async function forcarRecarregarTudo() {
   notif('🔄 Limpando tudo...', 2000);
@@ -2453,7 +2354,6 @@ async function forcarRecarregarTudo() {
     window.location.href = window.location.pathname + '?hard=' + Date.now();
   }, 1000);
 }
-
 async function atualizarAppMagico() {
   if (!confirm('🪄 Atualizar o app agora?')) return;
   notif('⏳ Atualizando...', 1500);
@@ -2472,9 +2372,6 @@ async function atualizarAppMagico() {
   }, 800);
 }
 
-/* ════════════════════════════════════════════════════════════════
-   INICIA O APP
-   ════════════════════════════════════════════════════════════════ */
 iniciar();
 
 })();
