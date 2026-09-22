@@ -20,9 +20,30 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#a855f7;--secondary:#22d3ee;--accent:#f472b6;--gold:#fbbf24;--black-0:#000;--black-1:#0a0a0a;--black-2:#121212;--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);--theme-1:#a855f7;--theme-2:#22d3ee;--ease-spring:cubic-bezier(0.34,1.56,0.64,1)}
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 1: VARIÁVEIS GLOBAIS
+   ════════════════════════════════════════════════════════════════ */
+:root{
+  --primary:#a855f7;
+  --secondary:#22d3ee;
+  --accent:#f472b6;
+  --gold:#fbbf24;
+  --black-0:#000;
+  --black-1:#0a0a0a;
+  --black-2:#121212;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-top:env(safe-area-inset-top,0px);
+  --theme-1:#a855f7;
+  --theme-2:#22d3ee;
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+  --live-red:#ef4444;
+}
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
 html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;position:fixed;top:0;left:0}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 2: LOADING SCREEN
+   ════════════════════════════════════════════════════════════════ */
 #loadingScreen{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:22px;overflow:hidden}
 #loadingScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(168,85,247,.35),transparent 45%),radial-gradient(circle at 80% 70%,rgba(168,85,247,.25),transparent 50%);animation:bgPulseLoad 4s ease-in-out infinite}
 .loading-logo-wrapper{position:relative;width:130px;height:130px;display:flex;align-items:center;justify-content:center;z-index:2}
@@ -38,7 +59,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .loading-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6);background-size:300% 100%;animation:progressShineLoad 2s linear infinite;transition:width .4s ease}
 @keyframes progressShineLoad{0%{background-position:0 50%}100%{background-position:200% 50%}}
 
-/* BANNER DE SAUDAÇÃO */
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 3: BANNER DE SAUDAÇÃO
+   ════════════════════════════════════════════════════════════════ */
 .banner-saudacao{position:fixed;inset:0;z-index:99998;background:linear-gradient(135deg,#0a0a0a 0%,#1a0a2e 50%,#0a0a0a 100%);display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .6s ease}
 .banner-saudacao.show{display:flex;opacity:1}
 .banner-saudacao.hide{opacity:0}
@@ -56,6 +79,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .banner-hora::before{content:'•  '}
 .banner-hora::after{content:'  •'}
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 4: PLAYER / MÍDIA DE FUNDO
+   ════════════════════════════════════════════════════════════════ */
 #playerContainer{position:fixed;inset:0;z-index:10;display:none}
 #playerContainer.visible{display:block}
 .media-container{position:fixed;inset:0;z-index:0;background:#000;overflow:hidden}
@@ -63,47 +89,53 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .media-container .active{opacity:1;z-index:3}
 .media-container .inactive{opacity:0;z-index:2}
 
-/* ============ TOPO NÍVELADO COM O FURO ============ */
-.top-bar{position:fixed;top:0;left:0;right:0;z-index:35;display:flex;align-items:center;justify-content:space-between;padding:6px 8px;padding-top:max(6px, env(safe-area-inset-top));background:linear-gradient(180deg,rgba(0,0,0,.9),transparent);height:52px;gap:6px}
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 5: TOP BAR — menu (3 pontinhos) ESQUERDA / timer DIREITA
+   ════════════════════════════════════════════════════════════════ */
+.top-bar{position:fixed;top:0;left:0;right:0;z-index:35;display:flex;align-items:center;justify-content:space-between;padding:6px 8px;padding-top:max(6px,env(safe-area-inset-top));background:linear-gradient(180deg,rgba(0,0,0,.9),transparent);height:52px;gap:6px}
 .top-left{display:flex;align-items:center;gap:6px;min-width:0;flex:1}
+
+/* Menu 3 pontinhos AGORA NA ESQUERDA */
+.menu-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;width:34px;height:34px;border-radius:50%;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;position:relative}
+.menu-btn:active{background:rgba(168,85,247,.35);transform:scale(.92)}
+/* Ponto piscante VERMELHO quando rádio AO VIVO */
+.menu-btn.radio-live::after{content:'';position:absolute;top:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:var(--live-red);animation:pulseLiveTop 1.1s infinite;box-shadow:0 0 14px var(--live-red);border:2px solid #000}
+@keyframes pulseLiveTop{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(1.35)}}
+
 .logo-macaco{height:34px;width:34px;border-radius:50%;object-fit:cover;border:2px solid rgba(168,85,247,.5);cursor:pointer;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.5)}
 .btn-fav-topo{background:linear-gradient(135deg,rgba(244,114,182,.25),rgba(168,85,247,.25));backdrop-filter:blur(14px);border:1px solid rgba(244,114,182,.5);border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;width:34px;height:34px;flex-shrink:0;transition:all .2s;position:relative}
 .btn-fav-topo:active{transform:scale(.94);background:linear-gradient(135deg,rgba(244,114,182,.4),rgba(168,85,247,.4))}
-.btn-fav-topo .fav-txt{display:none}
 .btn-fav-topo .fav-icon{font-size:1rem;color:var(--accent);line-height:1}
 .btn-fav-topo .fav-badge-topo{position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;border-radius:50%;padding:0 5px;font-size:.55rem;font-weight:900;min-width:16px;height:16px;text-align:center;line-height:16px;border:2px solid #000}
+
 .top-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
 .timer-lib{font-size:.68rem;font-weight:700;color:var(--secondary);background:rgba(0,0,0,.6);padding:4px 8px;border-radius:20px;white-space:nowrap;border:1px solid rgba(34,211,238,.2);display:flex;align-items:center;gap:4px}
 .timer-lib.lib{color:#00b894;border-color:rgba(0,184,148,.3)}
 .timer-lib i{font-size:.6rem}
-.menu-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;width:34px;height:34px;border-radius:50%;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
-.menu-btn:active{background:rgba(168,85,247,.35);transform:scale(.92)}
 
-/* ============ CARD CENTRAL — VIDRO CINZA IGUAL + ============ */
-.card-central{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:45;display:none;pointer-events:none}
-.card-central.visible{display:block;pointer-events:auto}
-.card-central.animating{transform:translate(-50%,-50%) scale(.85);opacity:0}
-.card-central-inner{background:linear-gradient(135deg,rgba(150,152,162,.32),rgba(70,72,82,.42));backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);border-radius:24px;padding:8px;display:flex;gap:8px;border:1px solid rgba(255,255,255,.22);box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1px 0 rgba(0,0,0,.15),0 0 40px rgba(168,85,247,.15);position:relative;overflow:hidden;animation:cardEntrada .5s cubic-bezier(.34,1.56,.64,1)}
-.card-central-inner::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent 45%);pointer-events:none;border-radius:24px}
-@keyframes cardEntrada{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
-.card-btn{padding:16px 24px;border-radius:18px;border:1px solid rgba(255,255,255,.2);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-family:'Audiowide',sans-serif;font-size:.7rem;letter-spacing:1.2px;text-transform:uppercase;transition:all .22s cubic-bezier(.34,1.56,.64,1);min-width:120px;position:relative;overflow:hidden;color:#fff;background:linear-gradient(135deg,rgba(200,202,212,.28),rgba(100,102,112,.38));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 -1px 0 rgba(0,0,0,.18),0 4px 15px rgba(0,0,0,.3);z-index:2}
-.card-btn:active{transform:scale(.94);background:linear-gradient(135deg,rgba(200,202,212,.45),rgba(100,102,112,.55))}
-.card-btn i{font-size:1.5rem;margin-bottom:2px;font-style:normal;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));z-index:2}
-.card-btn span{position:relative;z-index:2}
-.card-btn-genero{border-color:rgba(255,255,255,.22)}
-.card-btn-radio{border-color:rgba(255,255,255,.22)}
-.card-btn-radio.live::after{content:'';position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulseLive 1.2s infinite;box-shadow:0 0 12px #ef4444;z-index:3}
-.card-btn-radio.live{border-color:rgba(239,68,68,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 20px rgba(239,68,68,.4)}
-@keyframes pulseLive{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.35)}}
-.card-btn .genero-atual{font-size:.58rem;opacity:.85;letter-spacing:.5px;font-family:'Rajdhani',sans-serif;font-weight:700;position:relative;z-index:2}
-.card-btn .hora-radio{font-size:.55rem;opacity:.9;letter-spacing:.5px;font-family:'Rajdhani',sans-serif;font-weight:700;position:relative;z-index:2}
-
-/* INFO-SCROLL */
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 6: LETREIRO — mostra gênero + música; AO VIVO quando rádio
+   ════════════════════════════════════════════════════════════════ */
 .info-scroll{position:fixed;top:52px;left:0;right:0;z-index:30;padding:2px 10px;height:28px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;background:rgba(0,0,0,.25);backdrop-filter:blur(8px)}
 .info-scroll.modo-pesquisa{height:36px;background:rgba(0,0,0,.5)}
 .info-scroll.hidden{opacity:0;pointer-events:none;height:0;padding:0}
+
 .letreiro{font-size:.72rem;font-weight:700;white-space:nowrap;animation:scrollText 60s linear infinite;background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6,#fbbf24);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 @keyframes scrollText{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+
+/* Letreiro AO VIVO (rádio) */
+.letreiro.live{
+  background:linear-gradient(90deg,var(--live-red),var(--accent),var(--live-red));
+  background-size:300% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:scrollText 60s linear infinite,liveGlow 1.4s ease-in-out infinite;
+  font-weight:900;letter-spacing:1.2px;
+}
+@keyframes liveGlow{
+  0%,100%{filter:drop-shadow(0 0 4px rgba(239,68,68,.5))}
+  50%{filter:drop-shadow(0 0 14px rgba(239,68,68,1))}
+}
+
 .search-input-container{display:none;width:100%;align-items:center;position:relative}
 .info-scroll.modo-pesquisa .search-input-container{display:flex}
 .info-scroll.modo-pesquisa .letreiro{display:none}
@@ -111,6 +143,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 #searchClearLetreiro{position:absolute;right:6px;background:transparent;border:none;color:rgba(255,255,255,.3);font-size:1.1rem;cursor:pointer;display:none}
 #searchClearLetreiro.visible{display:block}
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 7: CORAÇÃO CENTRAL, EQUALIZADOR, CONTROLES, FAB, MENUS
+   ════════════════════════════════════════════════════════════════ */
 .fav-heart-center{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:15;pointer-events:none}
 .fav-heart{font-size:4rem;color:rgba(255,255,255,.5);cursor:pointer;display:inline-block;pointer-events:auto;transition:all .4s;filter:drop-shadow(0 0 15px rgba(0,0,0,.6))}
 .fav-heart.active{color:var(--accent);animation:heartBeat .9s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(244,114,182,.8))}
@@ -149,7 +184,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .fab-sub.open{display:flex}
 .fab-sub-btn{background:transparent;border:none;color:#ccc;padding:8px 14px;border-radius:12px;font-size:.75rem;cursor:pointer;display:flex;align-items:center;gap:8px;min-height:36px;white-space:nowrap}
 
-.menu-popup{position:fixed;top:52px;right:8px;background:rgba(15,15,20,.98);backdrop-filter:blur(24px);border-radius:18px;padding:8px;z-index:36;display:none;flex-direction:column;gap:2px;border:1px solid rgba(168,85,247,.2);min-width:220px;max-height:80vh;overflow-y:auto}
+.menu-popup{position:fixed;top:52px;left:8px;background:rgba(15,15,20,.98);backdrop-filter:blur(24px);border-radius:18px;padding:8px;z-index:36;display:none;flex-direction:column;gap:2px;border:1px solid rgba(168,85,247,.2);min-width:220px;max-height:80vh;overflow-y:auto}
 .menu-popup.open{display:flex}
 .menu-popup button{background:transparent;border:none;color:#ddd;padding:10px 14px;border-radius:12px;font-size:.82rem;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;min-height:40px}
 .menu-popup button i{width:20px;text-align:center;color:var(--primary)}
@@ -278,11 +313,14 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .speed-btn{padding:6px 12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#ccc;font-size:.75rem;font-weight:700;cursor:pointer}
 .speed-btn.active{background:linear-gradient(135deg,var(--theme-1),var(--theme-2));color:#fff}
 
-@media(max-width:480px){.fav-heart{font-size:3.4rem}.play-big{width:42px;height:42px}.ctrl-btn{width:34px;height:34px}.card-btn{padding:14px 20px;min-width:110px}.card-btn i{font-size:1.3rem}.card-btn .genero-atual,.card-btn .hora-radio{font-size:.55rem}}
+@media(max-width:480px){.fav-heart{font-size:3.4rem}.play-big{width:42px;height:42px}.ctrl-btn{width:34px;height:34px}}
 </style>
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     LOADING SCREEN
+     ═══════════════════════════════════════════════════════════════ -->
 <div id="loadingScreen">
 <div class="loading-logo-wrapper"><img src="favicon30.png" alt="VDB" class="loading-logo"></div>
 <span class="loading-text">VAI DE BOA! MUSIC</span>
@@ -290,6 +328,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <div class="loading-progress-container"><div class="loading-progress-fill" id="loadingProgressFill"></div></div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     BANNER DE SAUDAÇÃO
+     ═══════════════════════════════════════════════════════════════ -->
 <div id="bannerSaudacao" class="banner-saudacao">
 <div class="banner-content">
 <div class="banner-emoji" id="bannerEmoji">☀️</div>
@@ -300,42 +341,30 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     PLAYER CONTAINER
+     ═══════════════════════════════════════════════════════════════ -->
 <div id="playerContainer">
 <div class="media-container" id="mediaContainer"></div>
 
-<!-- TOPO: 🐵 ❤️ ••• ⏱️ -->
+<!-- ═══════════════════════════════════════════════════════════════
+     TOP BAR — menu (3 pontinhos) à ESQUERDA / timer à DIREITA
+     ═══════════════════════════════════════════════════════════════ -->
 <div class="top-bar">
 <div class="top-left">
-<img src="favicon30.png" alt="VDB" class="logo-macaco" id="logoMacaco">
-<button class="btn-fav-topo" id="btnFavTopo">
-<span class="fav-txt">FAV</span>
-<span class="fav-icon">❤️</span>
-<span class="fav-badge-topo" id="favBadgeTopo">0</span>
-</button>
+  <button class="menu-btn" id="menuButton" aria-label="Menu"><i class="fas fa-ellipsis-v"></i></button>
+  <img src="favicon30.png" alt="VDB" class="logo-macaco" id="logoMacaco">
+  <button class="btn-fav-topo" id="btnFavTopo">
+    <span class="fav-icon">❤️</span>
+    <span class="fav-badge-topo" id="favBadgeTopo">0</span>
+  </button>
 </div>
 <div class="top-right">
-<button class="menu-btn" id="menuButton" aria-label="Menu"><i class="fas fa-ellipsis-v"></i></button>
-<span class="timer-lib" id="timerLib"><i class="fas fa-clock"></i> 24:00:00</span>
+  <span class="timer-lib" id="timerLib"><i class="fas fa-clock"></i> 24:00:00</span>
 </div>
 </div>
 
-<!-- CARD CENTRAL (VIDRO CINZA) -->
-<div class="card-central" id="cardCentral">
-<div class="card-central-inner">
-<button class="card-btn card-btn-genero" id="cardBtnGenero">
-<i>🎸</i>
-<span>GÊNERO</span>
-<span class="genero-atual" id="cardGeneroAtual">BÔNUS</span>
-</button>
-<button class="card-btn card-btn-radio" id="cardBtnRadio">
-<i>🔴</i>
-<span>RÁDIO</span>
-<span class="hora-radio" id="cardHoraRadio">AO VIVO</span>
-</button>
-</div>
-</div>
-
-<!-- LETREIRO -->
+<!-- LETREIRO: mostra gênero + música; AO VIVO quando rádio -->
 <div class="info-scroll" id="infoScroll">
 <p class="letreiro" id="scrollText">🎵 VAI DE BOA!</p>
 <div class="search-input-container">
@@ -344,9 +373,13 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
+<!-- Coração central de favoritos -->
 <div class="fav-heart-center"><div class="fav-heart" id="heartBtn"><i class="far fa-heart"></i></div></div>
 <div class="equalizer on" id="equalizer"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     CONTROLES INFERIORES
+     ═══════════════════════════════════════════════════════════════ -->
 <div class="bottom-controls" id="bottomControls">
 <div class="progress-time"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
 <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
@@ -358,6 +391,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     FAB (botão flutuante) + SUBMENU
+     ═══════════════════════════════════════════════════════════════ -->
 <div class="fab-container">
 <div class="fab-sub" id="fabSub">
 <button class="fab-sub-btn" id="fabGeneros"><i class="fas fa-guitar"></i>Gêneros</button>
@@ -372,6 +408,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <div class="fab-main" id="fabMain"><i class="fas fa-plus"></i></div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     MENU POPUP (abre pelo botão 3 pontinhos à esquerda)
+     ═══════════════════════════════════════════════════════════════ -->
 <div class="menu-popup" id="menuPopup">
 <button id="closeMenuBtn"><i class="fas fa-times"></i>Fechar</button>
 <div class="menu-separator"></div>
@@ -391,8 +430,10 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button id="magicUpdateMenuBtn"><i class="fas fa-magic"></i>🪄 Atualizar App</button>
 <button id="hardReloadBtn"><i class="fas fa-redo"></i>Forçar Recarregar TUDO</button>
 </div>
-</div>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     BLOQUEIO / ADMIN / QR / NOTIFICAÇÕES
+     ═══════════════════════════════════════════════════════════════ -->
 <div id="blockOverlay" class="active">
 <div class="block-content">
 <img src="favicon30.png" alt="VDB" class="block-logo-img" onerror="this.style.display='none'">
@@ -442,6 +483,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <audio id="musicPlayer" preload="none"></audio>
 <audio id="backgroundAudio" preload="auto" style="display:none;"></audio>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     MODAIS: GÊNEROS / FAVORITAS / ESCOLHA / FEEDBACK
+     ═══════════════════════════════════════════════════════════════ -->
 <div class="genres-modal" id="genresModal">
 <div class="header"><div class="titulo">ESTILOS MUSICAIS</div></div>
 <div class="genres-grid" id="genresGrid"></div>
@@ -475,6 +519,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button id="closeFeedbackBtn">Cancelar</button>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     INSTALAÇÃO PWA
+     ═══════════════════════════════════════════════════════════════ -->
 <button id="btnInstalarFixo"><i class="fas fa-download"></i> INSTALAR APP</button>
 
 <div id="instrucoesInstalar">
@@ -487,6 +534,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     BOTTOM SHEETS: FILA / RECENTES / VELOCIDADE / SLEEP
+     ═══════════════════════════════════════════════════════════════ -->
 <div class="bottom-sheet" id="queueSheet"><h3>🎵 PRÓXIMAS NA FILA</h3><div class="queue-list" id="queueList"></div><button class="sheet-close" data-close="queueSheet">✕ FECHAR</button></div>
 <div class="bottom-sheet" id="recentSheet"><h3>🕐 TOCADAS RECENTEMENTE</h3><div class="recent-list" id="recentList"></div><button class="sheet-close" data-close="recentSheet">✕ FECHAR</button></div>
 <div class="bottom-sheet" id="speedSheet"><h3>⚡ VELOCIDADE</h3>
@@ -506,12 +556,15 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button class="sheet-option" data-sleep="0">🚫 Cancelar</button>
 <button class="sheet-close" data-close="sleepSheet">✕ FECHAR</button></div>
 
-<!-- ═══ PARTE 2 CONTINUA AQUI (JavaScript) ═══ -->
-
-<!-- ═══ PARTE 2 CONTINUA AQUI (JavaScript) ═══ --><script>
+<!-- ═══════════════════════════════════════════════════════════════
+     PARTE 2 (JAVASCRIPT) VEM AQUI
+     ═══════════════════════════════════════════════════════════════ --><script>
 (function(){
 'use strict';
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 10: CONFIGURAÇÕES GLOBAIS
+   ════════════════════════════════════════════════════════════════ */
 const CONFIG = {
   WHATSAPP: '5512988461978',
   TEMPO_TESTE_SEGUNDOS: 86400,
@@ -519,7 +572,8 @@ const CONFIG = {
   SENHA_MESTRA: 'Patico1685@',
   LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 5 MIL MÚSICAS • VITALÍCIO R$39,00 🐵 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE • BREGA • MODA RAIZ • SAMBA • POP/MIX 🎶',
   LETREIRO_DURACAO: 60,
-  APP_VERSION: 'v11'
+  APP_VERSION: 'v12',
+  BANNER_INTERVALO_HORAS: 24
 };
 
 const VOZ_CONFIG = {
@@ -531,6 +585,9 @@ const VOZ_CONFIG = {
 
 const CACHE_OFFLINE_CONFIG = { ativado: true, maxMusicas: 50 };
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 11: GÊNEROS MUSICAIS (fácil editar)
+   ════════════════════════════════════════════════════════════════ */
 const GENRE_URLS = {
   'BÔNUS': 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json',
   'FLASHBACK': 'https://raw.githubusercontent.com/radiolojasjc-hub/flashbacktop/refs/heads/main/flashback.json',
@@ -566,13 +623,33 @@ const GENRE_ORDEM = ['BÔNUS','POP/MIX','MPB','DISCO MUSIC','SERTANEJO','ROMÂNT
 
 const GENRE_REPOS = {'BÔNUS':'play12','MPB':'mpbtop','POP/MIX':'poptop','SERTANEJO':'sertanejo','FORRÓ':'forrodez','SAMBA':'sambatop','BREGA':'bregatop','REGGAE':'reggaetop','MODA RAIZ':'modatop','RELIGIOSA':'religiosa','ROMÂNTICA':'romanticatop','FLASHBACK':'flashbacktop','FUNK':'fank','TESTE MIDIA':'testemidias','MODÃO SERTANEJO':'modasertaneja','CHORINHO':'chorinho','FORRÓ RAIZ':'forroraiz','ROCK':'rock','NOVIDADES':'VDB','MISTURA BRASIL':'listtop','DISCO MUSIC':'vdb','TREINO':'listtop','SERESTA':'sertanejo','MPB 2':'mpbtop','HIP HOP':'poptop','PAGODE':'sambatop','BAILÃO':'forrodez','GLOBAL HITS':'chorinho'};
 
-const GENRE_COLORS = {'BÔNUS':{c1:'#22d3ee',c2:'#0288d1'},'POP/MIX':{c1:'#60a5fa',c2:'#3b82f6'},'MPB':{c1:'#2dd4bf',c2:'#10b981'},'SERTANEJO':{c1:'#fbbf24',c2:'#f59e0b'},'ROMÂNTICA':{c1:'#f472b6',c2:'#ec4899'},'FLASHBACK':{c1:'#a855f7',c2:'#8b5cf6'},'NOVIDADES':{c1:'#34d399',c2:'#10b981'},'FUNK':{c1:'#f43f5e',c2:'#be123c'},'ROCK':{c1:'#f472b6',c2:'#a855f7'},'FORRÓ':{c1:'#fb923c',c2:'#ea580c'}};
+const GENRE_COLORS = {
+  'BÔNUS':{c1:'#22d3ee',c2:'#0288d1'},'POP/MIX':{c1:'#60a5fa',c2:'#3b82f6'},
+  'MPB':{c1:'#2dd4bf',c2:'#10b981'},'SERTANEJO':{c1:'#fbbf24',c2:'#f59e0b'},
+  'ROMÂNTICA':{c1:'#f472b6',c2:'#ec4899'},'FLASHBACK':{c1:'#a855f7',c2:'#8b5cf6'},
+  'NOVIDADES':{c1:'#34d399',c2:'#10b981'},'FUNK':{c1:'#f43f5e',c2:'#be123c'},
+  'ROCK':{c1:'#f472b6',c2:'#a855f7'},'FORRÓ':{c1:'#fb923c',c2:'#ea580c'}
+};
 const COR_PADRAO = {c1:'#22d3ee', c2:'#a855f7'};
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 12: MÍDIAS DE FUNDO
+   ════════════════════════════════════════════════════════════════ */
 const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/vdb/main/midias.json';
 const MIDIAS_TV_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/vdb/main/modotv.json';
-const MIDIAS_FALLBACK = [{tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/mc1.mp4'},{tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/bv1.mp4'},{tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/mc2.mp4'}];
+const MIDIAS_FALLBACK = [
+  {tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/mc1.mp4'},
+  {tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/bv1.mp4'},
+  {tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/mc2.mp4'}
+];
+const MIDIAS_TV_FALLBACK = [
+  {tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/tvbob.mp4'},
+  {tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/amytv.mp4'}
+];
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 13: RÁDIO POR PERÍODO
+   ════════════════════════════════════════════════════════════════ */
 const RADIO_CONFIG = {
   madrugada: { nome: '🌙 VDB MADRUGADA', cor1: '#6366f1', cor2: '#8b5cf6', saudacao: 'Boa madrugada!', generos: ['MODÃO SERTANEJO', 'MODA RAIZ'] },
   manha: { nome: '☀️ VDB MANHÃ', cor1: '#fbbf24', cor2: '#fb923c', saudacao: 'Bom dia!', generos: ['FORRÓ', 'SERTANEJO', 'PAGODE'] },
@@ -587,32 +664,121 @@ const BANNER_CONFIG = {
   noite: { emoji: '🌆', saudacao: 'Boa noite!', mensagens: ['Relaxe, a noite é sua. 🎵','Que sua noite seja tranquila e musical! 🌙','Hora de descansar com boa música. ✨','Boa noite e bons sonhos! 💜','A melhor trilha pra fechar o dia. 🎶','Curta cada momento, a noite é especial! 🌟'] }
 };
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 14: HELPERS (utilitários)
+   ════════════════════════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
 const now = () => Date.now();
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const fmt = s => { if (!s || isNaN(s)) return '0:00'; const m = Math.floor(s / 60); const sg = Math.floor(s % 60); return m + ':' + (sg < 10 ? '0' : '') + sg; };
+const vibrar = (ms = 15) => { try { navigator.vibrate?.(ms); } catch(e){} };
 
-function fmtTempo(s) { if (s < 0) s = 0; s = Math.floor(s); const d = Math.floor(s/86400), h = Math.floor((s%86400)/3600); const m = Math.floor((s%3600)/60), sg = Math.floor(s%60); if (d > 0) return d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0'); if (h > 0) return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0'); return String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0'); }
+function fmtTempo(s) {
+  if (s < 0) s = 0; s = Math.floor(s);
+  const d = Math.floor(s/86400), h = Math.floor((s%86400)/3600);
+  const m = Math.floor((s%3600)/60), sg = Math.floor(s%60);
+  if (d > 0) return d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
+  if (h > 0) return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
+  return String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
+}
+
 function sanitize(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.textContent; }
-function shuffle(arr) { const x = [...arr]; const recentes = new Set(JSON.parse(localStorage.getItem('vdb_recentes') || '[]').slice(0, 20)); const filtrado = x.filter(m => !recentes.has(m.id)); const base = filtrado.length > 5 ? filtrado : x; for (let i = base.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [base[i], base[j]] = [base[j], base[i]]; } return base; }
-function copiarTexto(t, msg) { if (!t) return notif('⚠️ Nada para copiar!', 1500); navigator.clipboard.writeText(t).then(() => notif(msg || '📋 Copiado!', 1500)).catch(() => { const i = document.createElement('input'); i.value = t; document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); notif(msg || '📋 Copiado!', 1500); }); }
-function aplicarTema(g) { const c = GENRE_COLORS[g] || COR_PADRAO; document.documentElement.style.setProperty('--theme-1', c.c1); document.documentElement.style.setProperty('--theme-2', c.c2); }
-function getPeriodoAtual() { const hora = new Date().getHours(); if (hora >= 0 && hora < 6) return 'madrugada'; if (hora >= 6 && hora < 12) return 'manha'; if (hora >= 12 && hora < 18) return 'tarde'; return 'noite'; }
-function getNomePeriodo() { const p = getPeriodoAtual(); return RADIO_CONFIG[p].nome.split(' ')[1] || 'AO VIVO'; }
 
+function shuffle(arr) {
+  const x = [...arr];
+  const recentes = new Set(JSON.parse(localStorage.getItem('vdb_recentes') || '[]').slice(0, 20));
+  const filtrado = x.filter(m => !recentes.has(m.id));
+  const base = filtrado.length > 5 ? filtrado : x;
+  for (let i = base.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [base[i], base[j]] = [base[j], base[i]];
+  }
+  return base;
+}
+
+function copiarTexto(t, msg) {
+  if (!t) return notif('⚠️ Nada para copiar!', 1500);
+  navigator.clipboard.writeText(t).then(() => notif(msg || '📋 Copiado!', 1500)).catch(() => {
+    const i = document.createElement('input'); i.value = t;
+    document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove();
+    notif(msg || '📋 Copiado!', 1500);
+  });
+}
+
+function aplicarTema(g) {
+  const c = GENRE_COLORS[g] || COR_PADRAO;
+  document.documentElement.style.setProperty('--theme-1', c.c1);
+  document.documentElement.style.setProperty('--theme-2', c.c2);
+}
+
+function getPeriodoAtual() {
+  const hora = new Date().getHours();
+  if (hora >= 0 && hora < 6) return 'madrugada';
+  if (hora >= 6 && hora < 12) return 'manha';
+  if (hora >= 12 && hora < 18) return 'tarde';
+  return 'noite';
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 15: VOZ (TTS)
+   ════════════════════════════════════════════════════════════════ */
 let vozJaTocou = false, vozIntervalo = null, vozAtivada = VOZ_CONFIG.ativada;
-function falarTexto(texto) { if (!('speechSynthesis' in window)) return; if (!vozAtivada) return; window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(texto); u.lang = 'pt-BR'; u.rate = VOZ_CONFIG.rate; u.pitch = VOZ_CONFIG.pitch; u.volume = VOZ_CONFIG.volume; const vozes = window.speechSynthesis.getVoices(); const vozBR = vozes.find(v => v.lang === 'pt-BR' || v.lang === 'pt_BR' || v.lang === 'pt'); if (vozBR) u.voice = vozBR; window.speechSynthesis.speak(u); }
-function formatarHoraFalada(h, m) { let texto = h === 0 ? 'meia-noite' : h === 1 ? '1 hora' : h + ' horas'; if (m > 0) texto += ' e ' + (m === 1 ? '1 minuto' : m + ' minutos'); return texto; }
-function fraseAbertura() { const agora = new Date(); const h = agora.getHours(); const m = agora.getMinutes(); let saudacao; if (h >= 0 && h < 6) saudacao = 'Boa madrugada!'; else if (h >= 6 && h < 12) saudacao = 'Bom dia!'; else if (h >= 12 && h < 18) saudacao = 'Boa tarde!'; else saudacao = 'Boa noite!'; return saudacao + ' Agora são ' + formatarHoraFalada(h, m) + '. Você está ouvindo ' + VOZ_CONFIG.nomeApp + '!'; }
-function frasePeriodica() { const agora = new Date(); return 'Agora são ' + formatarHoraFalada(agora.getHours(), agora.getMinutes()) + '. Você está ouvindo ' + VOZ_CONFIG.nomeApp + '!'; }
-function falarSaudacaoInicial() { if (VOZ_CONFIG.falarAoAbrir) falarTexto(fraseAbertura()); }
-function falarHoraPeriodica() { if (!VOZ_CONFIG.falarPeriodicamente) return; if (VOZ_CONFIG.soFalarQuandoTocando && !appState.isPlaying) return; falarTexto(frasePeriodica()); }
-function iniciarVozPeriodica() { if (vozIntervalo) clearInterval(vozIntervalo); vozIntervalo = setInterval(falarHoraPeriodica, VOZ_CONFIG.intervaloMinutos * 60 * 1000); }
-if ('speechSynthesis' in window) { window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); }; }
 
+function falarTexto(texto) {
+  if (!('speechSynthesis' in window)) return;
+  if (!vozAtivada) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(texto);
+  u.lang = 'pt-BR'; u.rate = VOZ_CONFIG.rate; u.pitch = VOZ_CONFIG.pitch; u.volume = VOZ_CONFIG.volume;
+  const vozes = window.speechSynthesis.getVoices();
+  const vozBR = vozes.find(v => v.lang === 'pt-BR' || v.lang === 'pt_BR' || v.lang === 'pt');
+  if (vozBR) u.voice = vozBR;
+  window.speechSynthesis.speak(u);
+}
+
+function formatarHoraFalada(h, m) {
+  let texto = h === 0 ? 'meia-noite' : h === 1 ? '1 hora' : h + ' horas';
+  if (m > 0) texto += ' e ' + (m === 1 ? '1 minuto' : m + ' minutos');
+  return texto;
+}
+
+function fraseAbertura() {
+  const agora = new Date(); const h = agora.getHours(); const m = agora.getMinutes();
+  let saudacao;
+  if (h >= 0 && h < 6) saudacao = 'Boa madrugada!';
+  else if (h >= 6 && h < 12) saudacao = 'Bom dia!';
+  else if (h >= 12 && h < 18) saudacao = 'Boa tarde!';
+  else saudacao = 'Boa noite!';
+  return saudacao + ' Agora são ' + formatarHoraFalada(h, m) + '. Você está ouvindo ' + VOZ_CONFIG.nomeApp + '!';
+}
+
+function frasePeriodica() {
+  const agora = new Date();
+  return 'Agora são ' + formatarHoraFalada(agora.getHours(), agora.getMinutes()) + '. Você está ouvindo ' + VOZ_CONFIG.nomeApp + '!';
+}
+
+function falarSaudacaoInicial() { if (VOZ_CONFIG.falarAoAbrir) falarTexto(fraseAbertura()); }
+function falarHoraPeriodica() {
+  if (!VOZ_CONFIG.falarPeriodicamente) return;
+  if (VOZ_CONFIG.soFalarQuandoTocando && !appState.isPlaying) return;
+  falarTexto(frasePeriodica());
+}
+function iniciarVozPeriodica() {
+  if (vozIntervalo) clearInterval(vozIntervalo);
+  vozIntervalo = setInterval(falarHoraPeriodica, VOZ_CONFIG.intervaloMinutos * 60 * 1000);
+}
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 16: ESTADO DO APP (com debounce no _save)
+   ════════════════════════════════════════════════════════════════ */
 class AppState {
   constructor() {
-    this.key = 'vdb_state'; this.version = 3; this.data = this._load();
+    this.key = 'vdb_state';
+    this.version = 3;
+    this.data = this._load();
     this.favorites = this.data.favorites || [];
     this.fingerprint = this._getFP();
     this.desbloqueado = this.data.desbloqueado || false;
@@ -625,55 +791,191 @@ class AppState {
     this.isPlaying = false;
     this.shuffleMode = this.data.shuffleMode || false;
     this.historico = this.data.historico || [];
-    this.sleepTimer = null; this.isBackgroundActive = false; this.playerAtivado = false;
-    this.carregandoMusica = false; this.escolhaMostrada = false;
+    this.sleepTimer = null;
+    this.isBackgroundActive = false;
+    this.playerAtivado = false;
+    this.carregandoMusica = false;
+    this.escolhaMostrada = false;
     this.bloqueadoPermanente = localStorage.getItem('vdb_bloqueado_permanente') === 'true';
+    this._saveTimer = null;
     this._save();
   }
-  _load() { try { const r = localStorage.getItem(this.key); if (r) { const p = JSON.parse(r); if (p.version === this.version) return p; } } catch(e) {} return { version: this.version, favorites: [], desbloqueado: false, tempoRestante: CONFIG.TEMPO_TESTE_SEGUNDOS, modoTV: false, modoAtual: 'BÔNUS', musicas: [], playlistAtual: [], indiceAtual: 0, shuffleMode: false, historico: [] }; }
-  _save() { this.data = { version: this.version, favorites: this.favorites, desbloqueado: this.desbloqueado, tempoRestante: this.tempoRestante, modoTV: this.modoTV, modoAtual: this.modoAtual, indiceAtual: this.indiceAtual, shuffleMode: this.shuffleMode, historico: this.historico }; try { localStorage.setItem(this.key, JSON.stringify(this.data)); } catch(e) {} }
-  _getFP() { try { const n = navigator.userAgent || '', p = navigator.platform || '', l = navigator.language || ''; const s = screen.width + 'x' + screen.height + 'x' + screen.colorDepth; const t = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; const m = navigator.deviceMemory || '', c = navigator.hardwareConcurrency || ''; return btoa(n + '|' + p + '|' + l + '|' + s + '|' + t + '|' + m + '|' + c).slice(0, 64); } catch(e) { return 'fallback_' + now(); } }
-  addFavorite(m) { if (!this.favorites.find(f => f.id === m.id)) { this.favorites.push({ id:m.id, title:m.title, artist:m.artist, src:m.src, genero:m.genero, data:now() }); this._save(); } }
+  _load() {
+    try {
+      const r = localStorage.getItem(this.key);
+      if (r) { const p = JSON.parse(r); if (p.version === this.version) return p; }
+    } catch(e) {}
+    return { version: this.version, favorites: [], desbloqueado: false, tempoRestante: CONFIG.TEMPO_TESTE_SEGUNDOS, modoTV: false, modoAtual: 'BÔNUS', musicas: [], playlistAtual: [], indiceAtual: 0, shuffleMode: false, historico: [] };
+  }
+  // DEBOUNCE: evita salvar toda hora (performance)
+  _save() {
+    if (this._saveTimer) clearTimeout(this._saveTimer);
+    this._saveTimer = setTimeout(() => {
+      this.data = {
+        version: this.version, favorites: this.favorites,
+        desbloqueado: this.desbloqueado, tempoRestante: this.tempoRestante,
+        modoTV: this.modoTV, modoAtual: this.modoAtual,
+        indiceAtual: this.indiceAtual, shuffleMode: this.shuffleMode,
+        historico: this.historico
+      };
+      try { localStorage.setItem(this.key, JSON.stringify(this.data)); } catch(e) {}
+    }, 800);
+  }
+  _getFP() {
+    try {
+      const n = navigator.userAgent || '', p = navigator.platform || '', l = navigator.language || '';
+      const s = screen.width + 'x' + screen.height + 'x' + screen.colorDepth;
+      const t = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      const m = navigator.deviceMemory || '', c = navigator.hardwareConcurrency || '';
+      return btoa(n + '|' + p + '|' + l + '|' + s + '|' + t + '|' + m + '|' + c).slice(0, 64);
+    } catch(e) { return 'fallback_' + now(); }
+  }
+  addFavorite(m) {
+    if (!this.favorites.find(f => f.id === m.id)) {
+      this.favorites.push({ id:m.id, title:m.title, artist:m.artist, src:m.src, genero:m.genero, data:now() });
+      this._save();
+    }
+  }
   removeFavorite(id) { this.favorites = this.favorites.filter(f => f.id !== id); this._save(); }
   getFavorites() { return this.favorites; }
-  addHistorico(m) { this.historico = this.historico.filter(h => h.id !== m.id); this.historico.unshift({ ...m, data: now() }); if (this.historico.length > 20) this.historico.pop(); this._save(); try { let rec = JSON.parse(localStorage.getItem('vdb_recentes') || '[]'); rec = rec.filter(id => id !== m.id); rec.unshift(m.id); if (rec.length > 20) rec = rec.slice(0, 20); localStorage.setItem('vdb_recentes', JSON.stringify(rec)); } catch(e) {} }
+  addHistorico(m) {
+    this.historico = this.historico.filter(h => h.id !== m.id);
+    this.historico.unshift({ ...m, data: now() });
+    if (this.historico.length > 20) this.historico.pop();
+    this._save();
+    try {
+      let rec = JSON.parse(localStorage.getItem('vdb_recentes') || '[]');
+      rec = rec.filter(id => id !== m.id);
+      rec.unshift(m.id);
+      if (rec.length > 20) rec = rec.slice(0, 20);
+      localStorage.setItem('vdb_recentes', JSON.stringify(rec));
+    } catch(e) {}
+  }
   getSenhasHistorico() { try { return JSON.parse(localStorage.getItem('vdb_historico_senhas') || '[]'); } catch(e) { return []; } }
-  addSenhaHistorico(s, t) { const h = this.getSenhasHistorico(); h.unshift({ senha:s, tipo:t, data: new Date().toLocaleString() }); if (h.length > 20) h.pop(); localStorage.setItem('vdb_historico_senhas', JSON.stringify(h)); }
+  addSenhaHistorico(s, t) {
+    const h = this.getSenhasHistorico();
+    h.unshift({ senha:s, tipo:t, data: new Date().toLocaleString() });
+    if (h.length > 20) h.pop();
+    localStorage.setItem('vdb_historico_senhas', JSON.stringify(h));
+  }
 }
 const appState = new AppState();
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 17: CACHE (IndexedDB + fetch)
+   ════════════════════════════════════════════════════════════════ */
 class CacheManager {
   constructor(maxBytes = 5 * 1024 * 1024) { this.maxBytes = maxBytes; this.prefix = 'cache_'; }
   getKey(g) { return this.prefix + CONFIG.APP_VERSION + '_' + g; }
   async get(genero, url) {
-    const k = this.getKey(genero); const r = localStorage.getItem(k);
+    const k = this.getKey(genero);
+    const r = localStorage.getItem(k);
     if (r) { try { const d = JSON.parse(r); if (d.timestamp && (now() - d.timestamp < 1800000)) return d.dados; } catch(e) {} }
     try {
-      const rs = await fetch(this._cacheBust(url)); if (!rs.ok) throw new Error('HTTP ' + rs.status);
-      let j = await rs.json(); if (!Array.isArray(j)) j = j.musicas || j.data || Object.values(j)[0];
-      const ms = j.filter(m => m.src && m.title).map(m => ({ ...m, id: 'fav_' + (m.title + '_' + (m.artist || 'Artista')).toLowerCase().replace(/[^a-z0-9]+/g, '_'), genero: genero, artist: m.artist || 'Artista' }));
-      if (ms && ms.length) { try { localStorage.setItem(k, JSON.stringify({ timestamp: now(), dados: ms })); this._limpar(); } catch(e) {} return ms; }
+      const rs = await fetch(this._cacheBust(url));
+      if (!rs.ok) throw new Error('HTTP ' + rs.status);
+      let j = await rs.json();
+      if (!Array.isArray(j)) j = j.musicas || j.data || Object.values(j)[0];
+      const ms = j.filter(m => m.src && m.title).map(m => ({
+        ...m,
+        id: 'fav_' + (m.title + '_' + (m.artist || 'Artista')).toLowerCase().replace(/[^a-z0-9]+/g, '_'),
+        genero: genero,
+        artist: m.artist || 'Artista'
+      }));
+      if (ms && ms.length) {
+        try { localStorage.setItem(k, JSON.stringify({ timestamp: now(), dados: ms })); this._limpar(); } catch(e) {}
+        return ms;
+      }
       return null;
-    } catch(e) { const r2 = localStorage.getItem(k); if (r2) { try { return JSON.parse(r2).dados; } catch(e2) {} } return null; }
+    } catch(e) {
+      const r2 = localStorage.getItem(k);
+      if (r2) { try { return JSON.parse(r2).dados; } catch(e2) {} }
+      return null;
+    }
   }
   _cacheBust(url) { const s = url.includes('?') ? '&' : '?'; return `${url}${s}v=${CONFIG.APP_VERSION}&t=${now()}`; }
-  _limpar() { let t = 0; const it = []; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith(this.prefix)) { const v = localStorage.getItem(k); t += v ? v.length : 0; it.push({ key: k, size: v ? v.length : 0 }); } } if (t > this.maxBytes) { it.sort((a, b) => a.size - b.size); while (t > this.maxBytes && it.length) { const x = it.shift(); localStorage.removeItem(x.key); t -= x.size; } } }
+  _limpar() {
+    let t = 0; const it = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(this.prefix)) {
+        const v = localStorage.getItem(k);
+        t += v ? v.length : 0;
+        it.push({ key: k, size: v ? v.length : 0 });
+      }
+    }
+    if (t > this.maxBytes) {
+      it.sort((a, b) => a.size - b.size);
+      while (t > this.maxBytes && it.length) {
+        const x = it.shift(); localStorage.removeItem(x.key); t -= x.size;
+      }
+    }
+  }
 }
 const cacheManager = new CacheManager();
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 18: CACHE DE MÚSICAS OFFLINE (Service Worker Cache API)
+   ════════════════════════════════════════════════════════════════ */
 const CACHE_MUSICAS = 'vdb-musicas-offline';
-async function abrirCacheMusicas() { if (!('caches' in window)) return null; try { return await caches.open(CACHE_MUSICAS); } catch(e) { return null; } }
-async function salvarMusicaOffline(url) { if (!CACHE_OFFLINE_CONFIG.ativado) return; if (!url || !url.startsWith('http')) return; try { const cache = await abrirCacheMusicas(); if (!cache) return; const existe = await cache.match(url); if (existe) return; const chaves = await cache.keys(); if (chaves.length >= CACHE_OFFLINE_CONFIG.maxMusicas) await cache.delete(chaves[0]); await cache.add(url); console.log('💾 Salva offline:', url.split('/').pop().split('?')[0]); } catch(e) {} }
-async function buscarMusicaOffline(url) { try { const cache = await abrirCacheMusicas(); if (!cache) return null; const resposta = await cache.match(url); if (!resposta) return null; const blob = await resposta.blob(); return URL.createObjectURL(blob); } catch(e) { return null; } }
 
+async function abrirCacheMusicas() {
+  if (!('caches' in window)) return null;
+  try { return await caches.open(CACHE_MUSICAS); } catch(e) { return null; }
+}
+
+async function salvarMusicaOffline(url) {
+  if (!CACHE_OFFLINE_CONFIG.ativado) return;
+  if (!url || !url.startsWith('http')) return;
+  try {
+    const cache = await abrirCacheMusicas();
+    if (!cache) return;
+    const existe = await cache.match(url);
+    if (existe) return;
+    const chaves = await cache.keys();
+    if (chaves.length >= CACHE_OFFLINE_CONFIG.maxMusicas) await cache.delete(chaves[0]);
+    await cache.add(url);
+    console.log('💾 Salva offline:', url.split('/').pop().split('?')[0]);
+  } catch(e) {}
+}
+
+async function buscarMusicaOffline(url) {
+  try {
+    const cache = await abrirCacheMusicas();
+    if (!cache) return null;
+    const resposta = await cache.match(url);
+    if (!resposta) return null;
+    const blob = await resposta.blob();
+    return URL.createObjectURL(blob);
+  } catch(e) { return null; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 19: NOTIFICAÇÕES (filas)
+   ════════════════════════════════════════════════════════════════ */
 class Notifier {
   constructor() { this.queue = []; this.showing = false; this.el = $('notification'); }
   show(m, d = 2000, t = 'info') { this.queue.push({ msg: m, duration: d, type: t }); this.process(); }
-  async process() { if (this.showing || this.queue.length === 0) return; this.showing = true; const it = this.queue.shift(); const cores = { success: '#00b894', error: '#f472b6', info: '#a855f7', warning: '#fbbf24' }; this.el.style.borderColor = cores[it.type] || cores.info; this.el.textContent = it.msg; this.el.classList.add('show'); await sleep(it.duration); this.el.classList.remove('show'); this.showing = false; setTimeout(() => this.process(), 300); }
+  async process() {
+    if (this.showing || this.queue.length === 0) return;
+    this.showing = true;
+    const it = this.queue.shift();
+    const cores = { success: '#00b894', error: '#f472b6', info: '#a855f7', warning: '#fbbf24' };
+    this.el.style.borderColor = cores[it.type] || cores.info;
+    this.el.textContent = it.msg;
+    this.el.classList.add('show');
+    await sleep(it.duration);
+    this.el.classList.remove('show');
+    this.showing = false;
+    setTimeout(() => this.process(), 300);
+  }
 }
 const notifier = new Notifier();
 const notif = (m, d = 2000, t = 'info') => notifier.show(m, d, t);
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 20: DOM (referências)
+   ════════════════════════════════════════════════════════════════ */
 const dom = {
   loadingScreen: $('loadingScreen'), loadingProgressFill: $('loadingProgressFill'),
   playerContainer: $('playerContainer'), timerLib: $('timerLib'), blockOverlay: $('blockOverlay'),
@@ -686,7 +988,7 @@ const dom = {
   favListModal: $('favListModal'), choiceMenu: $('choiceMenu'), choiceGenres: $('choiceGenres'),
   choiceFavorites: $('choiceFavorites'), choiceBadge: $('choiceBadge'), choiceClose: $('choiceClose'),
   feedbackModal: $('feedbackModal'), infoScroll: $('infoScroll'),
-  menuButton: $('menuButton'), generoNome: $('generoNome'),
+  menuButton: $('menuButton'),
   senhaInput: $('senhaInput'), btnLiberar: $('btnLiberar'), erroSenha: $('erroSenha'),
   infoDispositivo: $('infoDispositivo'), btnCopiarFingerprint: $('btnCopiarFingerprint'),
   adminPanel: $('adminPanel'), adminFingerprintInput: $('adminFingerprintInput'),
@@ -711,73 +1013,471 @@ const dom = {
   equalizer: $('equalizer'), queueMenuBtn: $('queueMenuBtn'), recentMenuBtn: $('recentMenuBtn'),
   speedMenuBtn: $('speedMenuBtn'), queueSheet: $('queueSheet'), recentSheet: $('recentSheet'),
   speedSheet: $('speedSheet'), sleepSheet: $('sleepSheet'), queueList: $('queueList'),
-  recentList: $('recentList'),
-  // NOVOS ELEMENTOS
-  btnFavTopo: $('btnFavTopo'), favBadgeTopo: $('favBadgeTopo'),
-  cardCentral: $('cardCentral'), cardBtnGenero: $('cardBtnGenero'), cardBtnRadio: $('cardBtnRadio'),
-  cardGeneroAtual: $('cardGeneroAtual'), cardHoraRadio: $('cardHoraRadio')
+  recentList: $('recentList'), btnFavTopo: $('btnFavTopo'), favBadgeTopo: $('favBadgeTopo')
 };
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 21: TIMER / BLOQUEIO
+   ════════════════════════════════════════════════════════════════ */
 function updateProgress(p) { dom.loadingProgressFill.style.width = Math.min(p, 100) + '%'; }
-function calcularTempoRestante() { if (localStorage.getItem('vdb_bloqueado_permanente') === 'true') return 0; const e = localStorage.getItem('vdb_teste_expiracao'); if (!e) { const i = now(); localStorage.setItem('vdb_teste_expiracao', String(i + CONFIG.TEMPO_TESTE_SEGUNDOS * 1000)); return CONFIG.TEMPO_TESTE_SEGUNDOS; } const r = Math.floor((parseInt(e) - now()) / 1000); return r > 0 ? r : 0; }
-function updateTimerDisplay() { if (appState.desbloqueado) { dom.timerLib.innerHTML = '<i class="fas fa-lock-open"></i> Lib'; dom.timerLib.className = 'timer-lib lib'; return; } const t = calcularTempoRestante(); appState.tempoRestante = t; dom.timerLib.innerHTML = '<i class="fas fa-clock"></i> ' + fmtTempo(t); dom.timerLib.className = 'timer-lib'; dom.timerLib.style.color = t <= 3600 ? '#f472b6' : '#22d3ee'; }
-function iniciarTimerCorrido() { if (!localStorage.getItem('vdb_teste_expiracao') && localStorage.getItem('vdb_bloqueado_permanente') !== 'true') { localStorage.setItem('vdb_teste_expiracao', String(now() + CONFIG.TEMPO_TESTE_SEGUNDOS * 1000)); } updateTimerDisplay(); function tick() { if (appState.desbloqueado) return; const t = calcularTempoRestante(); appState.tempoRestante = t; if (t <= 0) { bloquear(); if (!appState.escolhaMostrada) appState.escolhaMostrada = true; return; } updateTimerDisplay(); setTimeout(tick, 2000); } tick(); }
-function fadeOutAudio(d = 400) { return new Promise(r => { if (dom.audio.paused || !dom.audio.src) { r(); return; } const sv = dom.audio.volume; const st = 20, stt = d / st; let s = 0; const fi = setInterval(() => { s++; dom.audio.volume = Math.max(0, sv * (1 - s / st)); if (s >= st) { clearInterval(fi); r(); } }, stt); }); }
-function fadeInAudio(d = 600) { return new Promise(r => { dom.audio.volume = 0; const st = 25, stt = d / st; let s = 0; const fi = setInterval(() => { s++; const e = 1 - Math.pow(1 - s / st, 2); dom.audio.volume = Math.min(1, e); if (s >= st) { clearInterval(fi); dom.audio.volume = 1; r(); } }, stt); }); }
-function getUrls(m) { const s = m.src || ''; if (!s) return []; if (s.startsWith('http')) return [s + (s.includes('?') ? '&' : '?') + 'v=' + CONFIG.APP_VERSION]; const n = s.replace(/^\.\//, '').replace(/[^a-zA-Z0-9\-_.]/g, ''); if (m.genero === 'DISCO MUSIC') return ['https://raw.githubusercontent.com/vaideboaroger-dotcom/vdb/refs/heads/main/' + n + '?v=' + CONFIG.APP_VERSION]; const r = GENRE_REPOS[m.genero] || 'play12'; return ['https://raw.githubusercontent.com/radiolojasjc-hub/' + r + '/refs/heads/main/' + n + '?v=' + CONFIG.APP_VERSION]; }
-function atualizarLetreiro(m) { const ehRadio = appState.modoAtual && appState.modoAtual.indexOf('VDB') > -1; const prefixo = ehRadio ? '🔴 AO VIVO • ' : ''; if (m) dom.scrollText.textContent = prefixo + sanitize(m.title) + ' - ' + sanitize(m.artist) + ' [' + m.genero + '] 🎵 | ' + CONFIG.LETREIRO; else dom.scrollText.textContent = CONFIG.LETREIRO; dom.scrollText.style.animation = 'none'; dom.scrollText.offsetHeight; dom.scrollText.style.animation = 'scrollText ' + CONFIG.LETREIRO_DURACAO + 's linear infinite'; }
-function atualizarPlaylist() { if (!appState.playlistAtual.length) return null; if (appState.indiceAtual >= appState.playlistAtual.length) { appState.playlistAtual = shuffle(appState.musicas); appState.indiceAtual = 0; } return appState.playlistAtual[appState.indiceAtual]; }
+
+function calcularTempoRestante() {
+  if (localStorage.getItem('vdb_bloqueado_permanente') === 'true') return 0;
+  const e = localStorage.getItem('vdb_teste_expiracao');
+  if (!e) {
+    const i = now();
+    localStorage.setItem('vdb_teste_expiracao', String(i + CONFIG.TEMPO_TESTE_SEGUNDOS * 1000));
+    return CONFIG.TEMPO_TESTE_SEGUNDOS;
+  }
+  const r = Math.floor((parseInt(e) - now()) / 1000);
+  return r > 0 ? r : 0;
+}
+
+function updateTimerDisplay() {
+  if (appState.desbloqueado) {
+    dom.timerLib.innerHTML = '<i class="fas fa-lock-open"></i> Lib';
+    dom.timerLib.className = 'timer-lib lib';
+    return;
+  }
+  const t = calcularTempoRestante();
+  appState.tempoRestante = t;
+  dom.timerLib.innerHTML = '<i class="fas fa-clock"></i> ' + fmtTempo(t);
+  dom.timerLib.className = 'timer-lib';
+  dom.timerLib.style.color = t <= 3600 ? '#f472b6' : '#22d3ee';
+}
+
+function iniciarTimerCorrido() {
+  if (!localStorage.getItem('vdb_teste_expiracao') && localStorage.getItem('vdb_bloqueado_permanente') !== 'true') {
+    localStorage.setItem('vdb_teste_expiracao', String(now() + CONFIG.TEMPO_TESTE_SEGUNDOS * 1000));
+  }
+  updateTimerDisplay();
+  function tick() {
+    if (appState.desbloqueado) return;
+    const t = calcularTempoRestante();
+    appState.tempoRestante = t;
+    if (t <= 0) { bloquear(); if (!appState.escolhaMostrada) appState.escolhaMostrada = true; return; }
+    updateTimerDisplay();
+    setTimeout(tick, 2000);
+  }
+  tick();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 22: ÁUDIO (fade, URLs, tocar)
+   ════════════════════════════════════════════════════════════════ */
+function fadeOutAudio(d = 400) {
+  return new Promise(r => {
+    if (dom.audio.paused || !dom.audio.src) { r(); return; }
+    const sv = dom.audio.volume;
+    const st = 20, stt = d / st; let s = 0;
+    const fi = setInterval(() => {
+      s++; dom.audio.volume = Math.max(0, sv * (1 - s / st));
+      if (s >= st) { clearInterval(fi); r(); }
+    }, stt);
+  });
+}
+
+function fadeInAudio(d = 600) {
+  return new Promise(r => {
+    dom.audio.volume = 0;
+    const st = 25, stt = d / st; let s = 0;
+    const fi = setInterval(() => {
+      s++; const e = 1 - Math.pow(1 - s / st, 2);
+      dom.audio.volume = Math.min(1, e);
+      if (s >= st) { clearInterval(fi); dom.audio.volume = 1; r(); }
+    }, stt);
+  });
+}
+
+function getUrls(m) {
+  const s = m.src || '';
+  if (!s) return [];
+  if (s.startsWith('http')) return [s + (s.includes('?') ? '&' : '?') + 'v=' + CONFIG.APP_VERSION];
+  const n = s.replace(/^\.\//, '').replace(/[^a-zA-Z0-9\-_.]/g, '');
+  const r = GENRE_REPOS[m.genero] || 'play12';
+  return ['https://raw.githubusercontent.com/radiolojasjc-hub/' + r + '/refs/heads/main/' + n + '?v=' + CONFIG.APP_VERSION];
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 23: LETREIRO — Mostra GÊNERO + MÚSICA ou AO VIVO
+   ════════════════════════════════════════════════════════════════ */
+function atualizarLetreiro(m) {
+  const ehRadio = appState.modoAtual && appState.modoAtual.indexOf('VDB') > -1;
+  if (ehRadio) {
+    // MODO RÁDIO: mostra 🔴 AO VIVO + gênero + música
+    dom.scrollText.classList.add('live');
+    const texto = m
+      ? '🔴 AO VIVO • ' + sanitize(m.title) + ' — ' + sanitize(m.artist) + ' [' + m.genero + '] • ' + CONFIG.LETREIRO
+      : '🔴 AO VIVO • ' + CONFIG.LETREIRO;
+    dom.scrollText.textContent = texto;
+  } else {
+    // MODO NORMAL: gênero + música
+    dom.scrollText.classList.remove('live');
+    const genero = appState.modoAtual && appState.modoAtual !== 'BÔNUS' ? '[' + appState.modoAtual + '] ' : '';
+    const texto = m
+      ? '🎵 ' + genero + sanitize(m.title) + ' — ' + sanitize(m.artist) + ' 🎵 | ' + CONFIG.LETREIRO
+      : '🎵 ' + CONFIG.LETREIRO;
+    dom.scrollText.textContent = texto;
+  }
+  // Reinicia animação
+  dom.scrollText.style.animation = 'none';
+  void dom.scrollText.offsetHeight;
+  const anim = ehRadio
+    ? 'scrollText ' + CONFIG.LETREIRO_DURACAO + 's linear infinite, liveGlow 1.4s ease-in-out infinite'
+    : 'scrollText ' + CONFIG.LETREIRO_DURACAO + 's linear infinite';
+  dom.scrollText.style.animation = anim;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 24: TOCAR MÚSICA (coração do player)
+   ════════════════════════════════════════════════════════════════ */
+function atualizarPlaylist() {
+  if (!appState.playlistAtual.length) return null;
+  if (appState.indiceAtual >= appState.playlistAtual.length) {
+    appState.playlistAtual = shuffle(appState.musicas);
+    appState.indiceAtual = 0;
+  }
+  return appState.playlistAtual[appState.indiceAtual];
+}
 
 async function tocar() {
   if (!appState.isBackgroundActive || appState.carregandoMusica || !appState.musicas.length) return;
   appState.carregandoMusica = true;
   dom.playBtn.classList.add('loading');
+
   if (!dom.audio.paused && dom.audio.src) await fadeOutAudio(400);
   const m = atualizarPlaylist();
   if (!m) { appState.carregandoMusica = false; dom.playBtn.classList.remove('loading'); return; }
-  atualizarLetreiro(m); updateHeart(m.id); appState.addHistorico(m); aplicarTema(m.genero); dom.equalizer.classList.remove('paused');
-  if ('mediaSession' in navigator) { try { navigator.mediaSession.metadata = new MediaMetadata({ title: m.title || 'VAI DE BOA!', artist: m.artist || 'Artista', album: m.genero || 'Música', artwork: [{ src: 'favicon30.png', sizes: '512x512', type: 'image/png' }] }); navigator.mediaSession.setActionHandler('play', togglePlay); navigator.mediaSession.setActionHandler('pause', togglePlay); navigator.mediaSession.setActionHandler('previoustrack', prev); navigator.mediaSession.setActionHandler('nexttrack', next); } catch(e) {} }
-  dom.audio.pause(); dom.audio.removeAttribute('src'); dom.audio.load();
+
+  atualizarLetreiro(m);
+  updateHeart(m.id);
+  appState.addHistorico(m);
+  aplicarTema(m.genero);
+  dom.equalizer.classList.remove('paused');
+
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: m.title || 'VAI DE BOA!', artist: m.artist || 'Artista',
+        album: m.genero || 'Música',
+        artwork: [{ src: 'favicon30.png', sizes: '512x512', type: 'image/png' }]
+      });
+      navigator.mediaSession.setActionHandler('play', togglePlay);
+      navigator.mediaSession.setActionHandler('pause', togglePlay);
+      navigator.mediaSession.setActionHandler('previoustrack', prev);
+      navigator.mediaSession.setActionHandler('nexttrack', next);
+    } catch(e) {}
+  }
+
+  dom.audio.pause();
+  dom.audio.removeAttribute('src');
+  dom.audio.load();
+
   const urls = getUrls(m).slice(0, 8);
   let ok = false;
-  if (!navigator.onLine) { for (const u of urls) { const urlCache = await buscarMusicaOffline(u); if (urlCache) { try { dom.audio.src = urlCache; dom.audio.load(); await new Promise(r => setTimeout(r, 400)); ok = true; console.log('📴 Tocando offline'); break; } catch(e) {} } } }
-  if (!ok) for (const u of urls) { try { const carregou = await new Promise(r => { const t = setTimeout(() => { dom.audio.oncanplay = null; dom.audio.onerror = null; r(false); }, 6000); dom.audio.oncanplay = () => { clearTimeout(t); dom.audio.oncanplay = null; dom.audio.onerror = null; r(true); }; dom.audio.onerror = () => { clearTimeout(t); dom.audio.oncanplay = null; dom.audio.onerror = null; r(false); }; dom.audio.src = u; dom.audio.load(); }); if (carregou) { ok = true; salvarMusicaOffline(u); break; } } catch(e) {} }
-  if (ok) { try { dom.audio.volume = 0; await dom.audio.play(); await fadeInAudio(600); appState.isPlaying = true; dom.playBtn.innerHTML = '<i class="fas fa-pause"></i>'; dom.playBtn.classList.remove('loading'); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; appState.carregandoMusica = false; esconderCardCentral(); } catch(e) { appState.carregandoMusica = false; dom.playBtn.classList.remove('loading'); setTimeout(next, 100); } } else { appState.carregandoMusica = false; dom.playBtn.classList.remove('loading'); setTimeout(next, 100); }
+
+  // Tenta offline primeiro
+  if (!navigator.onLine) {
+    for (const u of urls) {
+      const urlCache = await buscarMusicaOffline(u);
+      if (urlCache) {
+        try {
+          dom.audio.src = urlCache; dom.audio.load();
+          await new Promise(r => setTimeout(r, 400));
+          ok = true;
+          console.log('📴 Tocando offline');
+          break;
+        } catch(e) {}
+      }
+    }
+  }
+
+  // Tenta online
+  if (!ok) {
+    for (const u of urls) {
+      try {
+        const carregou = await new Promise(r => {
+          const t = setTimeout(() => {
+            dom.audio.oncanplay = null; dom.audio.onerror = null; r(false);
+          }, 6000);
+          dom.audio.oncanplay = () => { clearTimeout(t); dom.audio.oncanplay = null; dom.audio.onerror = null; r(true); };
+          dom.audio.onerror = () => { clearTimeout(t); dom.audio.oncanplay = null; dom.audio.onerror = null; r(false); };
+          dom.audio.src = u; dom.audio.load();
+        });
+        if (carregou) { ok = true; salvarMusicaOffline(u); break; }
+      } catch(e) {}
+    }
+  }
+
+  if (ok) {
+    try {
+      dom.audio.volume = 0;
+      await dom.audio.play();
+      await fadeInAudio(600);
+      appState.isPlaying = true;
+      dom.playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+      dom.playBtn.classList.remove('loading');
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+      appState.carregandoMusica = false;
+    } catch(e) {
+      appState.carregandoMusica = false;
+      dom.playBtn.classList.remove('loading');
+      setTimeout(next, 100);
+    }
+  } else {
+    appState.carregandoMusica = false;
+    dom.playBtn.classList.remove('loading');
+    setTimeout(next, 100);
+  }
 }
 
-function togglePlay() { if (!appState.isBackgroundActive) { notif('🔊 Aguarde...', 1500); return; } if (dom.audio.paused) tocar(); else { dom.audio.pause(); appState.isPlaying = false; dom.playBtn.innerHTML = '<i class="fas fa-play"></i>'; dom.equalizer.classList.add('paused'); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; } showControls(); }
-function next() { if (appState.carregandoMusica || !appState.playlistAtual.length) return; appState.indiceAtual = (appState.indiceAtual + 1) % appState.playlistAtual.length; if (appState.isBackgroundActive) setTimeout(tocar, 100); showControls(); }
-function prev() { if (appState.carregandoMusica || !appState.playlistAtual.length) return; appState.indiceAtual = (appState.indiceAtual - 1 + appState.playlistAtual.length) % appState.playlistAtual.length; if (appState.isBackgroundActive) setTimeout(tocar, 100); showControls(); }
-function toggleShuffle() { appState.shuffleMode = !appState.shuffleMode; dom.shuffleBtn.classList.toggle('active', appState.shuffleMode); appState.playlistAtual = shuffle(appState.musicas); notif(appState.shuffleMode ? '🔀 Aleatório ON' : '➡️ Sequencial'); }
-function showControls() { dom.bottomControls.classList.add('visible'); clearTimeout(appState.hideControlsTimeout); appState.hideControlsTimeout = setTimeout(() => dom.bottomControls.classList.remove('visible'), 4000); }
-function criarSilentAudio() { const sr = 44100, ns = sr * 5; const b = new ArrayBuffer(44 + ns * 2); const v = new DataView(b); const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); }; w(0, 'RIFF'); v.setUint32(4, 36 + ns * 2, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, ns * 2, true); return new Blob([b], { type: 'audio/wav' }); }
-let sb = null, su = null;
-function getSilentAudioUrl() { if (!sb) sb = criarSilentAudio(); if (!su) su = URL.createObjectURL(sb); return su; }
-let keepAliveInterval = null;
-function manterAudioAtivo() { if (keepAliveInterval) clearInterval(keepAliveInterval); keepAliveInterval = setInterval(() => { if (!appState.isBackgroundActive) return; try { if (dom.backgroundAudio.paused) dom.backgroundAudio.play().catch(() => {}); if (appState.isPlaying && dom.audio.paused && !dom.audio.ended && dom.audio.src && !appState.carregandoMusica) { dom.audio.play().catch(() => {}); } } catch(e) {} }, 3000); dom.audio.addEventListener('ended', () => { if (appState.isPlaying && !appState.carregandoMusica) next(); }); }
-async function ativarPlayer() { if (appState.playerAtivado) return; appState.playerAtivado = true; updateProgress(30); try { dom.backgroundAudio.src = getSilentAudioUrl(); dom.backgroundAudio.loop = true; dom.backgroundAudio.volume = .001; await dom.backgroundAudio.play(); appState.isBackgroundActive = true; manterAudioAtivo(); if ('wakeLock' in navigator) { try { appState.wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {} } updateProgress(70); forcarTelaCheia(); iniciarTimerCorrido(); updateProgress(100); setTimeout(tocar, 500); } catch(e) { appState.isBackgroundActive = true; updateProgress(100); forcarTelaCheia(); iniciarTimerCorrido(); setTimeout(tocar, 500); } }
-function forcarTelaCheia() { try { const e = document.documentElement; if (e.requestFullscreen) e.requestFullscreen().catch(() => {}); else if (e.webkitRequestFullscreen) e.webkitRequestFullscreen(); } catch(e) {} }
+function togglePlay() {
+  vibrar(10);
+  if (!appState.isBackgroundActive) { notif('🔊 Aguarde...', 1500); return; }
+  if (dom.audio.paused) tocar();
+  else {
+    dom.audio.pause();
+    appState.isPlaying = false;
+    dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+    dom.equalizer.classList.add('paused');
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+  }
+  showControls();
+}
 
+function next() {
+  vibrar(10);
+  if (appState.carregandoMusica || !appState.playlistAtual.length) return;
+  appState.indiceAtual = (appState.indiceAtual + 1) % appState.playlistAtual.length;
+  if (appState.isBackgroundActive) setTimeout(tocar, 100);
+  showControls();
+}
+
+function prev() {
+  vibrar(10);
+  if (appState.carregandoMusica || !appState.playlistAtual.length) return;
+  appState.indiceAtual = (appState.indiceAtual - 1 + appState.playlistAtual.length) % appState.playlistAtual.length;
+  if (appState.isBackgroundActive) setTimeout(tocar, 100);
+  showControls();
+}
+
+function toggleShuffle() {
+  vibrar(10);
+  appState.shuffleMode = !appState.shuffleMode;
+  dom.shuffleBtn.classList.toggle('active', appState.shuffleMode);
+  appState.playlistAtual = shuffle(appState.musicas);
+  notif(appState.shuffleMode ? '🔀 Aleatório ON' : '➡️ Sequencial');
+}
+
+function showControls() {
+  dom.bottomControls.classList.add('visible');
+  clearTimeout(appState.hideControlsTimeout);
+  appState.hideControlsTimeout = setTimeout(() => dom.bottomControls.classList.remove('visible'), 4000);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 25: KEEP-ALIVE (silent audio)
+   ════════════════════════════════════════════════════════════════ */
+function criarSilentAudio() {
+  const sr = 44100, ns = sr * 5;
+  const b = new ArrayBuffer(44 + ns * 2);
+  const v = new DataView(b);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + ns * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true);
+  v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, 'data'); v.setUint32(40, ns * 2, true);
+  return new Blob([b], { type: 'audio/wav' });
+}
+let sb = null, su = null;
+function getSilentAudioUrl() {
+  if (!sb) sb = criarSilentAudio();
+  if (!su) su = URL.createObjectURL(sb);
+  return su;
+}
+
+let keepAliveInterval = null;
+function manterAudioAtivo() {
+  if (keepAliveInterval) clearInterval(keepAliveInterval);
+  keepAliveInterval = setInterval(() => {
+    if (!appState.isBackgroundActive) return;
+    try {
+      if (dom.backgroundAudio.paused) dom.backgroundAudio.play().catch(() => {});
+      if (appState.isPlaying && dom.audio.paused && !dom.audio.ended && dom.audio.src && !appState.carregandoMusica) {
+        dom.audio.play().catch(() => {});
+      }
+    } catch(e) {}
+  }, 3000);
+  dom.audio.addEventListener('ended', () => {
+    if (appState.isPlaying && !appState.carregandoMusica) next();
+  });
+}
+
+async function ativarPlayer() {
+  if (appState.playerAtivado) return;
+  appState.playerAtivado = true;
+  updateProgress(30);
+  try {
+    dom.backgroundAudio.src = getSilentAudioUrl();
+    dom.backgroundAudio.loop = true;
+    dom.backgroundAudio.volume = .001;
+    await dom.backgroundAudio.play();
+    appState.isBackgroundActive = true;
+    manterAudioAtivo();
+    if ('wakeLock' in navigator) {
+      try { appState.wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
+    }
+    updateProgress(70);
+    forcarTelaCheia();
+    iniciarTimerCorrido();
+    updateProgress(100);
+    setTimeout(tocar, 500);
+  } catch(e) {
+    appState.isBackgroundActive = true;
+    updateProgress(100);
+    forcarTelaCheia();
+    iniciarTimerCorrido();
+    setTimeout(tocar, 500);
+  }
+}
+
+function forcarTelaCheia() {
+  try {
+    const e = document.documentElement;
+    if (e.requestFullscreen) e.requestFullscreen().catch(() => {});
+    else if (e.webkitRequestFullscreen) e.webkitRequestFullscreen();
+  } catch(e) {}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 26: FAVORITOS
+   ════════════════════════════════════════════════════════════════ */
 function updateFavBadge() {
   if (dom.favBadgeTopo) dom.favBadgeTopo.textContent = appState.favorites.length;
   if (dom.choiceBadge) dom.choiceBadge.textContent = appState.favorites.length;
 }
-function updateHeart(id) { const f = appState.favorites.some(x => x.id === id); dom.heartBtn.className = f ? 'fav-heart active' : 'fav-heart'; dom.heartBtn.innerHTML = f ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>'; }
-function toggleFav(m) { if (!m) return; const i = appState.favorites.findIndex(f => f.id === m.id); if (i > -1) { appState.removeFavorite(m.id); notif('💔 Removido dos favoritos', 1500); } else { appState.addFavorite(m); notif('❤️ Adicionado aos favoritos', 1500); } updateFavBadge(); updateHeart(m.id); }
-function renderizarFavoritosModal() { dom.favListModal.innerHTML = ''; const f = appState.getFavorites(); if (!f.length) { dom.favListModal.innerHTML = '<div class="fav-empty-modal">💔 Nenhuma música favorita</div>'; return; } f.forEach(m => { const it = document.createElement('div'); it.className = 'fav-item-modal'; it.innerHTML = '<div class="fav-info"><span class="title">' + sanitize(m.title) + '</span><span class="artist">- ' + sanitize(m.artist) + '</span></div><button class="remove-fav"><i class="fas fa-times-circle"></i></button>'; it.querySelector('.fav-info').onclick = () => { dom.favModal.classList.remove('open'); tocarFavoritaEspecifica(m.id); }; it.querySelector('.remove-fav').onclick = e => { e.stopPropagation(); toggleFav(m); renderizarFavoritosModal(); }; dom.favListModal.appendChild(it); }); }
-function tocarFavoritaEspecifica(id) { let m = appState.musicas.find(x => x.id === id); if (!m) m = appState.favorites.find(x => x.id === id); if (!m) return; appState.playlistAtual = shuffle(appState.favorites.map(x => ({ ...x }))); const i = appState.playlistAtual.findIndex(x => x.id === id); if (i > -1) { appState.indiceAtual = i; if (appState.isBackgroundActive) tocar(); notif('🎵 Tocando favorita!', 1500); } }
-function renderizarGeneros() { dom.genresGrid.innerHTML = ''; GENRE_ORDEM.forEach(g => { const c = GENRE_COLORS[g] || COR_PADRAO; const cd = document.createElement('div'); cd.className = 'genre-card'; cd.setAttribute('data-genre', g); cd.style.setProperty('--c1', c.c1); cd.style.setProperty('--c2', c.c2); const n = document.createElement('div'); n.className = 'genre-name'; n.textContent = g; cd.appendChild(n); cd.onclick = () => selecionarGenero(g); dom.genresGrid.appendChild(cd); }); }
-async function selecionarGenero(g) { showLoad(true); const m = await cacheManager.get(g, GENRE_URLS[g]); if (!m || !m.length) { showLoad(false); notif('❌ Erro ao carregar ' + g, 2000); dom.genresModal.classList.remove('open'); return; } dom.audio.pause(); appState.isPlaying = false; dom.playBtn.innerHTML = '<i class="fas fa-play"></i>'; dom.equalizer.classList.add('paused'); appState.musicas = m; appState.modoAtual = g; appState.playlistAtual = shuffle(m); appState.indiceAtual = 0; if (dom.cardGeneroAtual) dom.cardGeneroAtual.textContent = g; aplicarTema(g); const mm = appState.playlistAtual[0]; if (mm) { atualizarLetreiro(mm); updateHeart(mm.id); } renderizarGeneros(); showLoad(false); dom.genresModal.classList.remove('open'); forcarTelaCheia(); if (appState.isBackgroundActive) setTimeout(tocar, 300); appState._save(); }
+
+function updateHeart(id) {
+  const f = appState.favorites.some(x => x.id === id);
+  dom.heartBtn.className = f ? 'fav-heart active' : 'fav-heart';
+  dom.heartBtn.innerHTML = f ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>';
+}
+
+function toggleFav(m) {
+  vibrar(15);
+  if (!m) return;
+  const i = appState.favorites.findIndex(f => f.id === m.id);
+  if (i > -1) { appState.removeFavorite(m.id); notif('💔 Removido dos favoritos', 1500); }
+  else { appState.addFavorite(m); notif('❤️ Adicionado aos favoritos', 1500); }
+  updateFavBadge();
+  updateHeart(m.id);
+}
+
+function renderizarFavoritosModal() {
+  dom.favListModal.innerHTML = '';
+  const f = appState.getFavorites();
+  if (!f.length) { dom.favListModal.innerHTML = '<div class="fav-empty-modal">💔 Nenhuma música favorita</div>'; return; }
+  f.forEach(m => {
+    const it = document.createElement('div');
+    it.className = 'fav-item-modal';
+    it.innerHTML = '<div class="fav-info"><span class="title">' + sanitize(m.title) + '</span><span class="artist">- ' + sanitize(m.artist) + '</span></div><button class="remove-fav"><i class="fas fa-times-circle"></i></button>';
+    it.querySelector('.fav-info').onclick = () => { dom.favModal.classList.remove('open'); tocarFavoritaEspecifica(m.id); };
+    it.querySelector('.remove-fav').onclick = e => { e.stopPropagation(); toggleFav(m); renderizarFavoritosModal(); };
+    dom.favListModal.appendChild(it);
+  });
+}
+
+function tocarFavoritaEspecifica(id) {
+  let m = appState.musicas.find(x => x.id === id);
+  if (!m) m = appState.favorites.find(x => x.id === id);
+  if (!m) return;
+  appState.playlistAtual = shuffle(appState.favorites.map(x => ({ ...x })));
+  const i = appState.playlistAtual.findIndex(x => x.id === id);
+  if (i > -1) {
+    appState.indiceAtual = i;
+    if (appState.isBackgroundActive) tocar();
+    notif('🎵 Tocando favorita!', 1500);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 27: GÊNEROS
+   ════════════════════════════════════════════════════════════════ */
+function renderizarGeneros() {
+  dom.genresGrid.innerHTML = '';
+  GENRE_ORDEM.forEach(g => {
+    const c = GENRE_COLORS[g] || COR_PADRAO;
+    const cd = document.createElement('div');
+    cd.className = 'genre-card';
+    cd.setAttribute('data-genre', g);
+    cd.style.setProperty('--c1', c.c1);
+    cd.style.setProperty('--c2', c.c2);
+    const n = document.createElement('div');
+    n.className = 'genre-name';
+    n.textContent = g;
+    cd.appendChild(n);
+    cd.onclick = () => selecionarGenero(g);
+    dom.genresGrid.appendChild(cd);
+  });
+}
+
+async function selecionarGenero(g) {
+  vibrar(15);
+  showLoad(true);
+  const m = await cacheManager.get(g, GENRE_URLS[g]);
+  if (!m || !m.length) { showLoad(false); notif('❌ Erro ao carregar ' + g, 2000); dom.genresModal.classList.remove('open'); return; }
+  dom.audio.pause();
+  appState.isPlaying = false;
+  dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+  dom.equalizer.classList.add('paused');
+  appState.musicas = m;
+  appState.modoAtual = g;
+  appState.playlistAtual = shuffle(m);
+  appState.indiceAtual = 0;
+  aplicarTema(g);
+  const mm = appState.playlistAtual[0];
+  if (mm) { atualizarLetreiro(mm); updateHeart(mm.id); }
+  renderizarGeneros();
+  showLoad(false);
+  dom.genresModal.classList.remove('open');
+  forcarTelaCheia();
+  atualizarPontoRadio();
+  if (appState.isBackgroundActive) setTimeout(tocar, 300);
+  appState._save();
+}
+
 function showLoad(s) { dom.loadingOverlay.classList.toggle('active', s); }
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 28: PONTO VERMELHO NO MENU (rádio ao vivo)
+   ════════════════════════════════════════════════════════════════ */
+function atualizarPontoRadio() {
+  const ehRadio = appState.modoAtual && appState.modoAtual.indexOf('VDB') > -1;
+  if (ehRadio) dom.menuButton.classList.add('radio-live');
+  else dom.menuButton.classList.remove('radio-live');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 29: MODO RÁDIO
+   ════════════════════════════════════════════════════════════════ */
 async function ativarModoRadio() {
+  vibrar(20);
   const periodo = getPeriodoAtual();
   const config = RADIO_CONFIG[periodo];
   showLoad(true);
   notif('🔴 ' + config.saudacao + ' Sintonizando...', 2000);
   try {
     const todasMusicas = [];
-    for (const g of config.generos) { try { const m = await cacheManager.get(g, GENRE_URLS[g]); if (m && m.length) { const amostra = m.slice(0, 100).map(musica => ({ ...musica, radio: true, radioPeriodo: periodo })); todasMusicas.push(...amostra); } } catch(e) {} }
+    for (const g of config.generos) {
+      try {
+        const m = await cacheManager.get(g, GENRE_URLS[g]);
+        if (m && m.length) {
+          const amostra = m.slice(0, 100).map(musica => ({ ...musica, radio: true, radioPeriodo: periodo }));
+          todasMusicas.push(...amostra);
+        }
+      } catch(e) {}
+    }
     if (!todasMusicas.length) { showLoad(false); notif('❌ Sem músicas', 2000); return; }
     dom.audio.pause();
     appState.isPlaying = false;
@@ -787,238 +1487,994 @@ async function ativarModoRadio() {
     appState.modoAtual = config.nome;
     appState.playlistAtual = shuffle(todasMusicas);
     appState.indiceAtual = 0;
-    if (dom.cardGeneroAtual) dom.cardGeneroAtual.textContent = config.nome;
     document.documentElement.style.setProperty('--theme-1', config.cor1);
     document.documentElement.style.setProperty('--theme-2', config.cor2);
     const primeira = appState.playlistAtual[0];
     if (primeira) { atualizarLetreiro(primeira); updateHeart(primeira.id); }
     showLoad(false);
     forcarTelaCheia();
+    atualizarPontoRadio();
     if (appState.isBackgroundActive) setTimeout(tocar, 300);
     appState._save();
     notif('🔴 AO VIVO', 2000);
   } catch(e) { showLoad(false); notif('❌ Erro no rádio', 2000); }
 }
 
-function verificarMudancaPeriodo() { if (!appState.modoAtual) return; const ehRadio = appState.modoAtual.indexOf('VDB') > -1; if (!ehRadio) return; const periodoAtual = getPeriodoAtual(); const configAtual = RADIO_CONFIG[periodoAtual]; if (appState.modoAtual !== configAtual.nome) { notif('🔄 Novo período', 2000); mostrarBannerSaudacao(); ativarModoRadio(); } }
-setInterval(verificarMudancaPeriodo, 5 * 60 * 1000);
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 30: BANNER DE SAUDAÇÃO (1x por dia)
+   ════════════════════════════════════════════════════════════════ */
+function mostrarBannerSaudacao(forcar = false) {
+  const banner = document.getElementById('bannerSaudacao');
+  if (!banner) return;
 
-function mostrarBannerSaudacao() { const banner = document.getElementById('bannerSaudacao'); if (!banner) return; const periodo = getPeriodoAtual(); const config = BANNER_CONFIG[periodo]; const mensagemAleatoria = config.mensagens[Math.floor(Math.random() * config.mensagens.length)]; const hora = new Date().getHours(); const minuto = new Date().getMinutes(); document.getElementById('bannerEmoji').textContent = config.emoji; document.getElementById('bannerSaudacaoTexto').textContent = config.saudacao; document.getElementById('bannerMensagem').textContent = mensagemAleatoria; document.getElementById('bannerHora').textContent = String(hora).padStart(2, '0') + ':' + String(minuto).padStart(2, '0'); banner.classList.add('show'); banner.classList.remove('hide'); if (!vozJaTocou) { vozJaTocou = true; setTimeout(() => { falarSaudacaoInicial(); iniciarVozPeriodica(); }, 1200); } setTimeout(() => { banner.classList.add('hide'); setTimeout(() => { banner.classList.remove('show'); banner.classList.remove('hide'); }, 600); }, 3500); }
+  // Verifica se já mostrou hoje
+  if (!forcar) {
+    const ultimo = parseInt(localStorage.getItem('vdb_banner_ultimo') || '0');
+    const agora = now();
+    const horasPassadas = (agora - ultimo) / (1000 * 60 * 60);
+    if (horasPassadas < CONFIG.BANNER_INTERVALO_HORAS) return;
+    localStorage.setItem('vdb_banner_ultimo', String(agora));
+  }
 
-/* ═══ CARD CENTRAL ═══ */
-let cardTimeout = null;
-function mostrarCardCentral() {
-  if (!dom.cardCentral) return;
-  // Atualiza info dos botões
-  if (dom.cardGeneroAtual) {
-    const g = appState.modoAtual && !appState.modoAtual.includes('VDB') ? appState.modoAtual : 'BÔNUS';
-    dom.cardGeneroAtual.textContent = g;
+  const periodo = getPeriodoAtual();
+  const config = BANNER_CONFIG[periodo];
+  const mensagemAleatoria = config.mensagens[Math.floor(Math.random() * config.mensagens.length)];
+  const hora = new Date().getHours();
+  const minuto = new Date().getMinutes();
+  document.getElementById('bannerEmoji').textContent = config.emoji;
+  document.getElementById('bannerSaudacaoTexto').textContent = config.saudacao;
+  document.getElementById('bannerMensagem').textContent = mensagemAleatoria;
+  document.getElementById('bannerHora').textContent = String(hora).padStart(2, '0') + ':' + String(minuto).padStart(2, '0');
+  banner.classList.add('show');
+  banner.classList.remove('hide');
+
+  if (!vozJaTocou) {
+    vozJaTocou = true;
+    setTimeout(() => { falarSaudacaoInicial(); iniciarVozPeriodica(); }, 1200);
   }
-  if (dom.cardHoraRadio) {
-    dom.cardHoraRadio.textContent = getNomePeriodo();
-  }
-  if (appState.modoAtual && appState.modoAtual.includes('VDB')) {
-    if (dom.cardBtnRadio) dom.cardBtnRadio.classList.add('live');
-  } else {
-    if (dom.cardBtnRadio) dom.cardBtnRadio.classList.remove('live');
-  }
-  dom.cardCentral.classList.add('visible');
-  dom.cardCentral.classList.remove('animating');
-  clearTimeout(cardTimeout);
-  cardTimeout = setTimeout(() => { esconderCardCentral(); }, 4000);
-}
-function esconderCardCentral() {
-  if (!dom.cardCentral) return;
-  dom.cardCentral.classList.add('animating');
   setTimeout(() => {
-    dom.cardCentral.classList.remove('visible');
-    dom.cardCentral.classList.remove('animating');
-  }, 400);
-  clearTimeout(cardTimeout);
+    banner.classList.add('hide');
+    setTimeout(() => { banner.classList.remove('show'); banner.classList.remove('hide'); }, 600);
+  }, 3500);
 }
 
-function gerarSenhaAleatoria() { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s = ''; for (let i = 0; i < 12; i++) s += c.charAt(Math.floor(Math.random() * c.length)); return s; }
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 31: VERIFICAÇÃO DE MUDANÇA DE PERÍODO (eventos, não timer)
+   ════════════════════════════════════════════════════════════════ */
+function verificarMudancaPeriodo() {
+  if (!appState.modoAtual) return;
+  const ehRadio = appState.modoAtual.indexOf('VDB') > -1;
+  if (!ehRadio) return;
+  const periodoAtual = getPeriodoAtual();
+  const configAtual = RADIO_CONFIG[periodoAtual];
+  if (appState.modoAtual !== configAtual.nome) {
+    notif('🔄 Novo período', 2000);
+    mostrarBannerSaudacao(true);
+    ativarModoRadio();
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 32: SENHAS E ADMIN (INTACTO conforme pedido)
+   ════════════════════════════════════════════════════════════════ */
+function gerarSenhaAleatoria() {
+  const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s = '';
+  for (let i = 0; i < 12; i++) s += c.charAt(Math.floor(Math.random() * c.length));
+  return s;
+}
 function gerarSenhaDispositivo(fp) { return btoa(fp + ':' + gerarSenhaAleatoria()); }
-function gerarSenhaUniversal() { const ts = now().toString(36); return 'UNIV:' + ts + ':' + btoa('UNIV:' + ts + ':' + gerarSenhaAleatoria()).slice(0, 16); }
-function validarSenha(s) { if (s === CONFIG.SENHA_MESTRA) return { valida: true, tipo: 'mestra', msg: '✅ Liberado com sucesso!' }; try { const d = atob(s); const p = d.split(':'); if (p.length === 2 && p[0] === appState.fingerprint) return { valida: true, tipo: 'cliente', msg: '✅ Liberado permanentemente!' }; } catch(e) {} if (s.startsWith('UNIV:')) { const p = s.split(':'); if (p.length === 3 && p[2].length === 16) return { valida: true, tipo: 'universal', msg: '✅ Liberado com senha universal!' }; } return { valida: false }; }
-function bloquear() { appState.desbloqueado = false; appState.bloqueadoPermanente = true; dom.blockOverlay.classList.add('active'); dom.blockOverlay.style.display = 'flex'; dom.audio.pause(); appState.isPlaying = false; dom.playBtn.innerHTML = '<i class="fas fa-play"></i>'; localStorage.setItem('vdb_bloqueado_permanente', 'true'); localStorage.removeItem('vdb_desbloqueado'); localStorage.removeItem('vdb_senha_permanente'); localStorage.removeItem('vdb_teste_expiracao'); notif('⏰ Tempo de teste expirou!', 3000); }
-function handleLiberar() { const s = dom.senhaInput.value.trim(); if (!s) { dom.erroSenha.textContent = '⚠️ Digite a senha'; return; } const r = validarSenha(s); if (r.valida) { appState.desbloqueado = true; dom.blockOverlay.classList.remove('active'); dom.blockOverlay.style.display = 'none'; dom.erroSenha.textContent = ''; dom.senhaInput.value = ''; dom.senhaInput.blur(); localStorage.setItem('vdb_desbloqueado', 'true'); localStorage.setItem('vdb_senha_permanente', 'true'); localStorage.removeItem('vdb_teste_expiracao'); localStorage.removeItem('vdb_bloqueado_permanente'); appState.bloqueadoPermanente = false; notif(r.msg, 3000); if (!appState.playerAtivado) setTimeout(ativarPlayer, 500); appState._save(); } else { dom.erroSenha.innerHTML = '❌ Senha inválida!<br><small style="color:#888;font-size:.7rem;">💡 Fale com o suporte</small>'; dom.senhaInput.value = ''; notif('❌ Senha inválida!', 2000); } }
-function liberarAgora() { const s = prompt('🔑 Digite sua senha única:'); if (!s) return; const r = validarSenha(s); if (r.valida) { appState.desbloqueado = true; dom.blockOverlay.classList.remove('active'); dom.blockOverlay.style.display = 'none'; dom.timerLib.innerHTML = '<i class="fas fa-lock-open"></i> Lib'; dom.timerLib.className = 'timer-lib lib'; localStorage.setItem('vdb_desbloqueado', 'true'); localStorage.setItem('vdb_senha_permanente', 'true'); localStorage.removeItem('vdb_teste_expiracao'); localStorage.removeItem('vdb_bloqueado_permanente'); appState.bloqueadoPermanente = false; notif('✅ App liberado!', 3000); appState._save(); } else notif('❌ Senha inválida!', 2000); }
+function gerarSenhaUniversal() {
+  const ts = now().toString(36);
+  return 'UNIV:' + ts + ':' + btoa('UNIV:' + ts + ':' + gerarSenhaAleatoria()).slice(0, 16);
+}
+function validarSenha(s) {
+  if (s === CONFIG.SENHA_MESTRA) return { valida: true, tipo: 'mestra', msg: '✅ Liberado com sucesso!' };
+  try {
+    const d = atob(s); const p = d.split(':');
+    if (p.length === 2 && p[0] === appState.fingerprint) return { valida: true, tipo: 'cliente', msg: '✅ Liberado permanentemente!' };
+  } catch(e) {}
+  if (s.startsWith('UNIV:')) {
+    const p = s.split(':');
+    if (p.length === 3 && p[2].length === 16) return { valida: true, tipo: 'universal', msg: '✅ Liberado com senha universal!' };
+  }
+  return { valida: false };
+}
+function bloquear() {
+  appState.desbloqueado = false;
+  appState.bloqueadoPermanente = true;
+  dom.blockOverlay.classList.add('active');
+  dom.blockOverlay.style.display = 'flex';
+  dom.audio.pause();
+  appState.isPlaying = false;
+  dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+  localStorage.setItem('vdb_bloqueado_permanente', 'true');
+  localStorage.removeItem('vdb_desbloqueado');
+  localStorage.removeItem('vdb_senha_permanente');
+  localStorage.removeItem('vdb_teste_expiracao');
+  notif('⏰ Tempo de teste expirou!', 3000);
+}
+function handleLiberar() {
+  const s = dom.senhaInput.value.trim();
+  if (!s) { dom.erroSenha.textContent = '⚠️ Digite a senha'; return; }
+  const r = validarSenha(s);
+  if (r.valida) {
+    appState.desbloqueado = true;
+    dom.blockOverlay.classList.remove('active');
+    dom.blockOverlay.style.display = 'none';
+    dom.erroSenha.textContent = '';
+    dom.senhaInput.value = '';
+    dom.senhaInput.blur();
+    localStorage.setItem('vdb_desbloqueado', 'true');
+    localStorage.setItem('vdb_senha_permanente', 'true');
+    localStorage.removeItem('vdb_teste_expiracao');
+    localStorage.removeItem('vdb_bloqueado_permanente');
+    appState.bloqueadoPermanente = false;
+    notif(r.msg, 3000);
+    if (!appState.playerAtivado) setTimeout(ativarPlayer, 500);
+    appState._save();
+  } else {
+    dom.erroSenha.innerHTML = '❌ Senha inválida!<br><small style="color:#888;font-size:.7rem;">💡 Fale com o suporte</small>';
+    dom.senhaInput.value = '';
+    notif('❌ Senha inválida!', 2000);
+  }
+}
+function liberarAgora() {
+  const s = prompt('🔑 Digite sua senha única:');
+  if (!s) return;
+  const r = validarSenha(s);
+  if (r.valida) {
+    appState.desbloqueado = true;
+    dom.blockOverlay.classList.remove('active');
+    dom.blockOverlay.style.display = 'none';
+    dom.timerLib.innerHTML = '<i class="fas fa-lock-open"></i> Lib';
+    dom.timerLib.className = 'timer-lib lib';
+    localStorage.setItem('vdb_desbloqueado', 'true');
+    localStorage.setItem('vdb_senha_permanente', 'true');
+    localStorage.removeItem('vdb_teste_expiracao');
+    localStorage.removeItem('vdb_bloqueado_permanente');
+    appState.bloqueadoPermanente = false;
+    notif('✅ App liberado!', 3000);
+    appState._save();
+  } else notif('❌ Senha inválida!', 2000);
+}
 
-let clickTimestamps = [];
-function abrirAdmin() { const l = JSON.parse(localStorage.getItem('vdb_admin_lock') || '{"tentativas":0,"bloqueado":false,"ate":0}'); if (l.bloqueado && now() < l.ate) { notif('🔒 Bloqueado! ' + Math.ceil((l.ate - now())/1000) + 's', 2500); return; } if (l.bloqueado && now() >= l.ate) { l.bloqueado = false; l.tentativas = 0; localStorage.setItem('vdb_admin_lock', JSON.stringify(l)); } const s = prompt('🔐 Digite a senha do painel admin:'); if (s === null) return; if (s === CONFIG.SENHA_ADMIN) { l.tentativas = 0; l.bloqueado = false; localStorage.setItem('vdb_admin_lock', JSON.stringify(l)); dom.adminPanel.classList.add('open'); notif('🔐 Painel aberto!', 2000); carregarHistorico(); atualizarTotalSenhas(); } else { l.tentativas = (l.tentativas || 0) + 1; if (l.tentativas >= 3) { l.bloqueado = true; l.ate = now() + 60000; localStorage.setItem('vdb_admin_lock', JSON.stringify(l)); notif('🔒 Bloqueado 60s!', 3000); } else { localStorage.setItem('vdb_admin_lock', JSON.stringify(l)); notif('❌ Errada! ' + l.tentativas + '/3', 2000); } } }
-function carregarHistorico() { const h = appState.getSenhasHistorico(); dom.historicoSenhas.innerHTML = ''; h.forEach(it => { const d = document.createElement('div'); d.className = 'historico-item'; const ti = it.tipo === 'universal' ? '🌍' : '📱'; const so = it.senha.slice(0, 4) + '••••' + it.senha.slice(-4); d.innerHTML = '<span>' + ti + ' ' + it.data + '</span><span>' + so + '</span>'; dom.historicoSenhas.appendChild(d); }); }
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 33: ADMIN — Long press no logo (substitui 8 cliques)
+   ════════════════════════════════════════════════════════════════ */
+let longPressTimer = null;
+function setupLongPressAdmin() {
+  const logo = dom.logoMacaco;
+  if (!logo) return;
+
+  const iniciar = () => {
+    longPressTimer = setTimeout(() => {
+      vibrar(50);
+      abrirAdmin();
+    }, 2000);
+  };
+  const cancelar = () => {
+    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+  };
+
+  logo.addEventListener('touchstart', iniciar, { passive: true });
+  logo.addEventListener('touchend', cancelar, { passive: true });
+  logo.addEventListener('touchmove', cancelar, { passive: true });
+  logo.addEventListener('mousedown', iniciar);
+  logo.addEventListener('mouseup', cancelar);
+  logo.addEventListener('mouseleave', cancelar);
+}
+
+function abrirAdmin() {
+  const l = JSON.parse(localStorage.getItem('vdb_admin_lock') || '{"tentativas":0,"bloqueado":false,"ate":0}');
+  if (l.bloqueado && now() < l.ate) {
+    notif('🔒 Bloqueado! ' + Math.ceil((l.ate - now())/1000) + 's', 2500);
+    return;
+  }
+  if (l.bloqueado && now() >= l.ate) {
+    l.bloqueado = false; l.tentativas = 0;
+    localStorage.setItem('vdb_admin_lock', JSON.stringify(l));
+  }
+  const s = prompt('🔐 Digite a senha do painel admin:');
+  if (s === null) return;
+  if (s === CONFIG.SENHA_ADMIN) {
+    l.tentativas = 0; l.bloqueado = false;
+    localStorage.setItem('vdb_admin_lock', JSON.stringify(l));
+    dom.adminPanel.classList.add('open');
+    notif('🔐 Painel aberto!', 2000);
+    carregarHistorico();
+    atualizarTotalSenhas();
+  } else {
+    l.tentativas = (l.tentativas || 0) + 1;
+    if (l.tentativas >= 3) {
+      l.bloqueado = true; l.ate = now() + 60000;
+      localStorage.setItem('vdb_admin_lock', JSON.stringify(l));
+      notif('🔒 Bloqueado 60s!', 3000);
+    } else {
+      localStorage.setItem('vdb_admin_lock', JSON.stringify(l));
+      notif('❌ Errada! ' + l.tentativas + '/3', 2000);
+    }
+  }
+}
+function carregarHistorico() {
+  const h = appState.getSenhasHistorico();
+  dom.historicoSenhas.innerHTML = '';
+  h.forEach(it => {
+    const d = document.createElement('div');
+    d.className = 'historico-item';
+    const ti = it.tipo === 'universal' ? '🌍' : '📱';
+    const so = it.senha.slice(0, 4) + '••••' + it.senha.slice(-4);
+    d.innerHTML = '<span>' + ti + ' ' + it.data + '</span><span>' + so + '</span>';
+    dom.historicoSenhas.appendChild(d);
+  });
+}
 function atualizarTotalSenhas() { dom.totalSenhas.textContent = appState.getSenhasHistorico().length; }
-function abrirWhatsAppCompra() { const m = encodeURIComponent('Olá! Quero adquirir o VAI DE BOA! MUSIC VITALÍCIO por R$ 39,00'); window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + m, '_blank'); }
-function abrirCadastro() { const mo = document.createElement('div'); mo.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:10001;display:flex;align-items:center;justify-content:center;padding:20px;'; mo.innerHTML = '<div style="background:linear-gradient(145deg,#1a1a1a,#0a0a0a);border-radius:30px;padding:30px;max-width:400px;width:100%;text-align:center;border:2px solid rgba(168,85,247,0.3);"><div style="font-size:3rem;margin-bottom:10px;">🎵</div><h2 style="color:#fff;font-size:1.5rem;margin-bottom:5px;">CADASTRO</h2><p style="color:#888;font-size:.8rem;margin-bottom:20px;">Preencha seus dados</p><input type="text" id="cadastroNome" placeholder="Seu nome completo" style="width:100%;padding:15px;border-radius:25px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;font-size:1rem;margin-bottom:12px;outline:none;text-align:center;user-select:text"><input type="tel" id="cadastroZap" placeholder="WhatsApp com DDD" style="width:100%;padding:15px;border-radius:25px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;font-size:1rem;margin-bottom:20px;outline:none;text-align:center;user-select:text"><div style="background:rgba(168,85,247,0.05);border:1px solid rgba(168,85,247,0.15);border-radius:15px;padding:15px;margin-bottom:20px;"><div style="font-size:.7rem;color:#888;margin-bottom:5px;">💰 PAGAMENTO ÚNICO</div><div style="font-size:2rem;font-weight:900;color:#fbbf24;">R$ 39,00</div></div><button id="cadastroConfirmarBtn" style="width:100%;padding:16px;background:linear-gradient(135deg,#25d366,#128C7E);border:none;border-radius:25px;color:#fff;font-weight:700;font-size:1.1rem;cursor:pointer;margin-bottom:10px;">📱 CONFIRMAR E COMPRAR</button><button id="cadastroCancelarBtn" style="width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:25px;color:#888;font-size:.8rem;cursor:pointer;">✕ Cancelar</button></div>'; document.body.appendChild(mo); document.getElementById('cadastroCancelarBtn').onclick = () => mo.remove(); document.getElementById('cadastroConfirmarBtn').onclick = () => { const n = document.getElementById('cadastroNome').value.trim(); const z = document.getElementById('cadastroZap').value.trim(); if (!n || n.length < 2) { notif('⚠️ Digite seu nome!', 2000); return; } if (!z || z.length < 8) { notif('⚠️ Digite o WhatsApp!', 2000); return; } const m = '🎵 *VAI DE BOA! MUSIC*\n\n👤 *Nome:* ' + n + '\n📱 *WhatsApp:* ' + z + '\n💰 *Valor:* R$ 39,00\n\n✅ Quero comprar!'; window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + encodeURIComponent(m), '_blank'); mo.remove(); notif('✅ Cadastro enviado!', 3000); }; }
-function gerarQrCode() { const u = encodeURIComponent(window.location.href); dom.qrCodeImage.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + u + '&margin=20&format=png&bgcolor=ffffff&color=000000'; dom.qrCodeModal.classList.add('active'); }
-function renderizarFila() { dom.queueList.innerHTML = ''; const t = appState.playlistAtual.length; const i0 = appState.indiceAtual; for (let i = 0; i < Math.min(10, t); i++) { const idx = (i0 + i) % t; const m = appState.playlistAtual[idx]; if (!m) continue; const d = document.createElement('div'); d.className = 'queue-item' + (i === 0 ? ' now' : ''); d.innerHTML = '<div class="num">' + (i + 1) + '</div><div class="info"><div class="t">' + sanitize(m.title) + '</div><div class="a">' + sanitize(m.artist) + '</div></div>'; d.onclick = () => { appState.indiceAtual = idx; if (appState.isBackgroundActive) tocar(); dom.queueSheet.classList.remove('open'); }; dom.queueList.appendChild(d); } }
-function renderizarRecentes() { dom.recentList.innerHTML = ''; if (!appState.historico.length) { dom.recentList.innerHTML = '<div style="text-align:center;color:#666;padding:20px">Nada tocado ainda</div>'; return; } appState.historico.slice(0, 20).forEach((m, i) => { const d = document.createElement('div'); d.className = 'recent-item'; d.innerHTML = '<div class="num">' + (i + 1) + '</div><div class="info"><div class="t">' + sanitize(m.title) + '</div><div class="a">' + sanitize(m.artist) + '</div></div>'; d.onclick = () => { const f = appState.musicas.find(x => x.id === m.id); if (f) { appState.playlistAtual = [f]; appState.indiceAtual = 0; if (appState.isBackgroundActive) tocar(); } else notif('⚠️ Música não encontrada', 2000); dom.recentSheet.classList.remove('open'); }; dom.recentList.appendChild(d); }); }
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 34: FUNÇÕES AUXILIARES (WhatsApp, Cadastro, QR, Fila, etc.)
+   ════════════════════════════════════════════════════════════════ */
+function abrirWhatsAppCompra() {
+  const m = encodeURIComponent('Olá! Quero adquirir o VAI DE BOA! MUSIC VITALÍCIO por R$ 39,00');
+  window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + m, '_blank');
+}
+
+function abrirCadastro() {
+  const mo = document.createElement('div');
+  mo.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:10001;display:flex;align-items:center;justify-content:center;padding:20px;';
+  mo.innerHTML = '<div style="background:linear-gradient(145deg,#1a1a1a,#0a0a0a);border-radius:30px;padding:30px;max-width:400px;width:100%;text-align:center;border:2px solid rgba(168,85,247,0.3);"><div style="font-size:3rem;margin-bottom:10px;">🎵</div><h2 style="color:#fff;font-size:1.5rem;margin-bottom:5px;">CADASTRO</h2><p style="color:#888;font-size:.8rem;margin-bottom:20px;">Preencha seus dados</p><input type="text" id="cadastroNome" placeholder="Seu nome completo" style="width:100%;padding:15px;border-radius:25px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;font-size:1rem;margin-bottom:12px;outline:none;text-align:center;user-select:text"><input type="tel" id="cadastroZap" placeholder="WhatsApp com DDD" style="width:100%;padding:15px;border-radius:25px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;font-size:1rem;margin-bottom:20px;outline:none;text-align:center;user-select:text"><div style="background:rgba(168,85,247,0.05);border:1px solid rgba(168,85,247,0.15);border-radius:15px;padding:15px;margin-bottom:20px;"><div style="font-size:.7rem;color:#888;margin-bottom:5px;">💰 PAGAMENTO ÚNICO</div><div style="font-size:2rem;font-weight:900;color:#fbbf24;">R$ 39,00</div></div><button id="cadastroConfirmarBtn" style="width:100%;padding:16px;background:linear-gradient(135deg,#25d366,#128C7E);border:none;border-radius:25px;color:#fff;font-weight:700;font-size:1.1rem;cursor:pointer;margin-bottom:10px;">📱 CONFIRMAR E COMPRAR</button><button id="cadastroCancelarBtn" style="width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:25px;color:#888;font-size:.8rem;cursor:pointer;">✕ Cancelar</button></div>';
+  document.body.appendChild(mo);
+  document.getElementById('cadastroCancelarBtn').onclick = () => mo.remove();
+  document.getElementById('cadastroConfirmarBtn').onclick = () => {
+    const n = document.getElementById('cadastroNome').value.trim();
+    const z = document.getElementById('cadastroZap').value.trim();
+    if (!n || n.length < 2) { notif('⚠️ Digite seu nome!', 2000); return; }
+    if (!z || z.length < 8) { notif('⚠️ Digite o WhatsApp!', 2000); return; }
+    const m = '🎵 *VAI DE BOA! MUSIC*\n\n👤 *Nome:* ' + n + '\n📱 *WhatsApp:* ' + z + '\n💰 *Valor:* R$ 39,00\n\n✅ Quero comprar!';
+    window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + encodeURIComponent(m), '_blank');
+    mo.remove();
+    notif('✅ Cadastro enviado!', 3000);
+  };
+}
+
+function gerarQrCode() {
+  const u = encodeURIComponent(window.location.href);
+  dom.qrCodeImage.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + u + '&margin=20&format=png&bgcolor=ffffff&color=000000';
+  dom.qrCodeModal.classList.add('active');
+}
+
+function renderizarFila() {
+  dom.queueList.innerHTML = '';
+  const t = appState.playlistAtual.length;
+  const i0 = appState.indiceAtual;
+  for (let i = 0; i < Math.min(10, t); i++) {
+    const idx = (i0 + i) % t;
+    const m = appState.playlistAtual[idx];
+    if (!m) continue;
+    const d = document.createElement('div');
+    d.className = 'queue-item' + (i === 0 ? ' now' : '');
+    d.innerHTML = '<div class="num">' + (i + 1) + '</div><div class="info"><div class="t">' + sanitize(m.title) + '</div><div class="a">' + sanitize(m.artist) + '</div></div>';
+    d.onclick = () => { appState.indiceAtual = idx; if (appState.isBackgroundActive) tocar(); dom.queueSheet.classList.remove('open'); };
+    dom.queueList.appendChild(d);
+  }
+}
+
+function renderizarRecentes() {
+  dom.recentList.innerHTML = '';
+  if (!appState.historico.length) { dom.recentList.innerHTML = '<div style="text-align:center;color:#666;padding:20px">Nada tocado ainda</div>'; return; }
+  appState.historico.slice(0, 20).forEach((m, i) => {
+    const d = document.createElement('div');
+    d.className = 'recent-item';
+    d.innerHTML = '<div class="num">' + (i + 1) + '</div><div class="info"><div class="t">' + sanitize(m.title) + '</div><div class="a">' + sanitize(m.artist) + '</div></div>';
+    d.onclick = () => {
+      const f = appState.musicas.find(x => x.id === m.id);
+      if (f) { appState.playlistAtual = [f]; appState.indiceAtual = 0; if (appState.isBackgroundActive) tocar(); }
+      else notif('⚠️ Música não encontrada', 2000);
+      dom.recentSheet.classList.remove('open');
+    };
+    dom.recentList.appendChild(d);
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 35: TOUCH MANAGER (swipe com throttle)
+   ════════════════════════════════════════════════════════════════ */
 class TouchManager {
-  constructor() { this.st = 60; this.tsx = 0; this.tsy = 0; this.is = false; this.d = null; this.setup(); }
-  setup() { document.addEventListener('touchstart', this.hts.bind(this), { passive: true }); document.addEventListener('touchmove', this.htm.bind(this), { passive: true }); document.addEventListener('touchend', this.hte.bind(this), { passive: true }); document.addEventListener('touchcancel', this.htc.bind(this), { passive: true }); }
-  hts(e) { const t = e.touches[0]; this.tsx = t.clientX; this.tsy = t.clientY; this.is = false; this.d = null; const tg = e.target.closest('button, .clickable, a, .genre-card, .fav-item-modal, .ctrl-btn, .play-big, .shuffle-btn, .fab-main, .fab-sub-btn, .menu-btn, .close-genres, .close-fav, .choice-btn, .choice-close, .btn-liberar, .btn-copiar-fp, .btn-copiar, .btn-gerar, .btn-universal, .btn-limpar, .btn-whats, .qr-btn-close, #btnInstalarFixo, .sheet-option, .sheet-close, .speed-btn, .queue-item, .recent-item, #infoScroll, .menu-popup, .top-bar, .bottom-controls, .bottom-sheet, .genres-modal, .fav-modal, .choice-menu, .card-central, .card-btn, .btn-fav-topo'); if (tg) return; }
-  htm(e) { if (!this.tsx) return; const t = e.touches[0]; const dx = t.clientX - this.tsx; const dy = t.clientY - this.tsy; if (Math.abs(dx) > this.st || Math.abs(dy) > this.st) { this.is = true; if (Math.abs(dx) > Math.abs(dy)) this.d = dx > 0 ? 'right' : 'left'; else this.d = dy > 0 ? 'down' : 'up'; this.ssf(dx, dy); } }
-  hte(e) { if (this.is && this.d) this.esa(this.d); this.rsf(); this.tsx = 0; this.tsy = 0; this.d = null; this.is = false; }
-  htc() { this.rsf(); this.tsx = 0; this.tsy = 0; this.d = null; this.is = false; }
-  ssf(dx, dy) { let i = document.getElementById('swipeIndicator'); if (!i) { i = document.createElement('div'); i.id = 'swipeIndicator'; i.style.cssText = 'position:fixed;top:50%;transform:translateY(-50%);font-size:3rem;color:rgba(168,85,247,.85);z-index:9999;pointer-events:none;transition:all .2s;text-shadow:0 0 30px rgba(0,0,0,.8);'; document.body.appendChild(i); } const ax = Math.abs(dx), ay = Math.abs(dy); if (ax > ay && ax > this.st) { if (dx > 0) { i.textContent = '⏮️'; i.style.left = '20px'; i.style.right = 'auto'; } else { i.textContent = '⏭️'; i.style.right = '20px'; i.style.left = 'auto'; } i.style.opacity = Math.min(ax / 150, 1); } }
+  constructor() {
+    this.st = 60;
+    this.tsx = 0; this.tsy = 0;
+    this.is = false; this.d = null;
+    this.lastMove = 0;
+    this.setup();
+  }
+  setup() {
+    document.addEventListener('touchstart', this.hts.bind(this), { passive: true });
+    document.addEventListener('touchmove', this.htm.bind(this), { passive: true });
+    document.addEventListener('touchend', this.hte.bind(this), { passive: true });
+    document.addEventListener('touchcancel', this.htc.bind(this), { passive: true });
+  }
+  hts(e) {
+    const t = e.touches[0];
+    this.tsx = t.clientX; this.tsy = t.clientY;
+    this.is = false; this.d = null;
+  }
+  htm(e) {
+    // THROTTLE: só processa a cada 50ms
+    const agora = now();
+    if (agora - this.lastMove < 50) return;
+    this.lastMove = agora;
+
+    if (!this.tsx) return;
+    const t = e.touches[0];
+    const dx = t.clientX - this.tsx;
+    const dy = t.clientY - this.tsy;
+    if (Math.abs(dx) > this.st || Math.abs(dy) > this.st) {
+      this.is = true;
+      if (Math.abs(dx) > Math.abs(dy)) this.d = dx > 0 ? 'right' : 'left';
+      else this.d = dy > 0 ? 'down' : 'up';
+      this.ssf(dx, dy);
+    }
+  }
+  hte(e) {
+    if (this.is && this.d) this.esa(this.d);
+    this.rsf();
+    this.tsx = 0; this.tsy = 0; this.d = null; this.is = false;
+  }
+  htc() {
+    this.rsf();
+    this.tsx = 0; this.tsy = 0; this.d = null; this.is = false;
+  }
+  ssf(dx, dy) {
+    let i = document.getElementById('swipeIndicator');
+    if (!i) {
+      i = document.createElement('div');
+      i.id = 'swipeIndicator';
+      i.style.cssText = 'position:fixed;top:50%;transform:translateY(-50%);font-size:3rem;color:rgba(168,85,247,.85);z-index:9999;pointer-events:none;transition:all .2s;text-shadow:0 0 30px rgba(0,0,0,.8);';
+      document.body.appendChild(i);
+    }
+    const ax = Math.abs(dx), ay = Math.abs(dy);
+    if (ax > ay && ax > this.st) {
+      if (dx > 0) { i.textContent = '⏮️'; i.style.left = '20px'; i.style.right = 'auto'; }
+      else { i.textContent = '⏭️'; i.style.right = '20px'; i.style.left = 'auto'; }
+      i.style.opacity = Math.min(ax / 150, 1);
+    }
+  }
   rsf() { const i = document.getElementById('swipeIndicator'); if (i) i.remove(); }
-  esa(d) { if (d === 'left') { next(); notif('⏭️ Próxima', 800); showControls(); } else if (d === 'right') { prev(); notif('⏮️ Anterior', 800); showControls(); } else if (d === 'up') { mostrarCardCentral(); } }
+  esa(d) {
+    if (d === 'left') { next(); notif('⏭️ Próxima', 800); showControls(); }
+    else if (d === 'right') { prev(); notif('⏮️ Anterior', 800); showControls(); }
+  }
 }
 new TouchManager();
 
-async function carregarMidiasPadrao() { try { dom.mediaContainer.innerHTML = ''; let ms = []; try { const r = await fetch(MIDIAS_PADRAO_URL + '?v=' + CONFIG.APP_VERSION + '&t=' + now()); if (!r.ok) throw new Error('HTTP ' + r.status); const d = await r.json(); if (Array.isArray(d)) ms = d; else if (d.medias) ms = d.medias; else if (d.midias) ms = d.midias; } catch(e) {} if (!ms.length) ms = MIDIAS_FALLBACK; ms = ms.filter(m => m && (m.tipo === 'video' || m.tipo === 'imagem') && m.src); if (!ms.length) ms = MIDIAS_FALLBACK; const els = []; ms.forEach((m, i) => { let e; const u = m.src + (m.src.includes('?') ? '&' : '?') + 'v=' + CONFIG.APP_VERSION; if (m.tipo === 'video') { e = document.createElement('video'); e.src = u; e.muted = true; e.playsInline = true; e.setAttribute('playsinline', ''); e.setAttribute('webkit-playsinline', ''); e.preload = 'auto'; e.load(); e.onerror = () => { e.style.display = 'none'; }; } else { e = document.createElement('img'); e.src = u; e.loading = 'eager'; e.alt = 'VDB'; e.onerror = () => { e.style.display = 'none'; }; } e.className = i === 0 ? 'active' : 'inactive'; e.style.zIndex = i === 0 ? '3' : '2'; dom.mediaContainer.appendChild(e); els.push(e); }); dom.mediaContainer.addEventListener('click', function(ev) { const t = ev.target.closest('video, img'); if (t && t.src && t.src.toLowerCase().includes('clik')) abrirWhatsAppCompra(); }); if (!els.length) return; let idx = 0; function proximaMidia() { if (!els.length) return; const at = els[idx]; const pi = (idx + 1) % els.length; const px = els[pi]; if (!px) return; if (px.tagName === 'VIDEO') { try { px.currentTime = 0; } catch(e) {} px.play().catch(() => {}); } at.classList.remove('active'); at.classList.add('inactive'); px.classList.add('active'); px.classList.remove('inactive'); if (at.tagName === 'VIDEO') setTimeout(() => { try { at.pause(); at.currentTime = 0; } catch(e) {} }, 800); idx = pi; } if (els[0] && els[0].tagName === 'VIDEO') els[0].play().catch(() => {}); function agendar() { const at = els[idx]; if (at.tagName === 'VIDEO') { const onEnd = () => { at.removeEventListener('ended', onEnd); clearTimeout(at._ft); proximaMidia(); agendar(); }; at.addEventListener('ended', onEnd, { once: true }); at._ft = setTimeout(() => { at.removeEventListener('ended', onEnd); proximaMidia(); agendar(); }, 90000); } else setTimeout(() => { proximaMidia(); agendar(); }, 5000); } agendar(); } catch(e) { console.error('Erro mídias:', e); dom.mediaContainer.innerHTML = ''; } }
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 36: MÍDIAS DE FUNDO (refatorada — uma só função)
+   ════════════════════════════════════════════════════════════════ */
+async function carregarMidias(url, options = {}) {
+  const { fallback = MIDIAS_FALLBACK, duracaoImagem = 5000 } = options;
+  try {
+    dom.mediaContainer.innerHTML = '';
+    let ms = [];
+    try {
+      const r = await fetch(url + '?v=' + CONFIG.APP_VERSION + '&t=' + now());
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      if (Array.isArray(d)) ms = d;
+      else if (d.medias) ms = d.medias;
+      else if (d.midias) ms = d.midias;
+    } catch(e) {}
+    if (!ms.length) ms = fallback;
+    ms = ms.filter(m => m && (m.tipo === 'video' || m.tipo === 'imagem') && m.src);
+    if (!ms.length) ms = fallback;
 
-async function carregarMidiasTV() { try { dom.mediaContainer.innerHTML = ''; let ms = []; try { const r = await fetch(MIDIAS_TV_URL + '?v=' + CONFIG.APP_VERSION + '&t=' + now()); if (!r.ok) throw new Error('HTTP ' + r.status); const d = await r.json(); if (Array.isArray(d)) ms = d; else if (d.medias) ms = d.medias; else if (d.midias) ms = d.midias; } catch(e) {} if (!ms.length) ms = [{ tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/tvbob.mp4' }, { tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/amytv.mp4' }]; ms = ms.filter(m => m && (m.tipo === 'video' || m.tipo === 'imagem') && m.src); if (!ms.length) ms = [{ tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/tvbob.mp4' }, { tipo:'video', src:'https://raw.githack.com/vaideboaroger-dotcom/vdb/main/amytv.mp4' }]; const els = []; ms.forEach((m, i) => { let e; const u = m.src + (m.src.includes('?') ? '&' : '?') + 'v=' + CONFIG.APP_VERSION; if (m.tipo === 'video') { e = document.createElement('video'); e.src = u; e.muted = true; e.playsInline = true; e.setAttribute('playsinline', ''); e.preload = 'auto'; e.load(); e.onerror = () => { e.style.display = 'none'; }; } else { e = document.createElement('img'); e.src = u; e.loading = 'eager'; e.alt = 'VDB'; e.onerror = () => { e.style.display = 'none'; }; } e.className = i === 0 ? 'active' : 'inactive'; e.style.zIndex = i === 0 ? '3' : '2'; dom.mediaContainer.appendChild(e); els.push(e); }); if (!els.length) return; let idx = 0; function proximaTV() { const at = els[idx]; const pi = (idx + 1) % els.length; const px = els[pi]; if (!px) return; if (px.tagName === 'VIDEO') { try { px.currentTime = 0; } catch(e) {} px.play().catch(() => {}); } at.classList.remove('active'); at.classList.add('inactive'); px.classList.add('active'); px.classList.remove('inactive'); if (at.tagName === 'VIDEO') setTimeout(() => { try { at.pause(); at.currentTime = 0; } catch(e) {} }, 800); idx = pi; } if (els[0] && els[0].tagName === 'VIDEO') els[0].play().catch(() => {}); function agendar() { const at = els[idx]; if (at.tagName === 'VIDEO') { const onEnd = () => { at.removeEventListener('ended', onEnd); clearTimeout(at._ft); proximaTV(); agendar(); }; at.addEventListener('ended', onEnd, { once: true }); at._ft = setTimeout(() => { at.removeEventListener('ended', onEnd); proximaTV(); agendar(); }, 90000); } else setTimeout(() => { proximaTV(); agendar(); }, 8000); } agendar(); dom.infoScroll.classList.add('hidden'); mostrarBotaoSairTV(); } catch(e) { console.error('Erro TV:', e); dom.mediaContainer.innerHTML = ''; } }
+    const els = [];
+    ms.forEach((m, i) => {
+      let e;
+      const u = m.src + (m.src.includes('?') ? '&' : '?') + 'v=' + CONFIG.APP_VERSION;
+      if (m.tipo === 'video') {
+        e = document.createElement('video');
+        e.src = u; e.muted = true; e.playsInline = true;
+        e.setAttribute('playsinline', '');
+        e.setAttribute('webkit-playsinline', '');
+        e.preload = 'auto';
+        e.load();
+        e.onerror = () => { e.style.display = 'none'; };
+      } else {
+        e = document.createElement('img');
+        e.src = u; e.loading = 'eager'; e.alt = 'VDB';
+        e.onerror = () => { e.style.display = 'none'; };
+      }
+      e.className = i === 0 ? 'active' : 'inactive';
+      e.style.zIndex = i === 0 ? '3' : '2';
+      dom.mediaContainer.appendChild(e);
+      els.push(e);
+    });
 
-function mostrarBotaoSairTV() { esconderBotaoSairTV(); const b = document.createElement('button'); b.id = 'btnSairModoTV'; b.innerHTML = '✕'; b.onclick = () => toggleModoTV(); document.body.appendChild(b); }
-function esconderBotaoSairTV() { const b = document.getElementById('btnSairModoTV'); if (b) b.remove(); }
-async function toggleModoTV() { appState.modoTV = !appState.modoTV; if (appState.modoTV) { notif('📺 Modo TV ATIVADO', 2000); await carregarMidiasTV(); } else { notif('📺 Modo TV DESATIVADO', 2000); dom.infoScroll.classList.remove('hidden'); esconderBotaoSairTV(); await carregarMidiasPadrao(); } appState._save(); }
+    // Clique em mídia com "clik" no nome → WhatsApp
+    dom.mediaContainer.addEventListener('click', function(ev) {
+      const t = ev.target.closest('video, img');
+      if (t && t.src && t.src.toLowerCase().includes('clik')) abrirWhatsAppCompra();
+    });
 
+    if (!els.length) return;
+    let idx = 0;
+    function proximaMidia() {
+      if (!els.length) return;
+      const at = els[idx];
+      const pi = (idx + 1) % els.length;
+      const px = els[pi];
+      if (!px) return;
+      if (px.tagName === 'VIDEO') {
+        try { px.currentTime = 0; } catch(e) {}
+        px.play().catch(() => {});
+      }
+      at.classList.remove('active'); at.classList.add('inactive');
+      px.classList.add('active'); px.classList.remove('inactive');
+      if (at.tagName === 'VIDEO') setTimeout(() => { try { at.pause(); at.currentTime = 0; } catch(e) {} }, 800);
+      idx = pi;
+    }
+    if (els[0] && els[0].tagName === 'VIDEO') els[0].play().catch(() => {});
+
+    function agendar() {
+      const at = els[idx];
+      if (at.tagName === 'VIDEO') {
+        const onEnd = () => { at.removeEventListener('ended', onEnd); clearTimeout(at._ft); proximaMidia(); agendar(); };
+        at.addEventListener('ended', onEnd, { once: true });
+        at._ft = setTimeout(() => { at.removeEventListener('ended', onEnd); proximaMidia(); agendar(); }, 90000);
+      } else setTimeout(() => { proximaMidia(); agendar(); }, duracaoImagem);
+    }
+    agendar();
+  } catch(e) {
+    console.error('Erro mídias:', e);
+    dom.mediaContainer.innerHTML = '';
+  }
+}
+
+async function carregarMidiasPadrao() { await carregarMidias(MIDIAS_PADRAO_URL, { fallback: MIDIAS_FALLBACK, duracaoImagem: 5000 }); }
+async function carregarMidiasTV() {
+  await carregarMidias(MIDIAS_TV_URL, { fallback: MIDIAS_TV_FALLBACK, duracaoImagem: 8000 });
+  dom.infoScroll.classList.add('hidden');
+  mostrarBotaoSairTV();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 37: MODO TV
+   ════════════════════════════════════════════════════════════════ */
+function mostrarBotaoSairTV() {
+  esconderBotaoSairTV();
+  const b = document.createElement('button');
+  b.id = 'btnSairModoTV';
+  b.innerHTML = '✕';
+  b.onclick = () => toggleModoTV();
+  document.body.appendChild(b);
+}
+function esconderBotaoSairTV() {
+  const b = document.getElementById('btnSairModoTV');
+  if (b) b.remove();
+}
+async function toggleModoTV() {
+  vibrar(20);
+  appState.modoTV = !appState.modoTV;
+  if (appState.modoTV) {
+    notif('📺 Modo TV ATIVADO', 2000);
+    await carregarMidiasTV();
+  } else {
+    notif('📺 Modo TV DESATIVADO', 2000);
+    dom.infoScroll.classList.remove('hidden');
+    esconderBotaoSairTV();
+    await carregarMidiasPadrao();
+  }
+  appState._save();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 38: INSTALAÇÃO PWA
+   ════════════════════════════════════════════════════════════════ */
 const btnInstalarFixo = $('btnInstalarFixo');
 const instrucoesInstalar = $('instrucoesInstalar');
 let deferredInstallPrompt = null;
+
 function ehMobile() { return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent); }
 function jaEstaInstalado() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
-function mostrarBotaoInstalar() { if (!btnInstalarFixo) return; if (!ehMobile() || jaEstaInstalado()) { btnInstalarFixo.style.display = 'none'; return; } const b = dom.blockOverlay.classList.contains('active') && dom.blockOverlay.style.display !== 'none'; if (b) { btnInstalarFixo.style.display = 'none'; return; } btnInstalarFixo.style.display = 'flex'; }
-window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstallPrompt = e; setTimeout(mostrarBotaoInstalar, 500); });
-window.addEventListener('appinstalled', () => { btnInstalarFixo.style.display = 'none'; notif('🎉 App instalado!', 3000); });
-if (btnInstalarFixo) { btnInstalarFixo.onclick = async () => { if (deferredInstallPrompt) { deferredInstallPrompt.prompt(); const r = await deferredInstallPrompt.userChoice; if (r.outcome === 'accepted') notif('✅ Instalando...', 2500); deferredInstallPrompt = null; return; } if (instrucoesInstalar) instrucoesInstalar.classList.add('active'); }; }
+function mostrarBotaoInstalar() {
+  if (!btnInstalarFixo) return;
+  if (!ehMobile() || jaEstaInstalado()) { btnInstalarFixo.style.display = 'none'; return; }
+  const b = dom.blockOverlay.classList.contains('active') && dom.blockOverlay.style.display !== 'none';
+  if (b) { btnInstalarFixo.style.display = 'none'; return; }
+  btnInstalarFixo.style.display = 'flex';
+}
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  setTimeout(mostrarBotaoInstalar, 500);
+});
+window.addEventListener('appinstalled', () => {
+  btnInstalarFixo.style.display = 'none';
+  notif('🎉 App instalado!', 3000);
+});
+if (btnInstalarFixo) {
+  btnInstalarFixo.onclick = async () => {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      const r = await deferredInstallPrompt.userChoice;
+      if (r.outcome === 'accepted') notif('✅ Instalando...', 2500);
+      deferredInstallPrompt = null;
+      return;
+    }
+    if (instrucoesInstalar) instrucoesInstalar.classList.add('active');
+  };
+}
 const fecharInst = document.getElementById('fecharInstrucoesBtn');
 if (fecharInst) fecharInst.onclick = () => instrucoesInstalar.classList.remove('active');
-if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js', { scope: './' }).then(r => console.log('✅ SW:', r.scope)).catch(e => console.warn('⚠️ SW falhou:', e)); }); }
-
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .then(r => console.log('✅ SW:', r.scope))
+      .catch(e => console.warn('⚠️ SW falhou:', e));
+  });
+}/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 39: INICIALIZAÇÃO PRINCIPAL
+   ════════════════════════════════════════════════════════════════ */
 async function iniciar() {
   try {
-    try { const vSalva = localStorage.getItem('vdb_versao_limpeza'); if (vSalva !== CONFIG.APP_VERSION) { for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i); if (k && k.startsWith('cache_') && !k.includes(CONFIG.APP_VERSION)) localStorage.removeItem(k); } localStorage.setItem('vdb_versao_limpeza', CONFIG.APP_VERSION); } } catch(e) {}
+    // Limpa cache de versões antigas
+    try {
+      const vSalva = localStorage.getItem('vdb_versao_limpeza');
+      if (vSalva !== CONFIG.APP_VERSION) {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('cache_') && !k.includes(CONFIG.APP_VERSION)) localStorage.removeItem(k);
+        }
+        localStorage.setItem('vdb_versao_limpeza', CONFIG.APP_VERSION);
+      }
+    } catch(e) {}
+
     appState.favorites = appState.getFavorites();
     updateFavBadge();
     updateProgress(10);
+
     if (dom.infoDispositivo) dom.infoDispositivo.textContent = '🆔 ' + appState.fingerprint;
+
+    // Prepara letreiro
     dom.scrollText.textContent = CONFIG.LETREIRO;
     dom.scrollText.style.animation = 'none';
-    dom.scrollText.offsetHeight;
+    void dom.scrollText.offsetHeight;
     dom.scrollText.style.animation = 'scrollText ' + CONFIG.LETREIRO_DURACAO + 's linear infinite';
+
+    // Carrega mídias de fundo
     await carregarMidiasPadrao();
     updateProgress(30);
-    if (localStorage.getItem('vdb_desbloqueado') === 'true' || localStorage.getItem('vdb_senha_permanente') === 'true') { appState.desbloqueado = true; dom.blockOverlay.classList.remove('active'); dom.blockOverlay.style.display = 'none'; dom.timerLib.innerHTML = '<i class="fas fa-lock-open"></i> Lib'; dom.timerLib.className = 'timer-lib lib'; updateProgress(60); setTimeout(ativarPlayer, 1000); }
-    else if (localStorage.getItem('vdb_bloqueado_permanente') === 'true') { dom.blockOverlay.classList.add('active'); dom.blockOverlay.style.display = 'flex'; }
-    else { if (calcularTempoRestante() > 0) { dom.blockOverlay.style.display = 'none'; updateProgress(60); setTimeout(ativarPlayer, 500); } else { dom.blockOverlay.classList.add('active'); dom.blockOverlay.style.display = 'flex'; } }
+
+    // Verifica estado de bloqueio
+    if (localStorage.getItem('vdb_desbloqueado') === 'true' || localStorage.getItem('vdb_senha_permanente') === 'true') {
+      appState.desbloqueado = true;
+      dom.blockOverlay.classList.remove('active');
+      dom.blockOverlay.style.display = 'none';
+      dom.timerLib.innerHTML = '<i class="fas fa-lock-open"></i> Lib';
+      dom.timerLib.className = 'timer-lib lib';
+      updateProgress(60);
+      setTimeout(ativarPlayer, 1000);
+    } else if (localStorage.getItem('vdb_bloqueado_permanente') === 'true') {
+      dom.blockOverlay.classList.add('active');
+      dom.blockOverlay.style.display = 'flex';
+    } else {
+      if (calcularTempoRestante() > 0) {
+        dom.blockOverlay.style.display = 'none';
+        updateProgress(60);
+        setTimeout(ativarPlayer, 500);
+      } else {
+        dom.blockOverlay.classList.add('active');
+        dom.blockOverlay.style.display = 'flex';
+      }
+    }
     updateProgress(70);
+
+    // Carrega primeiro gênero
     let pronto = false;
-    for (const g of GENRE_ORDEM) { try { const m = await cacheManager.get(g, GENRE_URLS[g]); if (m && m.length) { appState.musicas = m; appState.modoAtual = g; appState.playlistAtual = shuffle(m); if (dom.cardGeneroAtual) dom.cardGeneroAtual.textContent = g; aplicarTema(g); const mm = appState.playlistAtual[0]; if (mm) { atualizarLetreiro(mm); updateHeart(mm.id); } pronto = true; break; } } catch(e) {} }
-    if (!pronto) { appState.musicas = [{ id:'f1', title:'Música Exemplo', artist:'Artista', src:'', genero:'BÔNUS' }, { id:'f2', title:'Outra Música', artist:'Artista 2', src:'', genero:'BÔNUS' }]; appState.playlistAtual = shuffle(appState.musicas); if (dom.cardGeneroAtual) dom.cardGeneroAtual.textContent = 'BÔNUS'; }
+    for (const g of GENRE_ORDEM) {
+      try {
+        const m = await cacheManager.get(g, GENRE_URLS[g]);
+        if (m && m.length) {
+          appState.musicas = m;
+          appState.modoAtual = g;
+          appState.playlistAtual = shuffle(m);
+          aplicarTema(g);
+          const mm = appState.playlistAtual[0];
+          if (mm) { atualizarLetreiro(mm); updateHeart(mm.id); }
+          pronto = true;
+          break;
+        }
+      } catch(e) {}
+    }
+    if (!pronto) {
+      appState.musicas = [
+        { id:'f1', title:'Música Exemplo', artist:'Artista', src:'', genero:'BÔNUS' },
+        { id:'f2', title:'Outra Música', artist:'Artista 2', src:'', genero:'BÔNUS' }
+      ];
+      appState.playlistAtual = shuffle(appState.musicas);
+    }
+
     renderizarGeneros();
     updateProgress(90);
-    setTimeout(() => { dom.loadingScreen.style.display = 'none'; dom.playerContainer.classList.add('visible'); updateProgress(100); mostrarBotaoInstalar(); setTimeout(() => { mostrarBannerSaudacao(); setTimeout(mostrarCardCentral, 4000); }, 300); }, 1500);
+
+    // ⚡ SEM DELAY ARTIFICIAL: mostra assim que pronto
+    dom.loadingScreen.style.display = 'none';
+    dom.playerContainer.classList.add('visible');
+    updateProgress(100);
+    mostrarBotaoInstalar();
+
+    // Banner de saudação só 1x por dia
+    setTimeout(mostrarBannerSaudacao, 300);
+
     updateTimerDisplay();
     forcarTelaCheia();
     if (appState.desbloqueado) setTimeout(ativarPlayer, 1500);
 
+    // ═══════════════════════════════════════════════════════════
+    // EVENT LISTENERS
+    // ═══════════════════════════════════════════════════════════
+
+    // Player
     dom.playBtn.onclick = togglePlay;
     dom.prevBtn.onclick = prev;
     dom.nextBtn.onclick = next;
     dom.shuffleBtn.onclick = toggleShuffle;
-    dom.progressBar.onclick = e => { if (dom.audio.duration) { const r = e.currentTarget.getBoundingClientRect(); dom.audio.currentTime = ((e.clientX - r.left) / r.width) * dom.audio.duration; } };
-    dom.heartBtn.onclick = () => { if (!appState.playlistAtual.length) return; const m = appState.playlistAtual[appState.indiceAtual % appState.playlistAtual.length] || appState.playlistAtual[0]; if (m) toggleFav(m); };
+    dom.progressBar.onclick = e => {
+      if (dom.audio.duration) {
+        const r = e.currentTarget.getBoundingClientRect();
+        dom.audio.currentTime = ((e.clientX - r.left) / r.width) * dom.audio.duration;
+      }
+    };
+    dom.heartBtn.onclick = () => {
+      vibrar(15);
+      if (!appState.playlistAtual.length) return;
+      const m = appState.playlistAtual[appState.indiceAtual % appState.playlistAtual.length] || appState.playlistAtual[0];
+      if (m) toggleFav(m);
+    };
 
-    // FAV no topo
+    // Botão FAV no topo
     if (dom.btnFavTopo) {
       dom.btnFavTopo.onclick = () => {
+        vibrar(10);
         renderizarFavoritosModal();
         dom.favModal.classList.add('open');
       };
     }
 
-    // Card central - botão GÊNERO
-    if (dom.cardBtnGenero) {
-      dom.cardBtnGenero.onclick = () => {
-        esconderCardCentral();
-        dom.genresModal.classList.add('open');
-      };
-    }
+    // Menu lateral (3 pontinhos)
+    dom.menuButton.onclick = e => {
+      e.stopPropagation();
+      vibrar(10);
+      dom.menuPopup.classList.toggle('open');
+    };
+    dom.closeMenuBtn.onclick = () => dom.menuPopup.classList.remove('open');
 
-    // Card central - botão RÁDIO
-    if (dom.cardBtnRadio) {
-      dom.cardBtnRadio.onclick = () => {
-        esconderCardCentral();
-        ativarModoRadio();
-      };
-    }
-
+    // Gêneros
     dom.choiceGenres.onclick = () => { dom.choiceMenu.classList.remove('open'); dom.genresModal.classList.add('open'); };
-    dom.choiceFavorites.onclick = () => { dom.choiceMenu.classList.remove('open'); renderizarFavoritosModal(); dom.favModal.classList.add('open'); };
-    dom.choiceClose.onclick = () => dom.choiceMenu.classList.remove('open');
     dom.closeGenresBtn.onclick = () => dom.genresModal.classList.remove('open');
+
+    // Favoritos
+    dom.choiceFavorites.onclick = () => {
+      dom.choiceMenu.classList.remove('open');
+      renderizarFavoritosModal();
+      dom.favModal.classList.add('open');
+    };
     dom.closeFavBtn.onclick = () => dom.favModal.classList.remove('open');
-    document.querySelectorAll('.sheet-close').forEach(b => { b.onclick = () => { const t = b.dataset.close; if (t) $(t).classList.remove('open'); }; });
+    dom.choiceClose.onclick = () => dom.choiceMenu.classList.remove('open');
+
+    // Bottom sheets
+    document.querySelectorAll('.sheet-close').forEach(b => {
+      b.onclick = () => {
+        const t = b.dataset.close;
+        if (t) $(t).classList.remove('open');
+      };
+    });
     dom.queueMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); renderizarFila(); dom.queueSheet.classList.add('open'); };
     dom.recentMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); renderizarRecentes(); dom.recentSheet.classList.add('open'); };
     dom.speedMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); dom.speedSheet.classList.add('open'); };
     dom.sleepMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); dom.sleepSheet.classList.add('open'); };
-    if (dom.toggleVozBtn) { vozAtivada = localStorage.getItem('vdb_voz_ativa') !== 'false'; atualizarBotaoVoz(); dom.toggleVozBtn.onclick = () => { vozAtivada = !vozAtivada; localStorage.setItem('vdb_voz_ativa', vozAtivada); atualizarBotaoVoz(); if (vozAtivada) { notif('🔊 Voz LIGADA', 1500); falarTexto('Voz ativada'); } else { window.speechSynthesis.cancel(); notif('🔇 Voz DESLIGADA', 1500); } dom.menuPopup.classList.remove('open'); }; function atualizarBotaoVoz() { if (vozAtivada) dom.toggleVozBtn.innerHTML = '<i class="fas fa-volume-high"></i>Desligar Voz'; else dom.toggleVozBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>Ligar Voz'; } }
+
+    // Voz on/off
+    if (dom.toggleVozBtn) {
+      vozAtivada = localStorage.getItem('vdb_voz_ativa') !== 'false';
+      atualizarBotaoVoz();
+      dom.toggleVozBtn.onclick = () => {
+        vozAtivada = !vozAtivada;
+        localStorage.setItem('vdb_voz_ativa', vozAtivada);
+        atualizarBotaoVoz();
+        if (vozAtivada) {
+          notif('🔊 Voz LIGADA', 1500);
+          falarTexto('Voz ativada');
+        } else {
+          window.speechSynthesis.cancel();
+          notif('🔇 Voz DESLIGADA', 1500);
+        }
+        dom.menuPopup.classList.remove('open');
+      };
+      function atualizarBotaoVoz() {
+        if (vozAtivada) dom.toggleVozBtn.innerHTML = '<i class="fas fa-volume-high"></i>Desligar Voz';
+        else dom.toggleVozBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>Ligar Voz';
+      }
+    }
+
+    // Recarregar / atualizar
     dom.hardReloadBtn.onclick = () => { dom.menuPopup.classList.remove('open'); forcarRecarregarTudo(); };
     dom.magicUpdateMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); atualizarAppMagico(); };
     dom.reloadPlaylistBtn.onclick = () => { dom.menuPopup.classList.remove('open'); location.reload(); };
-    dom.forceUpdateBtn.onclick = async () => { dom.menuPopup.classList.remove('open'); notif('🔄 Atualizando...', 1500); if (appState.modoTV) await carregarMidiasTV(); else await carregarMidiasPadrao(); notif('✅ Mídias atualizadas!', 2000); };
-    document.querySelectorAll('.speed-btn').forEach(b => { b.onclick = () => { document.querySelectorAll('.speed-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); dom.audio.playbackRate = parseFloat(b.dataset.speed); notif('⚡ ' + b.dataset.speed + 'x', 1500); }; });
-    document.querySelectorAll('.sheet-option[data-sleep]').forEach(b => { b.onclick = () => { const min = parseInt(b.dataset.sleep); clearTimeout(appState.sleepTimer); if (min > 0) { appState.sleepTimer = setTimeout(() => { dom.audio.pause(); appState.isPlaying = false; dom.playBtn.innerHTML = '<i class="fas fa-play"></i>'; notif('💤 Rádio desligada!', 2000); }, min * 60000); notif('⏰ Sleep: ' + min + ' min', 2000); } else notif('🚫 Cancelado', 1500); dom.sleepSheet.classList.remove('open'); }; });
-    dom.fabMain.onclick = () => { dom.fabSub.classList.toggle('open'); dom.fabMain.innerHTML = dom.fabSub.classList.contains('open') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-plus"></i>'; };
+    dom.forceUpdateBtn.onclick = async () => {
+      dom.menuPopup.classList.remove('open');
+      notif('🔄 Atualizando...', 1500);
+      if (appState.modoTV) await carregarMidiasTV();
+      else await carregarMidiasPadrao();
+      notif('✅ Mídias atualizadas!', 2000);
+    };
+
+    // Velocidade
+    document.querySelectorAll('.speed-btn').forEach(b => {
+      b.onclick = () => {
+        vibrar(10);
+        document.querySelectorAll('.speed-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        dom.audio.playbackRate = parseFloat(b.dataset.speed);
+        notif('⚡ ' + b.dataset.speed + 'x', 1500);
+      };
+    });
+
+    // Sleep timer
+    document.querySelectorAll('.sheet-option[data-sleep]').forEach(b => {
+      b.onclick = () => {
+        vibrar(10);
+        const min = parseInt(b.dataset.sleep);
+        clearTimeout(appState.sleepTimer);
+        if (min > 0) {
+          appState.sleepTimer = setTimeout(() => {
+            dom.audio.pause();
+            appState.isPlaying = false;
+            dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+            notif('💤 Rádio desligada!', 2000);
+          }, min * 60000);
+          notif('⏰ Sleep: ' + min + ' min', 2000);
+        } else notif('🚫 Cancelado', 1500);
+        dom.sleepSheet.classList.remove('open');
+      };
+    });
+
+    // FAB
+    dom.fabMain.onclick = () => {
+      vibrar(10);
+      dom.fabSub.classList.toggle('open');
+      dom.fabMain.innerHTML = dom.fabSub.classList.contains('open') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-plus"></i>';
+    };
     function fecharFab() { dom.fabSub.classList.remove('open'); dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>'; }
-    dom.fabGeneros.onclick = () => { esconderCardCentral(); dom.genresModal.classList.add('open'); fecharFab(); };
+    dom.fabGeneros.onclick = () => { dom.genresModal.classList.add('open'); fecharFab(); };
     dom.fabRadio.onclick = () => { ativarModoRadio(); fecharFab(); };
     dom.fabModoTV.onclick = () => { toggleModoTV(); fecharFab(); };
     dom.fabCadastro.onclick = () => { abrirCadastro(); fecharFab(); };
     dom.fabFeedback.onclick = () => { dom.feedbackModal.classList.add('open'); fecharFab(); };
     dom.fabYoutube.onclick = () => { window.open('https://sites.google.com/view/rogersjc/in%C3%ADcio'); fecharFab(); };
-    dom.fabShare.onclick = () => { navigator.clipboard.writeText(location.href).then(() => notif('📋 Link copiado!', 1500)); fecharFab(); };
+    dom.fabShare.onclick = () => {
+      navigator.clipboard.writeText(location.href).then(() => notif('📋 Link copiado!', 1500));
+      fecharFab();
+    };
     dom.fabQrCode.onclick = () => { gerarQrCode(); fecharFab(); };
-    dom.menuButton.onclick = e => { e.stopPropagation(); dom.menuPopup.classList.toggle('open'); };
-    dom.closeMenuBtn.onclick = () => dom.menuPopup.classList.remove('open');
+
+    // Menu superior
     dom.fullscreenMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); forcarTelaCheia(); };
     dom.liberarAgoraBtn.onclick = () => { dom.menuPopup.classList.remove('open'); liberarAgora(); };
     dom.cadastroMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); abrirCadastro(); };
+
+    // QR Code
     dom.qrCloseBtn.onclick = () => dom.qrCodeModal.classList.remove('active');
     dom.qrCodeModal.onclick = e => { if (e.target === dom.qrCodeModal) dom.qrCodeModal.classList.remove('active'); };
-    document.querySelectorAll('.star').forEach(s => { s.onclick = () => { const r = parseInt(s.dataset.rating); document.querySelectorAll('.star').forEach((x, i) => x.className = i < r ? 'fas fa-star star active' : 'far fa-star star'); }; });
-    dom.sendFeedbackBtn.onclick = () => { const s = document.querySelectorAll('.star.active').length; const t = dom.feedbackText.value; window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + encodeURIComponent('⭐ ' + '★'.repeat(s) + ' ' + t)); dom.feedbackModal.classList.remove('open'); };
+
+    // Feedback
+    document.querySelectorAll('.star').forEach(s => {
+      s.onclick = () => {
+        vibrar(10);
+        const r = parseInt(s.dataset.rating);
+        document.querySelectorAll('.star').forEach((x, i) => {
+          x.className = i < r ? 'fas fa-star star active' : 'far fa-star star';
+        });
+      };
+    });
+    dom.sendFeedbackBtn.onclick = () => {
+      const s = document.querySelectorAll('.star.active').length;
+      const t = dom.feedbackText.value;
+      window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + encodeURIComponent('⭐ ' + '★'.repeat(s) + ' ' + t));
+      dom.feedbackModal.classList.remove('open');
+    };
     dom.closeFeedbackBtn.onclick = () => dom.feedbackModal.classList.remove('open');
+
+    // Senha / Admin
     dom.senhaInput.onkeydown = e => { if (e.key === 'Enter') handleLiberar(); };
     dom.btnLiberar.onclick = handleLiberar;
-    dom.logoMacaco.addEventListener('click', e => { e.stopPropagation(); const t = now(); clickTimestamps = clickTimestamps.filter(x => t - x < 3000); clickTimestamps.push(t); if (clickTimestamps.length >= 8) { clickTimestamps = []; abrirAdmin(); } });
-    dom.adminGerarBtn.onclick = () => { const f = dom.adminFingerprintInput.value.trim(); if (!f || f.length < 10) { notif('⚠️ Cole o fingerprint!', 2000); dom.adminFingerprintInput.focus(); return; } const s = gerarSenhaDispositivo(f); dom.adminSenhaGerada.value = s; appState.addSenhaHistorico(s, 'dispositivo'); atualizarTotalSenhas(); carregarHistorico(); dom.adminFingerprintInput.value = ''; notif('✅ Senha gerada!', 2000); };
-    dom.adminGerarUniversalBtn.onclick = () => { const s = gerarSenhaUniversal(); dom.adminSenhaGerada.value = s; appState.addSenhaHistorico(s, 'universal'); atualizarTotalSenhas(); carregarHistorico(); notif('✅ Universal gerada!', 2000); };
+    setupLongPressAdmin(); // ⚡ long press em vez de 8 cliques
+
+    dom.adminGerarBtn.onclick = () => {
+      const f = dom.adminFingerprintInput.value.trim();
+      if (!f || f.length < 10) { notif('⚠️ Cole o fingerprint!', 2000); dom.adminFingerprintInput.focus(); return; }
+      const s = gerarSenhaDispositivo(f);
+      dom.adminSenhaGerada.value = s;
+      appState.addSenhaHistorico(s, 'dispositivo');
+      atualizarTotalSenhas();
+      carregarHistorico();
+      dom.adminFingerprintInput.value = '';
+      notif('✅ Senha gerada!', 2000);
+    };
+    dom.adminGerarUniversalBtn.onclick = () => {
+      const s = gerarSenhaUniversal();
+      dom.adminSenhaGerada.value = s;
+      appState.addSenhaHistorico(s, 'universal');
+      atualizarTotalSenhas();
+      carregarHistorico();
+      notif('✅ Universal gerada!', 2000);
+    };
     dom.adminLimparBtn.onclick = () => { dom.adminSenhaGerada.value = ''; notif('🗑️ Limpo!', 1000); };
     dom.btnCopiarSenha.onclick = () => copiarTexto(dom.adminSenhaGerada.value, '📋 Senha copiada!');
     dom.adminCopiarSenhaBtn.onclick = () => copiarTexto(dom.adminSenhaGerada.value, '📋 Senha copiada!');
     dom.btnCopiarFingerprint.onclick = () => copiarTexto(appState.fingerprint, '📋 ID copiado!');
-    dom.adminEnviarWhatsBtn.onclick = () => { const s = dom.adminSenhaGerada.value; if (!s) { notif('⚠️ Gere uma senha!', 1500); return; } const m = '🔑 *VAI DE BOA! MUSIC*%0A%0ASua senha:%0A%0A`' + s + '`%0A%0A📱 Cole no app!'; window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + m, '_blank'); };
+    dom.adminEnviarWhatsBtn.onclick = () => {
+      const s = dom.adminSenhaGerada.value;
+      if (!s) { notif('⚠️ Gere uma senha!', 1500); return; }
+      const m = '🔑 *VAI DE BOA! MUSIC*%0A%0ASua senha:%0A%0A`' + s + '`%0A%0A📱 Cole no app!';
+      window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + m, '_blank');
+    };
     dom.adminCloseBtn.onclick = () => dom.adminPanel.classList.remove('open');
-    dom.audio.ontimeupdate = () => { if (dom.audio.duration) { dom.progressFill.style.width = (dom.audio.currentTime / dom.audio.duration * 100) + '%'; dom.currentTime.textContent = fmt(dom.audio.currentTime); dom.totalTime.textContent = fmt(dom.audio.duration); } };
+
+    // Áudio
+    dom.audio.ontimeupdate = () => {
+      if (dom.audio.duration) {
+        dom.progressFill.style.width = (dom.audio.currentTime / dom.audio.duration * 100) + '%';
+        dom.currentTime.textContent = fmt(dom.audio.currentTime);
+        dom.totalTime.textContent = fmt(dom.audio.duration);
+      }
+    };
     dom.audio.onended = () => { if (!appState.carregandoMusica) next(); };
     dom.audio.onerror = () => { if (!appState.carregandoMusica) setTimeout(next, 500); };
-    dom.infoScroll.addEventListener('click', function() { if (this.classList.contains('modo-pesquisa')) return; this.classList.add('modo-pesquisa'); dom.searchInputLetreiro.value = ''; dom.searchClearLetreiro.classList.remove('visible'); dom.searchInputLetreiro.focus(); });
-    dom.searchInputLetreiro.addEventListener('input', function() { if (this.value.trim().length > 0) dom.searchClearLetreiro.classList.add('visible'); else dom.searchClearLetreiro.classList.remove('visible'); });
-    dom.searchInputLetreiro.addEventListener('keydown', function(e) { if (e.key === 'Enter') { const t = this.value.trim(); aplicarBusca(t); this.blur(); dom.infoScroll.classList.remove('modo-pesquisa'); dom.searchClearLetreiro.classList.remove('visible'); } });
-    dom.searchClearLetreiro.addEventListener('click', function(e) { e.stopPropagation(); dom.searchInputLetreiro.value = ''; dom.searchClearLetreiro.classList.remove('visible'); appState.playlistAtual = shuffle(appState.musicas); appState.indiceAtual = 0; if (appState.isBackgroundActive) tocar(); dom.searchInputLetreiro.focus(); });
-    function aplicarBusca(t) { if (!t || t.length === 0) { appState.playlistAtual = shuffle(appState.musicas); appState.indiceAtual = 0; if (appState.isBackgroundActive) tocar(); return; } const f = appState.musicas.filter(m => m.title.toLowerCase().includes(t.toLowerCase()) || (m.artist && m.artist.toLowerCase().includes(t.toLowerCase()))); if (f.length) { appState.playlistAtual = shuffle(f); appState.indiceAtual = 0; if (appState.isBackgroundActive) tocar(); notif('🔍 ' + f.length + ' músicas encontradas', 2000); } else notif('🔍 Nenhuma encontrada', 1500); }
-    document.addEventListener('keydown', e => { if (e.target.tagName === 'INPUT') return; if (e.key === ' ') { e.preventDefault(); togglePlay(); } if (e.key === 'ArrowRight') next(); if (e.key === 'ArrowLeft') prev(); if (e.key === 's' || e.key === 'S') toggleShuffle(); });
 
-    // TAP NA TELA → MOSTRA CARD CENTRAL
-    document.addEventListener('click', e => {
-      if (e.target.closest('button') || e.target.closest('.genre-card') || e.target.closest('.fav-item-modal') || e.target.closest('#infoScroll') || e.target.closest('.top-bar') || e.target.closest('.menu-popup') || e.target.closest('.card-central') || e.target.closest('.bottom-controls') || e.target.closest('.bottom-sheet') || e.target.closest('.genres-modal') || e.target.closest('.fav-modal') || e.target.closest('.choice-menu')) return;
-      mostrarCardCentral();
-      showControls();
+    // Busca no letreiro
+    dom.infoScroll.addEventListener('click', function() {
+      if (this.classList.contains('modo-pesquisa')) return;
+      this.classList.add('modo-pesquisa');
+      dom.searchInputLetreiro.value = '';
+      dom.searchClearLetreiro.classList.remove('visible');
+      dom.searchInputLetreiro.focus();
+    });
+    dom.searchInputLetreiro.addEventListener('input', function() {
+      if (this.value.trim().length > 0) dom.searchClearLetreiro.classList.add('visible');
+      else dom.searchClearLetreiro.classList.remove('visible');
+    });
+    dom.searchInputLetreiro.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const t = this.value.trim();
+        aplicarBusca(t);
+        this.blur();
+        dom.infoScroll.classList.remove('modo-pesquisa');
+        dom.searchClearLetreiro.classList.remove('visible');
+      }
+    });
+    dom.searchClearLetreiro.addEventListener('click', function(e) {
+      e.stopPropagation();
+      dom.searchInputLetreiro.value = '';
+      dom.searchClearLetreiro.classList.remove('visible');
+      appState.playlistAtual = shuffle(appState.musicas);
+      appState.indiceAtual = 0;
+      if (appState.isBackgroundActive) tocar();
+      dom.searchInputLetreiro.focus();
+    });
+    function aplicarBusca(t) {
+      if (!t || t.length === 0) {
+        appState.playlistAtual = shuffle(appState.musicas);
+        appState.indiceAtual = 0;
+        if (appState.isBackgroundActive) tocar();
+        return;
+      }
+      const f = appState.musicas.filter(m =>
+        m.title.toLowerCase().includes(t.toLowerCase()) ||
+        (m.artist && m.artist.toLowerCase().includes(t.toLowerCase()))
+      );
+      if (f.length) {
+        appState.playlistAtual = shuffle(f);
+        appState.indiceAtual = 0;
+        if (appState.isBackgroundActive) tocar();
+        notif('🔍 ' + f.length + ' músicas encontradas', 2000);
+      } else notif('🔍 Nenhuma encontrada', 1500);
+    }
+
+    // Teclado
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 's' || e.key === 'S') toggleShuffle();
     });
 
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { if (!appState.desbloqueado) { const t = calcularTempoRestante(); appState.tempoRestante = t; updateTimerDisplay(); } if (appState.isPlaying && dom.audio && dom.audio.paused && dom.audio.src && !appState.carregandoMusica) { dom.audio.play().catch(() => {}); } if (appState.isBackgroundActive && dom.backgroundAudio.paused) { dom.backgroundAudio.src = getSilentAudioUrl(); dom.backgroundAudio.loop = true; dom.backgroundAudio.volume = .001; dom.backgroundAudio.play().catch(() => {}); } } });
-  } catch(e) { console.error('❌ Erro:', e); dom.loadingScreen.style.display = 'none'; dom.playerContainer.classList.add('visible'); notif('⚠️ Erro ao iniciar', 5000); }
+    // Fecha menus ao clicar fora
+    document.addEventListener('click', e => {
+      if (!dom.menuPopup.contains(e.target) && e.target !== dom.menuButton && !dom.menuButton.contains(e.target)) {
+        dom.menuPopup.classList.remove('open');
+      }
+    });
+
+    // Volta do background
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        if (!appState.desbloqueado) {
+          const t = calcularTempoRestante();
+          appState.tempoRestante = t;
+          updateTimerDisplay();
+        }
+        if (appState.isPlaying && dom.audio && dom.audio.paused && dom.audio.src && !appState.carregandoMusica) {
+          dom.audio.play().catch(() => {});
+        }
+        if (appState.isBackgroundActive && dom.backgroundAudio.paused) {
+          dom.backgroundAudio.src = getSilentAudioUrl();
+          dom.backgroundAudio.loop = true;
+          dom.backgroundAudio.volume = .001;
+          dom.backgroundAudio.play().catch(() => {});
+        }
+        // Verifica mudança de período do rádio ao voltar
+        verificarMudancaPeriodo();
+      }
+    });
+
+    // Antes de sair
+    window.addEventListener('beforeunload', () => {
+      appState._save();
+    });
+
+    // ⚡ Atualiza ponto do rádio no início
+    atualizarPontoRadio();
+
+  } catch(e) {
+    console.error('❌ Erro:', e);
+    dom.loadingScreen.style.display = 'none';
+    dom.playerContainer.classList.add('visible');
+    notif('⚠️ Erro ao iniciar', 5000);
+  }
 }
 
-async function forcarRecarregarTudo() { notif('🔄 Limpando tudo...', 2000); try { if (navigator.serviceWorker) { const r = await navigator.serviceWorker.getRegistrations(); await Promise.all(r.map(x => x.unregister())); } if ('caches' in window) { const n = await caches.keys(); await Promise.all(n.map(x => caches.delete(x))); } } catch(e) {} setTimeout(() => { window.location.href = window.location.pathname + '?hard=' + Date.now(); }, 1000); }
-async function atualizarAppMagico() { if (!confirm('🪄 Atualizar o app agora?')) return; notif('⏳ Atualizando...', 1500); try { if ('caches' in window) { const k = await caches.keys(); await Promise.all(k.map(x => caches.delete(x))); } if (navigator.serviceWorker) { const r = await navigator.serviceWorker.getRegistrations(); await Promise.all(r.map(x => x.unregister())); } } catch(e) {} setTimeout(() => { window.location.href = window.location.pathname + '?update=' + Date.now(); }, 800); }
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 40: RECARREGAR TUDO / ATUALIZAR APP
+   ════════════════════════════════════════════════════════════════ */
+async function forcarRecarregarTudo() {
+  notif('🔄 Limpando tudo...', 2000);
+  try {
+    if (navigator.serviceWorker) {
+      const r = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(r.map(x => x.unregister()));
+    }
+    if ('caches' in window) {
+      const n = await caches.keys();
+      await Promise.all(n.map(x => caches.delete(x)));
+    }
+  } catch(e) {}
+  setTimeout(() => {
+    window.location.href = window.location.pathname + '?hard=' + Date.now();
+  }, 1000);
+}
 
+async function atualizarAppMagico() {
+  if (!confirm('🪄 Atualizar o app agora?')) return;
+  notif('⏳ Atualizando...', 1500);
+  try {
+    if ('caches' in window) {
+      const k = await caches.keys();
+      await Promise.all(k.map(x => caches.delete(x)));
+    }
+    if (navigator.serviceWorker) {
+      const r = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(r.map(x => x.unregister()));
+    }
+  } catch(e) {}
+  setTimeout(() => {
+    window.location.href = window.location.pathname + '?update=' + Date.now();
+  }, 800);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   INICIA O APP
+   ════════════════════════════════════════════════════════════════ */
 iniciar();
 
 })();
