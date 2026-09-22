@@ -90,64 +90,107 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .media-container .inactive{opacity:0;z-index:2}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 5: TOP BAR — menu ESQUERDA / badge AO VIVO + timer DIREITA
+   SEÇÃO 5: TOP BAR — NOVO LAYOUT
+   [🐵] [GÊNERO ou 🔴 AO VIVO] .......... [🕐 TIMER] [⋯ MENU]
    ════════════════════════════════════════════════════════════════ */
-.top-bar{position:fixed;top:0;left:0;right:0;z-index:35;display:flex;align-items:center;justify-content:space-between;padding:6px 8px;padding-top:max(6px,env(safe-area-inset-top));background:linear-gradient(180deg,rgba(0,0,0,.9),transparent);height:52px;gap:6px}
-.top-left{display:flex;align-items:center;gap:6px;min-width:0;flex:1}
-
-.menu-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;width:34px;height:34px;border-radius:50%;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;position:relative}
-.menu-btn:active{background:rgba(168,85,247,.35);transform:scale(.92)}
-.menu-btn.radio-live::after{content:'';position:absolute;top:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:var(--live-red);animation:pulseLiveTop 1.1s infinite;box-shadow:0 0 14px var(--live-red);border:2px solid #000}
-@keyframes pulseLiveTop{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(1.35)}}
-
-.logo-macaco{height:34px;width:34px;border-radius:50%;object-fit:cover;border:2px solid rgba(168,85,247,.5);cursor:pointer;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.5)}
-.btn-fav-topo{background:linear-gradient(135deg,rgba(244,114,182,.25),rgba(168,85,247,.25));backdrop-filter:blur(14px);border:1px solid rgba(244,114,182,.5);border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;width:34px;height:34px;flex-shrink:0;transition:all .2s;position:relative}
-.btn-fav-topo:active{transform:scale(.94);background:linear-gradient(135deg,rgba(244,114,182,.4),rgba(168,85,247,.4))}
-.btn-fav-topo .fav-icon{font-size:1rem;color:var(--accent);line-height:1}
-.btn-fav-topo .fav-badge-topo{position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;border-radius:50%;padding:0 5px;font-size:.55rem;font-weight:900;min-width:16px;height:16px;text-align:center;line-height:16px;border:2px solid #000}
-
-.top-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
-
-/* NOVO: Badge AO VIVO ao lado do timer */
-.badge-ao-vivo{
-  display:none;
-  align-items:center;gap:4px;
-  background:linear-gradient(135deg,var(--live-red),#dc2626);
-  color:#fff;font-size:.6rem;font-weight:900;
-  padding:4px 9px;border-radius:20px;
-  letter-spacing:1px;
-  border:1px solid rgba(255,255,255,.3);
-  box-shadow:0 0 12px rgba(239,68,68,.6);
-  animation:pulseBadgeLive 1.4s ease-in-out infinite;
-  white-space:nowrap;
+.top-bar{
+  position:fixed;top:0;left:0;right:0;z-index:35;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 8px;padding-top:max(6px,env(safe-area-inset-top));
+  background:linear-gradient(180deg,rgba(0,0,0,.9),transparent);
+  height:52px;gap:8px;
 }
-.badge-ao-vivo.show{display:flex}
-.badge-ao-vivo::before{
-  content:'';width:6px;height:6px;border-radius:50%;
-  background:#fff;
+
+/* Lado esquerdo: logo + gênero/ao vivo */
+.top-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1;overflow:hidden}
+
+.logo-macaco{
+  height:36px;width:36px;border-radius:50%;object-fit:cover;
+  border:2px solid rgba(168,85,247,.6);
+  cursor:pointer;flex-shrink:0;
+  box-shadow:0 2px 10px rgba(0,0,0,.5);
+  transition:transform .2s;
+}
+.logo-macaco:active{transform:scale(.92)}
+
+/* Badge do gênero / ao vivo */
+.badge-genero{
+  font-family:'Rajdhani',sans-serif;
+  font-size:.72rem;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  padding:5px 12px;border-radius:20px;
+  background:rgba(168,85,247,.15);
+  border:1px solid rgba(168,85,247,.4);
+  color:var(--secondary);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:140px;
+  transition:all .3s;
+  display:flex;align-items:center;gap:5px;
+}
+/* Modo rádio — fica vermelho pulsante */
+.badge-genero.live{
+  background:rgba(239,68,68,.2);
+  border-color:rgba(239,68,68,.6);
+  color:#ff6b6b;
+  animation:pulseBadgeLive 1.4s ease-in-out infinite;
+}
+.badge-genero.live::before{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:#ef4444;
   animation:pulseDotLive 1.1s infinite;
+  flex-shrink:0;
 }
 @keyframes pulseBadgeLive{
-  0%,100%{box-shadow:0 0 12px rgba(239,68,68,.6)}
-  50%{box-shadow:0 0 20px rgba(239,68,68,1)}
+  0%,100%{box-shadow:0 0 8px rgba(239,68,68,.4)}
+  50%{box-shadow:0 0 18px rgba(239,68,68,.9)}
 }
 @keyframes pulseDotLive{
   0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.4;transform:scale(1.4)}
+  50%{opacity:.4;transform:scale(1.35)}
 }
 
-.timer-lib{font-size:.68rem;font-weight:700;color:var(--secondary);background:rgba(0,0,0,.6);padding:4px 8px;border-radius:20px;white-space:nowrap;border:1px solid rgba(34,211,238,.2);display:flex;align-items:center;gap:4px}
+/* Lado direito: timer + menu */
+.top-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+
+.timer-lib{
+  font-size:.68rem;font-weight:700;color:var(--secondary);
+  background:rgba(0,0,0,.6);padding:5px 10px;border-radius:20px;
+  white-space:nowrap;border:1px solid rgba(34,211,238,.25);
+  display:flex;align-items:center;gap:4px;
+}
 .timer-lib.lib{color:#00b894;border-color:rgba(0,184,148,.3)}
 .timer-lib i{font-size:.6rem}
+
+.menu-btn{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;width:36px;height:36px;border-radius:50%;
+  font-size:.9rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .2s;
+}
+.menu-btn:active{background:rgba(168,85,247,.35);transform:scale(.92)}
 
 /* ════════════════════════════════════════════════════════════════
    SEÇÃO 6: LETREIRO
    ════════════════════════════════════════════════════════════════ */
-.info-scroll{position:fixed;top:52px;left:0;right:0;z-index:30;padding:2px 10px;height:28px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;background:rgba(0,0,0,.25);backdrop-filter:blur(8px)}
+.info-scroll{
+  position:fixed;top:52px;left:0;right:0;z-index:30;
+  padding:2px 10px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;cursor:pointer;
+  background:rgba(0,0,0,.25);backdrop-filter:blur(8px);
+}
 .info-scroll.modo-pesquisa{height:36px;background:rgba(0,0,0,.5)}
 .info-scroll.hidden{opacity:0;pointer-events:none;height:0;padding:0}
 
-.letreiro{font-size:.72rem;font-weight:700;white-space:nowrap;animation:scrollText 60s linear infinite;background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6,#fbbf24);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.letreiro{
+  font-size:.72rem;font-weight:700;white-space:nowrap;
+  animation:scrollText 60s linear infinite;
+  background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6,#fbbf24);
+  background-size:300% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
 @keyframes scrollText{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
 
 .letreiro.live{
@@ -170,14 +213,14 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 #searchClearLetreiro.visible{display:block}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 7: CORAÇÃO CENTRAL / EQUALIZADOR
+   SEÇÃO 7: CORAÇÃO CENTRAL (escondido — vira FAB)
    ════════════════════════════════════════════════════════════════ */
-.fav-heart-center{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:15;pointer-events:none}
-.fav-heart{font-size:4rem;color:rgba(255,255,255,.5);cursor:pointer;display:inline-block;pointer-events:auto;transition:all .4s;filter:drop-shadow(0 0 15px rgba(0,0,0,.6))}
-.fav-heart.active{color:var(--accent);animation:heartBeat .9s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(244,114,182,.8))}
-@keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.fav-heart-center{display:none}
 
-.equalizer{position:fixed;bottom:calc(95px + var(--safe-bottom));left:12px;z-index:19;display:flex;gap:2px;align-items:flex-end;height:20px;pointer-events:none;opacity:.4}
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 8: EQUALIZADOR
+   ════════════════════════════════════════════════════════════════ */
+.equalizer{position:fixed;bottom:calc(105px + var(--safe-bottom));left:12px;z-index:19;display:flex;gap:2px;align-items:flex-end;height:20px;pointer-events:none;opacity:.4}
 .equalizer.on{opacity:1}
 .equalizer .bar{width:3px;background:linear-gradient(180deg,var(--theme-1),var(--theme-2));border-radius:2px}
 .equalizer .bar:nth-child(1){animation:eq1 .8s infinite}
@@ -193,50 +236,69 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .equalizer.paused .bar{animation-play-state:paused}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 8: CONTROLES INFERIORES — SEMPRE VISÍVEIS (NOVO)
+   SEÇÃO 9: CONTROLES INFERIORES (aparecem/somem)
    ════════════════════════════════════════════════════════════════ */
 .bottom-controls{
-  position:fixed;
-  bottom:0;left:0;right:0;
+  position:fixed;bottom:0;left:0;right:0;
   background:rgba(10,10,10,.95);
-  padding:8px 12px calc(12px + var(--safe-bottom));
+  padding:6px 12px calc(10px + var(--safe-bottom));
   z-index:20;
+  transform:translateY(100%);
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
   border-top:1px solid rgba(255,255,255,.04);
   backdrop-filter:blur(20px);
-  /* SEMPRE VISÍVEL — removido o transform */
 }
-.progress-time{display:flex;justify-content:space-between;font-size:.68rem;color:#888;font-weight:600}
-.progress-bar{height:5px;background:rgba(255,255,255,.1);cursor:pointer;border-radius:5px;position:relative;margin:6px 0}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--theme-1),var(--theme-2));width:0%;border-radius:5px;transition:width .2s linear}
-.buttons-row{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:8px}
-.ctrl-btn{background:rgba(255,255,255,.08);border:none;color:#fff;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.ctrl-btn:active{transform:scale(.9);background:rgba(168,85,247,.35)}
-.play-big{background:linear-gradient(135deg,var(--theme-1),var(--theme-2));width:56px;height:56px;font-size:1.3rem;box-shadow:0 4px 20px rgba(168,85,247,.5)}
-.shuffle-btn{background:rgba(255,255,255,.08);border:none;color:#fff;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1rem;transition:all .2s}
-.shuffle-btn:active{transform:scale(.9)}
-.shuffle-btn.active{background:linear-gradient(135deg,var(--theme-1),var(--theme-2));color:#fff;box-shadow:0 0 15px rgba(168,85,247,.6)}
+.bottom-controls.visible{transform:translateY(0)}
+.progress-time{display:flex;justify-content:space-between;font-size:.65rem;color:#888}
+.progress-bar{height:4px;background:rgba(255,255,255,.08);cursor:pointer;border-radius:4px;position:relative}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--theme-1),var(--theme-2));width:0%;border-radius:4px;transition:width .2s linear}
+.buttons-row{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:5px}
+.ctrl-btn{background:rgba(255,255,255,.05);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center}
+.play-big{background:linear-gradient(135deg,var(--theme-1),var(--theme-2));width:48px;height:48px;font-size:1.15rem}
+.shuffle-btn{background:rgba(255,255,255,.05);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer}
+.shuffle-btn.active{background:rgba(168,85,247,.2);color:var(--secondary)}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 9: FAB (botão flutuante)
+   SEÇÃO 10: FAB (botão flutuante) + FAVORITOS
    ════════════════════════════════════════════════════════════════ */
-.fab-container{position:fixed;bottom:calc(110px + var(--safe-bottom));right:12px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
-.fab-main{background:linear-gradient(135deg,#a855f7,#22d3ee,#a855f7);background-size:200% 200%;animation:fabSuave 6s ease infinite;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:1.15rem;border:none;box-shadow:0 4px 15px rgba(168,85,247,.4)}
+.fab-container{position:fixed;bottom:calc(85px + var(--safe-bottom));right:12px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.fab-main{
+  background:linear-gradient(135deg,#a855f7,#22d3ee,#a855f7);
+  background-size:200% 200%;animation:fabSuave 6s ease infinite;
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:#fff;font-size:1.15rem;border:none;
+  box-shadow:0 4px 15px rgba(168,85,247,.4);
+}
 @keyframes fabSuave{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
-.fab-sub{background:rgba(10,10,10,.95);backdrop-filter:blur(16px);border-radius:14px;padding:6px;display:none;flex-direction:column;gap:3px;border:1px solid rgba(255,255,255,.05)}
+.fab-sub{background:rgba(10,10,10,.95);backdrop-filter:blur(16px);border-radius:14px;padding:6px;display:none;flex-direction:column;gap:3px;border:1px solid rgba(255,255,255,.05);max-height:70vh;overflow-y:auto}
 .fab-sub.open{display:flex}
 .fab-sub-btn{background:transparent;border:none;color:#ccc;padding:8px 14px;border-radius:12px;font-size:.75rem;cursor:pointer;display:flex;align-items:center;gap:8px;min-height:36px;white-space:nowrap}
+.fab-sub-btn:active{background:rgba(168,85,247,.2)}
+.fab-sub-btn .badge-fav{
+  background:var(--accent);color:#fff;border-radius:50%;
+  padding:0 6px;font-size:.6rem;font-weight:900;
+  min-width:18px;height:18px;text-align:center;line-height:18px;margin-left:auto;
+}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 10: MENU POPUP
+   SEÇÃO 11: MENU POPUP
    ════════════════════════════════════════════════════════════════ */
-.menu-popup{position:fixed;top:52px;left:8px;background:rgba(15,15,20,.98);backdrop-filter:blur(24px);border-radius:18px;padding:8px;z-index:36;display:none;flex-direction:column;gap:2px;border:1px solid rgba(168,85,247,.2);min-width:220px;max-height:80vh;overflow-y:auto}
+.menu-popup{
+  position:fixed;top:52px;right:8px;
+  background:rgba(15,15,20,.98);backdrop-filter:blur(24px);
+  border-radius:18px;padding:8px;z-index:36;
+  display:none;flex-direction:column;gap:2px;
+  border:1px solid rgba(168,85,247,.2);
+  min-width:220px;max-height:80vh;overflow-y:auto;
+}
 .menu-popup.open{display:flex}
 .menu-popup button{background:transparent;border:none;color:#ddd;padding:10px 14px;border-radius:12px;font-size:.82rem;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;min-height:40px}
 .menu-popup button i{width:20px;text-align:center;color:var(--primary)}
 .menu-separator{height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,.3),transparent);margin:4px 8px}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 11: MODAIS
+   SEÇÃO 12: MODAIS (gêneros, favoritos, feedback)
    ════════════════════════════════════════════════════════════════ */
 .genres-modal{position:fixed;top:0;left:0;right:0;bottom:0;z-index:33;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);padding:60px 16px 20px;display:none;flex-direction:column}
 .genres-modal.open{display:flex}
@@ -248,9 +310,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .genre-card .genre-name{font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#f0f0f0}
 .close-genres{width:100%;padding:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:25px;color:#ccc;font-size:.75rem;cursor:pointer;font-weight:700;margin-top:10px;letter-spacing:3px;text-transform:uppercase}
 
-.fav-modal,.choice-menu{position:fixed;bottom:0;left:0;right:0;background:rgba(15,15,20,.98);backdrop-filter:blur(20px);border-radius:25px 25px 0 0;padding:14px 12px 18px;transform:translateY(100%);transition:transform .4s;max-height:70vh;overflow:hidden;border-top:1px solid rgba(255,255,255,.05);z-index:34}
-.fav-modal.open,.choice-menu.open{transform:translateY(0)}
-.fav-modal h3,.choice-menu h3{text-align:center;margin-bottom:10px;font-size:1.1rem;color:var(--accent)}
+.fav-modal{position:fixed;bottom:0;left:0;right:0;background:rgba(15,15,20,.98);backdrop-filter:blur(20px);border-radius:25px 25px 0 0;padding:14px 12px 18px;transform:translateY(100%);transition:transform .4s;max-height:70vh;overflow:hidden;border-top:1px solid rgba(255,255,255,.05);z-index:34}
+.fav-modal.open{transform:translateY(0)}
+.fav-modal h3{text-align:center;margin-bottom:10px;font-size:1.1rem;color:var(--accent)}
 .fav-list-modal{display:flex;flex-direction:column;overflow-y:auto;gap:5px;padding:4px 0;max-height:50vh}
 .fav-item-modal{min-height:40px;border-radius:14px;cursor:pointer;border:1px solid rgba(255,255,255,.05);padding:6px 12px;background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:space-between;color:#fff}
 .fav-item-modal .fav-info{flex:1;display:flex;flex-direction:column;overflow:hidden}
@@ -259,9 +321,6 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .fav-item-modal .remove-fav{background:transparent;border:none;color:var(--accent);font-size:1rem;cursor:pointer;padding:0 6px}
 .fav-empty-modal{color:#555;padding:20px;text-align:center;font-size:.85rem}
 .close-fav{width:100%;padding:10px;background:linear-gradient(135deg,var(--accent),var(--primary));border:none;border-radius:25px;color:#fff;font-size:.85rem;cursor:pointer;font-weight:700}
-.choice-menu .choice-btn{width:100%;padding:12px;border-radius:14px;cursor:pointer;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:space-between;color:#fff;font-weight:700;font-size:1rem;margin-bottom:6px}
-.choice-menu .choice-btn .badge{background:var(--accent);color:#fff;border-radius:50%;padding:0 7px;font-size:.7rem;font-weight:900;min-width:20px;text-align:center;line-height:20px}
-.choice-menu .choice-close{width:100%;padding:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.05);border-radius:25px;color:#666;font-size:.8rem;cursor:pointer;font-weight:600}
 
 .feedback-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,15,20,.98);backdrop-filter:blur(20px);border-radius:20px;padding:18px;z-index:5000;width:90%;max-width:360px;text-align:center;display:none;border:1px solid rgba(168,85,247,.2)}
 .feedback-modal.open{display:block}
@@ -274,13 +333,14 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 #closeFeedbackBtn{background:transparent;border:none;color:#555;padding:8px;cursor:pointer;font-size:.8rem}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 12: NOTIFICAÇÕES E OVERLAYS
+   SEÇÃO 13: NOTIFICAÇÕES / OVERLAYS / BLOQUEIO / ADMIN
    ════════════════════════════════════════════════════════════════ */
 .notification{position:fixed;top:90px;left:50%;transform:translateX(-50%);background:rgba(15,15,20,.85);color:var(--secondary);padding:6px 14px;border-radius:20px;font-size:.7rem;z-index:100003;opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid rgba(168,85,247,.2);font-weight:600;max-width:70vw;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .notification.show{opacity:1}
 
 #loadingOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center}
 #loadingOverlay.active{display:flex}
+
 #qrCodeModal{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(20px);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px}
 #qrCodeModal.active{display:flex}
 .qr-content{background:linear-gradient(145deg,#1a1a1a,#0a0a0a);border-radius:25px;padding:20px;max-width:360px;width:100%;text-align:center;border:1px solid rgba(168,85,247,.2)}
@@ -335,9 +395,12 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 #adminPanel .total{font-size:.5rem;color:#555;text-align:center;padding:4px}
 .btn-fechar{background:rgba(255,255,255,.03);border:none;padding:8px;border-radius:20px;color:#555;cursor:pointer;width:100%;font-size:.75rem;margin-top:4px}
 
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 14: BOTÕES FIXOS / PWA / BOTTOM SHEETS
+   ════════════════════════════════════════════════════════════════ */
 #btnSairModoTV{position:fixed;top:80px;right:12px;z-index:60;background:rgba(0,0,0,.7);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:50%;width:34px;height:34px;font-size:1.1rem;cursor:pointer}
 
-#btnInstalarFixo{position:fixed;bottom:calc(130px + var(--safe-bottom));right:16px;z-index:999999;background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff;border:none;border-radius:30px;padding:14px 22px;font-weight:800;font-size:.95rem;cursor:pointer;display:none;align-items:center;gap:8px}
+#btnInstalarFixo{position:fixed;bottom:calc(20px + var(--safe-bottom));right:16px;z-index:999999;background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff;border:none;border-radius:30px;padding:14px 22px;font-weight:800;font-size:.95rem;cursor:pointer;display:none;align-items:center;gap:8px}
 #btnInstalarFixo.mostrar{display:flex!important}
 #instrucoesInstalar{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:1000002;display:none;align-items:center;justify-content:center;padding:20px}
 #instrucoesInstalar.active{display:flex}
@@ -348,9 +411,6 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .instrucoes-box .passo .txt{color:#ccc;font-size:.8rem}
 .instrucoes-box .btn-fechar-inst{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;padding:12px;border-radius:20px;color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;width:100%;margin-top:10px}
 
-/* ════════════════════════════════════════════════════════════════
-   SEÇÃO 13: BOTTOM SHEETS
-   ════════════════════════════════════════════════════════════════ */
 .bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:rgba(15,15,20,.98);backdrop-filter:blur(20px);border-radius:25px 25px 0 0;padding:14px 12px 18px;transform:translateY(100%);transition:transform .4s;max-height:70vh;overflow:hidden;border-top:1px solid rgba(255,255,255,.05);z-index:34}
 .bottom-sheet.open{transform:translateY(0)}
 .bottom-sheet h3{text-align:center;margin-bottom:10px;font-size:1.1rem;color:var(--theme-2)}
@@ -367,12 +427,18 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .speed-btn{padding:6px 12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#ccc;font-size:.75rem;font-weight:700;cursor:pointer}
 .speed-btn.active{background:linear-gradient(135deg,var(--theme-1),var(--theme-2));color:#fff}
 
-@media(max-width:480px){.fav-heart{font-size:3.4rem}.play-big{width:52px;height:52px;font-size:1.2rem}.ctrl-btn,.shuffle-btn{width:42px;height:42px}}
+@media(max-width:480px){
+  .play-big{width:44px;height:44px}
+  .ctrl-btn,.shuffle-btn{width:36px;height:36px}
+  .badge-genero{max-width:110px;font-size:.65rem;padding:4px 10px}
+  .logo-macaco{height:34px;width:34px}
+  .menu-btn{width:34px;height:34px}
+}
 </style>
 </head>
 <body>
 
-<!-- LOADING SCREEN -->
+<!-- LOADING -->
 <div id="loadingScreen">
 <div class="loading-logo-wrapper"><img src="favicon30.png" alt="VDB" class="loading-logo"></div>
 <span class="loading-text">VAI DE BOA! MUSIC</span>
@@ -380,7 +446,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <div class="loading-progress-container"><div class="loading-progress-fill" id="loadingProgressFill"></div></div>
 </div>
 
-<!-- BANNER DE SAUDAÇÃO -->
+<!-- BANNER -->
 <div id="bannerSaudacao" class="banner-saudacao">
 <div class="banner-content">
 <div class="banner-emoji" id="bannerEmoji">☀️</div>
@@ -391,24 +457,20 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
-<!-- PLAYER CONTAINER -->
+<!-- PLAYER -->
 <div id="playerContainer">
 <div class="media-container" id="mediaContainer"></div>
 
-<!-- TOP BAR -->
+<!-- TOP BAR NOVO -->
 <div class="top-bar">
-<div class="top-left">
-  <button class="menu-btn" id="menuButton" aria-label="Menu"><i class="fas fa-ellipsis-v"></i></button>
-  <img src="favicon30.png" alt="VDB" class="logo-macaco" id="logoMacaco">
-  <button class="btn-fav-topo" id="btnFavTopo">
-    <span class="fav-icon">❤️</span>
-    <span class="fav-badge-topo" id="favBadgeTopo">0</span>
-  </button>
-</div>
-<div class="top-right">
-  <span class="badge-ao-vivo" id="badgeAoVivo">🔴 AO VIVO</span>
-  <span class="timer-lib" id="timerLib"><i class="fas fa-clock"></i> 24:00:00</span>
-</div>
+  <div class="top-left">
+    <img src="favicon30.png" alt="VDB" class="logo-macaco" id="logoMacaco">
+    <span class="badge-genero" id="badgeGenero">BÔNUS</span>
+  </div>
+  <div class="top-right">
+    <span class="timer-lib" id="timerLib"><i class="fas fa-clock"></i> 24:00:00</span>
+    <button class="menu-btn" id="menuButton" aria-label="Menu"><i class="fas fa-ellipsis-v"></i></button>
+  </div>
 </div>
 
 <!-- LETREIRO -->
@@ -420,10 +482,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
-<div class="fav-heart-center"><div class="fav-heart" id="heartBtn"><i class="far fa-heart"></i></div></div>
 <div class="equalizer on" id="equalizer"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
 
-<!-- CONTROLES INFERIORES — SEMPRE VISÍVEIS -->
+<!-- CONTROLES INFERIORES -->
 <div class="bottom-controls" id="bottomControls">
 <div class="progress-time"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
 <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
@@ -438,6 +499,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <!-- FAB -->
 <div class="fab-container">
 <div class="fab-sub" id="fabSub">
+<button class="fab-sub-btn" id="fabFavoritos"><i class="fas fa-heart" style="color:var(--accent)"></i>Favoritas <span class="badge-fav" id="fabBadgeFav">0</span></button>
 <button class="fab-sub-btn" id="fabGeneros"><i class="fas fa-guitar"></i>Gêneros</button>
 <button class="fab-sub-btn" id="fabRadio"><i class="fas fa-broadcast-tower"></i>Rádio VDB</button>
 <button class="fab-sub-btn" id="fabModoTV"><i class="fas fa-tv"></i>Modo TV</button>
@@ -450,7 +512,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <div class="fab-main" id="fabMain"><i class="fas fa-plus"></i></div>
 </div>
 
-<!-- MENU POPUP -->
+<!-- MENU -->
 <div class="menu-popup" id="menuPopup">
 <button id="closeMenuBtn"><i class="fas fa-times"></i>Fechar</button>
 <div class="menu-separator"></div>
@@ -505,7 +567,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button class="btn-fechar" id="adminCloseBtn">✕ Fechar Painel</button>
 </div>
 
-<!-- QR CODE -->
+<!-- QR -->
 <div id="qrCodeModal">
 <div class="qr-content">
 <div class="qr-titulo">📱 VAI DE BOA! MUSIC</div>
@@ -534,13 +596,6 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <h3>❤️ SUAS FAVORITAS</h3>
 <div class="fav-list-modal" id="favListModal"></div>
 <button class="close-fav" id="closeFavBtn">FECHAR</button>
-</div>
-
-<div class="choice-menu" id="choiceMenu">
-<h3>🎯 O QUE VOCÊ QUER?</h3>
-<button class="choice-btn" id="choiceGenres"><span><i class="fas fa-guitar"></i> GÊNEROS</span></button>
-<button class="choice-btn" id="choiceFavorites"><span><i class="fas fa-heart" style="color:var(--accent);"></i> FAVORITAS</span><span class="badge" id="choiceBadge">0</span></button>
-<button class="choice-close" id="choiceClose">✕ CANCELAR</button>
 </div>
 
 <div class="feedback-modal" id="feedbackModal">
@@ -591,14 +646,13 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button class="sheet-close" data-close="sleepSheet">✕ FECHAR</button></div>
 
 <!-- ═══════════════════════════════════════════════════════════════
-     JAVASCRIPT
-     ═══════════════════════════════════════════════════════════════ -->
-<script>
+     PARTE 2 (JAVASCRIPT) VEM AQUI
+     ═══════════════════════════════════════════════════════════════ --><script>
 (function(){
 'use strict';
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 14: CONFIGURAÇÕES
+   SEÇÃO 15: CONFIGURAÇÕES
    ════════════════════════════════════════════════════════════════ */
 const CONFIG = {
   WHATSAPP: '5512988461978',
@@ -607,7 +661,7 @@ const CONFIG = {
   SENHA_MESTRA: 'Patico1685@',
   LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 5 MIL MÚSICAS • VITALÍCIO R$39,00 🐵 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE • BREGA • MODA RAIZ • SAMBA • POP/MIX 🎶',
   LETREIRO_DURACAO: 60,
-  APP_VERSION: 'v12',
+  APP_VERSION: 'v13',
   BANNER_INTERVALO_HORAS: 24
 };
 
@@ -677,10 +731,10 @@ const MIDIAS_TV_FALLBACK = [
 ];
 
 const RADIO_CONFIG = {
-  madrugada: { nome: '🌙 VDB MADRUGADA', cor1: '#6366f1', cor2: '#8b5cf6', saudacao: 'Boa madrugada!', generos: ['MODÃO SERTANEJO', 'MODA RAIZ'] },
-  manha: { nome: '☀️ VDB MANHÃ', cor1: '#fbbf24', cor2: '#fb923c', saudacao: 'Bom dia!', generos: ['FORRÓ', 'SERTANEJO', 'PAGODE'] },
-  tarde: { nome: '🌤️ VDB TARDE', cor1: '#f59e0b', cor2: '#ef4444', saudacao: 'Boa tarde!', generos: ['POP/MIX', 'MPB', 'ROMÂNTICA'] },
-  noite: { nome: '🌆 VDB NOITE', cor1: '#a855f7', cor2: '#ec4899', saudacao: 'Boa noite!', generos: ['SERTANEJO', 'PAGODE', 'FORRÓ'] }
+  madrugada: { nome: 'VDB MADRUGADA', cor1: '#6366f1', cor2: '#8b5cf6', saudacao: 'Boa madrugada!', generos: ['MODÃO SERTANEJO', 'MODA RAIZ'] },
+  manha: { nome: 'VDB MANHÃ', cor1: '#fbbf24', cor2: '#fb923c', saudacao: 'Bom dia!', generos: ['FORRÓ', 'SERTANEJO', 'PAGODE'] },
+  tarde: { nome: 'VDB TARDE', cor1: '#f59e0b', cor2: '#ef4444', saudacao: 'Boa tarde!', generos: ['POP/MIX', 'MPB', 'ROMÂNTICA'] },
+  noite: { nome: 'VDB NOITE', cor1: '#a855f7', cor2: '#ec4899', saudacao: 'Boa noite!', generos: ['SERTANEJO', 'PAGODE', 'FORRÓ'] }
 };
 
 const BANNER_CONFIG = {
@@ -691,7 +745,7 @@ const BANNER_CONFIG = {
 };
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 15: HELPERS
+   SEÇÃO 16: HELPERS
    ════════════════════════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
 const now = () => Date.now();
@@ -746,7 +800,7 @@ function getPeriodoAtual() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 16: VOZ
+   SEÇÃO 17: VOZ
    ════════════════════════════════════════════════════════════════ */
 let vozJaTocou = false, vozIntervalo = null, vozAtivada = VOZ_CONFIG.ativada;
 
@@ -794,7 +848,7 @@ if ('speechSynthesis' in window) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 17: ESTADO
+   SEÇÃO 18: ESTADO
    ════════════════════════════════════════════════════════════════ */
 class AppState {
   constructor() {
@@ -883,7 +937,7 @@ class AppState {
 const appState = new AppState();
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 18: CACHE
+   SEÇÃO 19: CACHE
    ════════════════════════════════════════════════════════════════ */
 class CacheManager {
   constructor(maxBytes = 5 * 1024 * 1024) { this.maxBytes = maxBytes; this.prefix = 'cache_'; }
@@ -965,7 +1019,7 @@ async function buscarMusicaOffline(url) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 19: NOTIFICAÇÕES
+   SEÇÃO 20: NOTIFICAÇÕES
    ════════════════════════════════════════════════════════════════ */
 class Notifier {
   constructor() { this.queue = []; this.showing = false; this.el = $('notification'); }
@@ -988,7 +1042,7 @@ const notifier = new Notifier();
 const notif = (m, d = 2000, t = 'info') => notifier.show(m, d, t);
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 20: DOM
+   SEÇÃO 21: DOM
    ════════════════════════════════════════════════════════════════ */
 const dom = {
   loadingScreen: $('loadingScreen'), loadingProgressFill: $('loadingProgressFill'),
@@ -997,12 +1051,12 @@ const dom = {
   playBtn: $('playBtn'), progressFill: $('progressFill'), currentTime: $('currentTime'),
   totalTime: $('totalTime'), bottomControls: $('bottomControls'), shuffleBtn: $('shuffleBtn'),
   loadingOverlay: $('loadingOverlay'), menuPopup: $('menuPopup'), progressBar: $('progressBar'),
-  mediaContainer: $('mediaContainer'), heartBtn: $('heartBtn'),
+  mediaContainer: $('mediaContainer'),
   genresModal: $('genresModal'), genresGrid: $('genresGrid'), favModal: $('favModal'),
-  favListModal: $('favListModal'), choiceMenu: $('choiceMenu'), choiceGenres: $('choiceGenres'),
-  choiceFavorites: $('choiceFavorites'), choiceBadge: $('choiceBadge'), choiceClose: $('choiceClose'),
+  favListModal: $('favListModal'),
   feedbackModal: $('feedbackModal'), infoScroll: $('infoScroll'),
   menuButton: $('menuButton'),
+  badgeGenero: $('badgeGenero'),
   senhaInput: $('senhaInput'), btnLiberar: $('btnLiberar'), erroSenha: $('erroSenha'),
   infoDispositivo: $('infoDispositivo'), btnCopiarFingerprint: $('btnCopiarFingerprint'),
   adminPanel: $('adminPanel'), adminFingerprintInput: $('adminFingerprintInput'),
@@ -1011,6 +1065,7 @@ const dom = {
   adminEnviarWhatsBtn: $('adminEnviarWhatsBtn'), adminCopiarSenhaBtn: $('adminCopiarSenhaBtn'),
   btnCopiarSenha: $('btnCopiarSenha'), adminCloseBtn: $('adminCloseBtn'),
   totalSenhas: $('totalSenhas'), historicoSenhas: $('historicoSenhas'),
+  fabFavoritos: $('fabFavoritos'), fabBadgeFav: $('fabBadgeFav'),
   fabGeneros: $('fabGeneros'), fabRadio: $('fabRadio'), fabModoTV: $('fabModoTV'),
   fabCadastro: $('fabCadastro'), closeGenresBtn: $('closeGenresBtn'), fabFeedback: $('fabFeedback'),
   fabYoutube: $('fabYoutube'), fabShare: $('fabShare'), fabQrCode: $('fabQrCode'),
@@ -1027,12 +1082,11 @@ const dom = {
   equalizer: $('equalizer'), queueMenuBtn: $('queueMenuBtn'), recentMenuBtn: $('recentMenuBtn'),
   speedMenuBtn: $('speedMenuBtn'), queueSheet: $('queueSheet'), recentSheet: $('recentSheet'),
   speedSheet: $('speedSheet'), sleepSheet: $('sleepSheet'), queueList: $('queueList'),
-  recentList: $('recentList'), btnFavTopo: $('btnFavTopo'), favBadgeTopo: $('favBadgeTopo'),
-  badgeAoVivo: $('badgeAoVivo')
+  recentList: $('recentList')
 };
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 21: TIMER / BLOQUEIO
+   SEÇÃO 22: TIMER / BLOQUEIO
    ════════════════════════════════════════════════════════════════ */
 function updateProgress(p) { dom.loadingProgressFill.style.width = Math.min(p, 100) + '%'; }
 
@@ -1078,7 +1132,7 @@ function iniciarTimerCorrido() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 22: ÁUDIO
+   SEÇÃO 23: ÁUDIO
    ════════════════════════════════════════════════════════════════ */
 function fadeOutAudio(d = 400) {
   return new Promise(r => {
@@ -1112,10 +1166,21 @@ function getUrls(m) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 23: LETREIRO + BADGE AO VIVO + PONTO NO MENU
+   SEÇÃO 24: BADGE GÊNERO/AO VIVO + LETREIRO
    ════════════════════════════════════════════════════════════════ */
 function ehModoRadio() {
   return appState.modoAtual && appState.modoAtual.indexOf('VDB') > -1;
+}
+
+function atualizarBadgeGenero() {
+  if (!dom.badgeGenero) return;
+  if (ehModoRadio()) {
+    dom.badgeGenero.textContent = 'AO VIVO';
+    dom.badgeGenero.classList.add('live');
+  } else {
+    dom.badgeGenero.textContent = appState.modoAtual || 'BÔNUS';
+    dom.badgeGenero.classList.remove('live');
+  }
 }
 
 function atualizarLetreiro(m) {
@@ -1123,7 +1188,7 @@ function atualizarLetreiro(m) {
   if (radio) {
     dom.scrollText.classList.add('live');
     const texto = m
-      ? '🔴 AO VIVO • ' + sanitize(m.title) + ' — ' + sanitize(m.artist) + ' [' + m.genero + '] • ' + CONFIG.LETREIRO
+      ? '🔴 AO VIVO • ' + sanitize(m.title) + ' — ' + sanitize(m.artist) + ' • ' + CONFIG.LETREIRO
       : '🔴 AO VIVO • ' + CONFIG.LETREIRO;
     dom.scrollText.textContent = texto;
   } else {
@@ -1142,19 +1207,24 @@ function atualizarLetreiro(m) {
   dom.scrollText.style.animation = anim;
 }
 
-// NOVO: atualiza badge AO VIVO + ponto no menu
-function atualizarIndicadoresRadio() {
-  if (ehModoRadio()) {
-    if (dom.badgeAoVivo) dom.badgeAoVivo.classList.add('show');
-    if (dom.menuButton) dom.menuButton.classList.add('radio-live');
-  } else {
-    if (dom.badgeAoVivo) dom.badgeAoVivo.classList.remove('show');
-    if (dom.menuButton) dom.menuButton.classList.remove('radio-live');
-  }
+/* ════════════════════════════════════════════════════════════════
+   SEÇÃO 25: CONTROLES VISÍVEIS/SOMEM
+   ════════════════════════════════════════════════════════════════ */
+let hideControlsTimeout = null;
+function showControls() {
+  dom.bottomControls.classList.add('visible');
+  clearTimeout(hideControlsTimeout);
+  hideControlsTimeout = setTimeout(() => {
+    dom.bottomControls.classList.remove('visible');
+  }, 4000);
+}
+function hideControls() {
+  dom.bottomControls.classList.remove('visible');
+  clearTimeout(hideControlsTimeout);
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 24: TOCAR
+   SEÇÃO 26: TOCAR
    ════════════════════════════════════════════════════════════════ */
 function atualizarPlaylist() {
   if (!appState.playlistAtual.length) return null;
@@ -1168,14 +1238,13 @@ function atualizarPlaylist() {
 async function tocar() {
   if (!appState.isBackgroundActive || appState.carregandoMusica || !appState.musicas.length) return;
   appState.carregandoMusica = true;
-  dom.playBtn.classList.add('loading');
 
   if (!dom.audio.paused && dom.audio.src) await fadeOutAudio(400);
   const m = atualizarPlaylist();
-  if (!m) { appState.carregandoMusica = false; dom.playBtn.classList.remove('loading'); return; }
+  if (!m) { appState.carregandoMusica = false; return; }
 
   atualizarLetreiro(m);
-  atualizarIndicadoresRadio();
+  atualizarBadgeGenero();
   updateHeart(m.id);
   appState.addHistorico(m);
   aplicarTema(m.genero);
@@ -1239,17 +1308,14 @@ async function tocar() {
       await fadeInAudio(600);
       appState.isPlaying = true;
       dom.playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-      dom.playBtn.classList.remove('loading');
       if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       appState.carregandoMusica = false;
     } catch(e) {
       appState.carregandoMusica = false;
-      dom.playBtn.classList.remove('loading');
       setTimeout(next, 100);
     }
   } else {
     appState.carregandoMusica = false;
-    dom.playBtn.classList.remove('loading');
     setTimeout(next, 100);
   }
 }
@@ -1265,6 +1331,7 @@ function togglePlay() {
     dom.equalizer.classList.add('paused');
     if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
   }
+  showControls();
 }
 
 function next() {
@@ -1272,6 +1339,7 @@ function next() {
   if (appState.carregandoMusica || !appState.playlistAtual.length) return;
   appState.indiceAtual = (appState.indiceAtual + 1) % appState.playlistAtual.length;
   if (appState.isBackgroundActive) setTimeout(tocar, 100);
+  showControls();
 }
 
 function prev() {
@@ -1279,6 +1347,7 @@ function prev() {
   if (appState.carregandoMusica || !appState.playlistAtual.length) return;
   appState.indiceAtual = (appState.indiceAtual - 1 + appState.playlistAtual.length) % appState.playlistAtual.length;
   if (appState.isBackgroundActive) setTimeout(tocar, 100);
+  showControls();
 }
 
 function toggleShuffle() {
@@ -1287,10 +1356,11 @@ function toggleShuffle() {
   dom.shuffleBtn.classList.toggle('active', appState.shuffleMode);
   appState.playlistAtual = shuffle(appState.musicas);
   notif(appState.shuffleMode ? '🔀 Aleatório ON' : '➡️ Sequencial');
+  showControls();
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 25: KEEP-ALIVE
+   SEÇÃO 27: KEEP-ALIVE
    ════════════════════════════════════════════════════════════════ */
 function criarSilentAudio() {
   const sr = 44100, ns = sr * 5;
@@ -1364,16 +1434,13 @@ function forcarTelaCheia() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 26: FAVORITOS
+   SEÇÃO 28: FAVORITOS
    ════════════════════════════════════════════════════════════════ */
 function updateFavBadge() {
-  if (dom.favBadgeTopo) dom.favBadgeTopo.textContent = appState.favorites.length;
-  if (dom.choiceBadge) dom.choiceBadge.textContent = appState.favorites.length;
+  if (dom.fabBadgeFav) dom.fabBadgeFav.textContent = appState.favorites.length;
 }
 function updateHeart(id) {
-  const f = appState.favorites.some(x => x.id === id);
-  dom.heartBtn.className = f ? 'fav-heart active' : 'fav-heart';
-  dom.heartBtn.innerHTML = f ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>';
+  // coração não fica mais visível, só salva estado
 }
 function toggleFav(m) {
   vibrar(15);
@@ -1382,7 +1449,11 @@ function toggleFav(m) {
   if (i > -1) { appState.removeFavorite(m.id); notif('💔 Removido dos favoritos', 1500); }
   else { appState.addFavorite(m); notif('❤️ Adicionado aos favoritos', 1500); }
   updateFavBadge();
-  updateHeart(m.id);
+}
+function toggleFavAtual() {
+  if (!appState.playlistAtual.length) return;
+  const m = appState.playlistAtual[appState.indiceAtual % appState.playlistAtual.length] || appState.playlistAtual[0];
+  if (m) toggleFav(m);
 }
 function renderizarFavoritosModal() {
   dom.favListModal.innerHTML = '';
@@ -1411,7 +1482,7 @@ function tocarFavoritaEspecifica(id) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 27: GÊNEROS
+   SEÇÃO 29: GÊNEROS
    ════════════════════════════════════════════════════════════════ */
 function renderizarGeneros() {
   dom.genresGrid.innerHTML = '';
@@ -1447,19 +1518,20 @@ async function selecionarGenero(g) {
   aplicarTema(g);
   const mm = appState.playlistAtual[0];
   if (mm) { atualizarLetreiro(mm); updateHeart(mm.id); }
+  atualizarBadgeGenero();
   renderizarGeneros();
   showLoad(false);
   dom.genresModal.classList.remove('open');
   forcarTelaCheia();
-  atualizarIndicadoresRadio();
   if (appState.isBackgroundActive) setTimeout(tocar, 300);
   appState._save();
+  notif('🎵 ' + g, 1500);
 }
 
 function showLoad(s) { dom.loadingOverlay.classList.toggle('active', s); }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 28: MODO RÁDIO
+   SEÇÃO 30: MODO RÁDIO
    ════════════════════════════════════════════════════════════════ */
 async function ativarModoRadio() {
   vibrar(20);
@@ -1491,9 +1563,9 @@ async function ativarModoRadio() {
     document.documentElement.style.setProperty('--theme-2', config.cor2);
     const primeira = appState.playlistAtual[0];
     if (primeira) { atualizarLetreiro(primeira); updateHeart(primeira.id); }
+    atualizarBadgeGenero();
     showLoad(false);
     forcarTelaCheia();
-    atualizarIndicadoresRadio();
     if (appState.isBackgroundActive) setTimeout(tocar, 300);
     appState._save();
     notif('🔴 AO VIVO', 2000);
@@ -1501,7 +1573,7 @@ async function ativarModoRadio() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 29: BANNER DE SAUDAÇÃO (1x por dia)
+   SEÇÃO 31: BANNER
    ════════════════════════════════════════════════════════════════ */
 function mostrarBannerSaudacao(forcar = false) {
   const banner = document.getElementById('bannerSaudacao');
@@ -1547,7 +1619,7 @@ function verificarMudancaPeriodo() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 30: SENHAS (INTACTO)
+   SEÇÃO 32: SENHAS (INTACTO)
    ════════════════════════════════════════════════════════════════ */
 function gerarSenhaAleatoria() {
   const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -1632,25 +1704,34 @@ function liberarAgora() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 31: ADMIN (long press 2s no logo)
+   SEÇÃO 33: ADMIN — 8 CLIQUE NO LOGO
    ════════════════════════════════════════════════════════════════ */
-let longPressTimer = null;
-function setupLongPressAdmin() {
+let cliqueTimestamps = [];
+function setup8CliquesLogo() {
   const logo = dom.logoMacaco;
   if (!logo) return;
-  const iniciar = () => { longPressTimer = setTimeout(() => { vibrar(50); abrirAdmin(); }, 2000); };
-  const cancelar = () => { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } };
-  logo.addEventListener('touchstart', iniciar, { passive: true });
-  logo.addEventListener('touchend', cancelar, { passive: true });
-  logo.addEventListener('touchmove', cancelar, { passive: true });
-  logo.addEventListener('mousedown', iniciar);
-  logo.addEventListener('mouseup', cancelar);
-  logo.addEventListener('mouseleave', cancelar);
+  logo.addEventListener('click', e => {
+    e.stopPropagation();
+    const t = now();
+    cliqueTimestamps = cliqueTimestamps.filter(x => t - x < 3000);
+    cliqueTimestamps.push(t);
+    if (cliqueTimestamps.length >= 8) {
+      cliqueTimestamps = [];
+      vibrar(50);
+      abrirAdmin();
+    }
+  });
 }
 function abrirAdmin() {
   const l = JSON.parse(localStorage.getItem('vdb_admin_lock') || '{"tentativas":0,"bloqueado":false,"ate":0}');
-  if (l.bloqueado && now() < l.ate) { notif('🔒 Bloqueado! ' + Math.ceil((l.ate - now())/1000) + 's', 2500); return; }
-  if (l.bloqueado && now() >= l.ate) { l.bloqueado = false; l.tentativas = 0; localStorage.setItem('vdb_admin_lock', JSON.stringify(l)); }
+  if (l.bloqueado && now() < l.ate) {
+    notif('🔒 Bloqueado! ' + Math.ceil((l.ate - now())/1000) + 's', 2500);
+    return;
+  }
+  if (l.bloqueado && now() >= l.ate) {
+    l.bloqueado = false; l.tentativas = 0;
+    localStorage.setItem('vdb_admin_lock', JSON.stringify(l));
+  }
   const s = prompt('🔐 Digite a senha do painel admin:');
   if (s === null) return;
   if (s === CONFIG.SENHA_ADMIN) {
@@ -1687,7 +1768,7 @@ function carregarHistorico() {
 function atualizarTotalSenhas() { dom.totalSenhas.textContent = appState.getSenhasHistorico().length; }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 32: AUXILIARES
+   SEÇÃO 34: AUXILIARES
    ════════════════════════════════════════════════════════════════ */
 function abrirWhatsAppCompra() {
   const m = encodeURIComponent('Olá! Quero adquirir o VAI DE BOA! MUSIC VITALÍCIO por R$ 39,00');
@@ -1748,7 +1829,7 @@ function renderizarRecentes() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 33: TOUCH (swipe com throttle)
+   SEÇÃO 35: TOUCH (swipe)
    ════════════════════════════════════════════════════════════════ */
 class TouchManager {
   constructor() {
@@ -1764,7 +1845,12 @@ class TouchManager {
     document.addEventListener('touchend', this.hte.bind(this), { passive: true });
     document.addEventListener('touchcancel', this.htc.bind(this), { passive: true });
   }
-  hts(e) { const t = e.touches[0]; this.tsx = t.clientX; this.tsy = t.clientY; this.is = false; this.d = null; }
+  hts(e) {
+    const t = e.touches[0];
+    this.tsx = t.clientX; this.tsy = t.clientY;
+    this.is = false; this.d = null;
+    showControls();
+  }
   htm(e) {
     const agora = now();
     if (agora - this.lastMove < 50) return;
@@ -1777,36 +1863,21 @@ class TouchManager {
       this.is = true;
       if (Math.abs(dx) > Math.abs(dy)) this.d = dx > 0 ? 'right' : 'left';
       else this.d = dy > 0 ? 'down' : 'up';
-      this.ssf(dx, dy);
     }
   }
-  hte(e) { if (this.is && this.d) this.esa(this.d); this.rsf(); this.tsx = 0; this.tsy = 0; this.d = null; this.is = false; }
-  htc() { this.rsf(); this.tsx = 0; this.tsy = 0; this.d = null; this.is = false; }
-  ssf(dx, dy) {
-    let i = document.getElementById('swipeIndicator');
-    if (!i) {
-      i = document.createElement('div');
-      i.id = 'swipeIndicator';
-      i.style.cssText = 'position:fixed;top:50%;transform:translateY(-50%);font-size:3rem;color:rgba(168,85,247,.85);z-index:9999;pointer-events:none;transition:all .2s;text-shadow:0 0 30px rgba(0,0,0,.8);';
-      document.body.appendChild(i);
+  hte(e) {
+    if (this.is && this.d) {
+      if (this.d === 'left') { next(); notif('⏭️', 800); }
+      else if (this.d === 'right') { prev(); notif('⏮️', 800); }
     }
-    const ax = Math.abs(dx), ay = Math.abs(dy);
-    if (ax > ay && ax > this.st) {
-      if (dx > 0) { i.textContent = '⏮️'; i.style.left = '20px'; i.style.right = 'auto'; }
-      else { i.textContent = '⏭️'; i.style.right = '20px'; i.style.left = 'auto'; }
-      i.style.opacity = Math.min(ax / 150, 1);
-    }
+    this.tsx = 0; this.tsy = 0; this.d = null; this.is = false;
   }
-  rsf() { const i = document.getElementById('swipeIndicator'); if (i) i.remove(); }
-  esa(d) {
-    if (d === 'left') { next(); notif('⏭️ Próxima', 800); }
-    else if (d === 'right') { prev(); notif('⏮️ Anterior', 800); }
-  }
+  htc() { this.tsx = 0; this.tsy = 0; this.d = null; this.is = false; }
 }
 new TouchManager();
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 34: MÍDIAS (refatorada)
+   SEÇÃO 36: MÍDIAS
    ════════════════════════════════════════════════════════════════ */
 async function carregarMidias(url, options = {}) {
   const { fallback = MIDIAS_FALLBACK, duracaoImagem = 5000 } = options;
@@ -1887,7 +1958,7 @@ async function carregarMidiasTV() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 35: MODO TV
+   SEÇÃO 37: MODO TV
    ════════════════════════════════════════════════════════════════ */
 function mostrarBotaoSairTV() {
   esconderBotaoSairTV();
@@ -1914,7 +1985,7 @@ async function toggleModoTV() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 36: PWA
+   SEÇÃO 38: PWA
    ════════════════════════════════════════════════════════════════ */
 const btnInstalarFixo = $('btnInstalarFixo');
 const instrucoesInstalar = $('instrucoesInstalar');
@@ -1960,7 +2031,7 @@ if ('serviceWorker' in navigator) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 37: INICIALIZAÇÃO
+   SEÇÃO 39: INICIALIZAÇÃO
    ════════════════════════════════════════════════════════════════ */
 async function iniciar() {
   try {
@@ -2023,6 +2094,7 @@ async function iniciar() {
           aplicarTema(g);
           const mm = appState.playlistAtual[0];
           if (mm) { atualizarLetreiro(mm); updateHeart(mm.id); }
+          atualizarBadgeGenero();
           pronto = true;
           break;
         }
@@ -2034,6 +2106,7 @@ async function iniciar() {
         { id:'f2', title:'Outra Música', artist:'Artista 2', src:'', genero:'BÔNUS' }
       ];
       appState.playlistAtual = shuffle(appState.musicas);
+      atualizarBadgeGenero();
     }
 
     renderizarGeneros();
@@ -2048,10 +2121,9 @@ async function iniciar() {
 
     updateTimerDisplay();
     forcarTelaCheia();
-    atualizarIndicadoresRadio();
     if (appState.desbloqueado) setTimeout(ativarPlayer, 1500);
 
-    // EVENT LISTENERS
+    /* EVENT LISTENERS */
     dom.playBtn.onclick = togglePlay;
     dom.prevBtn.onclick = prev;
     dom.nextBtn.onclick = next;
@@ -2062,19 +2134,7 @@ async function iniciar() {
         dom.audio.currentTime = ((e.clientX - r.left) / r.width) * dom.audio.duration;
       }
     };
-    dom.heartBtn.onclick = () => {
-      vibrar(15);
-      if (!appState.playlistAtual.length) return;
-      const m = appState.playlistAtual[appState.indiceAtual % appState.playlistAtual.length] || appState.playlistAtual[0];
-      if (m) toggleFav(m);
-    };
-    if (dom.btnFavTopo) {
-      dom.btnFavTopo.onclick = () => {
-        vibrar(10);
-        renderizarFavoritosModal();
-        dom.favModal.classList.add('open');
-      };
-    }
+
     dom.menuButton.onclick = e => {
       e.stopPropagation();
       vibrar(10);
@@ -2082,15 +2142,8 @@ async function iniciar() {
     };
     dom.closeMenuBtn.onclick = () => dom.menuPopup.classList.remove('open');
 
-    dom.choiceGenres.onclick = () => { dom.choiceMenu.classList.remove('open'); dom.genresModal.classList.add('open'); };
     dom.closeGenresBtn.onclick = () => dom.genresModal.classList.remove('open');
-    dom.choiceFavorites.onclick = () => {
-      dom.choiceMenu.classList.remove('open');
-      renderizarFavoritosModal();
-      dom.favModal.classList.add('open');
-    };
     dom.closeFavBtn.onclick = () => dom.favModal.classList.remove('open');
-    dom.choiceClose.onclick = () => dom.choiceMenu.classList.remove('open');
 
     document.querySelectorAll('.sheet-close').forEach(b => {
       b.onclick = () => {
@@ -2155,12 +2208,26 @@ async function iniciar() {
         dom.sleepSheet.classList.remove('open');
       };
     });
+
     dom.fabMain.onclick = () => {
       vibrar(10);
       dom.fabSub.classList.toggle('open');
       dom.fabMain.innerHTML = dom.fabSub.classList.contains('open') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-plus"></i>';
     };
     function fecharFab() { dom.fabSub.classList.remove('open'); dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>'; }
+    dom.fabFavoritos.onclick = () => {
+      vibrar(10);
+      // Se tiver música tocando, pergunta: ver lista OU favoritar atual
+      if (appState.playlistAtual.length > 0 && appState.isPlaying) {
+        const escolha = confirm('❤️ FAVORITOS\n\nOK = Favoritar música atual\nCancelar = Ver lista de favoritas');
+        if (escolha) toggleFavAtual();
+        else { renderizarFavoritosModal(); dom.favModal.classList.add('open'); }
+      } else {
+        renderizarFavoritosModal();
+        dom.favModal.classList.add('open');
+      }
+      fecharFab();
+    };
     dom.fabGeneros.onclick = () => { dom.genresModal.classList.add('open'); fecharFab(); };
     dom.fabRadio.onclick = () => { ativarModoRadio(); fecharFab(); };
     dom.fabModoTV.onclick = () => { toggleModoTV(); fecharFab(); };
@@ -2198,7 +2265,7 @@ async function iniciar() {
 
     dom.senhaInput.onkeydown = e => { if (e.key === 'Enter') handleLiberar(); };
     dom.btnLiberar.onclick = handleLiberar;
-    setupLongPressAdmin();
+    setup8CliquesLogo();
 
     dom.adminGerarBtn.onclick = () => {
       const f = dom.adminFingerprintInput.value.trim();
@@ -2289,6 +2356,16 @@ async function iniciar() {
       } else notif('🔍 Nenhuma encontrada', 1500);
     }
 
+    // TAP NA TELA → mostra controles
+    document.addEventListener('click', e => {
+      if (e.target.closest('button') || e.target.closest('.genre-card') || e.target.closest('.fav-item-modal') || e.target.closest('#infoScroll') || e.target.closest('.menu-popup') || e.target.closest('.bottom-controls') || e.target.closest('.bottom-sheet') || e.target.closest('.genres-modal') || e.target.closest('.fav-modal') || e.target.closest('.fab-container') || e.target.closest('.top-bar')) return;
+      showControls();
+    });
+    document.addEventListener('touchstart', e => {
+      if (e.target.closest('button') || e.target.closest('#infoScroll') || e.target.closest('.menu-popup') || e.target.closest('.bottom-controls') || e.target.closest('.bottom-sheet') || e.target.closest('.genres-modal') || e.target.closest('.fav-modal') || e.target.closest('.fab-container')) return;
+      showControls();
+    }, { passive: true });
+
     document.addEventListener('keydown', e => {
       if (e.target.tagName === 'INPUT') return;
       if (e.key === ' ') { e.preventDefault(); togglePlay(); }
@@ -2336,7 +2413,7 @@ async function iniciar() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 38: RECARREGAR / ATUALIZAR
+   SEÇÃO 40: RECARREGAR / ATUALIZAR
    ════════════════════════════════════════════════════════════════ */
 async function forcarRecarregarTudo() {
   notif('🔄 Limpando tudo...', 2000);
