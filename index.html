@@ -90,7 +90,8 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .media-container .inactive{opacity:0;z-index:2}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 5: TOP BAR
+   SEÇÃO 5: TOP BAR — NOVO LAYOUT
+   [🐵] [GÊNERO ou 🔴 AO VIVO] .......... [🕐 TIMER] [⋯ MENU]
    ════════════════════════════════════════════════════════════════ */
 .top-bar{
   position:fixed;top:0;left:0;right:0;z-index:35;
@@ -99,31 +100,111 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
   background:linear-gradient(180deg,rgba(0,0,0,.9),transparent);
   height:52px;gap:8px;
 }
+
+/* Lado esquerdo: logo + gênero/ao vivo */
 .top-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1;overflow:hidden}
-.logo-macaco{height:36px;width:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(168,85,247,.6);cursor:pointer;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.5);transition:transform .2s}
+
+.logo-macaco{
+  height:36px;width:36px;border-radius:50%;object-fit:cover;
+  border:2px solid rgba(168,85,247,.6);
+  cursor:pointer;flex-shrink:0;
+  box-shadow:0 2px 10px rgba(0,0,0,.5);
+  transition:transform .2s;
+}
 .logo-macaco:active{transform:scale(.92)}
-.badge-genero{font-family:'Rajdhani',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:5px 12px;border-radius:20px;background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.4);color:var(--secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;transition:all .3s;display:flex;align-items:center;gap:5px}
-.badge-genero.live{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.6);color:#ff6b6b;animation:pulseBadgeLive 1.4s ease-in-out infinite}
-.badge-genero.live::before{content:'';width:7px;height:7px;border-radius:50%;background:#ef4444;animation:pulseDotLive 1.1s infinite;flex-shrink:0}
-@keyframes pulseBadgeLive{0%,100%{box-shadow:0 0 8px rgba(239,68,68,.4)}50%{box-shadow:0 0 18px rgba(239,68,68,.9)}}
-@keyframes pulseDotLive{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.35)}}
+
+/* Badge do gênero / ao vivo */
+.badge-genero{
+  font-family:'Rajdhani',sans-serif;
+  font-size:.72rem;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  padding:5px 12px;border-radius:20px;
+  background:rgba(168,85,247,.15);
+  border:1px solid rgba(168,85,247,.4);
+  color:var(--secondary);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:140px;
+  transition:all .3s;
+  display:flex;align-items:center;gap:5px;
+}
+/* Modo rádio — fica vermelho pulsante */
+.badge-genero.live{
+  background:rgba(239,68,68,.2);
+  border-color:rgba(239,68,68,.6);
+  color:#ff6b6b;
+  animation:pulseBadgeLive 1.4s ease-in-out infinite;
+}
+.badge-genero.live::before{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:#ef4444;
+  animation:pulseDotLive 1.1s infinite;
+  flex-shrink:0;
+}
+@keyframes pulseBadgeLive{
+  0%,100%{box-shadow:0 0 8px rgba(239,68,68,.4)}
+  50%{box-shadow:0 0 18px rgba(239,68,68,.9)}
+}
+@keyframes pulseDotLive{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.4;transform:scale(1.35)}
+}
+
+/* Lado direito: timer + menu */
 .top-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.timer-lib{font-size:.68rem;font-weight:700;color:var(--secondary);background:rgba(0,0,0,.6);padding:5px 10px;border-radius:20px;white-space:nowrap;border:1px solid rgba(34,211,238,.25);display:flex;align-items:center;gap:4px}
+
+.timer-lib{
+  font-size:.68rem;font-weight:700;color:var(--secondary);
+  background:rgba(0,0,0,.6);padding:5px 10px;border-radius:20px;
+  white-space:nowrap;border:1px solid rgba(34,211,238,.25);
+  display:flex;align-items:center;gap:4px;
+}
 .timer-lib.lib{color:#00b894;border-color:rgba(0,184,148,.3)}
 .timer-lib i{font-size:.6rem}
-.menu-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;width:36px;height:36px;border-radius:50%;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+
+.menu-btn{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;width:36px;height:36px;border-radius:50%;
+  font-size:.9rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .2s;
+}
 .menu-btn:active{background:rgba(168,85,247,.35);transform:scale(.92)}
 
 /* ════════════════════════════════════════════════════════════════
    SEÇÃO 6: LETREIRO
    ════════════════════════════════════════════════════════════════ */
-.info-scroll{position:fixed;top:52px;left:0;right:0;z-index:30;padding:2px 10px;height:28px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;background:rgba(0,0,0,.25);backdrop-filter:blur(8px)}
+.info-scroll{
+  position:fixed;top:52px;left:0;right:0;z-index:30;
+  padding:2px 10px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;cursor:pointer;
+  background:rgba(0,0,0,.25);backdrop-filter:blur(8px);
+}
 .info-scroll.modo-pesquisa{height:36px;background:rgba(0,0,0,.5)}
 .info-scroll.hidden{opacity:0;pointer-events:none;height:0;padding:0}
-.letreiro{font-size:.72rem;font-weight:700;white-space:nowrap;animation:scrollText 60s linear infinite;background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6,#fbbf24);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+.letreiro{
+  font-size:.72rem;font-weight:700;white-space:nowrap;
+  animation:scrollText 60s linear infinite;
+  background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6,#fbbf24);
+  background-size:300% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
 @keyframes scrollText{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
-.letreiro.live{background:linear-gradient(90deg,var(--live-red),var(--accent),var(--live-red));background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:scrollText 60s linear infinite,liveGlow 1.4s ease-in-out infinite;font-weight:900;letter-spacing:1.2px}
-@keyframes liveGlow{0%,100%{filter:drop-shadow(0 0 4px rgba(239,68,68,.5))}50%{filter:drop-shadow(0 0 14px rgba(239,68,68,1))}}
+
+.letreiro.live{
+  background:linear-gradient(90deg,var(--live-red),var(--accent),var(--live-red));
+  background-size:300% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:scrollText 60s linear infinite,liveGlow 1.4s ease-in-out infinite;
+  font-weight:900;letter-spacing:1.2px;
+}
+@keyframes liveGlow{
+  0%,100%{filter:drop-shadow(0 0 4px rgba(239,68,68,.5))}
+  50%{filter:drop-shadow(0 0 14px rgba(239,68,68,1))}
+}
+
 .search-input-container{display:none;width:100%;align-items:center;position:relative}
 .info-scroll.modo-pesquisa .search-input-container{display:flex}
 .info-scroll.modo-pesquisa .letreiro{display:none}
@@ -132,35 +213,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 #searchClearLetreiro.visible{display:block}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 7: CORAÇÃO CENTRAL — FAVORITAR MÚSICA ATUAL
+   SEÇÃO 7: CORAÇÃO CENTRAL (escondido — vira FAB)
    ════════════════════════════════════════════════════════════════ */
-.fav-heart-center{
-  position:fixed;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%) scale(.6);
-  width:88px;height:88px;
-  border-radius:50%;
-  background:rgba(0,0,0,.55);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  border:2px solid rgba(244,114,182,.5);
-  display:flex;align-items:center;justify-content:center;
-  z-index:45;
-  cursor:pointer;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .35s ease, transform .5s cubic-bezier(.34,1.56,.64,1), background .2s, border-color .3s, box-shadow .3s;
-  box-shadow:0 8px 32px rgba(0,0,0,.6), 0 0 25px rgba(244,114,182,.25);
-  -webkit-tap-highlight-color:transparent;
-}
-.fav-heart-center.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
-.fav-heart-center:active{transform:translate(-50%,-50%) scale(.82);background:rgba(244,114,182,.35)}
-.fav-heart-center i{font-size:2.6rem;color:#fff;transition:color .3s, transform .3s;text-shadow:0 0 20px rgba(244,114,182,.7);pointer-events:none}
-.fav-heart-center.active{border-color:#f472b6;background:rgba(244,114,182,.18);box-shadow:0 8px 32px rgba(0,0,0,.6), 0 0 50px rgba(244,114,182,.7)}
-.fav-heart-center.active i{color:#f472b6;text-shadow:0 0 25px rgba(244,114,182,1)}
-.fav-heart-center.pop i{animation:heartPop .55s cubic-bezier(.34,1.56,.64,1)}
-@keyframes heartPop{0%{transform:scale(1)}30%{transform:scale(1.5)}60%{transform:scale(.9)}100%{transform:scale(1)}}
-.fav-heart-center.hide-temp{opacity:0 !important;pointer-events:none !important}
+.fav-heart-center{display:none}
 
 /* ════════════════════════════════════════════════════════════════
    SEÇÃO 8: EQUALIZADOR
@@ -181,9 +236,18 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .equalizer.paused .bar{animation-play-state:paused}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 9: CONTROLES INFERIORES
+   SEÇÃO 9: CONTROLES INFERIORES (aparecem/somem)
    ════════════════════════════════════════════════════════════════ */
-.bottom-controls{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.95);padding:6px 12px calc(10px + var(--safe-bottom));z-index:20;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);border-top:1px solid rgba(255,255,255,.04);backdrop-filter:blur(20px)}
+.bottom-controls{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(10,10,10,.95);
+  padding:6px 12px calc(10px + var(--safe-bottom));
+  z-index:20;
+  transform:translateY(100%);
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  border-top:1px solid rgba(255,255,255,.04);
+  backdrop-filter:blur(20px);
+}
 .bottom-controls.visible{transform:translateY(0)}
 .progress-time{display:flex;justify-content:space-between;font-size:.65rem;color:#888}
 .progress-bar{height:4px;background:rgba(255,255,255,.08);cursor:pointer;border-radius:4px;position:relative}
@@ -195,28 +259,46 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .shuffle-btn.active{background:rgba(168,85,247,.2);color:var(--secondary)}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 10: FAB
+   SEÇÃO 10: FAB (botão flutuante) + FAVORITOS
    ════════════════════════════════════════════════════════════════ */
 .fab-container{position:fixed;bottom:calc(85px + var(--safe-bottom));right:12px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
-.fab-main{background:linear-gradient(135deg,#a855f7,#22d3ee,#a855f7);background-size:200% 200%;animation:fabSuave 6s ease infinite;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:1.15rem;border:none;box-shadow:0 4px 15px rgba(168,85,247,.4)}
+.fab-main{
+  background:linear-gradient(135deg,#a855f7,#22d3ee,#a855f7);
+  background-size:200% 200%;animation:fabSuave 6s ease infinite;
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:#fff;font-size:1.15rem;border:none;
+  box-shadow:0 4px 15px rgba(168,85,247,.4);
+}
 @keyframes fabSuave{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
 .fab-sub{background:rgba(10,10,10,.95);backdrop-filter:blur(16px);border-radius:14px;padding:6px;display:none;flex-direction:column;gap:3px;border:1px solid rgba(255,255,255,.05);max-height:70vh;overflow-y:auto}
 .fab-sub.open{display:flex}
 .fab-sub-btn{background:transparent;border:none;color:#ccc;padding:8px 14px;border-radius:12px;font-size:.75rem;cursor:pointer;display:flex;align-items:center;gap:8px;min-height:36px;white-space:nowrap}
 .fab-sub-btn:active{background:rgba(168,85,247,.2)}
-.fab-sub-btn .badge-fav{background:var(--accent);color:#fff;border-radius:50%;padding:0 6px;font-size:.6rem;font-weight:900;min-width:18px;height:18px;text-align:center;line-height:18px;margin-left:auto}
+.fab-sub-btn .badge-fav{
+  background:var(--accent);color:#fff;border-radius:50%;
+  padding:0 6px;font-size:.6rem;font-weight:900;
+  min-width:18px;height:18px;text-align:center;line-height:18px;margin-left:auto;
+}
 
 /* ════════════════════════════════════════════════════════════════
    SEÇÃO 11: MENU POPUP
    ════════════════════════════════════════════════════════════════ */
-.menu-popup{position:fixed;top:52px;right:8px;background:rgba(15,15,20,.98);backdrop-filter:blur(24px);border-radius:18px;padding:8px;z-index:36;display:none;flex-direction:column;gap:2px;border:1px solid rgba(168,85,247,.2);min-width:220px;max-height:80vh;overflow-y:auto}
+.menu-popup{
+  position:fixed;top:52px;right:8px;
+  background:rgba(15,15,20,.98);backdrop-filter:blur(24px);
+  border-radius:18px;padding:8px;z-index:36;
+  display:none;flex-direction:column;gap:2px;
+  border:1px solid rgba(168,85,247,.2);
+  min-width:220px;max-height:80vh;overflow-y:auto;
+}
 .menu-popup.open{display:flex}
 .menu-popup button{background:transparent;border:none;color:#ddd;padding:10px 14px;border-radius:12px;font-size:.82rem;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;min-height:40px}
 .menu-popup button i{width:20px;text-align:center;color:var(--primary)}
 .menu-separator{height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,.3),transparent);margin:4px 8px}
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 12: MODAIS
+   SEÇÃO 12: MODAIS (gêneros, favoritos, feedback)
    ════════════════════════════════════════════════════════════════ */
 .genres-modal{position:fixed;top:0;left:0;right:0;bottom:0;z-index:33;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);padding:60px 16px 20px;display:none;flex-direction:column}
 .genres-modal.open{display:flex}
@@ -227,6 +309,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .genre-card::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:45%;background:var(--c1,#22d3ee);border-radius:0 4px 4px 0}
 .genre-card .genre-name{font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#f0f0f0}
 .close-genres{width:100%;padding:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:25px;color:#ccc;font-size:.75rem;cursor:pointer;font-weight:700;margin-top:10px;letter-spacing:3px;text-transform:uppercase}
+
 .fav-modal{position:fixed;bottom:0;left:0;right:0;background:rgba(15,15,20,.98);backdrop-filter:blur(20px);border-radius:25px 25px 0 0;padding:14px 12px 18px;transform:translateY(100%);transition:transform .4s;max-height:70vh;overflow:hidden;border-top:1px solid rgba(255,255,255,.05);z-index:34}
 .fav-modal.open{transform:translateY(0)}
 .fav-modal h3{text-align:center;margin-bottom:10px;font-size:1.1rem;color:var(--accent)}
@@ -238,6 +321,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .fav-item-modal .remove-fav{background:transparent;border:none;color:var(--accent);font-size:1rem;cursor:pointer;padding:0 6px}
 .fav-empty-modal{color:#555;padding:20px;text-align:center;font-size:.85rem}
 .close-fav{width:100%;padding:10px;background:linear-gradient(135deg,var(--accent),var(--primary));border:none;border-radius:25px;color:#fff;font-size:.85rem;cursor:pointer;font-weight:700}
+
 .feedback-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,15,20,.98);backdrop-filter:blur(20px);border-radius:20px;padding:18px;z-index:5000;width:90%;max-width:360px;text-align:center;display:none;border:1px solid rgba(168,85,247,.2)}
 .feedback-modal.open{display:block}
 .feedback-modal h3{font-size:1.1rem;margin-bottom:8px;color:var(--secondary)}
@@ -253,8 +337,10 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
    ════════════════════════════════════════════════════════════════ */
 .notification{position:fixed;top:90px;left:50%;transform:translateX(-50%);background:rgba(15,15,20,.85);color:var(--secondary);padding:6px 14px;border-radius:20px;font-size:.7rem;z-index:100003;opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid rgba(168,85,247,.2);font-weight:600;max-width:70vw;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .notification.show{opacity:1}
+
 #loadingOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center}
 #loadingOverlay.active{display:flex}
+
 #qrCodeModal{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(20px);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px}
 #qrCodeModal.active{display:flex}
 .qr-content{background:linear-gradient(145deg,#1a1a1a,#0a0a0a);border-radius:25px;padding:20px;max-width:360px;width:100%;text-align:center;border:1px solid rgba(168,85,247,.2)}
@@ -266,6 +352,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .qr-content .qr-info{display:flex;justify-content:center;gap:14px;margin:8px 0}
 .qr-content .qr-info span{font-size:.65rem;color:#888}
 .qr-btn-close{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;padding:10px;border-radius:25px;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;width:100%;margin-top:6px}
+
 #blockOverlay{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:10000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
 #blockOverlay.active{display:flex}
 .block-content{max-width:420px;width:100%;padding:24px 20px}
@@ -281,6 +368,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .fingerprint-area{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);padding:8px 12px;border-radius:12px;margin-top:6px}
 .fp-text{color:#888;font-size:.6rem;word-break:break-all;font-family:'Courier New',monospace;flex:1;letter-spacing:1px;user-select:text}
 .btn-copiar-fp{background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);color:var(--primary);padding:6px 12px;border-radius:12px;font-size:.6rem;cursor:pointer;font-weight:600}
+
 #adminPanel{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,10,.98);backdrop-filter:blur(20px);border-radius:20px;padding:18px;z-index:99999;width:90%;max-width:460px;border:2px solid var(--gold);max-height:90vh;overflow-y:auto}
 #adminPanel.open{display:block}
 #adminPanel h2{text-align:center;font-size:1.3rem;color:var(--gold);margin-bottom:2px;display:flex;align-items:center;justify-content:center;gap:8px}
@@ -311,6 +399,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
    SEÇÃO 14: BOTÕES FIXOS / PWA / BOTTOM SHEETS
    ════════════════════════════════════════════════════════════════ */
 #btnSairModoTV{position:fixed;top:80px;right:12px;z-index:60;background:rgba(0,0,0,.7);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:50%;width:34px;height:34px;font-size:1.1rem;cursor:pointer}
+
 #btnInstalarFixo{position:fixed;bottom:calc(20px + var(--safe-bottom));right:16px;z-index:999999;background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff;border:none;border-radius:30px;padding:14px 22px;font-weight:800;font-size:.95rem;cursor:pointer;display:none;align-items:center;gap:8px}
 #btnInstalarFixo.mostrar{display:flex!important}
 #instrucoesInstalar{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:1000002;display:none;align-items:center;justify-content:center;padding:20px}
@@ -321,6 +410,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .instrucoes-box .passo .num{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;flex-shrink:0}
 .instrucoes-box .passo .txt{color:#ccc;font-size:.8rem}
 .instrucoes-box .btn-fechar-inst{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;padding:12px;border-radius:20px;color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;width:100%;margin-top:10px}
+
 .bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:rgba(15,15,20,.98);backdrop-filter:blur(20px);border-radius:25px 25px 0 0;padding:14px 12px 18px;transform:translateY(100%);transition:transform .4s;max-height:70vh;overflow:hidden;border-top:1px solid rgba(255,255,255,.05);z-index:34}
 .bottom-sheet.open{transform:translateY(0)}
 .bottom-sheet h3{text-align:center;margin-bottom:10px;font-size:1.1rem;color:var(--theme-2)}
@@ -343,8 +433,6 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
   .badge-genero{max-width:110px;font-size:.65rem;padding:4px 10px}
   .logo-macaco{height:34px;width:34px}
   .menu-btn{width:34px;height:34px}
-  .fav-heart-center{width:78px;height:78px}
-  .fav-heart-center i{font-size:2.3rem}
 }
 </style>
 </head>
@@ -369,15 +457,11 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
-<!-- ❤️ CORAÇÃO CENTRAL -->
-<div class="fav-heart-center" id="favHeartCenter" title="Favoritar música atual">
-  <i class="far fa-heart" id="favHeartIcon"></i>
-</div>
-
 <!-- PLAYER -->
 <div id="playerContainer">
 <div class="media-container" id="mediaContainer"></div>
 
+<!-- TOP BAR NOVO -->
 <div class="top-bar">
   <div class="top-left">
     <img src="favicon30.png" alt="VDB" class="logo-macaco" id="logoMacaco">
@@ -389,6 +473,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
   </div>
 </div>
 
+<!-- LETREIRO -->
 <div class="info-scroll" id="infoScroll">
 <p class="letreiro" id="scrollText">🎵 VAI DE BOA!</p>
 <div class="search-input-container">
@@ -399,6 +484,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 
 <div class="equalizer on" id="equalizer"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
 
+<!-- CONTROLES INFERIORES -->
 <div class="bottom-controls" id="bottomControls">
 <div class="progress-time"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
 <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
@@ -410,6 +496,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
+<!-- FAB -->
 <div class="fab-container">
 <div class="fab-sub" id="fabSub">
 <button class="fab-sub-btn" id="fabFavoritos"><i class="fas fa-heart" style="color:var(--accent)"></i>Favoritas <span class="badge-fav" id="fabBadgeFav">0</span></button>
@@ -425,6 +512,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <div class="fab-main" id="fabMain"><i class="fas fa-plus"></i></div>
 </div>
 
+<!-- MENU -->
 <div class="menu-popup" id="menuPopup">
 <button id="closeMenuBtn"><i class="fas fa-times"></i>Fechar</button>
 <div class="menu-separator"></div>
@@ -445,6 +533,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button id="hardReloadBtn"><i class="fas fa-redo"></i>Forçar Recarregar TUDO</button>
 </div>
 
+<!-- BLOQUEIO -->
 <div id="blockOverlay" class="active">
 <div class="block-content">
 <img src="favicon30.png" alt="VDB" class="block-logo-img" onerror="this.style.display='none'">
@@ -458,6 +547,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
+<!-- ADMIN -->
 <div id="adminPanel">
 <h2><img src="favicon30.png" alt="VDB">GERENCIADOR DE SENHAS</h2>
 <div class="sub">Gere senhas para seus clientes</div>
@@ -477,6 +567,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button class="btn-fechar" id="adminCloseBtn">✕ Fechar Painel</button>
 </div>
 
+<!-- QR -->
 <div id="qrCodeModal">
 <div class="qr-content">
 <div class="qr-titulo">📱 VAI DE BOA! MUSIC</div>
@@ -494,6 +585,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <audio id="musicPlayer" preload="none"></audio>
 <audio id="backgroundAudio" preload="auto" style="display:none;"></audio>
 
+<!-- MODAIS -->
 <div class="genres-modal" id="genresModal">
 <div class="header"><div class="titulo">ESTILOS MUSICAIS</div></div>
 <div class="genres-grid" id="genresGrid"></div>
@@ -520,6 +612,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button id="closeFeedbackBtn">Cancelar</button>
 </div>
 
+<!-- PWA -->
 <button id="btnInstalarFixo"><i class="fas fa-download"></i> INSTALAR APP</button>
 
 <div id="instrucoesInstalar">
@@ -532,6 +625,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
+<!-- BOTTOM SHEETS -->
 <div class="bottom-sheet" id="queueSheet"><h3>🎵 PRÓXIMAS NA FILA</h3><div class="queue-list" id="queueList"></div><button class="sheet-close" data-close="queueSheet">✕ FECHAR</button></div>
 <div class="bottom-sheet" id="recentSheet"><h3>🕐 TOCADAS RECENTEMENTE</h3><div class="recent-list" id="recentList"></div><button class="sheet-close" data-close="recentSheet">✕ FECHAR</button></div>
 <div class="bottom-sheet" id="speedSheet"><h3>⚡ VELOCIDADE</h3>
@@ -551,7 +645,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button class="sheet-option" data-sleep="0">🚫 Cancelar</button>
 <button class="sheet-close" data-close="sleepSheet">✕ FECHAR</button></div>
 
-<script>
+<!-- ═══════════════════════════════════════════════════════════════
+     PARTE 2 (JAVASCRIPT) VEM AQUI
+     ═══════════════════════════════════════════════════════════════ --><script>
 (function(){
 'use strict';
 
@@ -563,64 +659,11 @@ const CONFIG = {
   TEMPO_TESTE_SEGUNDOS: 86400,
   SENHA_ADMIN: 'patico1685',
   SENHA_MESTRA: 'Patico1685@',
-  LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 5 MIL MÚSICAS • VITALÍCIO R$39,00 🐵 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE • BREGA • MODA RAIZ • SAMBA • POP/MIX • DISCO MUSIC 🎶',
+  LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 5 MIL MÚSICAS • VITALÍCIO R$39,00 🐵 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE • BREGA • MODA RAIZ • SAMBA • POP/MIX 🎶',
   LETREIRO_DURACAO: 60,
-  APP_VERSION: 'v14',
+  APP_VERSION: 'v13',
   BANNER_INTERVALO_HORAS: 24
 };
-
-/* 🎵 JSON EMBUTIDO DO DISCO MUSIC (funciona offline!) */
-const DISCO_MUSIC_JSON = [
-  {"id":1,"artist":"Shanice","title":"I Love Your Smile","genero":"DISCO MUSIC","src":"I_Love_Your_Smile_Shanice.mp3"},
-  {"id":2,"artist":"Madonna","title":"Sorry","genero":"DISCO MUSIC","src":"Sorry_desconhecido.mp3"},
-  {"id":3,"artist":"Brothers Johnson","title":"Stomp!","genero":"DISCO MUSIC","src":"Stomp_desconhecido.mp3"},
-  {"id":4,"artist":"Van McCoy","title":"The Hustle","genero":"DISCO MUSIC","src":"Recorded_The_Hustle_Re.mp3"},
-  {"id":5,"artist":"The Trammps","title":"Disco Inferno (Original Long Version - Tony Mendes Re Edit)","genero":"DISCO MUSIC","src":"Disco_Inferno_Original_Long_Version_Tony_Mendes_Re_Edit_The_Trammps.mp3"},
-  {"id":6,"artist":"Thelma Houston","title":"Don't Leave Me This Way (Long Version) • TopPop","genero":"DISCO MUSIC","src":"Dont_Leave_Me_This_Way_Long_Version_TopPop_Thelma_Houston.mp3"},
-  {"id":7,"artist":"Sister Sledge","title":"Thinking of You","genero":"DISCO MUSIC","src":"Thinking_of_You_desconhecido.mp3"},
-  {"id":8,"artist":"Sister Sledge","title":"We Are Family","genero":"DISCO MUSIC","src":"We_Are_Family_desconhecido.mp3"},
-  {"id":9,"artist":"Sylvester","title":"You Make Me Feel (Mighty Real)","genero":"DISCO MUSIC","src":"You_Make_Me_Feel_Mighty_Real.mp3"},
-  {"id":10,"artist":"Bee Gees","title":"You Should Be Dancing","genero":"DISCO MUSIC","src":"You_Should_Be_Dancing_desconhecido.mp3"},
-  {"id":11,"artist":"KC & The Sunshine Band","title":"(Shake, Shake, Shake) Shake Your Booty","genero":"DISCO MUSIC","src":"Shake_Shake_Shake_Shake_Your_Booty_desconhecido.mp3"},
-  {"id":12,"artist":"Walter Murphy","title":"A Fifth of Beethoven","genero":"DISCO MUSIC","src":"A_Fifth_of_Beethoven_desconhecido.mp3"},
-  {"id":13,"artist":"ABBA","title":"Dancing Queen","genero":"DISCO MUSIC","src":"Dancing_Queen_ABBA.mp3"},
-  {"id":14,"artist":"Blondie","title":"Heart Of Glass","genero":"DISCO MUSIC","src":"Heart_Of_Glass_Blondie.mp3"},
-  {"id":15,"artist":"Blue","title":"Fly By II","genero":"DISCO MUSIC","src":"Fly_By_II_Blue.mp3"},
-  {"id":16,"artist":"Patrick Hernandez","title":"Born to Be Alive (Extended Version)","genero":"DISCO MUSIC","src":"Born_to_Be_Alive_Extended_Version.mp3"},
-  {"id":17,"artist":"Kool & The Gang","title":"Celebration","genero":"DISCO MUSIC","src":"Celebration_desconhecido.mp3"},
-  {"id":18,"artist":"Charles & Eddie","title":"Would I Lie To You","genero":"DISCO MUSIC","src":"Would_I_Lie_To_You_Charles_Eddie.mp3"},
-  {"id":19,"artist":"Cher","title":"Believe","genero":"DISCO MUSIC","src":"Believe_Cher.mp3"},
-  {"id":20,"artist":"Barry Manilow","title":"Copacabana (At the Copa) (Long Version)","genero":"DISCO MUSIC","src":"Copacabana_At_the_Copa_Long_Version.mp3"},
-  {"id":21,"artist":"Chic","title":"Dance, Dance, Dance (Yowsah, Yowsah, Yowsah) (12 Version)","genero":"DISCO MUSIC","src":"Dance_Dance_Dance_Yowsah_Yowsah_Yowsah_12_Version.mp3"},
-  {"id":22,"artist":"Donna Summer","title":"Bad Girls / Hot Stuff (Night Of The Proms)","genero":"DISCO MUSIC","src":"Bad_Girls_Hot_Stuff_Night_Of_The_Proms_Netherlands_November_15_2007_Donna_Summer.mp3"},
-  {"id":23,"artist":"Donna Summer","title":"This Time I Know It's For Real","genero":"DISCO MUSIC","src":"This_Time_I_Know_Its_For_Real_Donna_Summer.mp3"},
-  {"id":24,"artist":"Jingle Punks","title":"Don't Hate Me (with lyrics)","genero":"DISCO MUSIC","src":"Jingle_Punks_Dont_Hate_Me_with_lyrics.mp3"},
-  {"id":25,"artist":"Thelma Houston","title":"Don't Leave Me This Way","genero":"DISCO MUSIC","src":"Dont_Leave_Me_This_Way_desconhecido.mp3"},
-  {"id":26,"artist":"Elton John, Kiki Dee","title":"Don't Go Breaking My Heart","genero":"DISCO MUSIC","src":"Dont_Go_Breaking_My_Heart_with_Kiki_Dee_Elton_John_Kiki_Dee.mp3"},
-  {"id":27,"artist":"George Michael","title":"Fastlove","genero":"DISCO MUSIC","src":"Fastlove_George_Michael.mp3"},
-  {"id":28,"artist":"Chic","title":"Good Times","genero":"DISCO MUSIC","src":"Good_Times_desconhecido.mp3"},
-  {"id":29,"artist":"Sister Sledge","title":"He's the Greatest Dancer","genero":"DISCO MUSIC","src":"Hes_the_Greatest_Dancer_desconhecido.mp3"},
-  {"id":30,"artist":"Tina Charles","title":"I Love To Love","genero":"DISCO MUSIC","src":"I_Love_To_Love_desconhecido.mp3"},
-  {"id":31,"artist":"Silver Convention","title":"I Like It","genero":"DISCO MUSIC","src":"I_Like_It_desconhecido.mp3"},
-  {"id":32,"artist":"Chic","title":"I Want Your Love","genero":"DISCO MUSIC","src":"I_Want_Your_Love_desconhecido.mp3"},
-  {"id":35,"artist":"Yvonne Elliman","title":"If I Can't Have You","genero":"DISCO MUSIC","src":"If_I_Cant_Have_You_desconhecido.mp3"},
-  {"id":36,"artist":"Jota Quest","title":"Sossego","genero":"DISCO MUSIC","src":"Sossego_Jota_Quest_part_Tony_Tornado_e_Lincoln_Tornado.mp3"},
-  {"id":37,"artist":"Kylie Minogue","title":"Spinning Around","genero":"DISCO MUSIC","src":"Spinning_Around_Kylie_Minogue.mp3"},
-  {"id":38,"artist":"Édith Piaf","title":"La Vie en rose","genero":"DISCO MUSIC","src":"La_Vie_en_rose_desconhecido.mp3"},
-  {"id":39,"artist":"Laura Branigan","title":"Self Control (Moreno J Remix)","genero":"DISCO MUSIC","src":"Self_Control_Moreno_J_Remix_New_other_has_an_Agerestricted_Laura_Branigan.mp3"},
-  {"id":40,"artist":"Chic","title":"Le Freak","genero":"DISCO MUSIC","src":"Le_Freak_desconhecido.mp3"},
-  {"id":42,"artist":"Michael Zager Band","title":"Let's All Chant","genero":"DISCO MUSIC","src":"Lets_All_Chant_desconhecido.mp3"},
-  {"id":43,"artist":"David Shire","title":"Manhattan Skyline","genero":"DISCO MUSIC","src":"Manhattan_Skyline_desconhecido.mp3"},
-  {"id":44,"artist":"Mike + The Mechanics","title":"Over My Shoulder","genero":"DISCO MUSIC","src":"Over_My_Shoulder_1_Mike_The_Mechanics.mp3"},
-  {"id":45,"artist":"Mike + The Mechanics","title":"Over My Shoulder","genero":"DISCO MUSIC","src":"Over_My_Shoulder_Mike_The_Mechanics.mp3"},
-  {"id":46,"artist":"Andrea True Connection","title":"More, More, More","genero":"DISCO MUSIC","src":"More_More_More_desconhecido.mp3"},
-  {"id":47,"artist":"Chic","title":"My Feet Keep Dancing","genero":"DISCO MUSIC","src":"My_Feet_Keep_Dancing_desconhecido.mp3"},
-  {"id":48,"artist":"Odyssey","title":"Native New Yorker","genero":"DISCO MUSIC","src":"Native_New_Yorker_desconhecido.mp3"},
-  {"id":49,"artist":"Gloria Gaynor","title":"Never Can Say Goodbye","genero":"DISCO MUSIC","src":"Never_Can_Say_Goodbye_desconhecido.mp3"},
-  {"id":50,"artist":"Anita Ward","title":"Ring My Bell","genero":"DISCO MUSIC","src":"Ring_My_Bell_desconhecido.mp3"},
-  {"id":51,"artist":"Chic","title":"Savoir Faire","genero":"DISCO MUSIC","src":"Savoir_Faire_desconhecido.mp3"},
-  {"id":52,"artist":"Judy Collins","title":"Send In The Clowns","genero":"DISCO MUSIC","src":"Send_In_The_Clowns_desconhecido.mp3"}
-];
 
 const VOZ_CONFIG = {
   ativada: true, falarAoAbrir: true, falarPeriodicamente: true, intervaloMinutos: 20,
@@ -650,7 +693,7 @@ const GENRE_URLS = {
   'CHORINHO': 'https://raw.githubusercontent.com/radiolojasjc-hub/chorinho/refs/heads/main/chorinho.json',
   'FORRÓ RAIZ': 'https://raw.githubusercontent.com/radiolojasjc-hub/forroraiz/refs/heads/main/forroraiz.json',
   'ROCK': 'https://raw.githubusercontent.com/radiolojasjc-hub/rock/refs/heads/main/rock.json',
-  'NOVIDADES': 'https://raw.githubusercontent.com/vaideboaroger-dotcom/vdb/refs/heads/main/novidades.json',
+  'NOVIDADES': 'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/novidades.json',
   'MISTURA BRASIL': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/misturabrasil.json',
   'DISCO MUSIC': 'https://raw.githubusercontent.com/vaideboaroger-dotcom/vdb/refs/heads/main/discomusic.json',
   'TREINO': 'https://raw.githubusercontent.com/radiolojasjc-hub/listtop/refs/heads/main/treino.json',
@@ -664,28 +707,14 @@ const GENRE_URLS = {
 
 const GENRE_ORDEM = ['BÔNUS','POP/MIX','MPB','DISCO MUSIC','SERTANEJO','ROMÂNTICA','FLASHBACK','NOVIDADES','MISTURA BRASIL','TREINO','SERESTA','MPB 2','HIP HOP','FORRÓ','FORRÓ RAIZ','BAILÃO','SAMBA','PAGODE','BREGA','REGGAE','MODA RAIZ','RELIGIOSA','FUNK','TESTE MIDIA','MODÃO SERTANEJO','CHORINHO','ROCK','GLOBAL HITS'];
 
-/* ⚠️ Agora aceita 'dono/repo' ou só 'repo' (usa dono padrão) */
-const GENRE_REPOS = {
-  'BÔNUS':'play12','MPB':'mpbtop','POP/MIX':'poptop','SERTANEJO':'sertanejo',
-  'FORRÓ':'forrodez','SAMBA':'sambatop','BREGA':'bregatop','REGGAE':'reggaetop',
-  'MODA RAIZ':'modatop','RELIGIOSA':'religiosa','ROMÂNTICA':'romanticatop',
-  'FLASHBACK':'flashbacktop','FUNK':'fank','TESTE MIDIA':'testemidias',
-  'MODÃO SERTANEJO':'modasertaneja','CHORINHO':'chorinho','FORRÓ RAIZ':'forroraiz',
-  'ROCK':'rock',
-  'NOVIDADES':'vaideboaroger-dotcom/vdb',      // ✅ dono customizado
-  'MISTURA BRASIL':'listtop',
-  'DISCO MUSIC':'vaideboaroger-dotcom/vdb',    // ✅ dono customizado
-  'TREINO':'listtop','SERESTA':'sertanejo','MPB 2':'mpbtop','HIP HOP':'poptop',
-  'PAGODE':'sambatop','BAILÃO':'forrodez','GLOBAL HITS':'chorinho'
-};
+const GENRE_REPOS = {'BÔNUS':'play12','MPB':'mpbtop','POP/MIX':'poptop','SERTANEJO':'sertanejo','FORRÓ':'forrodez','SAMBA':'sambatop','BREGA':'bregatop','REGGAE':'reggaetop','MODA RAIZ':'modatop','RELIGIOSA':'religiosa','ROMÂNTICA':'romanticatop','FLASHBACK':'flashbacktop','FUNK':'fank','TESTE MIDIA':'testemidias','MODÃO SERTANEJO':'modasertaneja','CHORINHO':'chorinho','FORRÓ RAIZ':'forroraiz','ROCK':'rock','NOVIDADES':'VDB','MISTURA BRASIL':'listtop','DISCO MUSIC':'vdb','TREINO':'listtop','SERESTA':'sertanejo','MPB 2':'mpbtop','HIP HOP':'poptop','PAGODE':'sambatop','BAILÃO':'forrodez','GLOBAL HITS':'chorinho'};
 
 const GENRE_COLORS = {
   'BÔNUS':{c1:'#22d3ee',c2:'#0288d1'},'POP/MIX':{c1:'#60a5fa',c2:'#3b82f6'},
   'MPB':{c1:'#2dd4bf',c2:'#10b981'},'SERTANEJO':{c1:'#fbbf24',c2:'#f59e0b'},
   'ROMÂNTICA':{c1:'#f472b6',c2:'#ec4899'},'FLASHBACK':{c1:'#a855f7',c2:'#8b5cf6'},
   'NOVIDADES':{c1:'#34d399',c2:'#10b981'},'FUNK':{c1:'#f43f5e',c2:'#be123c'},
-  'ROCK':{c1:'#f472b6',c2:'#a855f7'},'FORRÓ':{c1:'#fb923c',c2:'#ea580c'},
-  'DISCO MUSIC':{c1:'#fbbf24',c2:'#f59e0b'}
+  'ROCK':{c1:'#f472b6',c2:'#a855f7'},'FORRÓ':{c1:'#fb923c',c2:'#ea580c'}
 };
 const COR_PADRAO = {c1:'#22d3ee', c2:'#a855f7'};
 
@@ -1053,9 +1082,7 @@ const dom = {
   equalizer: $('equalizer'), queueMenuBtn: $('queueMenuBtn'), recentMenuBtn: $('recentMenuBtn'),
   speedMenuBtn: $('speedMenuBtn'), queueSheet: $('queueSheet'), recentSheet: $('recentSheet'),
   speedSheet: $('speedSheet'), sleepSheet: $('sleepSheet'), queueList: $('queueList'),
-  recentList: $('recentList'),
-  favHeartCenter: $('favHeartCenter'),
-  favHeartIcon: $('favHeartIcon')
+  recentList: $('recentList')
 };
 
 /* ════════════════════════════════════════════════════════════════
@@ -1129,29 +1156,17 @@ function fadeInAudio(d = 600) {
     }, stt);
   });
 }
-
-/* ✅ getUrls CORRIGIDO — aceita 'dono/repo' */
 function getUrls(m) {
   const s = m.src || '';
   if (!s) return [];
   if (s.startsWith('http')) return [s + (s.includes('?') ? '&' : '?') + 'v=' + CONFIG.APP_VERSION];
   const n = s.replace(/^\.\//, '').replace(/[^a-zA-Z0-9\-_.]/g, '');
-
-  let repo = GENRE_REPOS[m.genero] || 'play12';
-  let dono, nomeRepo;
-  if (repo.includes('/')) {
-    const partes = repo.split('/');
-    dono = partes[0];
-    nomeRepo = partes[1];
-  } else {
-    dono = 'radiolojasjc-hub';
-    nomeRepo = repo;
-  }
-  return ['https://raw.githubusercontent.com/' + dono + '/' + nomeRepo + '/refs/heads/main/' + n + '?v=' + CONFIG.APP_VERSION];
+  const r = GENRE_REPOS[m.genero] || 'play12';
+  return ['https://raw.githubusercontent.com/radiolojasjc-hub/' + r + '/refs/heads/main/' + n + '?v=' + CONFIG.APP_VERSION];
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 24: BADGE / LETREIRO
+   SEÇÃO 24: BADGE GÊNERO/AO VIVO + LETREIRO
    ════════════════════════════════════════════════════════════════ */
 function ehModoRadio() {
   return appState.modoAtual && appState.modoAtual.indexOf('VDB') > -1;
@@ -1424,42 +1439,22 @@ function forcarTelaCheia() {
 function updateFavBadge() {
   if (dom.fabBadgeFav) dom.fabBadgeFav.textContent = appState.favorites.length;
 }
-
-/* ❤️ Atualiza o coração central de acordo com a música */
 function updateHeart(id) {
-  if (!dom.favHeartCenter || !dom.favHeartIcon) return;
-  const ehFav = appState.favorites.some(f => f.id === id);
-  dom.favHeartIcon.className = ehFav ? 'fas fa-heart' : 'far fa-heart';
-  dom.favHeartCenter.classList.toggle('active', ehFav);
+  // coração não fica mais visível, só salva estado
 }
-
 function toggleFav(m) {
-  vibrar(20);
+  vibrar(15);
   if (!m) return;
   const i = appState.favorites.findIndex(f => f.id === m.id);
-  if (i > -1) {
-    appState.removeFavorite(m.id);
-    notif('💔 Removido dos favoritos', 1500);
-  } else {
-    appState.addFavorite(m);
-    notif('❤️ Adicionado aos favoritos!', 1500);
-    if (dom.favHeartIcon) {
-      dom.favHeartIcon.className = 'fas fa-heart';
-      dom.favHeartCenter.classList.add('active');
-      dom.favHeartCenter.classList.add('pop');
-      setTimeout(() => dom.favHeartCenter.classList.remove('pop'), 600);
-    }
-  }
+  if (i > -1) { appState.removeFavorite(m.id); notif('💔 Removido dos favoritos', 1500); }
+  else { appState.addFavorite(m); notif('❤️ Adicionado aos favoritos', 1500); }
   updateFavBadge();
-  updateHeart(m.id);
 }
-
 function toggleFavAtual() {
   if (!appState.playlistAtual.length) return;
   const m = appState.playlistAtual[appState.indiceAtual % appState.playlistAtual.length] || appState.playlistAtual[0];
   if (m) toggleFav(m);
 }
-
 function renderizarFavoritosModal() {
   dom.favListModal.innerHTML = '';
   const f = appState.getFavorites();
@@ -1507,32 +1502,11 @@ function renderizarGeneros() {
   });
 }
 
-/* ✅ selecionarGenero — DISCO MUSIC usa JSON embutido */
 async function selecionarGenero(g) {
   vibrar(15);
   showLoad(true);
-
-  let m = null;
-
-  if (g === 'DISCO MUSIC') {
-    // 🎯 JSON embutido (funciona offline!)
-    m = DISCO_MUSIC_JSON.map(x => ({
-      ...x,
-      id: 'disco_' + x.id,
-      genero: 'DISCO MUSIC',
-      artist: x.artist || 'Artista'
-    }));
-  } else {
-    m = await cacheManager.get(g, GENRE_URLS[g]);
-  }
-
-  if (!m || !m.length) {
-    showLoad(false);
-    notif('❌ Erro ao carregar ' + g, 2000);
-    dom.genresModal.classList.remove('open');
-    return;
-  }
-
+  const m = await cacheManager.get(g, GENRE_URLS[g]);
+  if (!m || !m.length) { showLoad(false); notif('❌ Erro ao carregar ' + g, 2000); dom.genresModal.classList.remove('open'); return; }
   dom.audio.pause();
   appState.isPlaying = false;
   dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
@@ -1645,7 +1619,7 @@ function verificarMudancaPeriodo() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 32: SENHAS
+   SEÇÃO 32: SENHAS (INTACTO)
    ════════════════════════════════════════════════════════════════ */
 function gerarSenhaAleatoria() {
   const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -1730,7 +1704,7 @@ function liberarAgora() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 33: ADMIN
+   SEÇÃO 33: ADMIN — 8 CLIQUE NO LOGO
    ════════════════════════════════════════════════════════════════ */
 let cliqueTimestamps = [];
 function setup8CliquesLogo() {
@@ -1855,7 +1829,7 @@ function renderizarRecentes() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SEÇÃO 35: TOUCH
+   SEÇÃO 35: TOUCH (swipe)
    ════════════════════════════════════════════════════════════════ */
 class TouchManager {
   constructor() {
@@ -2112,12 +2086,7 @@ async function iniciar() {
     let pronto = false;
     for (const g of GENRE_ORDEM) {
       try {
-        let m = null;
-        if (g === 'DISCO MUSIC') {
-          m = DISCO_MUSIC_JSON.map(x => ({ ...x, id: 'disco_' + x.id, genero: 'DISCO MUSIC', artist: x.artist || 'Artista' }));
-        } else {
-          m = await cacheManager.get(g, GENRE_URLS[g]);
-        }
+        const m = await cacheManager.get(g, GENRE_URLS[g]);
         if (m && m.length) {
           appState.musicas = m;
           appState.modoAtual = g;
@@ -2165,37 +2134,6 @@ async function iniciar() {
         dom.audio.currentTime = ((e.clientX - r.left) / r.width) * dom.audio.duration;
       }
     };
-
-    /* ❤️ CORAÇÃO CENTRAL */
-    let heartHideTimer = null;
-    function mostrarCoracaoTemp() {
-      if (!dom.favHeartCenter) return;
-      dom.favHeartCenter.classList.add('show');
-      dom.favHeartCenter.classList.remove('hide-temp');
-      clearTimeout(heartHideTimer);
-      heartHideTimer = setTimeout(() => {
-        dom.favHeartCenter.classList.add('hide-temp');
-      }, 4000);
-    }
-    if (dom.favHeartCenter) {
-      dom.favHeartCenter.onclick = e => {
-        e.stopPropagation();
-        if (!appState.playlistAtual.length) {
-          notif('🎵 Nenhuma música tocando', 1500);
-          return;
-        }
-        const m = appState.playlistAtual[appState.indiceAtual % appState.playlistAtual.length] || appState.playlistAtual[0];
-        if (m) toggleFav(m);
-        mostrarCoracaoTemp();
-      };
-    }
-    ['click','touchstart','touchmove'].forEach(ev => {
-      document.addEventListener(ev, e => {
-        if (e.target.closest && (e.target.closest('button') || e.target.closest('.fav-heart-center'))) return;
-        mostrarCoracaoTemp();
-      }, { passive: true });
-    });
-    setTimeout(mostrarCoracaoTemp, 2500);
 
     dom.menuButton.onclick = e => {
       e.stopPropagation();
@@ -2279,6 +2217,7 @@ async function iniciar() {
     function fecharFab() { dom.fabSub.classList.remove('open'); dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>'; }
     dom.fabFavoritos.onclick = () => {
       vibrar(10);
+      // Se tiver música tocando, pergunta: ver lista OU favoritar atual
       if (appState.playlistAtual.length > 0 && appState.isPlaying) {
         const escolha = confirm('❤️ FAVORITOS\n\nOK = Favoritar música atual\nCancelar = Ver lista de favoritas');
         if (escolha) toggleFavAtual();
@@ -2417,12 +2356,13 @@ async function iniciar() {
       } else notif('🔍 Nenhuma encontrada', 1500);
     }
 
+    // TAP NA TELA → mostra controles
     document.addEventListener('click', e => {
-      if (e.target.closest('button') || e.target.closest('.genre-card') || e.target.closest('.fav-item-modal') || e.target.closest('#infoScroll') || e.target.closest('.menu-popup') || e.target.closest('.bottom-controls') || e.target.closest('.bottom-sheet') || e.target.closest('.genres-modal') || e.target.closest('.fav-modal') || e.target.closest('.fab-container') || e.target.closest('.top-bar') || e.target.closest('.fav-heart-center')) return;
+      if (e.target.closest('button') || e.target.closest('.genre-card') || e.target.closest('.fav-item-modal') || e.target.closest('#infoScroll') || e.target.closest('.menu-popup') || e.target.closest('.bottom-controls') || e.target.closest('.bottom-sheet') || e.target.closest('.genres-modal') || e.target.closest('.fav-modal') || e.target.closest('.fab-container') || e.target.closest('.top-bar')) return;
       showControls();
     });
     document.addEventListener('touchstart', e => {
-      if (e.target.closest('button') || e.target.closest('#infoScroll') || e.target.closest('.menu-popup') || e.target.closest('.bottom-controls') || e.target.closest('.bottom-sheet') || e.target.closest('.genres-modal') || e.target.closest('.fav-modal') || e.target.closest('.fab-container') || e.target.closest('.fav-heart-center')) return;
+      if (e.target.closest('button') || e.target.closest('#infoScroll') || e.target.closest('.menu-popup') || e.target.closest('.bottom-controls') || e.target.closest('.bottom-sheet') || e.target.closest('.genres-modal') || e.target.closest('.fav-modal') || e.target.closest('.fab-container')) return;
       showControls();
     }, { passive: true });
 
