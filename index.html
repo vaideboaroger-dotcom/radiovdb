@@ -20,7 +20,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 <style>
-/* ============ VARIÁVEIS ============ */
+
+/* ═══════════════════════════════════════════════════════════
+   🎨 VARIÁVEIS GLOBAIS — EDITE AQUI AS CORES DO APP
+   ═══════════════════════════════════════════════════════════ */
 :root{
   --primary:#a855f7;--secondary:#22d3ee;--accent:#f472b6;--gold:#fbbf24;
   --black-0:#000;--black-1:#0a0a0a;--black-2:#121212;
@@ -28,29 +31,69 @@
   --theme-1:#a855f7;--theme-2:#22d3ee;
   --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
   --live-red:#ef4444;
-  --heart-color:#e5e7eb;
-  --heart-active:#9ca3af;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   🔧 RESET
+   ═══════════════════════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
 html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;position:fixed;top:0;left:0}
 
-/* ============ LOADING ============ */
-#loadingScreen{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:22px;overflow:hidden}
-#loadingScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(168,85,247,.35),transparent 45%),radial-gradient(circle at 80% 70%,rgba(168,85,247,.25),transparent 50%);animation:bgPulseLoad 4s ease-in-out infinite}
-.loading-logo-wrapper{position:relative;width:130px;height:130px;display:flex;align-items:center;justify-content:center;z-index:2}
-.loading-logo-wrapper::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:2px solid transparent;border-top-color:#a855f7;border-right-color:#22d3ee;border-bottom-color:#f472b6;border-left-color:#fbbf24;animation:spin 3s linear infinite}
-.loading-logo{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid #a855f7;animation:pulseLogo 1.8s ease-in-out infinite}
-@keyframes bgPulseLoad{0%,100%{opacity:.7}50%{opacity:1}}
-@keyframes pulseLogo{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+/* ═══════════════════════════════════════════════════════════
+   ⏳ TELA DE LOADING — MODERNA
+   ═══════════════════════════════════════════════════════════ */
+#loadingScreen{
+  position:fixed;inset:0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(168,85,247,.45), transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(34,211,238,.35), transparent 55%),
+    radial-gradient(circle at 50% 50%, rgba(244,114,182,.18), transparent 60%),
+    linear-gradient(135deg,#0a0616 0%,#140a2e 50%,#0a0616 100%);
+  display:flex;align-items:center;justify-content:center;z-index:99999;
+  flex-direction:column;gap:22px;overflow:hidden;
+}
+#loadingScreen::before{
+  content:'';position:absolute;inset:-30%;
+  background:conic-gradient(from 0deg,transparent,rgba(168,85,247,.25),transparent 30%,rgba(34,211,238,.25),transparent 60%,rgba(244,114,182,.2),transparent);
+  animation:bgRotate 12s linear infinite;opacity:.5;filter:blur(60px);
+}
+#loadingScreen::after{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.08) 1px,transparent 1px);
+  background-size:24px 24px;
+  mask-image:radial-gradient(circle at 50% 50%,#000 30%,transparent 75%);
+  -webkit-mask-image:radial-gradient(circle at 50% 50%,#000 30%,transparent 75%);
+  animation:pontosMove 20s linear infinite;
+}
+@keyframes bgRotate{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes pontosMove{0%{background-position:0 0}100%{background-position:24px 24px}}
+.loading-logo-wrapper{position:relative;width:150px;height:150px;display:flex;align-items:center;justify-content:center;z-index:2}
+.loading-logo-wrapper::before{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,rgba(168,85,247,.55),transparent 65%);
+  animation:pulseGlow 2s ease-in-out infinite;filter:blur(12px);
+}
+.loading-logo-wrapper::after{
+  content:'';position:absolute;inset:-8px;border-radius:50%;
+  border:2px solid transparent;
+  border-top-color:#a855f7;border-right-color:#22d3ee;
+  border-bottom-color:#f472b6;border-left-color:#fbbf24;
+  animation:spin 2.4s linear infinite;box-shadow:0 0 30px rgba(168,85,247,.5);
+}
+@keyframes pulseGlow{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.15);opacity:1}}
+.loading-logo{width:104px;height:104px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.15);animation:pulseLogo 1.8s ease-in-out infinite;z-index:2;box-shadow:0 0 40px rgba(168,85,247,.6)}
+@keyframes pulseLogo{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-.loading-text{font-family:'Audiowide',sans-serif;font-size:1.35rem;background:linear-gradient(135deg,#a855f7,#c084fc,#22d3ee);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:4px;animation:gradientText 3s ease infinite}
+.loading-text{font-family:'Audiowide',sans-serif;font-size:1.5rem;background:linear-gradient(135deg,#a855f7,#c084fc,#22d3ee,#f472b6,#a855f7);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:5px;animation:gradientText 3s ease infinite;filter:drop-shadow(0 0 20px rgba(168,85,247,.6));z-index:2}
 @keyframes gradientText{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
-.loading-sub{font-family:'Rajdhani',sans-serif;font-size:.72rem;color:rgba(168,85,247,.7);letter-spacing:6px}
-.loading-progress-container{width:220px;height:5px;background:rgba(168,85,247,.12);border-radius:5px;overflow:hidden}
-.loading-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6);background-size:300% 100%;animation:progressShineLoad 2s linear infinite;transition:width .4s ease}
+.loading-sub{font-family:'Rajdhani',sans-serif;font-size:.78rem;color:rgba(34,211,238,.85);letter-spacing:7px;z-index:2}
+.loading-progress-container{width:240px;height:5px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden;z-index:2;box-shadow:inset 0 0 10px rgba(0,0,0,.5)}
+.loading-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6,#a855f7);background-size:300% 100%;animation:progressShineLoad 1.5s linear infinite;transition:width .4s ease;box-shadow:0 0 12px rgba(168,85,247,.7)}
 @keyframes progressShineLoad{0%{background-position:0 50%}100%{background-position:200% 50%}}
 
-/* ============ BANNER ============ */
+/* ═══════════════════════════════════════════════════════════
+   🎬 BANNER DE SAUDAÇÃO
+   ═══════════════════════════════════════════════════════════ */
 .banner-saudacao{position:fixed;inset:0;z-index:99998;background:linear-gradient(135deg,#0a0a0a 0%,#1a0a2e 50%,#0a0a0a 100%);display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .6s ease}
 .banner-saudacao.show{display:flex;opacity:1}
 .banner-saudacao.hide{opacity:0}
@@ -66,7 +109,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .banner-mensagem{font-family:'Rajdhani',sans-serif;font-size:1.05rem;color:#ccc;font-weight:600;letter-spacing:1.5px;line-height:1.5;padding:14px 20px;margin:0 20px;border-top:1px solid rgba(168,85,247,.2);border-bottom:1px solid rgba(168,85,247,.2)}
 .banner-hora{font-family:'Audiowide',sans-serif;font-size:.85rem;color:var(--secondary);letter-spacing:3px;margin-top:14px;opacity:.7}
 
-/* ============ PLAYER ============ */
+/* ═══════════════════════════════════════════════════════════
+   🎵 PLAYER CONTAINER
+   ═══════════════════════════════════════════════════════════ */
 #playerContainer{position:fixed;inset:0;z-index:10;display:none}
 #playerContainer.visible{display:block}
 .media-container{position:fixed;inset:0;z-index:0;background:#000;overflow:hidden}
@@ -74,7 +119,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .media-container .active{opacity:1;z-index:3}
 .media-container .inactive{opacity:0;z-index:2}
 
-/* ============ TOP BAR ============ */
+/* ═══════════════════════════════════════════════════════════
+   🔝 TOP BAR
+   ═══════════════════════════════════════════════════════════ */
 .top-bar{position:fixed;top:0;left:0;right:0;z-index:35;display:flex;align-items:center;justify-content:space-between;padding:6px 8px;padding-top:max(6px,env(safe-area-inset-top));background:linear-gradient(180deg,rgba(0,0,0,.9),transparent);height:52px;gap:8px}
 .top-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1;overflow:hidden}
 .logo-macaco{height:36px;width:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(168,85,247,.6);cursor:pointer;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.5);transition:transform .2s}
@@ -91,7 +138,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .menu-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;width:36px;height:36px;border-radius:50%;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
 .menu-btn:active{background:rgba(168,85,247,.35);transform:scale(.92)}
 
-/* ============ LETREIRO ============ */
+/* ═══════════════════════════════════════════════════════════
+   📜 LETREIRO / INFO SCROLL
+   ═══════════════════════════════════════════════════════════ */
 .info-scroll{position:fixed;top:52px;left:0;right:0;z-index:30;padding:2px 10px;height:28px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;background:rgba(0,0,0,.25);backdrop-filter:blur(8px)}
 .info-scroll.modo-pesquisa{height:36px;background:rgba(0,0,0,.5)}
 .info-scroll.hidden{opacity:0;pointer-events:none;height:0;padding:0}
@@ -106,16 +155,26 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 #searchClearLetreiro{position:absolute;right:6px;background:transparent;border:none;color:rgba(255,255,255,.3);font-size:1.1rem;cursor:pointer;display:none}
 #searchClearLetreiro.visible{display:block}
 
-/* ============ CORAÇÃO CENTRAL (DISCRETO) ============ */
-.fav-heart-center{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:15;pointer-events:none;opacity:0;transition:opacity .4s}
+/* ═══════════════════════════════════════════════════════════
+   ❤️ CORAÇÃO CENTRAL — FICA FIXO QUANDO É FAVORITA
+   ═══════════════════════════════════════════════════════════ */
+.fav-heart-center{
+  position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:15;pointer-events:none;opacity:0;
+  transition:opacity .5s ease, transform .5s cubic-bezier(.34,1.56,.64,1);
+}
+.fav-heart-center.is-fav{opacity:1;pointer-events:auto}
 .fav-heart-center.show{opacity:1;pointer-events:auto}
-.fav-heart{font-size:4.5rem;color:rgba(255,255,255,.35);cursor:pointer;display:inline-block;transition:all .3s;filter:drop-shadow(0 0 15px rgba(0,0,0,.5));text-shadow:0 0 20px rgba(0,0,0,.6)}
-.fav-heart:active{transform:scale(.9)}
-.fav-heart.active{color:var(--heart-active);filter:drop-shadow(0 0 20px rgba(200,200,200,.5));text-shadow:0 0 25px rgba(255,255,255,.4)}
-@keyframes heartPop{0%{transform:scale(1)}30%{transform:scale(1.3)}60%{transform:scale(.95)}100%{transform:scale(1)}}
-.fav-heart.pop{animation:heartPop .5s cubic-bezier(.34,1.56,.64,1)}
+.fav-heart{font-size:4.5rem;color:rgba(255,255,255,.32);cursor:pointer;display:inline-block;transition:all .35s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(0 0 15px rgba(0,0,0,.6));text-shadow:0 0 20px rgba(0,0,0,.7)}
+.fav-heart:active{transform:scale(.88)}
+.fav-heart.active{color:#f472b6;filter:drop-shadow(0 0 25px rgba(244,114,182,.9)) drop-shadow(0 0 8px rgba(255,255,255,.5));text-shadow:0 0 30px rgba(244,114,182,.8)}
+@keyframes heartPop{0%{transform:scale(1)}30%{transform:scale(1.4)}60%{transform:scale(.92)}100%{transform:scale(1)}}
+.fav-heart.pop{animation:heartPop .55s cubic-bezier(.34,1.56,.64,1)}
 
-/* ============ EQUALIZADOR ============ */
+/* ═══════════════════════════════════════════════════════════
+   📊 EQUALIZADOR
+   ═══════════════════════════════════════════════════════════ */
 .equalizer{position:fixed;bottom:calc(105px + var(--safe-bottom));left:12px;z-index:19;display:flex;gap:2px;align-items:flex-end;height:20px;pointer-events:none;opacity:.4}
 .equalizer.on{opacity:1}
 .equalizer .bar{width:3px;background:linear-gradient(180deg,var(--theme-1),var(--theme-2));border-radius:2px}
@@ -131,7 +190,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 @keyframes eq5{0%,100%{height:8px}50%{height:18px}}
 .equalizer.paused .bar{animation-play-state:paused}
 
-/* ============ CONTROLES ============ */
+/* ═══════════════════════════════════════════════════════════
+   🎮 CONTROLES INFERIORES
+   ═══════════════════════════════════════════════════════════ */
 .bottom-controls{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.95);padding:6px 12px calc(10px + var(--safe-bottom));z-index:20;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);border-top:1px solid rgba(255,255,255,.04);backdrop-filter:blur(20px)}
 .bottom-controls.visible{transform:translateY(0)}
 .progress-time{display:flex;justify-content:space-between;font-size:.65rem;color:#888}
@@ -140,10 +201,14 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .buttons-row{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:5px}
 .ctrl-btn{background:rgba(255,255,255,.05);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center}
 .play-big{background:linear-gradient(135deg,var(--theme-1),var(--theme-2));width:48px;height:48px;font-size:1.15rem}
+.play-big.loading i{animation:spinSlow 1s linear infinite}
+@keyframes spinSlow{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 .shuffle-btn{background:rgba(255,255,255,.05);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer}
 .shuffle-btn.active{background:rgba(168,85,247,.2);color:var(--secondary)}
 
-/* ============ FAB ============ */
+/* ═══════════════════════════════════════════════════════════
+   ➕ FAB (BOTÃO FLUTUANTE)
+   ═══════════════════════════════════════════════════════════ */
 .fab-container{position:fixed;bottom:calc(85px + var(--safe-bottom));right:12px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 .fab-main{background:linear-gradient(135deg,#a855f7,#22d3ee,#a855f7);background-size:200% 200%;animation:fabSuave 6s ease infinite;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:1.15rem;border:none;box-shadow:0 4px 15px rgba(168,85,247,.4)}
 @keyframes fabSuave{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
@@ -153,23 +218,31 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .fab-sub-btn:active{background:rgba(168,85,247,.2)}
 .fab-sub-btn .badge-fav{background:var(--accent);color:#fff;border-radius:50%;padding:0 6px;font-size:.6rem;font-weight:900;min-width:18px;height:18px;text-align:center;line-height:18px;margin-left:auto}
 
-/* ============ MENU ============ */
-.menu-popup{position:fixed;top:52px;right:8px;background:rgba(15,15,20,.98);backdrop-filter:blur(24px);border-radius:18px;padding:8px;z-index:36;display:none;flex-direction:column;gap:2px;border:1px solid rgba(168,85,247,.2);min-width:220px;max-height:80vh;overflow-y:auto}
+/* ═══════════════════════════════════════════════════════════
+   ☰ MENU POPUP
+   ═══════════════════════════════════════════════════════════ */
+.menu-popup{position:fixed;top:calc(52px + var(--safe-top));right:8px;background:rgba(15,15,20,.98);backdrop-filter:blur(24px);border-radius:18px;padding:8px;z-index:36;display:none;flex-direction:column;gap:2px;border:1px solid rgba(168,85,247,.2);min-width:220px;max-height:80vh;overflow-y:auto}
 .menu-popup.open{display:flex}
 .menu-popup button{background:transparent;border:none;color:#ddd;padding:10px 14px;border-radius:12px;font-size:.82rem;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;min-height:40px}
 .menu-popup button i{width:20px;text-align:center;color:var(--primary)}
 .menu-separator{height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,.3),transparent);margin:4px 8px}
 
-/* ============ MODAIS ============ */
+/* ═══════════════════════════════════════════════════════════
+   🎸 MODAL DE GÊNEROS
+   ═══════════════════════════════════════════════════════════ */
 .genres-modal{position:fixed;top:0;left:0;right:0;bottom:0;z-index:33;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);padding:60px 16px 20px;display:none;flex-direction:column}
 .genres-modal.open{display:flex}
 .genres-modal .header{text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.06)}
 .genres-modal .header .titulo{font-family:'Audiowide',sans-serif;font-size:1.05rem;color:var(--secondary);letter-spacing:3px}
 .genres-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;flex:1;overflow-y:auto}
-.genre-card{position:relative;min-height:62px;border-radius:14px;cursor:pointer;padding:14px 12px 14px 18px;display:flex;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.genre-card{position:relative;min-height:62px;border-radius:14px;cursor:pointer;padding:14px 12px 14px 18px;display:flex;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);text-align:left;width:100%}
 .genre-card::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:45%;background:var(--c1,#22d3ee);border-radius:0 4px 4px 0}
 .genre-card .genre-name{font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#f0f0f0}
 .close-genres{width:100%;padding:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:25px;color:#ccc;font-size:.75rem;cursor:pointer;font-weight:700;margin-top:10px;letter-spacing:3px;text-transform:uppercase}
+
+/* ═══════════════════════════════════════════════════════════
+   ❤️ MODAL DE FAVORITAS
+   ═══════════════════════════════════════════════════════════ */
 .fav-modal{position:fixed;bottom:0;left:0;right:0;background:rgba(15,15,20,.98);backdrop-filter:blur(20px);border-radius:25px 25px 0 0;padding:14px 12px 18px;transform:translateY(100%);transition:transform .4s;max-height:70vh;overflow:hidden;border-top:1px solid rgba(255,255,255,.05);z-index:34}
 .fav-modal.open{transform:translateY(0)}
 .fav-modal h3{text-align:center;margin-bottom:10px;font-size:1.1rem;color:var(--accent)}
@@ -181,6 +254,10 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .fav-item-modal .remove-fav{background:transparent;border:none;color:var(--accent);font-size:1rem;cursor:pointer;padding:0 6px}
 .fav-empty-modal{color:#555;padding:20px;text-align:center;font-size:.85rem}
 .close-fav{width:100%;padding:10px;background:linear-gradient(135deg,var(--accent),var(--primary));border:none;border-radius:25px;color:#fff;font-size:.85rem;cursor:pointer;font-weight:700}
+
+/* ═══════════════════════════════════════════════════════════
+   ⭐ MODAL DE FEEDBACK
+   ═══════════════════════════════════════════════════════════ */
 .feedback-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,15,20,.98);backdrop-filter:blur(20px);border-radius:20px;padding:18px;z-index:5000;width:90%;max-width:360px;text-align:center;display:none;border:1px solid rgba(168,85,247,.2)}
 .feedback-modal.open{display:block}
 .feedback-modal h3{font-size:1.1rem;margin-bottom:8px;color:var(--secondary)}
@@ -191,13 +268,17 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .btn-feedback{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;padding:10px;border-radius:25px;color:#fff;font-weight:700;cursor:pointer;width:100%;margin-top:6px;font-size:.95rem}
 #closeFeedbackBtn{background:transparent;border:none;color:#555;padding:8px;cursor:pointer;font-size:.8rem}
 
-/* ============ NOTIFICAÇÕES ============ */
-.notification{position:fixed;top:90px;left:50%;transform:translateX(-50%);background:rgba(15,15,20,.85);color:var(--secondary);padding:6px 14px;border-radius:20px;font-size:.7rem;z-index:100003;opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid rgba(168,85,247,.2);font-weight:600;max-width:70vw;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ═══════════════════════════════════════════════════════════
+   🔔 NOTIFICAÇÕES
+   ═══════════════════════════════════════════════════════════ */
+.notification{position:fixed;top:90px;left:50%;transform:translateX(-50%);background:rgba(15,15,20,.85);color:var(--secondary);padding:8px 16px;border-radius:20px;font-size:.72rem;z-index:100003;opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid rgba(168,85,247,.2);font-weight:600;max-width:80vw;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px}
 .notification.show{opacity:1}
 #loadingOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center}
 #loadingOverlay.active{display:flex}
 
-/* ============ QR ============ */
+/* ═══════════════════════════════════════════════════════════
+   📱 QR CODE MODAL
+   ═══════════════════════════════════════════════════════════ */
 #qrCodeModal{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(20px);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px}
 #qrCodeModal.active{display:flex}
 .qr-content{background:linear-gradient(145deg,#1a1a1a,#0a0a0a);border-radius:25px;padding:20px;max-width:360px;width:100%;text-align:center;border:1px solid rgba(168,85,247,.2)}
@@ -210,7 +291,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .qr-content .qr-info span{font-size:.65rem;color:#888}
 .qr-btn-close{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;padding:10px;border-radius:25px;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;width:100%;margin-top:6px}
 
-/* ============ BLOQUEIO ============ */
+/* ═══════════════════════════════════════════════════════════
+   🔒 TELA DE BLOQUEIO
+   ═══════════════════════════════════════════════════════════ */
 #blockOverlay{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:10000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
 #blockOverlay.active{display:flex}
 .block-content{max-width:420px;width:100%;padding:24px 20px}
@@ -227,7 +310,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .fp-text{color:#888;font-size:.6rem;word-break:break-all;font-family:'Courier New',monospace;flex:1;letter-spacing:1px;user-select:text}
 .btn-copiar-fp{background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);color:var(--primary);padding:6px 12px;border-radius:12px;font-size:.6rem;cursor:pointer;font-weight:600}
 
-/* ============ ADMIN ============ */
+/* ═══════════════════════════════════════════════════════════
+   👑 PAINEL ADMIN
+   ═══════════════════════════════════════════════════════════ */
 #adminPanel{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,10,.98);backdrop-filter:blur(20px);border-radius:20px;padding:18px;z-index:99999;width:90%;max-width:460px;border:2px solid var(--gold);max-height:90vh;overflow-y:auto}
 #adminPanel.open{display:block}
 #adminPanel h2{text-align:center;font-size:1.3rem;color:var(--gold);margin-bottom:2px;display:flex;align-items:center;justify-content:center;gap:8px}
@@ -254,7 +339,26 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 #adminPanel .total{font-size:.5rem;color:#555;text-align:center;padding:4px}
 .btn-fechar{background:rgba(255,255,255,.03);border:none;padding:8px;border-radius:20px;color:#555;cursor:pointer;width:100%;font-size:.75rem;margin-top:4px}
 
-/* ============ BOTÕES FIXOS ============ */
+/* ═══════════════════════════════════════════════════════════
+   💬 DIÁLOGOS ESTILIZADOS (substitui prompt/confirm)
+   ═══════════════════════════════════════════════════════════ */
+.vdb-dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(14px);z-index:100004;display:none;align-items:center;justify-content:center;padding:20px}
+.vdb-dialog-overlay.active{display:flex}
+.vdb-dialog{background:linear-gradient(145deg,#1a1a2e,#0a0a14);border-radius:24px;padding:24px 20px;max-width:400px;width:100%;border:1px solid rgba(168,85,247,.35);box-shadow:0 0 40px rgba(168,85,247,.3);animation:dialogIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes dialogIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.vdb-dialog h3{color:#fff;font-family:'Audiowide',sans-serif;font-size:1.15rem;text-align:center;margin-bottom:8px;letter-spacing:2px;background:linear-gradient(135deg,#a855f7,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.vdb-dialog p{color:#aaa;font-size:.85rem;text-align:center;margin-bottom:14px;line-height:1.5}
+.vdb-dialog input{width:100%;padding:14px 18px;border-radius:30px;border:2px solid rgba(168,85,247,.25);background:rgba(255,255,255,.05);color:#fff;font-size:1rem;text-align:center;outline:none;user-select:text;margin-bottom:14px;transition:border .2s}
+.vdb-dialog input:focus{border-color:var(--primary)}
+.vdb-dialog .btns{display:flex;gap:8px}
+.vdb-dialog .btns button{flex:1;padding:13px;border-radius:25px;border:none;font-weight:700;font-size:.9rem;cursor:pointer;transition:transform .15s}
+.vdb-dialog .btns button:active{transform:scale(.96)}
+.vdb-dialog .btn-ok{background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff}
+.vdb-dialog .btn-cancel{background:rgba(255,255,255,.06);color:#999;border:1px solid rgba(255,255,255,.08)}
+
+/* ═══════════════════════════════════════════════════════════
+   📺 BOTÕES FIXOS / INSTALAÇÃO
+   ═══════════════════════════════════════════════════════════ */
 #btnSairModoTV{position:fixed;top:80px;right:12px;z-index:60;background:rgba(0,0,0,.7);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:50%;width:34px;height:34px;font-size:1.1rem;cursor:pointer}
 #btnInstalarFixo{position:fixed;bottom:calc(20px + var(--safe-bottom));right:16px;z-index:999999;background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff;border:none;border-radius:30px;padding:14px 22px;font-weight:800;font-size:.95rem;cursor:pointer;display:none;align-items:center;gap:8px}
 #btnInstalarFixo.mostrar{display:flex!important}
@@ -267,7 +371,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .instrucoes-box .passo .txt{color:#ccc;font-size:.8rem}
 .instrucoes-box .btn-fechar-inst{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;padding:12px;border-radius:20px;color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;width:100%;margin-top:10px}
 
-/* ============ BOTTOM SHEETS ============ */
+/* ═══════════════════════════════════════════════════════════
+   📋 BOTTOM SHEETS (FILA, RECENTES, VELOCIDADE, SLEEP)
+   ═══════════════════════════════════════════════════════════ */
 .bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:rgba(15,15,20,.98);backdrop-filter:blur(20px);border-radius:25px 25px 0 0;padding:14px 12px 18px;transform:translateY(100%);transition:transform .4s;max-height:70vh;overflow:hidden;border-top:1px solid rgba(255,255,255,.05);z-index:34}
 .bottom-sheet.open{transform:translateY(0)}
 .bottom-sheet h3{text-align:center;margin-bottom:10px;font-size:1.1rem;color:var(--theme-2)}
@@ -284,6 +390,9 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 .speed-btn{padding:6px 12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#ccc;font-size:.75rem;font-weight:700;cursor:pointer}
 .speed-btn.active{background:linear-gradient(135deg,var(--theme-1),var(--theme-2));color:#fff}
 
+/* ═══════════════════════════════════════════════════════════
+   📱 RESPONSIVO
+   ═══════════════════════════════════════════════════════════ */
 @media(max-width:480px){
   .play-big{width:44px;height:44px}
   .ctrl-btn,.shuffle-btn{width:36px;height:36px}
@@ -296,7 +405,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </head>
 <body>
 
-<!-- LOADING -->
+<!-- ═══════════════ LOADING ═══════════════ -->
 <div id="loadingScreen">
 <div class="loading-logo-wrapper"><img src="favicon30.png" alt="VDB" class="loading-logo"></div>
 <span class="loading-text">VAI DE BOA! MUSIC</span>
@@ -304,7 +413,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <div class="loading-progress-container"><div class="loading-progress-fill" id="loadingProgressFill"></div></div>
 </div>
 
-<!-- BANNER -->
+<!-- ═══════════════ BANNER ═══════════════ -->
 <div id="bannerSaudacao" class="banner-saudacao">
 <div class="banner-content">
 <div class="banner-emoji" id="bannerEmoji">☀️</div>
@@ -315,7 +424,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
-<!-- PLAYER -->
+<!-- ═══════════════ PLAYER ═══════════════ -->
 <div id="playerContainer">
 <div class="media-container" id="mediaContainer"></div>
 
@@ -391,6 +500,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button id="hardReloadBtn"><i class="fas fa-redo"></i>Forçar Recarregar TUDO</button>
 </div>
 
+<!-- ═══════════════ BLOQUEIO ═══════════════ -->
 <div id="blockOverlay" class="active">
 <div class="block-content">
 <img src="favicon30.png" alt="VDB" class="block-logo-img" onerror="this.style.display='none'">
@@ -404,6 +514,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
+<!-- ═══════════════ ADMIN ═══════════════ -->
 <div id="adminPanel">
 <h2><img src="favicon30.png" alt="VDB">GERENCIADOR DE SENHAS</h2>
 <div class="sub">Gere senhas para seus clientes</div>
@@ -423,6 +534,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button class="btn-fechar" id="adminCloseBtn">✕ Fechar Painel</button>
 </div>
 
+<!-- ═══════════════ QR CODE ═══════════════ -->
 <div id="qrCodeModal">
 <div class="qr-content">
 <div class="qr-titulo">📱 VAI DE BOA! MUSIC</div>
@@ -435,23 +547,27 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
+<!-- ═══════════════ NOTIFICAÇÕES E ÁUDIOS OCULTOS ═══════════════ -->
 <div class="notification" id="notification"></div>
 <div id="loadingOverlay"><i class="fas fa-spinner fa-spin"></i></div>
 <audio id="musicPlayer" preload="none"></audio>
 <audio id="backgroundAudio" preload="auto" style="display:none;"></audio>
 
+<!-- ═══════════════ MODAL DE GÊNEROS ═══════════════ -->
 <div class="genres-modal" id="genresModal">
 <div class="header"><div class="titulo">ESTILOS MUSICAIS</div></div>
 <div class="genres-grid" id="genresGrid"></div>
 <button class="close-genres" id="closeGenresBtn">✕ FECHAR</button>
 </div>
 
+<!-- ═══════════════ MODAL DE FAVORITAS ═══════════════ -->
 <div class="fav-modal" id="favModal">
 <h3>❤️ SUAS FAVORITAS</h3>
 <div class="fav-list-modal" id="favListModal"></div>
 <button class="close-fav" id="closeFavBtn">FECHAR</button>
 </div>
 
+<!-- ═══════════════ MODAL DE FEEDBACK ═══════════════ -->
 <div class="feedback-modal" id="feedbackModal">
 <h3>⭐ Avalie o App</h3>
 <div class="stars" id="starRating">
@@ -466,8 +582,21 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button id="closeFeedbackBtn">Cancelar</button>
 </div>
 
-<button id="btnInstalarFixo"><i class="fas fa-download"></i> INSTALAR APP</button>
+<!-- ═══════════════ DIÁLOGO ESTILIZADO ═══════════════ -->
+<div class="vdb-dialog-overlay" id="vdbDialogOverlay">
+  <div class="vdb-dialog">
+    <h3 id="vdbDialogTitle">Título</h3>
+    <p id="vdbDialogMsg">Mensagem</p>
+    <input type="text" id="vdbDialogInput" placeholder="" style="display:none;">
+    <div class="btns">
+      <button class="btn-cancel" id="vdbDialogCancel">Cancelar</button>
+      <button class="btn-ok" id="vdbDialogOk">Confirmar</button>
+    </div>
+  </div>
+</div>
 
+<!-- ═══════════════ INSTALAÇÃO ═══════════════ -->
+<button id="btnInstalarFixo"><i class="fas fa-download"></i> INSTALAR APP</button>
 <div id="instrucoesInstalar">
 <div class="instrucoes-box" id="instrucoesBox">
 <h3>📲 INSTALAR APP</h3>
@@ -478,6 +607,7 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 </div>
 </div>
 
+<!-- ═══════════════ BOTTOM SHEETS ═══════════════ -->
 <div class="bottom-sheet" id="queueSheet"><h3>🎵 PRÓXIMAS NA FILA</h3><div class="queue-list" id="queueList"></div><button class="sheet-close" data-close="queueSheet">✕ FECHAR</button></div>
 <div class="bottom-sheet" id="recentSheet"><h3>🕐 TOCADAS RECENTEMENTE</h3><div class="recent-list" id="recentList"></div><button class="sheet-close" data-close="recentSheet">✕ FECHAR</button></div>
 <div class="bottom-sheet" id="speedSheet"><h3>⚡ VELOCIDADE</h3>
@@ -495,13 +625,33 @@ html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;posit
 <button class="sheet-option" data-sleep="60">⏱️ 1 hora</button>
 <button class="sheet-option" data-sleep="120">⏱️ 2 horas</button>
 <button class="sheet-option" data-sleep="0">🚫 Cancelar</button>
-<button class="sheet-close" data-close="sleepSheet">✕ FECHAR</button></div>
-
-<script>
+<button class="sheet-close" data-close="sleepSheet">✕ FECHAR</button></div>// ═══ 1. CONFIGURAÇÕES (edite tudo aqui) ═══
+// ═══ 2. HELPERS ═══
+// ═══ 3. VOZ ═══
+// ═══ 4. ESTADO DO APP ═══
+// ═══ 5. CACHE ═══
+// ═══ 6. NOTIFICAÇÕES ═══
+// ═══ 7. DOM ═══
+// ═══ 8. TIMER ═══
+// ═══ 9. ÁUDIO ═══
+// ═══ 10. PLAYER ═══
+// ═══ 11. FAVORITOS ═══
+// ═══ 12. GÊNEROS ═══
+// ═══ 13. RÁDIO ═══
+// ═══ 14. BANNER ═══
+// ═══ 15. SENHAS ═══
+// ═══ 16. ADMIN ═══
+// ═══ 17. MÍDIAS ═══
+// ═══ 18. MODO TV ═══
+// ═══ 19. DIÁLOGOS ═══
+// ═══ 20. PWA ═══
+// ═══ 21. INICIALIZAÇÃO ═══<script>
 (function(){
 'use strict';
 
-/* ============ CONFIGURAÇÕES ============ */
+/* ═══════════════════════════════════════════════════════════
+   1️⃣ CONFIGURAÇÕES — EDITE TUDO AQUI
+   ═══════════════════════════════════════════════════════════ */
 const CONFIG = {
   WHATSAPP: '5512988461978',
   TEMPO_TESTE_SEGUNDOS: 86400,
@@ -509,7 +659,7 @@ const CONFIG = {
   SENHA_MESTRA: 'Patico1685@',
   LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$39,00 🐵 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
   LETREIRO_DURACAO: 60,
-  APP_VERSION: 'v14',
+  APP_VERSION: 'v15',
   BANNER_INTERVALO_HORAS: 24
 };
 
@@ -522,6 +672,7 @@ const VOZ_CONFIG = {
 
 const CACHE_OFFLINE_CONFIG = { ativado: true, maxMusicas: 50 };
 
+/* ─── URLS DOS GÊNEROS ─── */
 const GENRE_URLS = {
   'BÔNUS': 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json',
   'FLASHBACK': 'https://raw.githubusercontent.com/radiolojasjc-hub/flashbacktop/refs/heads/main/flashback.json',
@@ -555,18 +706,13 @@ const GENRE_URLS = {
 
 const GENRE_ORDEM = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','DISCO MUSIC','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','TESTE MIDIA','MISTURA BRASIL','CHORINHO','TREINO','GLOBAL HITS'];
 
-/* ✅ ÚNICA MUDANÇA NO GENRE_REPOS: DISCO MUSIC agora aponta pro repo certo */
-const GENRE_REPOS = {
-  'BÔNUS':'play12','MPB':'mpbtop','POP/MIX':'poptop','SERTANEJO':'sertanejo',
-  'FORRÓ':'forrodez','SAMBA':'sambatop','BREGA':'bregatop','REGGAE':'reggaetop',
-  'MODA RAIZ':'modatop','RELIGIOSA':'religiosa','ROMÂNTICA':'romanticatop',
-  'FLASHBACK':'flashbacktop','FUNK':'fank','TESTE MIDIA':'testemidias',
-  'MODÃO SERTANEJO':'modasertaneja','CHORINHO':'chorinho','FORRÓ RAIZ':'forroraiz',
-  'ROCK':'rock','NOVIDADES':'VDB','MISTURA BRASIL':'listtop',
-  'DISCO MUSIC':'vaideboaroger-dotcom/vdb',
-  'TREINO':'listtop','SERESTA':'sertanejo','MPB 2':'mpbtop','HIP HOP':'poptop',
-  'PAGODE':'sambatop','BAILÃO':'forrodez','GLOBAL HITS':'chorinho'
-};
+/* 🎯 GENRE_REPOS agora é DERIVADO automaticamente do GENRE_URLS
+   (nunca mais vai ficar inconsistente) */
+const GENRE_REPOS = {};
+Object.keys(GENRE_URLS).forEach(g => {
+  const m = GENRE_URLS[g].match(/githubusercontent\.com\/([^\/]+)\/([^\/]+)/);
+  GENRE_REPOS[g] = m ? m[1] + '/' + m[2] : 'radiolojasjc-hub/play12';
+});
 
 const GENRE_COLORS = {
   'BÔNUS':{c1:'#22d3ee',c2:'#0288d1'},'POP/MIX':{c1:'#60a5fa',c2:'#3b82f6'},
@@ -604,7 +750,9 @@ const BANNER_CONFIG = {
   noite: { emoji: '🌆', saudacao: 'Boa noite!', mensagens: ['Relaxe, a noite é sua. 🎵','Que sua noite seja tranquila e musical! 🌙','Hora de descansar com boa música. ✨','Boa noite e bons sonhos! 💜','A melhor trilha pra fechar o dia. 🎶','Curta cada momento, a noite é especial! 🌟'] }
 };
 
-/* ============ HELPERS ============ */
+/* ═══════════════════════════════════════════════════════════
+   2️⃣ HELPERS
+   ═══════════════════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
 const now = () => Date.now();
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -620,6 +768,8 @@ function fmtTempo(s) {
   return String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
 }
 function sanitize(t) { if (!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.textContent; }
+
+/* 🔀 SHUFFLE com histórico de recentes (evita repetir) */
 function shuffle(arr) {
   const x = [...arr];
   const recentes = new Set(JSON.parse(localStorage.getItem('vdb_recentes') || '[]').slice(0, 20));
@@ -632,11 +782,11 @@ function shuffle(arr) {
   return base;
 }
 function copiarTexto(t, msg) {
-  if (!t) return notif('⚠️ Nada para copiar!', 1500);
-  navigator.clipboard.writeText(t).then(() => notif(msg || '📋 Copiado!', 1500)).catch(() => {
+  if (!t) return notif('⚠️ Nada para copiar!', 1500, 'warning');
+  navigator.clipboard.writeText(t).then(() => notif(msg || '📋 Copiado!', 1500, 'success')).catch(() => {
     const i = document.createElement('input'); i.value = t;
     document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove();
-    notif(msg || '📋 Copiado!', 1500);
+    notif(msg || '📋 Copiado!', 1500, 'success');
   });
 }
 function aplicarTema(g) {
@@ -652,8 +802,11 @@ function getPeriodoAtual() {
   return 'noite';
 }
 
-/* ============ VOZ ============ */
+/* ═══════════════════════════════════════════════════════════
+   3️⃣ VOZ
+   ═══════════════════════════════════════════════════════════ */
 let vozJaTocou = false, vozIntervalo = null, vozAtivada = VOZ_CONFIG.ativada;
+
 function falarTexto(texto) {
   if (!('speechSynthesis' in window)) return;
   if (!vozAtivada) return;
@@ -693,11 +846,24 @@ function iniciarVozPeriodica() {
   if (vozIntervalo) clearInterval(vozIntervalo);
   vozIntervalo = setInterval(falarHoraPeriodica, VOZ_CONFIG.intervaloMinutos * 60 * 1000);
 }
+
+/* 🎯 Inicia voz independente do banner */
+function iniciarVozSeNecessario() {
+  if (vozJaTocou) return;
+  vozJaTocou = true;
+  setTimeout(() => {
+    falarSaudacaoInicial();
+    iniciarVozPeriodica();
+  }, 1200);
+}
+
 if ('speechSynthesis' in window) {
   window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
 }
 
-/* ============ ESTADO ============ */
+/* ═══════════════════════════════════════════════════════════
+   4️⃣ ESTADO DO APP
+   ═══════════════════════════════════════════════════════════ */
 class AppState {
   constructor() {
     this.key = 'vdb_state';
@@ -727,9 +893,23 @@ class AppState {
   _load() {
     try {
       const r = localStorage.getItem(this.key);
-      if (r) { const p = JSON.parse(r); if (p.version === this.version) return p; }
-    } catch(e) {}
-    return { version: this.version, favorites: [], desbloqueado: false, tempoRestante: CONFIG.TEMPO_TESTE_SEGUNDOS, modoTV: false, modoAtual: 'BÔNUS', musicas: [], playlistAtual: [], indiceAtual: 0, shuffleMode: false, historico: [] };
+      if (r) {
+        const p = JSON.parse(r);
+        // 🔄 Migração de versões antigas
+        if (p.version < 3) {
+          p.favorites = p.favorites || [];
+          p.historico = p.historico || [];
+          p.version = 3;
+        }
+        if (p.version === 3) return p;
+      }
+    } catch (e) {}
+    return {
+      version: this.version, favorites: [], desbloqueado: false,
+      tempoRestante: CONFIG.TEMPO_TESTE_SEGUNDOS, modoTV: false,
+      modoAtual: 'BÔNUS', musicas: [], playlistAtual: [],
+      indiceAtual: 0, shuffleMode: false, historico: []
+    };
   }
   _save() {
     if (this._saveTimer) clearTimeout(this._saveTimer);
@@ -768,29 +948,52 @@ class AppState {
 }
 const appState = new AppState();
 
-/* ============ CACHE ============ */
+/* ═══════════════════════════════════════════════════════════
+   5️⃣ CACHE
+   ═══════════════════════════════════════════════════════════ */
 class CacheManager {
   constructor(maxBytes = 5 * 1024 * 1024) { this.maxBytes = maxBytes; this.prefix = 'cache_'; }
   getKey(g) { return this.prefix + CONFIG.APP_VERSION + '_' + g; }
-  async get(genero, url) {
+  _cacheBust(url) {
+    const s = url.includes('?') ? '&' : '?';
+    return `${url}${s}v=${CONFIG.APP_VERSION}&t=${now()}`;
+  }
+  async get(genero, url, timeoutMs = 9000) {
     const k = this.getKey(genero);
     const r = localStorage.getItem(k);
-    if (r) { try { const d = JSON.parse(r); if (d.timestamp && (now() - d.timestamp < 1800000)) return d.dados; } catch(e) {} }
+    if (r) {
+      try {
+        const d = JSON.parse(r);
+        if (d.timestamp && (now() - d.timestamp < 1800000)) return d.dados;
+      } catch (e) {}
+    }
     try {
-      const rs = await fetch(this._cacheBust(url));
+      const ctrl = new AbortController();
+      const tid = setTimeout(() => ctrl.abort(), timeoutMs);
+      const rs = await fetch(this._cacheBust(url), { signal: ctrl.signal });
+      clearTimeout(tid);
       if (!rs.ok) throw new Error('HTTP ' + rs.status);
       let j = await rs.json();
       if (!Array.isArray(j)) j = j.musicas || j.data || Object.values(j)[0];
-      const ms = j.filter(m => m.src && m.title).map(m => ({ ...m, id: 'fav_' + (m.title + '_' + (m.artist || 'Artista')).toLowerCase().replace(/[^a-z0-9]+/g, '_'), genero: genero, artist: m.artist || 'Artista' }));
-      if (ms && ms.length) { try { localStorage.setItem(k, JSON.stringify({ timestamp: now(), dados: ms })); this._limpar(); } catch(e) {} return ms; }
+      const ms = (j || [])
+        .filter(m => m && m.src && m.title)
+        .map(m => ({
+          ...m,
+          id: 'fav_' + (m.title + '_' + (m.artist || 'Artista')).toLowerCase().replace(/[^a-z0-9]+/g, '_'),
+          genero: genero,
+          artist: m.artist || 'Artista'
+        }));
+      if (ms && ms.length) {
+        try { localStorage.setItem(k, JSON.stringify({ timestamp: now(), dados: ms })); this._limpar(); } catch (e) {}
+        return ms;
+      }
       return null;
-    } catch(e) {
+    } catch (e) {
       const r2 = localStorage.getItem(k);
-      if (r2) { try { return JSON.parse(r2).dados; } catch(e2) {} }
+      if (r2) { try { return JSON.parse(r2).dados; } catch (e2) {} }
       return null;
     }
   }
-  _cacheBust(url) { const s = url.includes('?') ? '&' : '?'; return `${url}${s}v=${CONFIG.APP_VERSION}&t=${now()}`; }
   _limpar() {
     let t = 0; const it = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -828,7 +1031,9 @@ async function salvarMusicaOffline(url) {
 }
 async function buscarMusicaOffline(url) { try { const cache = await abrirCacheMusicas(); if (!cache) return null; const resposta = await cache.match(url); if (!resposta) return null; const blob = await resposta.blob(); return URL.createObjectURL(blob); } catch(e) { return null; } }
 
-/* ============ NOTIFICAÇÕES ============ */
+/* ═══════════════════════════════════════════════════════════
+   6️⃣ NOTIFICAÇÕES (agora com ícone por tipo)
+   ═══════════════════════════════════════════════════════════ */
 class Notifier {
   constructor() { this.queue = []; this.showing = false; this.el = $('notification'); }
   show(m, d = 2000, t = 'info') { this.queue.push({ msg: m, duration: d, type: t }); this.process(); }
@@ -837,8 +1042,9 @@ class Notifier {
     this.showing = true;
     const it = this.queue.shift();
     const cores = { success: '#00b894', error: '#f472b6', info: '#a855f7', warning: '#fbbf24' };
+    const icones = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
     this.el.style.borderColor = cores[it.type] || cores.info;
-    this.el.textContent = it.msg;
+    this.el.innerHTML = '<span style="margin-right:6px">' + (icones[it.type] || '') + '</span>' + it.msg;
     this.el.classList.add('show');
     await sleep(it.duration);
     this.el.classList.remove('show');
@@ -849,7 +1055,9 @@ class Notifier {
 const notifier = new Notifier();
 const notif = (m, d = 2000, t = 'info') => notifier.show(m, d, t);
 
-/* ============ DOM ============ */
+/* ═══════════════════════════════════════════════════════════
+   7️⃣ DOM
+   ═══════════════════════════════════════════════════════════ */
 const dom = {
   loadingScreen: $('loadingScreen'), loadingProgressFill: $('loadingProgressFill'),
   playerContainer: $('playerContainer'), timerLib: $('timerLib'), blockOverlay: $('blockOverlay'),
@@ -891,7 +1099,9 @@ const dom = {
   recentList: $('recentList')
 };
 
-/* ============ TIMER ============ */
+/* ═══════════════════════════════════════════════════════════
+   8️⃣ TIMER
+   ═══════════════════════════════════════════════════════════ */
 function updateProgress(p) { dom.loadingProgressFill.style.width = Math.min(p, 100) + '%'; }
 function calcularTempoRestante() {
   if (localStorage.getItem('vdb_bloqueado_permanente') === 'true') return 0;
@@ -922,30 +1132,25 @@ function iniciarTimerCorrido() {
   tick();
 }
 
-/* ============ ÁUDIO ============ */
+/* ═══════════════════════════════════════════════════════════
+   9️⃣ ÁUDIO
+   ═══════════════════════════════════════════════════════════ */
 function fadeOutAudio(d = 400) { return new Promise(r => { if (dom.audio.paused || !dom.audio.src) { r(); return; } const sv = dom.audio.volume; const st = 20, stt = d / st; let s = 0; const fi = setInterval(() => { s++; dom.audio.volume = Math.max(0, sv * (1 - s / st)); if (s >= st) { clearInterval(fi); r(); } }, stt); }); }
 function fadeInAudio(d = 600) { return new Promise(r => { dom.audio.volume = 0; const st = 25, stt = d / st; let s = 0; const fi = setInterval(() => { s++; const e = 1 - Math.pow(1 - s / st, 2); dom.audio.volume = Math.min(1, e); if (s >= st) { clearInterval(fi); dom.audio.volume = 1; r(); } }, stt); }); }
 
-/* ✅ getUrls CORRIGIDO — aceita 'dono/repo' no GENRE_REPOS */
+/* 🎯 getUrls — agora usando GENRE_REPOS derivado */
 function getUrls(m) {
   const s = m.src || '';
   if (!s) return [];
   if (s.startsWith('http')) return [s + (s.includes('?') ? '&' : '?') + 'v=' + CONFIG.APP_VERSION];
   const n = s.replace(/^\.\//, '').replace(/[^a-zA-Z0-9\-_.]/g, '');
-  let repo = GENRE_REPOS[m.genero] || 'play12';
-  let dono, nomeRepo;
-  if (repo.includes('/')) {
-    const partes = repo.split('/');
-    dono = partes[0];
-    nomeRepo = partes[1];
-  } else {
-    dono = 'radiolojasjc-hub';
-    nomeRepo = repo;
-  }
-  return ['https://raw.githubusercontent.com/' + dono + '/' + nomeRepo + '/refs/heads/main/' + n + '?v=' + CONFIG.APP_VERSION];
+  const repoCompleto = GENRE_REPOS[m.genero] || 'radiolojasjc-hub/play12';
+  return ['https://raw.githubusercontent.com/' + repoCompleto + '/refs/heads/main/' + n + '?v=' + CONFIG.APP_VERSION];
 }
 
-/* ============ BADGE / LETREIRO ============ */
+/* ═══════════════════════════════════════════════════════════
+   🔟 BADGE / LETREIRO
+   ═══════════════════════════════════════════════════════════ */
 function ehModoRadio() { return appState.modoAtual && appState.modoAtual.indexOf('VDB') > -1; }
 function atualizarBadgeGenero() {
   if (!dom.badgeGenero) return;
@@ -967,7 +1172,9 @@ function atualizarLetreiro(m) {
   dom.scrollText.style.animation = radio ? 'scrollText ' + CONFIG.LETREIRO_DURACAO + 's linear infinite, liveGlow 1.4s ease-in-out infinite' : 'scrollText ' + CONFIG.LETREIRO_DURACAO + 's linear infinite';
 }
 
-/* ============ CONTROLES ============ */
+/* ═══════════════════════════════════════════════════════════
+   1️⃣1️⃣ CONTROLES
+   ═══════════════════════════════════════════════════════════ */
 let hideControlsTimeout = null;
 function showControls() {
   dom.bottomControls.classList.add('visible');
@@ -975,7 +1182,9 @@ function showControls() {
   hideControlsTimeout = setTimeout(() => dom.bottomControls.classList.remove('visible'), 4000);
 }
 
-/* ============ TOCAR ============ */
+/* ═══════════════════════════════════════════════════════════
+   1️⃣2️⃣ PLAYER — TOCAR / NEXT / PREV
+   ═══════════════════════════════════════════════════════════ */
 function atualizarPlaylist() {
   if (!appState.playlistAtual.length) return null;
   if (appState.indiceAtual >= appState.playlistAtual.length) { appState.playlistAtual = shuffle(appState.musicas); appState.indiceAtual = 0; }
@@ -984,9 +1193,12 @@ function atualizarPlaylist() {
 async function tocar() {
   if (!appState.isBackgroundActive || appState.carregandoMusica || !appState.musicas.length) return;
   appState.carregandoMusica = true;
+  // 🎯 Indicador visual de carregando
+  dom.playBtn.innerHTML = '<i class="fas fa-spinner"></i>';
+  dom.playBtn.classList.add('loading');
   if (!dom.audio.paused && dom.audio.src) await fadeOutAudio(400);
   const m = atualizarPlaylist();
-  if (!m) { appState.carregandoMusica = false; return; }
+  if (!m) { appState.carregandoMusica = false; dom.playBtn.classList.remove('loading'); dom.playBtn.innerHTML = '<i class="fas fa-play"></i>'; return; }
   atualizarLetreiro(m);
   atualizarBadgeGenero();
   updateHeart(m.id);
@@ -1032,15 +1244,26 @@ async function tocar() {
       await dom.audio.play();
       await fadeInAudio(600);
       appState.isPlaying = true;
+      dom.playBtn.classList.remove('loading');
       dom.playBtn.innerHTML = '<i class="fas fa-pause"></i>';
       if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       appState.carregandoMusica = false;
-    } catch(e) { appState.carregandoMusica = false; setTimeout(next, 100); }
-  } else { appState.carregandoMusica = false; setTimeout(next, 100); }
+    } catch(e) {
+      appState.carregandoMusica = false;
+      dom.playBtn.classList.remove('loading');
+      dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+      setTimeout(next, 100);
+    }
+  } else {
+    appState.carregandoMusica = false;
+    dom.playBtn.classList.remove('loading');
+    dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+    setTimeout(next, 100);
+  }
 }
 function togglePlay() {
   vibrar(10);
-  if (!appState.isBackgroundActive) { notif('🔊 Aguarde...', 1500); return; }
+  if (!appState.isBackgroundActive) { notif('🔊 Aguarde...', 1500, 'warning'); return; }
   if (dom.audio.paused) tocar();
   else {
     dom.audio.pause();
@@ -1053,9 +1276,11 @@ function togglePlay() {
 }
 function next() { vibrar(10); if (appState.carregandoMusica || !appState.playlistAtual.length) return; appState.indiceAtual = (appState.indiceAtual + 1) % appState.playlistAtual.length; if (appState.isBackgroundActive) setTimeout(tocar, 100); showControls(); }
 function prev() { vibrar(10); if (appState.carregandoMusica || !appState.playlistAtual.length) return; appState.indiceAtual = (appState.indiceAtual - 1 + appState.playlistAtual.length) % appState.playlistAtual.length; if (appState.isBackgroundActive) setTimeout(tocar, 100); showControls(); }
-function toggleShuffle() { vibrar(10); appState.shuffleMode = !appState.shuffleMode; dom.shuffleBtn.classList.toggle('active', appState.shuffleMode); appState.playlistAtual = shuffle(appState.musicas); notif(appState.shuffleMode ? '🔀 Aleatório ON' : '➡️ Sequencial'); showControls(); }
+function toggleShuffle() { vibrar(10); appState.shuffleMode = !appState.shuffleMode; dom.shuffleBtn.classList.toggle('active', appState.shuffleMode); appState.playlistAtual = shuffle(appState.musicas); notif(appState.shuffleMode ? '🔀 Aleatório ON' : '➡️ Sequencial', 1500, 'info'); showControls(); }
 
-/* ============ KEEP-ALIVE ============ */
+/* ═══════════════════════════════════════════════════════════
+   1️⃣3️⃣ KEEP-ALIVE
+   ═══════════════════════════════════════════════════════════ */
 function criarSilentAudio() {
   const sr = 44100, ns = sr * 5;
   const b = new ArrayBuffer(44 + ns * 2);
@@ -1099,30 +1324,49 @@ async function ativarPlayer() {
     iniciarTimerCorrido();
     updateProgress(100);
     setTimeout(tocar, 500);
-  } catch(e) { appState.isBackgroundActive = true; updateProgress(100); forcarTelaCheia(); iniciarTimerCorrido(); setTimeout(tocar, 500); }
+  } catch(e) {
+    appState.isBackgroundActive = true;
+    updateProgress(100);
+    forcarTelaCheia();
+    iniciarTimerCorrido();
+    setTimeout(tocar, 500);
+  }
 }
 function forcarTelaCheia() { try { const e = document.documentElement; if (e.requestFullscreen) e.requestFullscreen().catch(() => {}); else if (e.webkitRequestFullscreen) e.webkitRequestFullscreen(); } catch(e) {} }
 
-/* ============ FAVORITOS ============ */
+/* ═══════════════════════════════════════════════════════════
+   1️⃣4️⃣ FAVORITOS — ❤️ CORAÇÃO FICA FIXO QUANDO É FAVORITA
+   ═══════════════════════════════════════════════════════════ */
 function updateFavBadge() { if (dom.fabBadgeFav) dom.fabBadgeFav.textContent = appState.favorites.length; }
+
 function updateHeart(id) {
   if (!dom.heartBtn) return;
   const ehFav = appState.favorites.some(f => f.id === id);
   dom.heartBtn.className = ehFav ? 'fav-heart active' : 'fav-heart';
   dom.heartBtn.innerHTML = ehFav ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>';
+  // 🔥 Coração fica SEMPRE visível se a música atual é favorita
+  if (dom.favHeartCenter) {
+    if (ehFav) dom.favHeartCenter.classList.add('is-fav');
+    else dom.favHeartCenter.classList.remove('is-fav');
+  }
 }
+
 function toggleFav(m) {
   vibrar(20);
   if (!m) return;
   const i = appState.favorites.findIndex(f => f.id === m.id);
-  if (i > -1) { appState.removeFavorite(m.id); notif('💔 Removido dos favoritos', 1500); }
-  else {
+  if (i > -1) {
+    appState.removeFavorite(m.id);
+    notif('💔 Removido dos favoritos', 1500, 'info');
+    if (dom.favHeartCenter) dom.favHeartCenter.classList.remove('is-fav');
+  } else {
     appState.addFavorite(m);
-    notif('❤️ Adicionado aos favoritos', 1500);
+    notif('❤️ Adicionado aos favoritos', 1500, 'success');
     if (dom.heartBtn) {
       dom.heartBtn.classList.add('pop');
       setTimeout(() => dom.heartBtn.classList.remove('pop'), 600);
     }
+    if (dom.favHeartCenter) dom.favHeartCenter.classList.add('is-fav');
   }
   updateFavBadge();
   updateHeart(m.id);
@@ -1151,17 +1395,21 @@ function tocarFavoritaEspecifica(id) {
   if (!m) return;
   appState.playlistAtual = shuffle(appState.favorites.map(x => ({ ...x })));
   const i = appState.playlistAtual.findIndex(x => x.id === id);
-  if (i > -1) { appState.indiceAtual = i; if (appState.isBackgroundActive) tocar(); notif('🎵 Tocando favorita!', 1500); }
+  if (i > -1) { appState.indiceAtual = i; if (appState.isBackgroundActive) tocar(); notif('🎵 Tocando favorita!', 1500, 'success'); }
 }
 
-/* ============ GÊNEROS ============ */
+/* ═══════════════════════════════════════════════════════════
+   1️⃣5️⃣ GÊNEROS
+   ═══════════════════════════════════════════════════════════ */
 function renderizarGeneros() {
   dom.genresGrid.innerHTML = '';
   GENRE_ORDEM.forEach(g => {
     const c = GENRE_COLORS[g] || COR_PADRAO;
-    const cd = document.createElement('div');
+    const cd = document.createElement('button');
+    cd.type = 'button';
     cd.className = 'genre-card';
     cd.setAttribute('data-genre', g);
+    cd.setAttribute('aria-label', 'Selecionar gênero ' + g);
     cd.style.setProperty('--c1', c.c1);
     cd.style.setProperty('--c2', c.c2);
     const n = document.createElement('div');
@@ -1176,7 +1424,7 @@ async function selecionarGenero(g) {
   vibrar(15);
   showLoad(true);
   const m = await cacheManager.get(g, GENRE_URLS[g]);
-  if (!m || !m.length) { showLoad(false); notif('❌ Erro ao carregar ' + g, 2000); dom.genresModal.classList.remove('open'); return; }
+  if (!m || !m.length) { showLoad(false); notif('❌ Erro ao carregar ' + g, 2000, 'error'); dom.genresModal.classList.remove('open'); return; }
   dom.audio.pause();
   appState.isPlaying = false;
   dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
@@ -1195,17 +1443,19 @@ async function selecionarGenero(g) {
   forcarTelaCheia();
   if (appState.isBackgroundActive) setTimeout(tocar, 300);
   appState._save();
-  notif('🎵 ' + g, 1500);
+  notif('🎵 ' + g, 1500, 'success');
 }
 function showLoad(s) { dom.loadingOverlay.classList.toggle('active', s); }
 
-/* ============ RÁDIO ============ */
+/* ═══════════════════════════════════════════════════════════
+   1️⃣6️⃣ RÁDIO
+   ═══════════════════════════════════════════════════════════ */
 async function ativarModoRadio() {
   vibrar(20);
   const periodo = getPeriodoAtual();
   const config = RADIO_CONFIG[periodo];
   showLoad(true);
-  notif('🔴 ' + config.saudacao + ' Sintonizando...', 2000);
+  notif('🔴 ' + config.saudacao + ' Sintonizando...', 2000, 'info');
   try {
     const todasMusicas = [];
     for (const g of config.generos) {
@@ -1214,7 +1464,7 @@ async function ativarModoRadio() {
         if (m && m.length) { const amostra = m.slice(0, 100).map(musica => ({ ...musica, radio: true, radioPeriodo: periodo })); todasMusicas.push(...amostra); }
       } catch(e) {}
     }
-    if (!todasMusicas.length) { showLoad(false); notif('❌ Sem músicas', 2000); return; }
+    if (!todasMusicas.length) { showLoad(false); notif('❌ Sem músicas', 2000, 'error'); return; }
     dom.audio.pause();
     appState.isPlaying = false;
     dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
@@ -1232,26 +1482,27 @@ async function ativarModoRadio() {
     forcarTelaCheia();
     if (appState.isBackgroundActive) setTimeout(tocar, 300);
     appState._save();
-    notif('🔴 AO VIVO', 2000);
-  } catch(e) { showLoad(false); notif('❌ Erro no rádio', 2000); }
+    notif('🔴 AO VIVO', 2000, 'success');
+  } catch(e) { showLoad(false); notif('❌ Erro no rádio', 2000, 'error'); }
 }
 function verificarMudancaPeriodo() {
-  if (!appState.modoAtual) return;
   if (!ehModoRadio()) return;
   const periodoAtual = getPeriodoAtual();
   const configAtual = RADIO_CONFIG[periodoAtual];
-  if (appState.modoAtual !== configAtual.nome) { notif('🔄 Novo período', 2000); mostrarBannerSaudacao(true); ativarModoRadio(); }
+  if (appState.modoAtual !== configAtual.nome) { notif('🔄 Novo período', 2000, 'info'); mostrarBannerSaudacao(true); ativarModoRadio(); }
 }
 
-/* ============ BANNER ============ */
+/* ═══════════════════════════════════════════════════════════
+   1️⃣7️⃣ BANNER DE SAUDAÇÃO
+   ═══════════════════════════════════════════════════════════ */
 function mostrarBannerSaudacao(forcar = false) {
   const banner = document.getElementById('bannerSaudacao');
   if (!banner) return;
   if (!forcar) {
-    const ultimo = parseInt(localStorage.getItem('vdb_banner_ultimo') || '0');
+    const ultimo = parseInt(localStorage.getItem('vdb_banner_ultimo_v' + CONFIG.APP_VERSION) || '0');
     const agora = now();
     if ((agora - ultimo) / (1000 * 60 * 60) < CONFIG.BANNER_INTERVALO_HORAS) return;
-    localStorage.setItem('vdb_banner_ultimo', String(agora));
+    localStorage.setItem('vdb_banner_ultimo_v' + CONFIG.APP_VERSION, String(agora));
   }
   const periodo = getPeriodoAtual();
   const config = BANNER_CONFIG[periodo];
@@ -1264,11 +1515,18 @@ function mostrarBannerSaudacao(forcar = false) {
   document.getElementById('bannerHora').textContent = String(hora).padStart(2, '0') + ':' + String(minuto).padStart(2, '0');
   banner.classList.add('show');
   banner.classList.remove('hide');
-  if (!vozJaTocou) { vozJaTocou = true; setTimeout(() => { falarSaudacaoInicial(); iniciarVozPeriodica(); }, 1200); }
-  setTimeout(() => { banner.classList.add('hide'); setTimeout(() => { banner.classList.remove('show'); banner.classList.remove('hide'); }, 600); }, 3500);
+  setTimeout(() => {
+    banner.classList.add('hide');
+    setTimeout(() => {
+      banner.classList.remove('show');
+      banner.classList.remove('hide');
+    }, 600);
+  }, 3500);
 }
 
-/* ============ SENHAS ============ */
+/* ═══════════════════════════════════════════════════════════
+   1️⃣8️⃣ SENHAS
+   ═══════════════════════════════════════════════════════════ */
 function gerarSenhaAleatoria() { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s = ''; for (let i = 0; i < 12; i++) s += c.charAt(Math.floor(Math.random() * c.length)); return s; }
 function gerarSenhaDispositivo(fp) { return btoa(fp + ':' + gerarSenhaAleatoria()); }
 function gerarSenhaUniversal() { const ts = now().toString(36); return 'UNIV:' + ts + ':' + btoa('UNIV:' + ts + ':' + gerarSenhaAleatoria()).slice(0, 16); }
@@ -1290,7 +1548,7 @@ function bloquear() {
   localStorage.removeItem('vdb_desbloqueado');
   localStorage.removeItem('vdb_senha_permanente');
   localStorage.removeItem('vdb_teste_expiracao');
-  notif('⏰ Tempo de teste expirou!', 3000);
+  notif('⏰ Tempo de teste expirou!', 3000, 'warning');
 }
 function handleLiberar() {
   const s = dom.senhaInput.value.trim();
@@ -1308,17 +1566,23 @@ function handleLiberar() {
     localStorage.removeItem('vdb_teste_expiracao');
     localStorage.removeItem('vdb_bloqueado_permanente');
     appState.bloqueadoPermanente = false;
-    notif(r.msg, 3000);
+    notif(r.msg, 3000, 'success');
     if (!appState.playerAtivado) setTimeout(ativarPlayer, 500);
     appState._save();
   } else {
     dom.erroSenha.innerHTML = '❌ Senha inválida!<br><small style="color:#888;font-size:.7rem;">💡 Fale com o suporte</small>';
     dom.senhaInput.value = '';
-    notif('❌ Senha inválida!', 2000);
+    notif('❌ Senha inválida!', 2000, 'error');
   }
 }
-function liberarAgora() {
-  const s = prompt('🔑 Digite sua senha única:');
+async function liberarAgora() {
+  const s = await vdbDialog({
+    title: '🔑 LIBERAR APP',
+    msg: 'Digite sua senha única:',
+    input: 'text',
+    placeholder: 'Sua senha',
+    okText: 'Liberar'
+  });
   if (!s) return;
   const r = validarSenha(s);
   if (r.valida) {
@@ -1332,12 +1596,14 @@ function liberarAgora() {
     localStorage.removeItem('vdb_teste_expiracao');
     localStorage.removeItem('vdb_bloqueado_permanente');
     appState.bloqueadoPermanente = false;
-    notif('✅ App liberado!', 3000);
+    notif('✅ App liberado!', 3000, 'success');
     appState._save();
-  } else notif('❌ Senha inválida!', 2000);
+  } else notif('❌ Senha inválida!', 2000, 'error');
 }
 
-/* ============ ADMIN ============ */
+/* ═══════════════════════════════════════════════════════════
+   1️⃣9️⃣ ADMIN
+   ═══════════════════════════════════════════════════════════ */
 let cliqueTimestamps = [];
 function setup8CliquesLogo() {
   const logo = dom.logoMacaco;
@@ -1350,23 +1616,29 @@ function setup8CliquesLogo() {
     if (cliqueTimestamps.length >= 8) { cliqueTimestamps = []; vibrar(50); abrirAdmin(); }
   });
 }
-function abrirAdmin() {
+async function abrirAdmin() {
   const l = JSON.parse(localStorage.getItem('vdb_admin_lock') || '{"tentativas":0,"bloqueado":false,"ate":0}');
-  if (l.bloqueado && now() < l.ate) { notif('🔒 Bloqueado! ' + Math.ceil((l.ate - now())/1000) + 's', 2500); return; }
+  if (l.bloqueado && now() < l.ate) { notif('🔒 Bloqueado! ' + Math.ceil((l.ate - now())/1000) + 's', 2500, 'warning'); return; }
   if (l.bloqueado && now() >= l.ate) { l.bloqueado = false; l.tentativas = 0; localStorage.setItem('vdb_admin_lock', JSON.stringify(l)); }
-  const s = prompt('🔐 Digite a senha do painel admin:');
+  const s = await vdbDialog({
+    title: '🔐 PAINEL ADMIN',
+    msg: 'Digite a senha do painel:',
+    input: 'password',
+    placeholder: 'Senha admin',
+    okText: 'Entrar'
+  });
   if (s === null) return;
   if (s === CONFIG.SENHA_ADMIN) {
     l.tentativas = 0; l.bloqueado = false;
     localStorage.setItem('vdb_admin_lock', JSON.stringify(l));
     dom.adminPanel.classList.add('open');
-    notif('🔐 Painel aberto!', 2000);
+    notif('🔐 Painel aberto!', 2000, 'success');
     carregarHistorico();
     atualizarTotalSenhas();
   } else {
     l.tentativas = (l.tentativas || 0) + 1;
-    if (l.tentativas >= 3) { l.bloqueado = true; l.ate = now() + 60000; localStorage.setItem('vdb_admin_lock', JSON.stringify(l)); notif('🔒 Bloqueado 60s!', 3000); }
-    else { localStorage.setItem('vdb_admin_lock', JSON.stringify(l)); notif('❌ Errada! ' + l.tentativas + '/3', 2000); }
+    if (l.tentativas >= 3) { l.bloqueado = true; l.ate = now() + 60000; localStorage.setItem('vdb_admin_lock', JSON.stringify(l)); notif('🔒 Bloqueado 60s!', 3000, 'error'); }
+    else { localStorage.setItem('vdb_admin_lock', JSON.stringify(l)); notif('❌ Errada! ' + l.tentativas + '/3', 2000, 'error'); }
   }
 }
 function carregarHistorico() {
@@ -1383,7 +1655,54 @@ function carregarHistorico() {
 }
 function atualizarTotalSenhas() { dom.totalSenhas.textContent = appState.getSenhasHistorico().length; }
 
-/* ============ AUXILIARES ============ */
+/* ═══════════════════════════════════════════════════════════
+   2️⃣0️⃣ DIÁLOGOS ESTILIZADOS
+   ═══════════════════════════════════════════════════════════ */
+function vdbDialog({ title, msg, input, placeholder, okText, cancelText }) {
+  return new Promise(resolve => {
+    const overlay = $('vdbDialogOverlay');
+    const titleEl = $('vdbDialogTitle');
+    const msgEl = $('vdbDialogMsg');
+    const inputEl = $('vdbDialogInput');
+    const okBtn = $('vdbDialogOk');
+    const cancelBtn = $('vdbDialogCancel');
+    titleEl.textContent = title || 'Confirmação';
+    msgEl.textContent = msg || '';
+    if (input) {
+      inputEl.style.display = 'block';
+      inputEl.value = '';
+      inputEl.type = input;
+      inputEl.placeholder = placeholder || '';
+      setTimeout(() => inputEl.focus(), 150);
+    } else {
+      inputEl.style.display = 'none';
+    }
+    okBtn.textContent = okText || 'Confirmar';
+    cancelBtn.textContent = cancelText || 'Cancelar';
+    overlay.classList.add('active');
+    function fechar(valor) {
+      overlay.classList.remove('active');
+      okBtn.onclick = null;
+      cancelBtn.onclick = null;
+      inputEl.onkeydown = null;
+      overlay.onclick = null;
+      resolve(valor);
+    }
+    okBtn.onclick = () => fechar(input ? (inputEl.value || null) : true);
+    cancelBtn.onclick = () => fechar(null);
+    overlay.onclick = (e) => { if (e.target === overlay) fechar(null); };
+    if (input) {
+      inputEl.onkeydown = (e) => {
+        if (e.key === 'Enter') fechar(inputEl.value || null);
+        if (e.key === 'Escape') fechar(null);
+      };
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   2️⃣1️⃣ AUXILIARES (WHATSAPP, CADASTRO, QR, FILA)
+   ═══════════════════════════════════════════════════════════ */
 function abrirWhatsAppCompra() { const m = encodeURIComponent('Olá! Quero adquirir o VAI DE BOA! MUSIC VITALÍCIO por R$ 39,00'); window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + m, '_blank'); }
 function abrirCadastro() {
   const mo = document.createElement('div');
@@ -1394,12 +1713,12 @@ function abrirCadastro() {
   document.getElementById('cadastroConfirmarBtn').onclick = () => {
     const n = document.getElementById('cadastroNome').value.trim();
     const z = document.getElementById('cadastroZap').value.trim();
-    if (!n || n.length < 2) { notif('⚠️ Digite seu nome!', 2000); return; }
-    if (!z || z.length < 8) { notif('⚠️ Digite o WhatsApp!', 2000); return; }
+    if (!n || n.length < 2) { notif('⚠️ Digite seu nome!', 2000, 'warning'); return; }
+    if (!z || z.length < 8) { notif('⚠️ Digite o WhatsApp!', 2000, 'warning'); return; }
     const m = '🎵 *VAI DE BOA! MUSIC*\n\n👤 *Nome:* ' + n + '\n📱 *WhatsApp:* ' + z + '\n💰 *Valor:* R$ 39,00\n\n✅ Quero comprar!';
     window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + encodeURIComponent(m), '_blank');
     mo.remove();
-    notif('✅ Cadastro enviado!', 3000);
+    notif('✅ Cadastro enviado!', 3000, 'success');
   };
 }
 function gerarQrCode() { const u = encodeURIComponent(window.location.href); dom.qrCodeImage.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + u + '&margin=20&format=png&bgcolor=ffffff&color=000000'; dom.qrCodeModal.classList.add('active'); }
@@ -1428,14 +1747,16 @@ function renderizarRecentes() {
     d.onclick = () => {
       const f = appState.musicas.find(x => x.id === m.id);
       if (f) { appState.playlistAtual = [f]; appState.indiceAtual = 0; if (appState.isBackgroundActive) tocar(); }
-      else notif('⚠️ Música não encontrada', 2000);
+      else notif('⚠️ Música não encontrada', 2000, 'warning');
       dom.recentSheet.classList.remove('open');
     };
     dom.recentList.appendChild(d);
   });
 }
 
-/* ============ TOUCH ============ */
+/* ═══════════════════════════════════════════════════════════
+   2️⃣2️⃣ TOUCH / SWIPE
+   ═══════════════════════════════════════════════════════════ */
 class TouchManager {
   constructor() { this.st = 60; this.tsx = 0; this.tsy = 0; this.is = false; this.d = null; this.lastMove = 0; this.setup(); }
   setup() {
@@ -1459,8 +1780,8 @@ class TouchManager {
   }
   hte() {
     if (this.is && this.d) {
-      if (this.d === 'left') { next(); notif('⏭️', 800); }
-      else if (this.d === 'right') { prev(); notif('⏮️', 800); }
+      if (this.d === 'left') { next(); notif('⏭️', 800, 'info'); }
+      else if (this.d === 'right') { prev(); notif('⏮️', 800, 'info'); }
     }
     this.tsx = 0; this.tsy = 0; this.d = null; this.is = false;
   }
@@ -1468,29 +1789,35 @@ class TouchManager {
 }
 new TouchManager();
 
-/* ============ CORAÇÃO TEMPORÁRIO ============ */
+/* 🎯 Coração temporário — mas se for fav, fica fixo */
 let coracaoTimeout = null;
 function mostrarCoracaoTemp() {
   if (!dom.favHeartCenter) return;
+  if (dom.favHeartCenter.classList.contains('is-fav')) return;
   dom.favHeartCenter.classList.add('show');
   clearTimeout(coracaoTimeout);
   coracaoTimeout = setTimeout(() => dom.favHeartCenter.classList.remove('show'), 4000);
 }
 
-/* ============ MÍDIAS ============ */
+/* ═══════════════════════════════════════════════════════════
+   2️⃣3️⃣ MÍDIAS DE FUNDO
+   ═══════════════════════════════════════════════════════════ */
 async function carregarMidias(url, options = {}) {
   const { fallback = MIDIAS_FALLBACK, duracaoImagem = 5000 } = options;
   try {
     dom.mediaContainer.innerHTML = '';
     let ms = [];
     try {
-      const r = await fetch(url + '?v=' + CONFIG.APP_VERSION + '&t=' + now());
+      const ctrl = new AbortController();
+      const tid = setTimeout(() => ctrl.abort(), 9000);
+      const r = await fetch(url + '?v=' + CONFIG.APP_VERSION + '&t=' + now(), { signal: ctrl.signal });
+      clearTimeout(tid);
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const d = await r.json();
       if (Array.isArray(d)) ms = d;
       else if (d.medias) ms = d.medias;
       else if (d.midias) ms = d.midias;
-    } catch(e) {}
+    } catch(e) { console.warn('⚠️ Mídias: usando fallback', e); }
     if (!ms.length) ms = fallback;
     ms = ms.filter(m => m && (m.tipo === 'video' || m.tipo === 'imagem') && m.src);
     if (!ms.length) ms = fallback;
@@ -1553,18 +1880,22 @@ async function carregarMidiasTV() {
   mostrarBotaoSairTV();
 }
 
-/* ============ MODO TV ============ */
+/* ═══════════════════════════════════════════════════════════
+   2️⃣4️⃣ MODO TV
+   ═══════════════════════════════════════════════════════════ */
 function mostrarBotaoSairTV() { esconderBotaoSairTV(); const b = document.createElement('button'); b.id = 'btnSairModoTV'; b.innerHTML = '✕'; b.onclick = () => toggleModoTV(); document.body.appendChild(b); }
 function esconderBotaoSairTV() { const b = document.getElementById('btnSairModoTV'); if (b) b.remove(); }
 async function toggleModoTV() {
   vibrar(20);
   appState.modoTV = !appState.modoTV;
-  if (appState.modoTV) { notif('📺 Modo TV ATIVADO', 2000); await carregarMidiasTV(); }
-  else { notif('📺 Modo TV DESATIVADO', 2000); dom.infoScroll.classList.remove('hidden'); esconderBotaoSairTV(); await carregarMidiasPadrao(); }
+  if (appState.modoTV) { notif('📺 Modo TV ATIVADO', 2000, 'success'); await carregarMidiasTV(); }
+  else { notif('📺 Modo TV DESATIVADO', 2000, 'info'); dom.infoScroll.classList.remove('hidden'); esconderBotaoSairTV(); await carregarMidiasPadrao(); }
   appState._save();
 }
 
-/* ============ PWA ============ */
+/* ═══════════════════════════════════════════════════════════
+   2️⃣5️⃣ PWA / INSTALAÇÃO
+   ═══════════════════════════════════════════════════════════ */
 const btnInstalarFixo = $('btnInstalarFixo');
 const instrucoesInstalar = $('instrucoesInstalar');
 let deferredInstallPrompt = null;
@@ -1578,8 +1909,19 @@ function mostrarBotaoInstalar() {
   btnInstalarFixo.style.display = 'flex';
 }
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstallPrompt = e; setTimeout(mostrarBotaoInstalar, 500); });
-window.addEventListener('appinstalled', () => { btnInstalarFixo.style.display = 'none'; notif('🎉 App instalado!', 3000); });
-if (btnInstalarFixo) { btnInstalarFixo.onclick = async () => { if (deferredInstallPrompt) { deferredInstallPrompt.prompt(); const r = await deferredInstallPrompt.userChoice; if (r.outcome === 'accepted') notif('✅ Instalando...', 2500); deferredInstallPrompt = null; return; } if (instrucoesInstalar) instrucoesInstalar.classList.add('active'); }; }
+window.addEventListener('appinstalled', () => { btnInstalarFixo.style.display = 'none'; notif('🎉 App instalado!', 3000, 'success'); });
+if (btnInstalarFixo) {
+  btnInstalarFixo.onclick = async () => {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      const r = await deferredInstallPrompt.userChoice;
+      if (r.outcome === 'accepted') notif('✅ Instalando...', 2500, 'success');
+      deferredInstallPrompt = null;
+      return;
+    }
+    if (instrucoesInstalar) instrucoesInstalar.classList.add('active');
+  };
+}
 const fecharInst = document.getElementById('fecharInstrucoesBtn');
 if (fecharInst) fecharInst.onclick = () => instrucoesInstalar.classList.remove('active');
 if ('serviceWorker' in navigator) {
@@ -1590,9 +1932,38 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-/* ============ INICIALIZAÇÃO ============ */
+/* ═══════════════════════════════════════════════════════════
+   2️⃣6️⃣ RECARREGAR / ATUALIZAR
+   ═══════════════════════════════════════════════════════════ */
+async function forcarRecarregarTudo() {
+  notif('🔄 Limpando tudo...', 2000, 'info');
+  try {
+    if (navigator.serviceWorker) { const r = await navigator.serviceWorker.getRegistrations(); await Promise.all(r.map(x => x.unregister())); }
+    if ('caches' in window) { const n = await caches.keys(); await Promise.all(n.map(x => caches.delete(x))); }
+  } catch(e) {}
+  setTimeout(() => { window.location.href = window.location.pathname + '?hard=' + Date.now(); }, 1000);
+}
+async function atualizarAppMagico() {
+  const ok = await vdbDialog({
+    title: '🪄 ATUALIZAR APP',
+    msg: 'Deseja atualizar o app agora?',
+    okText: 'Atualizar'
+  });
+  if (!ok) return;
+  notif('⏳ Atualizando...', 1500, 'info');
+  try {
+    if ('caches' in window) { const k = await caches.keys(); await Promise.all(k.map(x => caches.delete(x))); }
+    if (navigator.serviceWorker) { const r = await navigator.serviceWorker.getRegistrations(); await Promise.all(r.map(x => x.unregister())); }
+  } catch(e) {}
+  setTimeout(() => { window.location.href = window.location.pathname + '?update=' + Date.now(); }, 800);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   2️⃣7️⃣ INICIALIZAÇÃO
+   ═══════════════════════════════════════════════════════════ */
 async function iniciar() {
   try {
+    // Limpa caches de versões antigas
     try {
       const vSalva = localStorage.getItem('vdb_versao_limpeza');
       if (vSalva !== CONFIG.APP_VERSION) {
@@ -1617,6 +1988,7 @@ async function iniciar() {
     await carregarMidiasPadrao();
     updateProgress(30);
 
+    // Verifica se já está desbloqueado
     if (localStorage.getItem('vdb_desbloqueado') === 'true' || localStorage.getItem('vdb_senha_permanente') === 'true') {
       appState.desbloqueado = true;
       dom.blockOverlay.classList.remove('active');
@@ -1634,22 +2006,27 @@ async function iniciar() {
     }
     updateProgress(70);
 
-    let pronto = false;
-    for (const g of GENRE_ORDEM) {
+    // 🚀 Busca PARALELA dos 6 primeiros gêneros (muito mais rápido)
+    const promessas = GENRE_ORDEM.slice(0, 6).map(async (g) => {
       try {
         const m = await cacheManager.get(g, GENRE_URLS[g]);
-        if (m && m.length) {
-          appState.musicas = m;
-          appState.modoAtual = g;
-          appState.playlistAtual = shuffle(m);
-          aplicarTema(g);
-          const mm = appState.playlistAtual[0];
-          if (mm) { atualizarLetreiro(mm); updateHeart(mm.id); }
-          atualizarBadgeGenero();
-          pronto = true;
-          break;
-        }
-      } catch(e) {}
+        return m && m.length ? { g, m } : null;
+      } catch (e) { return null; }
+    });
+    const resultados = await Promise.all(promessas);
+    let pronto = false;
+    for (const r of resultados) {
+      if (r) {
+        appState.musicas = r.m;
+        appState.modoAtual = r.g;
+        appState.playlistAtual = shuffle(r.m);
+        aplicarTema(r.g);
+        const mm = appState.playlistAtual[0];
+        if (mm) { atualizarLetreiro(mm); updateHeart(mm.id); }
+        atualizarBadgeGenero();
+        pronto = true;
+        break;
+      }
     }
     if (!pronto) {
       appState.musicas = [
@@ -1673,7 +2050,10 @@ async function iniciar() {
     forcarTelaCheia();
     if (appState.desbloqueado) setTimeout(ativarPlayer, 1500);
 
-    /* EVENT LISTENERS */
+    // 🎤 Inicia voz independente do banner
+    iniciarVozSeNecessario();
+
+    /* ─── EVENT LISTENERS ─── */
     dom.playBtn.onclick = togglePlay;
     dom.prevBtn.onclick = prev;
     dom.nextBtn.onclick = next;
@@ -1694,7 +2074,7 @@ async function iniciar() {
       };
     }
     document.addEventListener('click', e => {
-      if (e.target.closest('button') || e.target.closest('.genre-card') || e.target.closest('.fav-item-modal') || e.target.closest('#infoScroll') || e.target.closest('.menu-popup') || e.target.closest('.bottom-controls') || e.target.closest('.bottom-sheet') || e.target.closest('.genres-modal') || e.target.closest('.fav-modal') || e.target.closest('.fab-container') || e.target.closest('.top-bar') || e.target.closest('.fav-heart-center')) return;
+      if (e.target.closest('button') || e.target.closest('.genre-card') || e.target.closest('.fav-item-modal') || e.target.closest('#infoScroll') || e.target.closest('.menu-popup') || e.target.closest('.bottom-controls') || e.target.closest('.bottom-sheet') || e.target.closest('.genres-modal') || e.target.closest('.fav-modal') || e.target.closest('.fab-container') || e.target.closest('.top-bar') || e.target.closest('.fav-heart-center') || e.target.closest('.vdb-dialog-overlay')) return;
       showControls();
       mostrarCoracaoTemp();
     });
@@ -1709,28 +2089,62 @@ async function iniciar() {
     dom.recentMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); renderizarRecentes(); dom.recentSheet.classList.add('open'); };
     dom.speedMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); dom.speedSheet.classList.add('open'); };
     dom.sleepMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); dom.sleepSheet.classList.add('open'); };
+
+    /* 🔊 VOZ */
+    vozAtivada = localStorage.getItem('vdb_voz_ativa') !== 'false';
+    function atualizarBotaoVoz() {
+      if (vozAtivada) dom.toggleVozBtn.innerHTML = '<i class="fas fa-volume-high"></i>Desligar Voz';
+      else dom.toggleVozBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>Ligar Voz';
+    }
+    atualizarBotaoVoz();
     if (dom.toggleVozBtn) {
-      vozAtivada = localStorage.getItem('vdb_voz_ativa') !== 'false';
-      atualizarBotaoVoz();
       dom.toggleVozBtn.onclick = () => {
         vozAtivada = !vozAtivada;
         localStorage.setItem('vdb_voz_ativa', vozAtivada);
         atualizarBotaoVoz();
-        if (vozAtivada) { notif('🔊 Voz LIGADA', 1500); falarTexto('Voz ativada'); }
-        else { window.speechSynthesis.cancel(); notif('🔇 Voz DESLIGADA', 1500); }
+        if (vozAtivada) { notif('🔊 Voz LIGADA', 1500, 'success'); falarTexto('Voz ativada'); }
+        else { window.speechSynthesis.cancel(); notif('🔇 Voz DESLIGADA', 1500, 'info'); }
         dom.menuPopup.classList.remove('open');
       };
-      function atualizarBotaoVoz() {
-        if (vozAtivada) dom.toggleVozBtn.innerHTML = '<i class="fas fa-volume-high"></i>Desligar Voz';
-        else dom.toggleVozBtn.innerHTML = '<i class="fas fa-volume-xmark"></i>Ligar Voz';
-      }
     }
+
+    /* MENU */
     dom.hardReloadBtn.onclick = () => { dom.menuPopup.classList.remove('open'); forcarRecarregarTudo(); };
     dom.magicUpdateMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); atualizarAppMagico(); };
     dom.reloadPlaylistBtn.onclick = () => { dom.menuPopup.classList.remove('open'); location.reload(); };
-    dom.forceUpdateBtn.onclick = async () => { dom.menuPopup.classList.remove('open'); notif('🔄 Atualizando...', 1500); if (appState.modoTV) await carregarMidiasTV(); else await carregarMidiasPadrao(); notif('✅ Mídias atualizadas!', 2000); };
-    document.querySelectorAll('.speed-btn').forEach(b => { b.onclick = () => { vibrar(10); document.querySelectorAll('.speed-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); dom.audio.playbackRate = parseFloat(b.dataset.speed); notif('⚡ ' + b.dataset.speed + 'x', 1500); }; });
-    document.querySelectorAll('.sheet-option[data-sleep]').forEach(b => { b.onclick = () => { vibrar(10); const min = parseInt(b.dataset.sleep); clearTimeout(appState.sleepTimer); if (min > 0) { appState.sleepTimer = setTimeout(() => { dom.audio.pause(); appState.isPlaying = false; dom.playBtn.innerHTML = '<i class="fas fa-play"></i>'; notif('💤 Rádio desligada!', 2000); }, min * 60000); notif('⏰ Sleep: ' + min + ' min', 2000); } else notif('🚫 Cancelado', 1500); dom.sleepSheet.classList.remove('open'); }; });
+    dom.forceUpdateBtn.onclick = async () => { dom.menuPopup.classList.remove('open'); notif('🔄 Atualizando...', 1500, 'info'); if (appState.modoTV) await carregarMidiasTV(); else await carregarMidiasPadrao(); notif('✅ Mídias atualizadas!', 2000, 'success'); };
+
+    /* VELOCIDADE */
+    document.querySelectorAll('.speed-btn').forEach(b => {
+      b.onclick = () => {
+        vibrar(10);
+        document.querySelectorAll('.speed-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        dom.audio.playbackRate = parseFloat(b.dataset.speed);
+        notif('⚡ ' + b.dataset.speed + 'x', 1500, 'info');
+      };
+    });
+
+    /* SLEEP TIMER */
+    document.querySelectorAll('.sheet-option[data-sleep]').forEach(b => {
+      b.onclick = () => {
+        vibrar(10);
+        const min = parseInt(b.dataset.sleep);
+        clearTimeout(appState.sleepTimer);
+        if (min > 0) {
+          appState.sleepTimer = setTimeout(() => {
+            dom.audio.pause();
+            appState.isPlaying = false;
+            dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+            notif('💤 Rádio desligada!', 2000, 'info');
+          }, min * 60000);
+          notif('⏰ Sleep: ' + min + ' min', 2000, 'info');
+        } else notif('🚫 Cancelado', 1500, 'info');
+        dom.sleepSheet.classList.remove('open');
+      };
+    });
+
+    /* FAB */
     dom.fabMain.onclick = () => { vibrar(10); dom.fabSub.classList.toggle('open'); dom.fabMain.innerHTML = dom.fabSub.classList.contains('open') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-plus"></i>'; };
     function fecharFab() { dom.fabSub.classList.remove('open'); dom.fabMain.innerHTML = '<i class="fas fa-plus"></i>'; }
     dom.fabFavoritos.onclick = () => { vibrar(10); renderizarFavoritosModal(); dom.favModal.classList.add('open'); fecharFab(); };
@@ -1740,57 +2154,168 @@ async function iniciar() {
     dom.fabCadastro.onclick = () => { abrirCadastro(); fecharFab(); };
     dom.fabFeedback.onclick = () => { dom.feedbackModal.classList.add('open'); fecharFab(); };
     dom.fabYoutube.onclick = () => { window.open('https://sites.google.com/view/rogersjc/in%C3%ADcio'); fecharFab(); };
-    dom.fabShare.onclick = () => { navigator.clipboard.writeText(location.href).then(() => notif('📋 Link copiado!', 1500)); fecharFab(); };
+    dom.fabShare.onclick = () => { navigator.clipboard.writeText(location.href).then(() => notif('📋 Link copiado!', 1500, 'success')); fecharFab(); };
     dom.fabQrCode.onclick = () => { gerarQrCode(); fecharFab(); };
+
+    /* MENU OUTROS */
     dom.fullscreenMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); forcarTelaCheia(); };
     dom.liberarAgoraBtn.onclick = () => { dom.menuPopup.classList.remove('open'); liberarAgora(); };
     dom.cadastroMenuBtn.onclick = () => { dom.menuPopup.classList.remove('open'); abrirCadastro(); };
     dom.qrCloseBtn.onclick = () => dom.qrCodeModal.classList.remove('active');
     dom.qrCodeModal.onclick = e => { if (e.target === dom.qrCodeModal) dom.qrCodeModal.classList.remove('active'); };
-    document.querySelectorAll('.star').forEach(s => { s.onclick = () => { vibrar(10); const r = parseInt(s.dataset.rating); document.querySelectorAll('.star').forEach((x, i) => x.className = i < r ? 'fas fa-star star active' : 'far fa-star star'); }; });
-    dom.sendFeedbackBtn.onclick = () => { const s = document.querySelectorAll('.star.active').length; const t = dom.feedbackText.value; window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + encodeURIComponent('⭐ ' + '★'.repeat(s) + ' ' + t)); dom.feedbackModal.classList.remove('open'); };
+
+    /* FEEDBACK */
+    document.querySelectorAll('.star').forEach(s => {
+      s.onclick = () => {
+        vibrar(10);
+        const r = parseInt(s.dataset.rating);
+        document.querySelectorAll('.star').forEach((x, i) => x.className = i < r ? 'fas fa-star star active' : 'far fa-star star');
+      };
+    });
+    dom.sendFeedbackBtn.onclick = () => {
+      const s = document.querySelectorAll('.star.active').length;
+      const t = dom.feedbackText.value;
+      window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + encodeURIComponent('⭐ ' + '★'.repeat(s) + ' ' + t));
+      dom.feedbackModal.classList.remove('open');
+    };
     dom.closeFeedbackBtn.onclick = () => dom.feedbackModal.classList.remove('open');
+
+    /* BLOQUEIO */
     dom.senhaInput.onkeydown = e => { if (e.key === 'Enter') handleLiberar(); };
     dom.btnLiberar.onclick = handleLiberar;
+
+    /* ADMIN */
     setup8CliquesLogo();
-    dom.adminGerarBtn.onclick = () => { const f = dom.adminFingerprintInput.value.trim(); if (!f || f.length < 10) { notif('⚠️ Cole o fingerprint!', 2000); dom.adminFingerprintInput.focus(); return; } const s = gerarSenhaDispositivo(f); dom.adminSenhaGerada.value = s; appState.addSenhaHistorico(s, 'dispositivo'); atualizarTotalSenhas(); carregarHistorico(); dom.adminFingerprintInput.value = ''; notif('✅ Senha gerada!', 2000); };
-    dom.adminGerarUniversalBtn.onclick = () => { const s = gerarSenhaUniversal(); dom.adminSenhaGerada.value = s; appState.addSenhaHistorico(s, 'universal'); atualizarTotalSenhas(); carregarHistorico(); notif('✅ Universal gerada!', 2000); };
-    dom.adminLimparBtn.onclick = () => { dom.adminSenhaGerada.value = ''; notif('🗑️ Limpo!', 1000); };
+    dom.adminGerarBtn.onclick = () => {
+      const f = dom.adminFingerprintInput.value.trim();
+      if (!f || f.length < 10) { notif('⚠️ Cole o fingerprint!', 2000, 'warning'); dom.adminFingerprintInput.focus(); return; }
+      const s = gerarSenhaDispositivo(f);
+      dom.adminSenhaGerada.value = s;
+      appState.addSenhaHistorico(s, 'dispositivo');
+      atualizarTotalSenhas();
+      carregarHistorico();
+      dom.adminFingerprintInput.value = '';
+      notif('✅ Senha gerada!', 2000, 'success');
+    };
+    dom.adminGerarUniversalBtn.onclick = () => {
+      const s = gerarSenhaUniversal();
+      dom.adminSenhaGerada.value = s;
+      appState.addSenhaHistorico(s, 'universal');
+      atualizarTotalSenhas();
+      carregarHistorico();
+      notif('✅ Universal gerada!', 2000, 'success');
+    };
+    dom.adminLimparBtn.onclick = () => { dom.adminSenhaGerada.value = ''; notif('🗑️ Limpo!', 1000, 'info'); };
     dom.btnCopiarSenha.onclick = () => copiarTexto(dom.adminSenhaGerada.value, '📋 Senha copiada!');
     dom.adminCopiarSenhaBtn.onclick = () => copiarTexto(dom.adminSenhaGerada.value, '📋 Senha copiada!');
     dom.btnCopiarFingerprint.onclick = () => copiarTexto(appState.fingerprint, '📋 ID copiado!');
-    dom.adminEnviarWhatsBtn.onclick = () => { const s = dom.adminSenhaGerada.value; if (!s) { notif('⚠️ Gere uma senha!', 1500); return; } const m = '🔑 *VAI DE BOA! MUSIC*%0A%0ASua senha:%0A%0A`' + s + '`%0A%0A📱 Cole no app!'; window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + m, '_blank'); };
+    dom.adminEnviarWhatsBtn.onclick = () => {
+      const s = dom.adminSenhaGerada.value;
+      if (!s) { notif('⚠️ Gere uma senha!', 1500, 'warning'); return; }
+      const m = '🔑 *VAI DE BOA! MUSIC*%0A%0ASua senha:%0A%0A`' + s + '`%0A%0A📱 Cole no app!';
+      window.open('https://wa.me/' + CONFIG.WHATSAPP.replace(/\D/g, '') + '?text=' + m, '_blank');
+    };
     dom.adminCloseBtn.onclick = () => dom.adminPanel.classList.remove('open');
-    dom.audio.ontimeupdate = () => { if (dom.audio.duration) { dom.progressFill.style.width = (dom.audio.currentTime / dom.audio.duration * 100) + '%'; dom.currentTime.textContent = fmt(dom.audio.currentTime); dom.totalTime.textContent = fmt(dom.audio.duration); } };
+
+    /* ÁUDIO TIMEUPDATE — com MediaSession.setPositionState */
+    dom.audio.ontimeupdate = () => {
+      if (dom.audio.duration) {
+        dom.progressFill.style.width = (dom.audio.currentTime / dom.audio.duration * 100) + '%';
+        dom.currentTime.textContent = fmt(dom.audio.currentTime);
+        dom.totalTime.textContent = fmt(dom.audio.duration);
+        // 📱 Atualiza barra de progresso na tela de bloqueio (iOS/Android)
+        if ('mediaSession' in navigator && navigator.mediaSession.setPositionState) {
+          try {
+            navigator.mediaSession.setPositionState({
+              duration: dom.audio.duration,
+              playbackRate: dom.audio.playbackRate,
+              position: Math.min(dom.audio.currentTime, dom.audio.duration)
+            });
+          } catch (e) {}
+        }
+      }
+    };
     dom.audio.onended = () => { if (!appState.carregandoMusica) next(); };
     dom.audio.onerror = () => { if (!appState.carregandoMusica) setTimeout(next, 500); };
-    dom.infoScroll.addEventListener('click', function() { if (this.classList.contains('modo-pesquisa')) return; this.classList.add('modo-pesquisa'); dom.searchInputLetreiro.value = ''; dom.searchClearLetreiro.classList.remove('visible'); dom.searchInputLetreiro.focus(); });
-    dom.searchInputLetreiro.addEventListener('input', function() { if (this.value.trim().length > 0) dom.searchClearLetreiro.classList.add('visible'); else dom.searchClearLetreiro.classList.remove('visible'); });
-    dom.searchInputLetreiro.addEventListener('keydown', function(e) { if (e.key === 'Enter') { const t = this.value.trim(); aplicarBusca(t); this.blur(); dom.infoScroll.classList.remove('modo-pesquisa'); dom.searchClearLetreiro.classList.remove('visible'); } });
-    dom.searchClearLetreiro.addEventListener('click', function(e) { e.stopPropagation(); dom.searchInputLetreiro.value = ''; dom.searchClearLetreiro.classList.remove('visible'); appState.playlistAtual = shuffle(appState.musicas); appState.indiceAtual = 0; if (appState.isBackgroundActive) tocar(); dom.searchInputLetreiro.focus(); });
-    function aplicarBusca(t) { if (!t || t.length === 0) { appState.playlistAtual = shuffle(appState.musicas); appState.indiceAtual = 0; if (appState.isBackgroundActive) tocar(); return; } const f = appState.musicas.filter(m => m.title.toLowerCase().includes(t.toLowerCase()) || (m.artist && m.artist.toLowerCase().includes(t.toLowerCase()))); if (f.length) { appState.playlistAtual = shuffle(f); appState.indiceAtual = 0; if (appState.isBackgroundActive) tocar(); notif('🔍 ' + f.length + ' músicas encontradas', 2000); } else notif('🔍 Nenhuma encontrada', 1500); }
-    document.addEventListener('keydown', e => { if (e.target.tagName === 'INPUT') return; if (e.key === ' ') { e.preventDefault(); togglePlay(); } if (e.key === 'ArrowRight') next(); if (e.key === 'ArrowLeft') prev(); if (e.key === 's' || e.key === 'S') toggleShuffle(); });
-    document.addEventListener('click', e => { if (!dom.menuPopup.contains(e.target) && e.target !== dom.menuButton && !dom.menuButton.contains(e.target)) dom.menuPopup.classList.remove('open'); });
+
+    /* BUSCA */
+    dom.infoScroll.addEventListener('click', function() {
+      if (this.classList.contains('modo-pesquisa')) return;
+      this.classList.add('modo-pesquisa');
+      dom.searchInputLetreiro.value = '';
+      dom.searchClearLetreiro.classList.remove('visible');
+      dom.searchInputLetreiro.focus();
+    });
+    dom.searchInputLetreiro.addEventListener('input', function() {
+      if (this.value.trim().length > 0) dom.searchClearLetreiro.classList.add('visible');
+      else dom.searchClearLetreiro.classList.remove('visible');
+    });
+    dom.searchInputLetreiro.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const t = this.value.trim();
+        aplicarBusca(t);
+        this.blur();
+        dom.infoScroll.classList.remove('modo-pesquisa');
+        dom.searchClearLetreiro.classList.remove('visible');
+      }
+    });
+    dom.searchClearLetreiro.addEventListener('click', function(e) {
+      e.stopPropagation();
+      dom.searchInputLetreiro.value = '';
+      dom.searchClearLetreiro.classList.remove('visible');
+      appState.playlistAtual = shuffle(appState.musicas);
+      appState.indiceAtual = 0;
+      if (appState.isBackgroundActive) tocar();
+      dom.searchInputLetreiro.focus();
+    });
+    function aplicarBusca(t) {
+      if (!t || t.length === 0) { appState.playlistAtual = shuffle(appState.musicas); appState.indiceAtual = 0; if (appState.isBackgroundActive) tocar(); return; }
+      const f = appState.musicas.filter(m => m.title.toLowerCase().includes(t.toLowerCase()) || (m.artist && m.artist.toLowerCase().includes(t.toLowerCase())));
+      if (f.length) {
+        appState.playlistAtual = shuffle(f);
+        appState.indiceAtual = 0;
+        if (appState.isBackgroundActive) tocar();
+        notif('🔍 ' + f.length + ' músicas encontradas', 2000, 'success');
+      } else notif('🔍 Nenhuma encontrada', 1500, 'warning');
+    }
+
+    /* TECLADO */
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 's' || e.key === 'S') toggleShuffle();
+    });
+
+    /* FECHA MENU AO CLICAR FORA */
+    document.addEventListener('click', e => {
+      if (!dom.menuPopup.contains(e.target) && e.target !== dom.menuButton && !dom.menuButton.contains(e.target)) dom.menuPopup.classList.remove('open');
+    });
+
+    /* VISIBILIDADE */
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         if (!appState.desbloqueado) { const t = calcularTempoRestante(); appState.tempoRestante = t; updateTimerDisplay(); }
         if (appState.isPlaying && dom.audio && dom.audio.paused && dom.audio.src && !appState.carregandoMusica) dom.audio.play().catch(() => {});
-        if (appState.isBackgroundActive && dom.backgroundAudio.paused) { dom.backgroundAudio.src = getSilentAudioUrl(); dom.backgroundAudio.loop = true; dom.backgroundAudio.volume = .001; dom.backgroundAudio.play().catch(() => {}); }
+        if (appState.isBackgroundActive && dom.backgroundAudio.paused) {
+          dom.backgroundAudio.src = getSilentAudioUrl();
+          dom.backgroundAudio.loop = true;
+          dom.backgroundAudio.volume = .001;
+          dom.backgroundAudio.play().catch(() => {});
+        }
         verificarMudancaPeriodo();
       }
     });
     window.addEventListener('beforeunload', () => { appState._save(); });
+
   } catch(e) {
     console.error('❌ Erro:', e);
     dom.loadingScreen.style.display = 'none';
     dom.playerContainer.classList.add('visible');
-    notif('⚠️ Erro ao iniciar', 5000);
+    notif('⚠️ Erro ao iniciar', 5000, 'error');
   }
 }
-
-/* ============ RECARREGAR ============ */
-async function forcarRecarregarTudo() { notif('🔄 Limpando tudo...', 2000); try { if (navigator.serviceWorker) { const r = await navigator.serviceWorker.getRegistrations(); await Promise.all(r.map(x => x.unregister())); } if ('caches' in window) { const n = await caches.keys(); await Promise.all(n.map(x => caches.delete(x))); } } catch(e) {} setTimeout(() => { window.location.href = window.location.pathname + '?hard=' + Date.now(); }, 1000); }
-async function atualizarAppMagico() { if (!confirm('🪄 Atualizar o app agora?')) return; notif('⏳ Atualizando...', 1500); try { if ('caches' in window) { const k = await caches.keys(); await Promise.all(k.map(x => caches.delete(x))); } if (navigator.serviceWorker) { const r = await navigator.serviceWorker.getRegistrations(); await Promise.all(r.map(x => x.unregister())); } } catch(e) {} setTimeout(() => { window.location.href = window.location.pathname + '?update=' + Date.now(); }, 800); }
 
 iniciar();
 
