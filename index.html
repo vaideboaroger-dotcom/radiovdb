@@ -36,7 +36,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-touch-callout:none}
 html,body{height:100%;width:100%;background:var(--black-1);overflow:hidden;position:fixed;top:0;left:0}
 html,body{height:100dvh!important;height:-webkit-fill-available!important;min-height:100vh;min-height:-webkit-fill-available;overscroll-behavior:none;touch-action:manipulation}
-html,body,#loadingScreen,#playerContainer,.banner-saudacao{overflow:hidden!important;position:fixed;width:100%;inset:0}
+#loadingScreen,#playerContainer,.banner-saudacao{overflow:hidden!important;position:fixed;width:100%;inset:0}
 :fullscreen,:-webkit-full-screen,:-moz-full-screen{background:#000}
 @supports (padding: max(0px)) {
   body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);}
@@ -796,9 +796,6 @@ html,body,#loadingScreen,#playerContainer,.banner-saudacao{overflow:hidden!impor
 (function(){
 'use strict';
 
-/* ═══════════════════════════════════════════════════════════
-   ⚙️ CONFIGURAÇÕES
-   ═══════════════════════════════════════════════════════════ */
 const CONFIG = {
   WHATSAPP: '5512988461978',
   _A: 'cGF0aWNvMTY4NQ==',
@@ -1128,9 +1125,6 @@ const dom={
 
 function updateProgress(p){dom.loadingProgressFill.style.width=Math.min(p,100)+'%';}
 
-/* ═══════════════════════════════════════════════════════════
-   🔐 CONTROLE DE TEMPO 24H
-   ═══════════════════════════════════════════════════════════ */
 (function resetFlagsAntigas(){
   try{
     const vTimer = localStorage.getItem('vdb_timer_versao');
@@ -1226,7 +1220,7 @@ let sb=null,su=null;
 function getSilentAudioUrl(){if(!sb)sb=criarSilentAudio();if(!su)su=URL.createObjectURL(sb);return su;}
 let keepAliveInterval=null;
 function manterAudioAtivo(){if(keepAliveInterval)clearInterval(keepAliveInterval);keepAliveInterval=setInterval(()=>{if(!appState.isBackgroundActive)return;try{if(dom.backgroundAudio.paused)dom.backgroundAudio.play().catch(()=>{});if(appState.isPlaying&&dom.audio.paused&&!dom.audio.ended&&dom.audio.src&&!appState.carregandoMusica)dom.audio.play().catch(()=>{});}catch(e){}},3000);dom.audio.addEventListener('ended',()=>{if(appState.isPlaying&&!appState.carregandoMusica)next();});}
-async function ativarPlayer(){if(appState.playerAtivado)return;appState.playerAtivado=true;updateProgress(30);try{dom.backgroundAudio.src=getSilentAudioUrl();dom.backgroundAudio.loop=true;dom.backgroundAudio.volume=.001;await dom.backgroundAudio.play();appState.isBackgroundActive=true;manterAudioAtivo();if('wakeLock' in navigator){try{appState.wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}updateProgress(70);forcarTelaCheia();iniciarTimerCorrido();updateProgress(100);setTimeout(tocar,500);}catch(e){appState.isBackgroundActive=true;updateProgress(100);forcarTelaCheia();iniciarTimerCorrido();setTimeout(tocar,500);}}
+async function ativarPlayer(){if(appState.playerAtivado)return;appState.playerAtivado=true;updateProgress(30);try{dom.backgroundAudio.src=getSilentAudioUrl();dom.backgroundAudio.loop=true;dom.backgroundAudio.volume=.001;await dom.backgroundAudio.play();appState.isBackgroundActive=true;manterAudioAtivo();if('wakeLock' in navigator){try{appState.wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}updateProgress(70);iniciarTimerCorrido();updateProgress(100);setTimeout(tocar,500);}catch(e){appState.isBackgroundActive=true;updateProgress(100);iniciarTimerCorrido();setTimeout(tocar,500);}}
 
 function updateFavBadge(){if(dom.fabBadgeFav)dom.fabBadgeFav.textContent=appState.favorites.length;}
 function updateHeart(id){if(!dom.heartBtn)return;const ehFav=appState.favorites.some(f=>f.id===id);dom.heartBtn.className=ehFav?'fav-heart active':'fav-heart';dom.heartBtn.innerHTML=ehFav?'<i class="fas fa-heart"></i>':'<i class="far fa-heart"></i>';if(dom.favHeartCenter){if(ehFav)dom.favHeartCenter.classList.add('is-fav');else dom.favHeartCenter.classList.remove('is-fav');}}
@@ -1448,9 +1442,6 @@ function mostrarBotaoSairTV(){esconderBotaoSairTV();const b=document.createEleme
 function esconderBotaoSairTV(){const b=document.getElementById('btnSairModoTV');if(b)b.remove();}
 async function toggleModoTV(){vibrar(20);appState.modoTV=!appState.modoTV;if(appState.modoTV){notif('📺 Modo TV ATIVADO',2000,'success');await carregarMidiasTV();}else{notif('📺 Modo TV DESATIVADO',2000,'info');dom.infoScroll.classList.remove('hidden');esconderBotaoSairTV();await carregarMidiasPadrao();}appState._save();}
 
-/* ═══════════════════════════════════════════════════════════
-   📱 PWA — INSTALAÇÃO INTELIGENTE
-   ═══════════════════════════════════════════════════════════ */
 const btnInstalarFixo=$('btnInstalarFixo');
 const instrucoesInstalar=$('instrucoesInstalar');
 let deferredInstallPrompt=null;
@@ -1530,7 +1521,6 @@ window.addEventListener('appinstalled',()=>{
   esconderModalPWA();
   localStorage.setItem('vdb_pwa_instalado','true');
   notif('🎉 App instalado com sucesso!',3000,'success');
-  setTimeout(forcarTelaCheia,1000);
 });
 
 if(btnInstalarFixo){
@@ -1676,7 +1666,6 @@ async function iniciar(){
     setTimeout(()=>mostrarBannerSaudacao(true),600);
 
     updateTimerDisplay();
-    forcarTelaCheia();
     if(appState.desbloqueado)setTimeout(ativarPlayer,1500);
     iniciarVozSeNecessario();
 
