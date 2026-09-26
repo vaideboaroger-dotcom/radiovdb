@@ -696,9 +696,6 @@ html,body,#loadingScreen,#playerContainer,.banner-saudacao{overflow:hidden!impor
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     📱 MODAL PWA NOVO — FORÇA INSTALAR (aparece após 30s)
-     ═══════════════════════════════════════════════════════════ -->
 <div id="pwaInstallModal">
   <div class="pwa-box">
     <div class="pwa-logo">
@@ -920,38 +917,63 @@ function aplicarTema(g){const c=GENRE_COLORS[g]||COR_PADRAO;document.documentEle
 function getPeriodoAtual(){const h=new Date().getHours();if(h>=0&&h<6)return 'madrugada';if(h>=6&&h<12)return 'manha';if(h>=12&&h<18)return 'tarde';return 'noite';}
 
 /* ═══════════════════════════════════════════════════════════
-   📱 TELA CHEIA INTELIGENTE (NOVO)
+   📱 TELA CHEIA — VERSÃO CORRIGIDA PARA MOBILE
    ═══════════════════════════════════════════════════════════ */
 let fullscreenJaAtivado = false;
 let tentativasFullscreen = 0;
+let fullscreenEmAndamento = false;
+
+function ehMobileFullscreen(){
+  return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+}
+
+function jaEstaFullscreen(){
+  return !!(document.fullscreenElement || 
+            document.webkitFullscreenElement || 
+            document.mozFullScreenElement ||
+            document.msFullscreenElement);
+}
 
 function forcarTelaCheia(){
-  if (document.fullscreenElement || 
-      document.webkitFullscreenElement || 
-      document.mozFullScreenElement ||
-      document.msFullscreenElement) {
+  if (jaEstaFullscreen()) {
     fullscreenJaAtivado = true;
     return true;
   }
-  if (tentativasFullscreen >= 3) return false;
+  if (fullscreenEmAndamento) return false;
+  fullscreenEmAndamento = true;
+  if (tentativasFullscreen >= 3) {
+    fullscreenEmAndamento = false;
+    return false;
+  }
   tentativasFullscreen++;
   try {
     const el = document.documentElement;
     if (el.requestFullscreen) {
-      el.requestFullscreen({ navigationUI: 'hide' }).catch(() => {});
+      el.requestFullscreen({ navigationUI: 'hide' })
+        .then(() => { fullscreenEmAndamento = false; })
+        .catch(() => { fullscreenEmAndamento = false; });
     } else if (el.webkitRequestFullscreen) {
       el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+      fullscreenEmAndamento = false;
     } else if (el.mozRequestFullScreen) {
       el.mozRequestFullScreen();
+      fullscreenEmAndamento = false;
     } else if (el.msRequestFullscreen) {
       el.msRequestFullscreen();
+      fullscreenEmAndamento = false;
+    } else {
+      fullscreenEmAndamento = false;
     }
-  } catch(e) {}
+  } catch(e) {
+    fullscreenEmAndamento = false;
+  }
 }
 
 function ativarFullscreenPrimeiroToque(){
   const handler = () => {
-    forcarTelaCheia();
+    if (!jaEstaFullscreen()) {
+      forcarTelaCheia();
+    }
     document.removeEventListener('touchstart', handler);
     document.removeEventListener('click', handler);
   };
@@ -960,15 +982,19 @@ function ativarFullscreenPrimeiroToque(){
 }
 
 document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement && appState && appState.playerAtivado) {
-    tentativasFullscreen = 0;
-    setTimeout(ativarFullscreenPrimeiroToque, 500);
+  if (!document.fullscreenElement) {
+    if (!ehMobileFullscreen() && appState && appState.playerAtivado) {
+      tentativasFullscreen = 0;
+      setTimeout(ativarFullscreenPrimeiroToque, 500);
+    }
   }
 });
 document.addEventListener('webkitfullscreenchange', () => {
-  if (!document.webkitFullscreenElement && appState && appState.playerAtivado) {
-    tentativasFullscreen = 0;
-    setTimeout(ativarFullscreenPrimeiroToque, 500);
+  if (!document.webkitFullscreenElement) {
+    if (!ehMobileFullscreen() && appState && appState.playerAtivado) {
+      tentativasFullscreen = 0;
+      setTimeout(ativarFullscreenPrimeiroToque, 500);
+    }
   }
 });
 
@@ -1210,10 +1236,38 @@ function renderizarFavoritosModal(){dom.favListModal.innerHTML='';const f=appSta
 function tocarFavoritaEspecifica(id){let m=appState.musicas.find(x=>x.id===id);if(!m)m=appState.favorites.find(x=>x.id===id);if(!m)return;appState.playlistAtual=shuffle(appState.favorites.map(x=>({...x})));const i=appState.playlistAtual.findIndex(x=>x.id===id);if(i>-1){appState.indiceAtual=i;if(appState.isBackgroundActive)tocar();notif('🎵 Tocando favorita!',1500,'success');}}
 
 function renderizarGeneros(){dom.genresGrid.innerHTML='';GENRE_ORDEM.forEach(g=>{const c=GENRE_COLORS[g]||COR_PADRAO;const cd=document.createElement('button');cd.type='button';cd.className='genre-card';cd.setAttribute('data-genre',g);cd.setAttribute('aria-label','Selecionar gênero '+g);cd.style.setProperty('--c1',c.c1);cd.style.setProperty('--c2',c.c2);const n=document.createElement('div');n.className='genre-name';n.textContent=g;cd.appendChild(n);cd.onclick=()=>selecionarGenero(g);dom.genresGrid.appendChild(cd);});}
-async function selecionarGenero(g){vibrar(15);showLoad(true);const m=await cacheManager.get(g,GENRE_URLS[g]);if(!m||!m.length){showLoad(false);notif('❌ Erro ao carregar '+g,2000,'error');dom.genresModal.classList.remove('open');return;}dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';dom.equalizer.classList.add('paused');appState.musicas=m;appState.modoAtual=g;appState.playlistAtual=shuffle(m);appState.indiceAtual=0;aplicarTema(g);const mm=appState.playlistAtual[0];if(mm){atualizarLetreiro(mm);updateHeart(mm.id);}atualizarBadgeGenero();renderizarGeneros();showLoad(false);dom.genresModal.classList.remove('open');forcarTelaCheia();if(appState.isBackgroundActive)setTimeout(tocar,300);appState._save();notif('🎵 '+g,1500,'success');}
+async function selecionarGenero(g){
+  vibrar(15);
+  showLoad(true);
+  const m = await cacheManager.get(g, GENRE_URLS[g]);
+  if(!m || !m.length){
+    showLoad(false);
+    notif('❌ Erro ao carregar '+g, 2000, 'error');
+    dom.genresModal.classList.remove('open');
+    return;
+  }
+  dom.audio.pause();
+  appState.isPlaying = false;
+  dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+  dom.equalizer.classList.add('paused');
+  appState.musicas = m;
+  appState.modoAtual = g;
+  appState.playlistAtual = shuffle(m);
+  appState.indiceAtual = 0;
+  aplicarTema(g);
+  const mm = appState.playlistAtual[0];
+  if(mm){ atualizarLetreiro(mm); updateHeart(mm.id); }
+  atualizarBadgeGenero();
+  renderizarGeneros();
+  showLoad(false);
+  dom.genresModal.classList.remove('open');
+  if(appState.isBackgroundActive) setTimeout(tocar, 300);
+  appState._save();
+  notif('🎵 '+g, 1500, 'success');
+}
 function showLoad(s){dom.loadingOverlay.classList.toggle('active',s);}
 
-async function ativarModoRadio(){vibrar(20);const periodo=getPeriodoAtual();const config=RADIO_CONFIG[periodo];showLoad(true);notif('🔴 '+config.saudacao+' Sintonizando...',2000,'info');try{const todasMusicas=[];for(const g of config.generos){try{const m=await cacheManager.get(g,GENRE_URLS[g]);if(m&&m.length){const amostra=m.slice(0,100).map(musica=>({...musica,radio:true,radioPeriodo:periodo}));todasMusicas.push(...amostra);}}catch(e){}}if(!todasMusicas.length){showLoad(false);notif('❌ Sem músicas',2000,'error');return;}dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';dom.equalizer.classList.add('paused');appState.musicas=todasMusicas;appState.modoAtual=config.nome;appState.playlistAtual=shuffle(todasMusicas);appState.indiceAtual=0;document.documentElement.style.setProperty('--theme-1',config.cor1);document.documentElement.style.setProperty('--theme-2',config.cor2);const primeira=appState.playlistAtual[0];if(primeira){atualizarLetreiro(primeira);updateHeart(primeira.id);}atualizarBadgeGenero();showLoad(false);forcarTelaCheia();if(appState.isBackgroundActive)setTimeout(tocar,300);appState._save();mostrarBannerSaudacao(true,config);notif('🔴 AO VIVO',2000,'success');}catch(e){showLoad(false);notif('❌ Erro no rádio',2000,'error');}}
+async function ativarModoRadio(){vibrar(20);const periodo=getPeriodoAtual();const config=RADIO_CONFIG[periodo];showLoad(true);notif('🔴 '+config.saudacao+' Sintonizando...',2000,'info');try{const todasMusicas=[];for(const g of config.generos){try{const m=await cacheManager.get(g,GENRE_URLS[g]);if(m&&m.length){const amostra=m.slice(0,100).map(musica=>({...musica,radio:true,radioPeriodo:periodo}));todasMusicas.push(...amostra);}}catch(e){}}if(!todasMusicas.length){showLoad(false);notif('❌ Sem músicas',2000,'error');return;}dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';dom.equalizer.classList.add('paused');appState.musicas=todasMusicas;appState.modoAtual=config.nome;appState.playlistAtual=shuffle(todasMusicas);appState.indiceAtual=0;document.documentElement.style.setProperty('--theme-1',config.cor1);document.documentElement.style.setProperty('--theme-2',config.cor2);const primeira=appState.playlistAtual[0];if(primeira){atualizarLetreiro(primeira);updateHeart(primeira.id);}atualizarBadgeGenero();showLoad(false);if(appState.isBackgroundActive)setTimeout(tocar,300);appState._save();mostrarBannerSaudacao(true,config);notif('🔴 AO VIVO',2000,'success');}catch(e){showLoad(false);notif('❌ Erro no rádio',2000,'error');}}
 function verificarMudancaPeriodo(){if(!ehModoRadio())return;const periodoAtual=getPeriodoAtual();const configAtual=RADIO_CONFIG[periodoAtual];if(appState.modoAtual!==configAtual.nome){notif('🔄 Novo período',2000,'info');mostrarBannerSaudacao(true,configAtual);ativarModoRadio();}}
 
 function mostrarBannerSaudacao(forcar=false,radioConfig=null){
@@ -1395,7 +1449,7 @@ function esconderBotaoSairTV(){const b=document.getElementById('btnSairModoTV');
 async function toggleModoTV(){vibrar(20);appState.modoTV=!appState.modoTV;if(appState.modoTV){notif('📺 Modo TV ATIVADO',2000,'success');await carregarMidiasTV();}else{notif('📺 Modo TV DESATIVADO',2000,'info');dom.infoScroll.classList.remove('hidden');esconderBotaoSairTV();await carregarMidiasPadrao();}appState._save();}
 
 /* ═══════════════════════════════════════════════════════════
-   📱 PWA — INSTALAÇÃO INTELIGENTE (NOVO)
+   📱 PWA — INSTALAÇÃO INTELIGENTE
    ═══════════════════════════════════════════════════════════ */
 const btnInstalarFixo=$('btnInstalarFixo');
 const instrucoesInstalar=$('instrucoesInstalar');
@@ -1626,22 +1680,13 @@ async function iniciar(){
     if(appState.desbloqueado)setTimeout(ativarPlayer,1500);
     iniciarVozSeNecessario();
 
-    /* ═══════════════════════════════════════════════════════════
-       📱 TELA CHEIA — 4 CAMADAS
-       ═══════════════════════════════════════════════════════════ */
-    setTimeout(()=>{forcarTelaCheia();},100);
+    /* TELA CHEIA — mobile corrigido */
+    setTimeout(() => {
+      if (!jaEstaFullscreen()) forcarTelaCheia();
+    }, 300);
     ativarFullscreenPrimeiroToque();
-    setTimeout(()=>{if(!document.fullscreenElement)forcarTelaCheia();},2000);
-    document.addEventListener('visibilitychange',()=>{
-      if(document.visibilityState==='visible'&&!document.fullscreenElement){
-        tentativasFullscreen=0;
-        setTimeout(forcarTelaCheia,300);
-      }
-    });
 
-    /* ═══════════════════════════════════════════════════════════
-       📱 PWA — AGENDAR MODAL APÓS DELAY
-       ═══════════════════════════════════════════════════════════ */
+    /* PWA — agendar modal */
     setTimeout(()=>{
       if(!jaEstaInstalado() && ehMobile()){
         mostrarModalPWA();
@@ -1763,7 +1808,19 @@ async function iniciar(){
     dom.fabShare.onclick=()=>{navigator.clipboard.writeText(location.href).then(()=>notif('📋 Link copiado!',1500,'success'));fecharFab();};
     dom.fabQrCode.onclick=()=>{gerarQrCode();fecharFab();};
 
-    dom.fullscreenMenuBtn.onclick=()=>{fecharMenu();tentativasFullscreen=0;forcarTelaCheia();};
+    dom.fullscreenMenuBtn.onclick = () => {
+      fecharMenu();
+      tentativasFullscreen = 0;
+      fullscreenEmAndamento = false;
+      if (jaEstaFullscreen()) {
+        if (document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        notif('📱 SAIU da tela cheia', 1500, 'info');
+      } else {
+        forcarTelaCheia();
+        notif('📱 TELA CHEIA ativada', 1500, 'success');
+      }
+    };
     dom.liberarAgoraBtn.onclick=()=>{fecharMenu();liberarAgora();};
     dom.cadastroMenuBtn.onclick=()=>{fecharMenu();abrirCadastro();};
     if(dom.tutorialMenuBtn)dom.tutorialMenuBtn.onclick=()=>{fecharMenu();abrirTutorial();};
