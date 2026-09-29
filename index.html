@@ -13,10 +13,6 @@
 <meta name="apple-mobile-web-app-title" content="VDB Music">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#a855f7">
-<meta property="og:title" content="VAI DE BOA! MUSIC">
-<meta property="og:description" content="+10 mil músicas por R$ 39,90 — vitalício">
-<meta property="og:image" content="favicon30.png">
-<meta property="og:type" content="website">
 <link rel="manifest" href="./manifest.json">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,23 +23,12 @@
   --primary:#a855f7;--secondary:#22d3ee;--accent:#f472b6;--gold:#fbbf24;
   --safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);
   --theme-1:#a855f7;--theme-2:#22d3ee;
-  --z-media:0;--z-card:20;--z-topbar:35;--z-fab:40;--z-modal:100;
-  --z-dialog:200;--z-block:500;--z-admin:600;--z-propaganda:700;--z-notif:9999;--z-debug:99999;
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-touch-callout:none}
 html{background:#000;height:100vh;height:100dvh}
 body{position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;overscroll-behavior:none;background:#000;width:100%}
 :fullscreen,:-webkit-full-screen{background:#000}
 html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
-
-#debugPanel{position:fixed;bottom:0;left:0;right:0;max-height:40vh;overflow-y:auto;background:rgba(0,0,0,.92);color:#0f0;font-family:monospace;font-size:.65rem;padding:8px;z-index:var(--z-debug);display:none;border-top:2px solid #0f0;user-select:text}
-#debugPanel.ativo{display:block}
-#debugPanel .debug-linha{padding:2px 0;border-bottom:1px solid rgba(255,255,255,.1);word-break:break-all}
-#debugPanel .debug-erro{color:#f44}
-#debugPanel .debug-info{color:#0ff}
-#debugPanel .debug-ok{color:#0f0}
-#debugToggle{position:fixed;top:60px;right:8px;z-index:var(--z-debug);background:rgba(255,0,0,.7);color:#fff;border:none;border-radius:20px;padding:6px 12px;font-size:.7rem;font-weight:700;cursor:pointer;display:none}
-#debugToggle.ativo{display:block}
 
 #loadingScreen{position:fixed;inset:0;background:radial-gradient(circle at 20% 20%, rgba(168,85,247,.45), transparent 55%),radial-gradient(circle at 80% 80%, rgba(34,211,238,.35), transparent 55%),linear-gradient(135deg,#0a0616 0%,#140a2e 50%,#0a0616 100%);display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:22px;text-align:center;width:100%}
 .loading-logo-wrapper{position:relative;width:150px;height:150px;display:flex;align-items:center;justify-content:center;z-index:2}
@@ -59,12 +44,12 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 #playerContainer{position:fixed;inset:0;z-index:10;display:none}
 #playerContainer.visible{display:block}
 
-.media-container{position:fixed;inset:0;z-index:var(--z-media);background:#000;overflow:hidden}
+.media-container{position:fixed;inset:0;z-index:0;background:#000;overflow:hidden}
 .media-container video,.media-container img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease}
 .media-container .active{opacity:1;z-index:3}
 .media-container .inactive{opacity:0;z-index:2}
 
-.top-bar{position:fixed;top:0;left:0;right:0;z-index:var(--z-topbar);display:flex;align-items:center;justify-content:space-between;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top));background:linear-gradient(180deg,rgba(0,0,0,.85),transparent);height:56px;gap:8px;transition:opacity .6s ease}
+.top-bar{position:fixed;top:0;left:0;right:0;z-index:35;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top));background:linear-gradient(180deg,rgba(0,0,0,.85),transparent);height:56px;gap:8px;transition:opacity .6s ease}
 .top-bar.escondido{opacity:0;pointer-events:none}
 .top-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1;overflow:hidden}
 .logo-texto{font-family:'Audiowide',sans-serif;font-size:1rem;font-weight:900;letter-spacing:4px;color:#fff;text-shadow:0 0 10px rgba(168,85,247,.9),0 0 20px rgba(168,85,247,.5);cursor:pointer;user-select:none;white-space:nowrap;transition:color .3s}
@@ -74,16 +59,14 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .menu-btn-limpo{background:transparent;border:none;color:#fff;font-size:1.3rem;cursor:pointer;padding:4px 6px;display:flex;align-items:center;justify-content:center;opacity:.9;transition:opacity .2s}
 .menu-btn-limpo:active{opacity:.5;transform:scale(.9)}
 
-.info-scroll{position:fixed;top:56px;left:0;right:0;z-index:var(--z-topbar);padding:6px 12px;height:32px;display:flex;align-items:center;overflow:hidden;background:rgba(0,0,0,.3);backdrop-filter:blur(8px);transition:opacity .6s ease;border-top:1px solid rgba(255,255,255,.05);cursor:pointer}
+.info-scroll{position:fixed;top:56px;left:0;right:0;z-index:30;padding:6px 12px;height:32px;display:flex;align-items:center;overflow:hidden;background:rgba(0,0,0,.3);backdrop-filter:blur(8px);transition:opacity .6s ease;border-top:1px solid rgba(255,255,255,.05);cursor:pointer}
 .info-scroll.escondido{opacity:0;pointer-events:none}
 .info-scroll:active{background:rgba(168,85,247,.2)}
 .letreiro{font-size:.72rem;font-weight:700;white-space:nowrap;animation:scrollText 60s linear infinite;background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6,#fbbf24);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 @keyframes scrollText{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
 .letreiro b{font-weight:900;color:#fff;-webkit-text-fill-color:#fff}
 
-.fav-heart-center{display:none !important}
-
-.glass-card{position:fixed;inset:0;z-index:var(--z-card);background:radial-gradient(circle at 20% 20%, rgba(168,85,247,.35), transparent 50%),radial-gradient(circle at 80% 80%, rgba(139,92,246,.3), transparent 50%),linear-gradient(160deg, rgba(10,6,22,.92) 0%, rgba(0,0,0,.95) 50%, rgba(26,10,46,.92) 100%);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);display:flex;flex-direction:column;padding:80px 24px calc(30px + var(--safe-bottom));padding-top:max(80px,calc(66px + env(safe-area-inset-top)));gap:20px;opacity:1;visibility:visible;transition:opacity .8s cubic-bezier(.4,0,.2,1), transform .8s cubic-bezier(.4,0,.2,1), visibility .8s;overflow-y:auto;overflow-x:hidden}
+.glass-card{position:fixed;inset:0;z-index:20;background:radial-gradient(circle at 20% 20%, rgba(168,85,247,.35), transparent 50%),radial-gradient(circle at 80% 80%, rgba(139,92,246,.3), transparent 50%),linear-gradient(160deg, rgba(10,6,22,.92) 0%, rgba(0,0,0,.95) 50%, rgba(26,10,46,.92) 100%);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);display:flex;flex-direction:column;padding:80px 24px calc(30px + var(--safe-bottom));padding-top:max(80px,calc(66px + env(safe-area-inset-top)));gap:20px;opacity:1;visibility:visible;transition:opacity .8s cubic-bezier(.4,0,.2,1), transform .8s cubic-bezier(.4,0,.2,1), visibility .8s;overflow-y:auto;overflow-x:hidden}
 .glass-card.escondido{opacity:0;visibility:hidden;transform:scale(1.05) translateY(-20px);pointer-events:none}
 .glass-card::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;opacity:.6}
 .glass-titulo{text-align:center;font-family:'Audiowide',sans-serif;font-size:1.8rem;font-weight:900;color:#fff;letter-spacing:8px;text-transform:uppercase;text-shadow:0 0 10px rgba(255,255,255,.9),0 0 20px rgba(168,85,247,.8),0 0 40px rgba(168,85,247,.6),0 0 80px rgba(34,211,238,.4);animation:brilhoTitulo 3s ease-in-out infinite;margin-bottom:4px;margin-top:70px}
@@ -100,8 +83,6 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .btn-coracao-info{flex-shrink:0;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg, rgba(244,114,182,0.15), rgba(168,85,247,0.1));border:2px solid rgba(244,114,182,0.4);color:rgba(244,114,182,0.7);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);box-shadow:0 4px 15px rgba(244,114,182,0.2)}
 .btn-coracao-info:active{transform:scale(0.88)}
 .btn-coracao-info.ativo{background:linear-gradient(135deg, #f472b6, #a855f7);color:#fff;border-color:#f472b6;box-shadow:0 0 20px rgba(244,114,182,0.7), 0 0 40px rgba(244,114,182,0.4)}
-.btn-coracao-info.ativo i{animation:pulseHeart 1.5s ease-in-out infinite}
-@keyframes pulseHeart{0%, 100%{transform:scale(1)}50%{transform:scale(1.15)}}
 
 .glass-controles{display:flex;justify-content:center;align-items:center;gap:18px;padding:16px 20px;background:linear-gradient(135deg, rgba(0,0,0,.5), rgba(26,10,46,.6));border:1px solid rgba(168,85,247,.2);border-radius:24px;box-shadow:0 8px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08);margin-bottom:8px}
 .ctrl-btn{background:linear-gradient(135deg, rgba(168,85,247,.15), rgba(34,211,238,.1));border:1px solid rgba(168,85,247,.35);color:#fff;width:56px;height:56px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 15px rgba(168,85,247,.25)}
@@ -119,7 +100,7 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .volume-slider{display:flex;align-items:center;gap:10px;padding:10px 16px;background:linear-gradient(135deg, rgba(0,0,0,.5), rgba(26,10,46,.6));border:1px solid rgba(168,85,247,.2);border-radius:16px;margin-top:8px;box-shadow:0 8px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08)}
 .volume-slider i{color:#22d3ee;font-size:.9rem;width:18px;text-align:center}
 .volume-slider input[type="range"]{flex:1;-webkit-appearance:none;appearance:none;height:6px;background:rgba(0,0,0,.5);border-radius:6px;outline:none;cursor:pointer;box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
-.volume-slider input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg, #a855f7, #22d3ee);cursor:pointer;box-shadow:0 0 15px rgba(168,85,247,0.8), 0 2px 6px rgba(0,0,0,0.4);border:2px solid rgba(255,255,255,0.3)}
+.volume-slider input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg, #a855f7, #22d3ee);cursor:pointer;box-shadow:0 0 15px rgba(168,85,247,0.8);border:2px solid rgba(255,255,255,0.3)}
 .volume-slider input[type="range"]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg, #a855f7, #22d3ee);cursor:pointer;box-shadow:0 0 15px rgba(168,85,247,0.8);border:2px solid rgba(255,255,255,0.3)}
 .volume-valor{color:#22d3ee;font-size:.7rem;font-weight:700;font-family:'Rajdhani',sans-serif;min-width:32px;text-align:right}
 
@@ -130,22 +111,19 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .btn-baixar-offline.ja-offline{background:linear-gradient(135deg,#10b981,#065f46);cursor:default;opacity:.7}
 .btn-baixar-offline.escondido-offline{opacity:0;max-height:0;padding:0 !important;margin:0 !important;pointer-events:none}
 
-.fab-container{position:fixed;bottom:calc(24px + var(--safe-bottom));right:20px;z-index:var(--z-fab);display:flex;flex-direction:column;align-items:flex-end;gap:8px;transition:opacity .4s ease}
+.fab-container{position:fixed;bottom:calc(24px + var(--safe-bottom));right:20px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:8px;transition:opacity .4s ease}
 .fab-main{background:rgba(168, 85, 247, 0.3);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:1.1rem;border:2px solid rgba(168, 85, 247, 0.5);box-shadow:0 4px 20px rgba(168, 85, 247, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)}
 .fab-main:active{transform:scale(0.9);background:rgba(168, 85, 247, 0.5)}
-
-.fab-bemvindo{position:fixed;bottom:calc(90px + var(--safe-bottom));right:20px;z-index:calc(var(--z-fab) + 1);font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:2px;color:#fff;text-shadow:0 0 8px rgba(168,85,247,.9),0 0 16px rgba(34,211,238,.6);opacity:0;transition:opacity .5s ease, transform .5s ease;pointer-events:none;white-space:nowrap;background:rgba(0,0,0,.7);padding:8px 14px;border-radius:20px;border:1px solid rgba(168,85,247,.4)}
-.fab-bemvindo.visivel{opacity:1;animation:bemVindoPulse 1.5s ease-in-out infinite}
-@keyframes bemVindoPulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.05);opacity:1}}
+.fab-bemvindo{position:fixed;bottom:calc(90px + var(--safe-bottom));right:20px;z-index:41;font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:2px;color:#fff;text-shadow:0 0 8px rgba(168,85,247,.9);opacity:0;transition:opacity .5s ease;pointer-events:none;white-space:nowrap;background:rgba(0,0,0,.7);padding:8px 14px;border-radius:20px;border:1px solid rgba(168,85,247,.4)}
+.fab-bemvindo.visivel{opacity:1}
 .fab-sub{background:linear-gradient(145deg,rgba(20,15,35,.98),rgba(10,5,20,.98));backdrop-filter:blur(16px);border-radius:16px;padding:8px;display:none;flex-direction:column;gap:3px;border:1px solid rgba(168,85,247,.3);max-height:70vh;overflow-y:auto}
 .fab-sub.open{display:flex}
 .fab-sub-btn{background:transparent;border:none;color:#ddd;padding:10px 16px;border-radius:12px;font-size:.8rem;cursor:pointer;display:flex;align-items:center;gap:10px;min-height:40px;white-space:nowrap;text-align:left}
 .fab-sub-btn:active{background:rgba(168,85,247,.2)}
 .fab-sub-btn .badge-fav{color:#f472b6;font-size:.85rem;font-weight:900;margin-left:auto}
 .fab-sub-btn.destaque-fav{background:linear-gradient(135deg, rgba(244,114,182,0.2), rgba(168,85,247,0.15));border:1px solid rgba(244,114,182,0.5);color:#fff;font-weight:700}
-.fab-sub-btn.destaque-fav:active{background:linear-gradient(135deg, rgba(244,114,182,0.4), rgba(168,85,247,0.3))}
 
-.equalizer{position:fixed;bottom:calc(30px + var(--safe-bottom));left:24px;z-index:var(--z-fab);display:flex;gap:3px;align-items:flex-end;height:28px;pointer-events:none;opacity:.7;transition:opacity .6s ease}
+.equalizer{position:fixed;bottom:calc(30px + var(--safe-bottom));left:24px;z-index:45;display:flex;gap:3px;align-items:flex-end;height:28px;pointer-events:none;opacity:.7;transition:opacity .6s ease}
 .equalizer.escondido{opacity:0}
 .equalizer .bar{width:4px;background:linear-gradient(180deg,var(--theme-1),var(--theme-2));border-radius:2px}
 .equalizer .bar:nth-child(1){animation:eq1 .8s infinite}
@@ -160,7 +138,7 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 @keyframes eq5{0%,100%{height:10px}50%{height:22px}}
 .equalizer.paused .bar{animation-play-state:paused}
 
-.menu-popup{position:fixed;top:calc(56px + var(--safe-top));right:8px;background:linear-gradient(145deg,rgba(20,15,35,.98),rgba(10,5,20,.98));backdrop-filter:blur(24px);border-radius:22px;padding:14px;z-index:var(--z-modal);display:none;flex-direction:column;gap:10px;border:1px solid rgba(168,85,247,.3);min-width:280px;max-width:92vw;box-shadow:0 10px 40px rgba(0,0,0,.7)}
+.menu-popup{position:fixed;top:calc(56px + var(--safe-top));right:8px;background:linear-gradient(145deg,rgba(20,15,35,.98),rgba(10,5,20,.98));backdrop-filter:blur(24px);border-radius:22px;padding:14px;z-index:36;display:none;flex-direction:column;gap:10px;border:1px solid rgba(168,85,247,.3);min-width:280px;max-width:92vw;box-shadow:0 10px 40px rgba(0,0,0,.7)}
 .menu-popup.open{display:flex}
 .menu-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid rgba(168,85,247,.2)}
 .menu-header .titulo{font-family:'Audiowide',sans-serif;font-size:.85rem;background:linear-gradient(135deg,#a855f7,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px}
@@ -173,7 +151,7 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .menu-item:active{background:rgba(168,85,247,.15)}
 .menu-item i{width:22px;text-align:center;color:#22d3ee}
 
-.genres-modal{position:fixed;inset:0;z-index:var(--z-modal);background:rgba(0,0,0,.94);backdrop-filter:blur(20px);padding:60px 16px 20px;display:none;flex-direction:column}
+.genres-modal{position:fixed;inset:0;z-index:33;background:rgba(0,0,0,.94);backdrop-filter:blur(20px);padding:60px 16px 20px;display:none;flex-direction:column}
 .genres-modal.open{display:flex}
 .genres-modal .header{text-align:center;margin-bottom:14px}
 .genres-modal .header .titulo{font-family:'Audiowide',sans-serif;font-size:1.1rem;color:#22d3ee;letter-spacing:4px}
@@ -183,18 +161,16 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .genre-card:active{transform:scale(.96)}
 .genre-card .genre-name{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#fff}
 .genre-card.offline::after{content:'✓';position:absolute;top:6px;right:8px;background:#10b981;color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;box-shadow:0 0 8px rgba(16,185,129,.8)}
-.genre-card.baixando::after{content:'↓';background:#fbbf24;animation:pulseDown 1s infinite}
-@keyframes pulseDown{0%,100%{opacity:1}50%{opacity:.4}}
 .close-genres{width:100%;padding:14px;background:linear-gradient(135deg,#a855f7,#22d3ee);border:none;border-radius:25px;color:#fff;font-size:.85rem;cursor:pointer;font-weight:700;margin-top:12px;letter-spacing:3px;text-transform:uppercase}
 
-.fav-modal,.bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(145deg,rgba(20,15,35,.98),rgba(10,5,20,.98));backdrop-filter:blur(20px);border-radius:28px 28px 0 0;padding:18px 16px 24px;transform:translateY(100%);transition:transform .4s;max-height:70vh;overflow:hidden;border-top:1px solid rgba(168,85,247,.3);z-index:var(--z-modal)}
+.fav-modal,.bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(145deg,rgba(20,15,35,.98),rgba(10,5,20,.98));backdrop-filter:blur(20px);border-radius:28px 28px 0 0;padding:18px 16px 24px;transform:translateY(100%);transition:transform .4s;max-height:70vh;overflow:hidden;border-top:1px solid rgba(168,85,247,.3);z-index:34}
 .fav-modal.open,.bottom-sheet.open{transform:translateY(0)}
 .fav-modal h3,.bottom-sheet h3{text-align:center;margin-bottom:14px;font-size:1.1rem;color:#f472b6}
 .fav-list-modal{display:flex;flex-direction:column;overflow-y:auto;gap:6px;max-height:50vh}
 .fav-item-modal{padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;gap:10px}
 .fav-item-modal .title{color:#fff;font-weight:600;font-size:.9rem;cursor:pointer}
 .fav-item-modal .artist{color:#888;font-size:.75rem;display:block;cursor:pointer}
-.fav-item-modal .remove-fav{background:transparent;border:none;color:#f472b6;font-size:1.1rem;cursor:pointer;flex-shrink:0}
+.fav-item-modal .remove-fav{background:transparent;border:none;color:#f472b6;font-size:1.1rem;cursor:pointer}
 .close-fav,.sheet-close{width:100%;padding:12px;background:linear-gradient(135deg,#f472b6,#a855f7);border:none;border-radius:25px;color:#fff;font-size:.9rem;cursor:pointer;font-weight:700;margin-top:8px}
 .sheet-option{width:100%;padding:14px;border-radius:14px;cursor:pointer;background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:space-between;color:#fff;font-weight:600;font-size:.9rem;margin-bottom:8px;border:1px solid rgba(168,85,247,.15)}
 .queue-item,.recent-item{padding:12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:12px;cursor:pointer;margin-bottom:6px}
@@ -205,13 +181,13 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .speed-btn{padding:8px 16px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#ccc;font-size:.8rem;font-weight:700;cursor:pointer}
 .speed-btn.active{background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff}
 
-.notification{position:fixed;top:100px;left:50%;transform:translateX(-50%);background:rgba(15,15,20,.9);color:#22d3ee;padding:10px 18px;border-radius:20px;font-size:.78rem;z-index:var(--z-notif);opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid rgba(168,85,247,.3);font-weight:600}
+.notification{position:fixed;top:100px;left:50%;transform:translateX(-50%);background:rgba(15,15,20,.9);color:#22d3ee;padding:10px 18px;border-radius:20px;font-size:.78rem;z-index:100003;opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid rgba(168,85,247,.3);font-weight:600}
 .notification.show{opacity:1}
 #loadingOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center;color:#22d3ee;font-size:2rem}
 #loadingOverlay.active{display:flex}
 #loadingOverlay i{animation:spinSlow 1s linear infinite}
 
-#blockOverlay{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:var(--z-block);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+#blockOverlay{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:10000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
 #blockOverlay.active{display:flex}
 .block-content{max-width:420px;width:100%}
 .block-content h1{color:#fff;font-size:2rem;margin-bottom:8px;font-weight:900}
@@ -224,7 +200,7 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .fp-text{color:#888;font-size:.6rem;word-break:break-all;font-family:monospace;flex:1;user-select:text}
 .btn-copiar-fp{background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);color:#a855f7;padding:8px 14px;border-radius:12px;font-size:.65rem;cursor:pointer;font-weight:600}
 
-#adminPanel{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,10,.98);border-radius:20px;padding:20px;z-index:var(--z-admin);width:92%;max-width:460px;border:2px solid #fbbf24;max-height:90vh;overflow-y:auto}
+#adminPanel{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,10,.98);border-radius:20px;padding:20px;z-index:99999;width:92%;max-width:460px;border:2px solid #fbbf24;max-height:90vh;overflow-y:auto}
 #adminPanel.open{display:block}
 #adminPanel h2{text-align:center;font-size:1.2rem;color:#fbbf24;margin-bottom:12px}
 #adminPanel input,#adminPanel .senha-box input{width:100%;padding:12px;border-radius:25px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#fff;font-size:.85rem;font-family:monospace;outline:none;margin-top:6px;user-select:text}
@@ -237,13 +213,12 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 #adminPanel .senha-box label{font-size:.7rem;color:#888}
 #adminPanel .row{display:flex;gap:6px;margin-top:6px}
 #adminPanel .btn-copiar{background:rgba(168,85,247,.15);border:1px solid #a855f7;color:#a855f7;padding:10px;border-radius:20px;cursor:pointer;font-size:.75rem;font-weight:600}
-#adminPanel .fp-cliente label{font-size:.7rem;color:#888}
 #adminCloseTopBtn{position:absolute;top:10px;right:14px;background:transparent;border:none;color:#666;font-size:1.3rem;cursor:pointer;padding:4px 8px}
 
-.vdb-dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(14px);z-index:var(--z-dialog);display:none;align-items:center;justify-content:center;padding:20px}
+.vdb-dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(14px);z-index:100004;display:none;align-items:center;justify-content:center;padding:20px}
 .vdb-dialog-overlay.active{display:flex}
 .vdb-dialog{background:linear-gradient(145deg,#1a1a2e,#0a0a14);border-radius:24px;padding:24px 20px;max-width:400px;width:100%;border:1px solid rgba(168,85,247,.35)}
-.vdb-dialog h3{color:#fff;font-family:'Audiowide',sans-serif;font-size:1.15rem;text-align:center;margin-bottom:12px;letter-spacing:2px;background:linear-gradient(135deg,#a855f7,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.vdb-dialog h3{color:#fff;font-family:'Audiowide',sans-serif;font-size:1.15rem;text-align:center;margin-bottom:12px;background:linear-gradient(135deg,#a855f7,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .vdb-dialog p{color:#aaa;font-size:.85rem;text-align:center;margin-bottom:14px}
 .vdb-dialog input{width:100%;padding:14px;border-radius:30px;border:2px solid rgba(168,85,247,.25);background:rgba(255,255,255,.05);color:#fff;font-size:1rem;text-align:center;outline:none;user-select:text;margin-bottom:14px}
 .vdb-dialog .btns{display:flex;gap:8px}
@@ -251,14 +226,14 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .vdb-dialog .btn-ok{background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff}
 .vdb-dialog .btn-cancel{background:rgba(255,255,255,.06);color:#999}
 
-#qrCodeModal{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:var(--z-modal);display:none;align-items:center;justify-content:center;padding:20px}
+#qrCodeModal{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px}
 #qrCodeModal.active{display:flex}
 .qr-content{background:linear-gradient(145deg,#1a1a1a,#0a0a0a);border-radius:25px;padding:24px;text-align:center;max-width:360px}
 .qr-wrapper{background:#fff;border-radius:16px;padding:12px;display:inline-block;margin:12px 0}
 .qr-wrapper img{width:200px;height:200px;display:block}
 .qr-btn-close{background:linear-gradient(135deg,#a855f7,#22d3ee);border:none;padding:12px;border-radius:25px;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;width:100%;margin-top:12px}
 
-.tutorial-modal{position:fixed;inset:0;z-index:var(--z-dialog);background:rgba(0,0,0,.96);display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.tutorial-modal{position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.96);display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
 .tutorial-modal.open{display:flex}
 .tutorial-box{background:linear-gradient(145deg,#1a1a2e,#0a0a14);border-radius:28px;padding:24px 20px;max-width:420px;width:100%;border:2px solid rgba(168,85,247,.4);max-height:90vh;overflow-y:auto}
 .tutorial-header{text-align:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(168,85,247,.25)}
@@ -269,7 +244,7 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .tutorial-item .td{font-size:.78rem;color:#aaa;line-height:1.4}
 .tutorial-btn-fechar{width:100%;padding:14px;margin-top:14px;background:linear-gradient(135deg,#a855f7,#22d3ee);border:none;border-radius:25px;color:#fff;font-family:'Audiowide',sans-serif;font-size:.95rem;font-weight:900;letter-spacing:3px;cursor:pointer}
 
-.feedback-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,15,20,.98);border-radius:20px;padding:20px;z-index:var(--z-modal);width:90%;max-width:360px;text-align:center;display:none;border:1px solid rgba(168,85,247,.3)}
+.feedback-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,15,20,.98);border-radius:20px;padding:20px;z-index:5000;width:90%;max-width:360px;text-align:center;display:none;border:1px solid rgba(168,85,247,.3)}
 .feedback-modal.open{display:block}
 .feedback-modal h3{font-size:1.1rem;margin-bottom:12px;color:#22d3ee}
 .feedback-modal .stars{display:flex;justify-content:center;gap:8px;margin:12px 0}
@@ -279,9 +254,9 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .btn-feedback{background:linear-gradient(135deg,#a855f7,#22d3ee);border:none;padding:12px;border-radius:25px;color:#fff;font-weight:700;cursor:pointer;width:100%;margin-top:10px}
 #closeFeedbackBtn{background:transparent;border:none;color:#555;padding:10px;cursor:pointer;font-size:.85rem}
 
-#btnInstalarFixo{position:fixed;bottom:calc(24px + var(--safe-bottom));right:20px;z-index:calc(var(--z-fab) + 2);background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff;border:none;border-radius:30px;padding:14px 22px;font-weight:800;font-size:.9rem;cursor:pointer;display:none;align-items:center;gap:8px}
+#btnInstalarFixo{position:fixed;bottom:calc(24px + var(--safe-bottom));right:20px;z-index:999999;background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff;border:none;border-radius:30px;padding:14px 22px;font-weight:800;font-size:.9rem;cursor:pointer;display:none;align-items:center;gap:8px}
 
-#instrucoesInstalar,#pwaInstallModal{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:var(--z-propaganda);display:none;align-items:center;justify-content:center;padding:20px}
+#instrucoesInstalar,#pwaInstallModal{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:1000002;display:none;align-items:center;justify-content:center;padding:20px}
 #instrucoesInstalar.active,#pwaInstallModal.active{display:flex}
 .instrucoes-box,.pwa-box{background:linear-gradient(145deg,#1a1a1a,#0a0a0a);border-radius:24px;padding:24px 20px;max-width:400px;width:100%;text-align:center;border:2px solid rgba(168,85,247,.3)}
 .passo,.pwa-instrucao{background:rgba(168,85,247,.08);border-radius:14px;padding:14px;margin-bottom:10px;text-align:left;display:flex;align-items:center;gap:12px}
@@ -291,7 +266,7 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .pwa-sub{color:#22d3ee;font-size:.9rem;margin-bottom:16px;font-weight:700}
 .pwa-btn-depois{background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:30px;padding:12px;width:100%;color:#888;font-size:.8rem;cursor:pointer;margin-top:10px}
 
-.banner-propaganda-full{position:fixed;inset:0;z-index:var(--z-propaganda);background:radial-gradient(circle at 20% 20%, rgba(168,85,247,.5), transparent 55%),radial-gradient(circle at 80% 80%, rgba(34,211,238,.4), transparent 55%),linear-gradient(135deg,#0a0616 0%,#1a0a2e 50%,#0a0616 100%);display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .5s;cursor:pointer;overflow-y:auto}
+.banner-propaganda-full{position:fixed;inset:0;z-index:100005;background:radial-gradient(circle at 20% 20%, rgba(168,85,247,.5), transparent 55%),radial-gradient(circle at 80% 80%, rgba(34,211,238,.4), transparent 55%),linear-gradient(135deg,#0a0616 0%,#1a0a2e 50%,#0a0616 100%);display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .5s;cursor:pointer;overflow-y:auto}
 .banner-propaganda-full.visivel{display:flex;opacity:1}
 .prop-full-content{position:relative;text-align:center;max-width:440px;width:100%}
 .prop-full-fechar{position:fixed;top:20px;right:20px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.7);border:2px solid rgba(255,255,255,.3);color:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
@@ -305,36 +280,6 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .prop-full-beneficio{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;background:rgba(255,255,255,.06);border:1px solid rgba(168,85,247,.3);border-radius:14px;color:#fff;font-weight:700;margin-bottom:10px}
 .prop-full-cta{background:linear-gradient(135deg,#25d366,#128C7E);border:none;border-radius:40px;padding:20px 40px;width:100%;font-family:'Audiowide',sans-serif;font-size:1.1rem;color:#fff;font-weight:900;letter-spacing:3px;margin-top:14px;cursor:pointer}
 
-.download-modal{position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);z-index:100010;display:none;align-items:center;justify-content:center;padding:20px}
-.download-modal.active{display:flex}
-.download-box{background:linear-gradient(145deg,#1a1a2e,#0a0a14);border-radius:28px;padding:28px 24px;max-width:420px;width:100%;border:2px solid rgba(168,85,247,.4);text-align:center}
-.download-header{margin-bottom:20px}
-.download-icon{font-size:3rem;margin-bottom:8px}
-.download-titulo{font-family:'Audiowide',sans-serif;font-size:1.2rem;color:#fff;letter-spacing:3px;margin-bottom:6px}
-.download-sub{color:#22d3ee;font-size:.85rem;font-weight:700}
-.download-progress-bar{height:12px;background:rgba(0,0,0,.5);border-radius:12px;overflow:hidden;margin-bottom:12px;box-shadow:inset 0 2px 4px rgba(0,0,0,.6)}
-.download-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6);background-size:200% 100%;animation:shine 2s linear infinite;border-radius:12px;transition:width .3s ease}
-@keyframes shine{0%{background-position:0 50%}100%{background-position:200% 50%}}
-.download-info{display:flex;justify-content:space-between;font-size:.8rem;color:#aaa;margin-bottom:16px;font-weight:700}
-.download-btns{display:flex;gap:8px}
-.download-btn{flex:1;padding:14px;border-radius:22px;border:none;font-weight:700;font-size:.9rem;cursor:pointer}
-.download-btn.cancel{background:linear-gradient(135deg,#f472b6,#ef4444);color:#fff}
-.download-btn.close{background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff}
-
-.offline-manager{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(20px);z-index:100011;display:none;align-items:center;justify-content:center;padding:20px}
-.offline-manager.active{display:flex}
-.offline-box{background:linear-gradient(145deg,#1a1a2e,#0a0a14);border-radius:28px;padding:24px 20px;max-width:460px;width:100%;border:2px solid rgba(168,85,247,.4);max-height:90vh;overflow-y:auto}
-.offline-box h3{text-align:center;color:#22d3ee;font-family:'Audiowide',sans-serif;font-size:1.1rem;letter-spacing:3px;margin-bottom:16px}
-.offline-stats{background:rgba(168,85,247,.1);border-radius:14px;padding:14px;margin-bottom:14px;text-align:center;color:#fff;font-weight:700;font-size:.85rem}
-.offline-stats b{color:#22d3ee}
-.offline-lista{max-height:40vh;overflow-y:auto;margin-bottom:14px}
-.offline-item{padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.offline-item .nome{color:#fff;font-weight:700;font-size:.85rem}
-.offline-item .qtd{color:#22d3ee;font-size:.75rem;font-weight:700}
-.offline-item .remove{background:transparent;border:none;color:#f472b6;cursor:pointer;font-size:1rem}
-.offline-btn-limpar{width:100%;padding:12px;background:linear-gradient(135deg,#ef4444,#991b1b);border:none;border-radius:22px;color:#fff;font-weight:700;cursor:pointer;margin-bottom:8px}
-.offline-btn-fechar{width:100%;padding:12px;background:linear-gradient(135deg,#a855f7,#22d3ee);border:none;border-radius:22px;color:#fff;font-weight:700;cursor:pointer}
-
 #dicaCliques{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fbbf24;padding:8px 16px;border-radius:20px;font-size:.75rem;font-weight:700;z-index:99999;border:1px solid rgba(251,191,36,.4);pointer-events:none;letter-spacing:1px;opacity:0;transition:opacity .3s}
 
 body.modo-tv-ativo .top-bar,
@@ -343,7 +288,7 @@ body.modo-tv-ativo .glass-card,
 body.modo-tv-ativo .fab-container,
 body.modo-tv-ativo .equalizer{display:none !important}
 
-#btnSairModoTV{position:fixed !important;top:20px !important;right:20px !important;z-index:99999 !important;width:40px !important;height:40px !important;border-radius:50% !important;background:rgba(0,0,0,0.5) !important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,0.2) !important;color:rgba(255,255,255,0.7) !important;font-size:1.1rem !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;transition:all 0.3s ease !important;opacity:0.5}
+#btnSairModoTV{position:fixed !important;top:20px !important;right:20px !important;z-index:99999 !important;width:40px !important;height:40px !important;border-radius:50% !important;background:rgba(0,0,0,0.5) !important;backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,0.2) !important;color:rgba(255,255,255,0.7) !important;font-size:1.1rem !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;transition:all 0.3s ease !important;opacity:0.5}
 #btnSairModoTV:hover, #btnSairModoTV:active{opacity:1;background:rgba(239,68,68,0.7) !important;color:#fff !important;transform:scale(1.1)}
 
 @media(max-width:480px){
@@ -425,7 +370,7 @@ body.modo-tv-ativo .equalizer{display:none !important}
       <span>BAIXAR OFFLINE</span>
     </button>
 
-    <div class="glass-mensagem" id="cardMensagem">✨ Toque em qualquer lugar pra voltar ao card ✨</div>
+    <div class="glass-mensagem" id="cardMensagem">✨ Toque na tela pra voltar ao card ✨</div>
   </div>
 
   <div class="fab-container" id="fabContainer">
@@ -474,8 +419,6 @@ body.modo-tv-ativo .equalizer{display:none !important}
       <button class="menu-item" id="liberarAgoraBtn"><i class="fas fa-unlock"></i><span>Liberar Agora</span></button>
       <div class="menu-categoria">📱 App</div>
       <button class="menu-item" id="menuInstalarBtn"><i class="fas fa-download"></i><span>Instalar App</span></button>
-      <div class="menu-categoria">🐛 Debug</div>
-      <button class="menu-item" id="debugMenuBtn"><i class="fas fa-bug"></i><span>Mostrar Logs</span></button>
       <div class="menu-categoria">🔄 Atualizações</div>
       <button class="menu-item" id="reloadPlaylistBtn"><i class="fas fa-sync"></i><span>Recarregar</span></button>
       <button class="menu-item" id="forceUpdateBtn"><i class="fas fa-sync-alt"></i><span>Atualizar Mídias</span></button>
@@ -572,7 +515,6 @@ body.modo-tv-ativo .equalizer{display:none !important}
     <div class="tutorial-item"><div class="icon-tut">🎸</div><div><div class="tt">Trocar gênero</div><div class="td">Toque em ➕ → Gêneros.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">📻</div><div><div class="tt">Rádio VDB</div><div class="td">Toque em ➕ → Rádio VDB.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">📥</div><div><div class="tt">Baixar Offline</div><div class="td">Escolha um gênero e toque em "BAIXAR OFFLINE".</div></div></div>
-    <div class="tutorial-item"><div class="icon-tut">🔍</div><div><div class="tt">Buscar música</div><div class="td">Toque no letreiro do topo.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">👆</div><div><div class="tt">Card volta</div><div class="td">Se o card sumir, toque em qualquer lugar da tela.</div></div></div>
     <button class="tutorial-btn-fechar" id="closeTutorialBtn">ENTENDI ✅</button>
   </div>
@@ -673,65 +615,11 @@ body.modo-tv-ativo .equalizer{display:none !important}
   </div>
 </div>
 
-<div class="download-modal" id="downloadModal">
-  <div class="download-box">
-    <div class="download-header">
-      <div class="download-icon">📥</div>
-      <div class="download-titulo" id="downloadTitulo">BAIXAR OFFLINE</div>
-      <div class="download-sub" id="downloadSub">Preparando...</div>
-    </div>
-    <div class="download-progress-bar">
-      <div class="download-progress-fill" id="downloadProgressFill"></div>
-    </div>
-    <div class="download-info">
-      <span id="downloadContador">0 / 0</span>
-      <span id="downloadAtual"></span>
-    </div>
-    <div class="download-btns">
-      <button class="download-btn cancel" id="downloadCancelBtn">🛑 CANCELAR</button>
-      <button class="download-btn close" id="downloadCloseBtn" style="display:none">✕ FECHAR</button>
-    </div>
-  </div>
-</div>
-
-<div class="offline-manager" id="offlineManager">
-  <div class="offline-box">
-    <h3>📥 MÚSICAS OFFLINE</h3>
-    <div class="offline-stats" id="offlineStats">Carregando...</div>
-    <div class="offline-lista" id="offlineLista"></div>
-    <button class="offline-btn-limpar" id="offlineLimparBtn">🗑️ LIMPAR TUDO</button>
-    <button class="offline-btn-fechar" id="offlineFecharBtn">✕ FECHAR</button>
-  </div>
-</div>
-
 <div id="dicaCliques"></div>
-
-<button id="debugToggle">🐛 DEBUG</button>
-<div id="debugPanel"></div>
 
 <script>
 (function(){
 'use strict';
-
-const debugLogs = [];
-function log(msg, tipo='info'){
-  const t = new Date().toLocaleTimeString();
-  const linha = {msg: String(msg), tipo, tempo: t};
-  debugLogs.push(linha);
-  if(debugLogs.length > 200) debugLogs.shift();
-  console.log('['+tipo+'] '+msg);
-  const el = document.getElementById('debugPanel');
-  if(el && el.classList.contains('ativo')){
-    const div = document.createElement('div');
-    div.className = 'debug-linha debug-'+tipo;
-    div.textContent = '['+t+'] '+msg;
-    el.appendChild(div);
-    el.scrollTop = el.scrollHeight;
-  }
-}
-function logErro(msg){ log(msg, 'erro'); }
-function logOk(msg){ log(msg, 'ok'); }
-function logInfo(msg){ log(msg, 'info'); }
 
 const CONFIG = {
   WHATSAPP: '5512988461978',
@@ -739,24 +627,20 @@ const CONFIG = {
   _HASH_MASTER: '6c62070b5f5d14e73e27214df05fdda0773523a189eb619c8dcde6de2fbb1631',
   TEMPO_TESTE_SEGUNDOS: 86400,
   PRECO: 'R$ 39,90',
-  LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 🐵 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
+  LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
   LETREIRO_DURACAO: 60,
-  APP_VERSION: 'v30',
-  NOME_APP: 'VAI DE BOA! MUSIC',
+  APP_VERSION: 'v31',
   LOADING_DURACAO_MS: 3500,
   PROPAGANDA_INTERVALO_MS: 120000,
   PWA_INSTALL_DELAY_MS: 30000,
   PWA_INSTALL_INTERVALO_HORAS: 6,
   CARD_DURACAO_MS: 30000,
   MIDIA_DURACAO_MS: 30000,
-  TIMEOUT_MUSICA_MS: 8000
+  TIMEOUT_MUSICA_MS: 15000,
+  TIMEOUT_SEGURANCA_MS: 20000
 };
 
-const CACHE_OFFLINE_CONFIG = {
-  ativado: true,
-  maxMusicas: 500,
-  maxBytesPorMusica: 8 * 1024 * 1024
-};
+const CACHE_OFFLINE_CONFIG = { ativado: true, maxMusicas: 500, maxBytesPorMusica: 8 * 1024 * 1024 };
 
 const GENRE_COLORS = {
   'BÔNUS':{c1:'#22d3ee'},'POP/MIX':{c1:'#60a5fa'},'MPB':{c1:'#2dd4bf'},
@@ -823,11 +707,16 @@ const MIDIAS_TV_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/ra
 
 const MIDIAS_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/mc1.mp4'},
-  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/mc2.mp4'}
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/mc2.mp4'},
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'},
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'},
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/lan.mp4'}
 ];
 
 const MIDIAS_TV_FALLBACK = [
-  {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/mac1.mp4'}
+  {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/mac1.mp4'},
+  {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/amytv.mp4'},
+  {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/tvbob.mp4'}
 ];
 
 const $ = id => document.getElementById(id);
@@ -843,10 +732,7 @@ function shuffle(arr){
   const recentes = appState.recentes || new Set();
   const filtrado = x.filter(m=>!recentes.has(m.id));
   const base = filtrado.length > 5 ? filtrado : x;
-  for(let i=base.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [base[i],base[j]] = [base[j],base[i]];
-  }
+  for(let i=base.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [base[i],base[j]] = [base[j],base[i]]; }
   return base;
 }
 function copiarTexto(t,msg){if(!t)return notif('⚠️ Nada!',1500,'warning');navigator.clipboard.writeText(t).then(()=>notif(msg||'📋 Copiado!',1500,'success')).catch(()=>{const i=document.createElement('input');i.value=t;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();notif(msg||'📋 Copiado!',1500,'success');});}
@@ -872,7 +758,6 @@ const SecureTimer = {
   SALT: 'vdb_x9k7_music_2024_secret',
   CHAVE_LOCAL: 'vdb_ts', CHAVE_DEVICE: 'vdb_dev', CHAVE_DATA: 'vdb_lastdate',
   CHAVE_TRAPACA: 'vdb_trapaca', CHAVE_DESBLOQ: 'vdb_desbloq', CHAVE_BLOQ_PERM: 'vdb_bloq_perm',
-
   async getDeviceId() {
     const dados = [navigator.userAgent||'', navigator.platform||'', navigator.language||'', navigator.hardwareConcurrency||0, screen.width+'x'+screen.height+'x'+screen.colorDepth, Intl.DateTimeFormat().resolvedOptions().timeZone||'', new Date().getTimezoneOffset()].join('|');
     return await sha256(dados);
@@ -908,26 +793,10 @@ const SecureTimer = {
     });
   },
   async _salvarIDB(valor) {
-    try {
-      const db = await this._abrirDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('dados', 'readwrite');
-        tx.objectStore('dados').put(valor, 'exp');
-        tx.oncomplete = () => { db.close(); resolve(true); };
-        tx.onerror = () => { db.close(); reject(tx.error); };
-      });
-    } catch (e) { return false; }
+    try { const db = await this._abrirDB(); return new Promise((resolve, reject) => { const tx = db.transaction('dados', 'readwrite'); tx.objectStore('dados').put(valor, 'exp'); tx.oncomplete = () => { db.close(); resolve(true); }; tx.onerror = () => { db.close(); reject(tx.error); }; }); } catch (e) { return false; }
   },
   async _lerIDB() {
-    try {
-      const db = await this._abrirDB();
-      return new Promise((resolve) => {
-        const tx = db.transaction('dados', 'readonly');
-        const req = tx.objectStore('dados').get('exp');
-        req.onsuccess = () => { db.close(); resolve(req.result || null); };
-        req.onerror = () => { db.close(); resolve(null); };
-      });
-    } catch (e) { return null; }
+    try { const db = await this._abrirDB(); return new Promise((resolve) => { const tx = db.transaction('dados', 'readonly'); const req = tx.objectStore('dados').get('exp'); req.onsuccess = () => { db.close(); resolve(req.result || null); }; req.onerror = () => { db.close(); resolve(null); }; }); } catch (e) { return null; }
   },
   async _salvarCache(valor) {
     try { if (!('caches' in window)) return false; const cache = await caches.open(this.CACHE_NAME); const blob = new Blob([valor], { type: 'text/plain' }); await cache.put(this.CACHE_KEY, new Response(blob)); return true; } catch (e) { return false; }
@@ -967,11 +836,7 @@ const SecureTimer = {
     const deviceId = await this.getDeviceId();
     localStorage.setItem(this.CHAVE_DEVICE, deviceId);
     const expiracoes = await this._lerTodos(deviceId);
-    if (expiracoes.length === 0) {
-      const exp = Date.now() + CONFIG.TEMPO_TESTE_SEGUNDOS * 1000;
-      await this._salvarTodos(deviceId, exp);
-      return { liberado: true, motivo: 'novo', expiracao: exp };
-    }
+    if (expiracoes.length === 0) { const exp = Date.now() + CONFIG.TEMPO_TESTE_SEGUNDOS * 1000; await this._salvarTodos(deviceId, exp); return { liberado: true, motivo: 'novo', expiracao: exp }; }
     const expiracaoReal = Math.max(...expiracoes);
     if (expiracoes.length < 3) await this._salvarTodos(deviceId, expiracaoReal);
     if (Date.now() > expiracaoReal) return { liberado: false, motivo: 'expirado', expiracao: expiracaoReal };
@@ -1004,7 +869,7 @@ class AppState{
     this.sleepTimer=null;this.isBackgroundActive=false;this.playerAtivado=false;
     this.carregandoMusica=false;this.errosSeguidos=0;
     this.volume=parseInt(localStorage.getItem('vdb_volume')||'100')/100;
-    if(this.volume === 0) this.volume = 1;
+    if(this.volume <= 0) this.volume = 1;
     try{this.recentes=new Set(JSON.parse(localStorage.getItem('vdb_recentes')||'[]'));}catch(e){this.recentes=new Set();}
     this.bloqueadoPermanente=localStorage.getItem(SecureTimer.CHAVE_BLOQ_PERM)==='true';
     this._saveTimer=null;
@@ -1032,20 +897,17 @@ class CacheManager{
   constructor(maxBytes=5*1024*1024){this.maxBytes=maxBytes;this.prefix='cache_';}
   getKey(g){return this.prefix+CONFIG.APP_VERSION+'_'+g;}
   _cacheBust(url){const s=url.includes('?')?'&':'?';return `${url}${s}v=${CONFIG.APP_VERSION}&t=${now()}`;}
-  async get(genero,url,timeoutMs=9000){
+  async get(genero,url,timeoutMs=12000){
     const k=this.getKey(genero);
     try{
-      log('Buscando gênero: '+genero);
       const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),timeoutMs);
       const rs=await fetch(this._cacheBust(url),{signal:ctrl.signal});clearTimeout(tid);
       if(!rs.ok)throw new Error('HTTP '+rs.status);
-      let j=await rs.json();
-      if(!Array.isArray(j))j=j.musicas||j.data||Object.values(j)[0];
+      let j=await rs.json();if(!Array.isArray(j))j=j.musicas||j.data||Object.values(j)[0];
       const ms=(j||[]).filter(m=>m&&m.src&&m.title).map(m=>({...m,id:'fav_'+(m.title+'_'+(m.artist||'Artista')).toLowerCase().replace(/[^a-z0-9]+/g,'_'),genero:genero,artist:m.artist||'Artista'}));
-      if(ms&&ms.length){try{localStorage.setItem(k,JSON.stringify({timestamp:now(),dados:ms}));this._limpar();}catch(e){}logOk(genero+': '+ms.length+' músicas');return ms;}
-      logErro(genero+': vazio');
+      if(ms&&ms.length){try{localStorage.setItem(k,JSON.stringify({timestamp:now(),dados:ms}));this._limpar();}catch(e){}return ms;}
       return null;
-    }catch(e){logErro(genero+': '+e.message);const r2=localStorage.getItem(k);if(r2){try{const d=JSON.parse(r2).dados;logInfo(genero+': usando cache antigo');return d;}catch(e2){}}return null;}
+    }catch(e){const r2=localStorage.getItem(k);if(r2){try{return JSON.parse(r2).dados;}catch(e2){}}return null;}
   }
   _limpar(){let t=0;const it=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(this.prefix)){const v=localStorage.getItem(k);t+=v?v.length:0;it.push({key:k,size:v?v.length:0});}}if(t>this.maxBytes){it.sort((a,b)=>a.size-b.size);while(t>this.maxBytes&&it.length){const x=it.shift();localStorage.removeItem(x.key);t-=x.size;}}}
 }
@@ -1053,7 +915,7 @@ const cacheManager=new CacheManager();
 
 const CACHE_MUSICAS = 'vdb-musicas-offline';
 async function abrirCacheMusicas(){if(!('caches' in window))return null;try{return await caches.open(CACHE_MUSICAS);}catch(e){return null;}}
-async function salvarMusicaOffline(url){if(!CACHE_OFFLINE_CONFIG.ativado)return false;if(!url||!url.startsWith('http'))return false;try{const cache=await abrirCacheMusicas();if(!cache)return false;const existe=await cache.match(url);if(existe)return true;const resp=await fetch(url,{mode:'cors'});if(!resp.ok)return false;const tamanho=parseInt(resp.headers.get('content-length')||'0');if(tamanho&&tamanho>CACHE_OFFLINE_CONFIG.maxBytesPorMusica)return false;const clone=resp.clone();await cache.put(url,clone);return true;}catch(e){return false;}}
+async function salvarMusicaOffline(url){if(!CACHE_OFFLINE_CONFIG.ativado)return false;if(!url||!url.startsWith('http'))return false;try{const cache=await abrirCacheMusicas();if(!cache)return false;const existe=await cache.match(url);if(existe)return true;const resp=await fetch(url,{mode:'cors'});if(!resp.ok)return false;const clone=resp.clone();await cache.put(url,clone);return true;}catch(e){return false;}}
 async function buscarMusicaOffline(url){try{const cache=await abrirCacheMusicas();if(!cache)return null;const resposta=await cache.match(url);if(!resposta)return null;const blob=await resposta.blob();return URL.createObjectURL(blob);}catch(e){return null;}}
 async function limparTudoOffline(){try{const cache=await abrirCacheMusicas();if(!cache)return false;const chaves=await cache.keys();for(const k of chaves)await cache.delete(k);return true;}catch(e){return false;}}
 async function tamanhoUsadoOffline(){try{if(navigator.storage&&navigator.storage.estimate){const est=await navigator.storage.estimate();return {usado:est.usage||0,total:est.quota||0};}}catch(e){}return {usado:0,total:0};}
@@ -1105,71 +967,66 @@ const dom={
   playBtn:$('playBtn'),progressFill:$('progressFill'),currentTime:$('currentTime'),
   totalTime:$('totalTime'),bottomControls:$('bottomControls'),shuffleBtn:$('shuffleBtn'),
   loadingOverlay:$('loadingOverlay'),menuPopup:$('menuPopup'),progressBar:$('progressBar'),
-  mediaContainer:$('mediaContainer'),genresModal:$('genresModal'),genresGrid:$('genresGrid'),favModal:$('favModal'),
-  favListModal:$('favListModal'),feedbackModal:$('feedbackModal'),infoScroll:$('infoScroll'),
-  menuButton:$('menuButton'),logoTexto:$('logoTexto'),senhaInput:$('senhaInput'),
-  btnLiberar:$('btnLiberar'),erroSenha:$('erroSenha'),infoDispositivo:$('infoDispositivo'),
-  btnCopiarFingerprint:$('btnCopiarFingerprint'),adminPanel:$('adminPanel'),
-  adminFingerprintInput:$('adminFingerprintInput'),adminSenhaGerada:$('adminSenhaGerada'),
-  adminGerarBtn:$('adminGerarBtn'),adminGerarUniversalBtn:$('adminGerarUniversalBtn'),
-  adminLimparBtn:$('adminLimparBtn'),adminEnviarWhatsBtn:$('adminEnviarWhatsBtn'),
-  adminCopiarSenhaBtn:$('adminCopiarSenhaBtn'),btnCopiarSenha:$('btnCopiarSenha'),
-  adminCloseBtn:$('adminCloseBtn'),adminCloseTopBtn:$('adminCloseTopBtn'),
-  historicoSenhas:$('historicoSenhas'),
+  mediaContainer:$('mediaContainer'),genresModal:$('genresModal'),genresGrid:$('genresGrid'),
+  favModal:$('favModal'),favListModal:$('favListModal'),feedbackModal:$('feedbackModal'),
+  infoScroll:$('infoScroll'),menuButton:$('menuButton'),logoTexto:$('logoTexto'),
+  senhaInput:$('senhaInput'),btnLiberar:$('btnLiberar'),erroSenha:$('erroSenha'),
+  infoDispositivo:$('infoDispositivo'),btnCopiarFingerprint:$('btnCopiarFingerprint'),
+  adminPanel:$('adminPanel'),adminFingerprintInput:$('adminFingerprintInput'),
+  adminSenhaGerada:$('adminSenhaGerada'),adminGerarBtn:$('adminGerarBtn'),
+  adminGerarUniversalBtn:$('adminGerarUniversalBtn'),adminLimparBtn:$('adminLimparBtn'),
+  adminEnviarWhatsBtn:$('adminEnviarWhatsBtn'),adminCopiarSenhaBtn:$('adminCopiarSenhaBtn'),
+  btnCopiarSenha:$('btnCopiarSenha'),adminCloseBtn:$('adminCloseBtn'),
+  adminCloseTopBtn:$('adminCloseTopBtn'),historicoSenhas:$('historicoSenhas'),
   fabFavoritos:$('fabFavoritos'),fabBadgeFav:$('fabBadgeFav'),fabGeneros:$('fabGeneros'),
   fabRadio:$('fabRadio'),fabModoTV:$('fabModoTV'),fabCadastro:$('fabCadastro'),
   closeGenresBtn:$('closeGenresBtn'),fabFeedback:$('fabFeedback'),fabYoutube:$('fabYoutube'),
   fabShare:$('fabShare'),fabQrCode:$('fabQrCode'),fabMain:$('fabMain'),fabSub:$('fabSub'),
-  fabInstalar:$('fabInstalar'),sendFeedbackBtn:$('sendFeedbackBtn'),closeFeedbackBtn:$('closeFeedbackBtn'),
-  closeMenuBtn:$('closeMenuBtn'),fullscreenMenuBtn:$('fullscreenMenuBtn'),
-  liberarAgoraBtn:$('liberarAgoraBtn'),cadastroMenuBtn:$('cadastroMenuBtn'),
-  reloadPlaylistBtn:$('reloadPlaylistBtn'),sleepMenuBtn:$('sleepMenuBtn'),
-  forceUpdateBtn:$('forceUpdateBtn'),hardReloadBtn:$('hardReloadBtn'),
-  magicUpdateMenuBtn:$('magicUpdateMenuBtn'),debugMenuBtn:$('debugMenuBtn'),
+  fabInstalar:$('fabInstalar'),sendFeedbackBtn:$('sendFeedbackBtn'),
+  closeFeedbackBtn:$('closeFeedbackBtn'),closeMenuBtn:$('closeMenuBtn'),
+  fullscreenMenuBtn:$('fullscreenMenuBtn'),liberarAgoraBtn:$('liberarAgoraBtn'),
+  cadastroMenuBtn:$('cadastroMenuBtn'),reloadPlaylistBtn:$('reloadPlaylistBtn'),
+  sleepMenuBtn:$('sleepMenuBtn'),forceUpdateBtn:$('forceUpdateBtn'),
+  hardReloadBtn:$('hardReloadBtn'),magicUpdateMenuBtn:$('magicUpdateMenuBtn'),
   qrCodeModal:$('qrCodeModal'),qrCodeImage:$('qrCodeImage'),qrCloseBtn:$('qrCloseBtn'),
   prevBtn:$('prevBtn'),nextBtn:$('nextBtn'),closeFavBtn:$('closeFavBtn'),
-  feedbackText:$('feedbackText'),
-  equalizer:$('equalizer'),queueMenuBtn:$('queueMenuBtn'),recentMenuBtn:$('recentMenuBtn'),
-  speedMenuBtn:$('speedMenuBtn'),queueSheet:$('queueSheet'),recentSheet:$('recentSheet'),
-  speedSheet:$('speedSheet'),sleepSheet:$('sleepSheet'),queueList:$('queueList'),
-  recentList:$('recentList'),fabTutorial:$('fabTutorial'),tutorialMenuBtn:$('tutorialMenuBtn'),
-  tutorialModal:$('tutorialModal'),closeTutorialBtn:$('closeTutorialBtn'),
-  bannerPropagandaFull:$('bannerPropagandaFull'),propFullFecharBtn:$('propFullFecharBtn'),
-  propFullCtaBtn:$('propFullCtaBtn'),btnWhatsBlock:$('btnWhatsBlock'),
-  menuInstalarBtn:$('menuInstalarBtn'),pwaInstallModal:$('pwaInstallModal'),
-  pwaBtnInstalar:$('pwaBtnInstalar'),pwaBtnDepois:$('pwaBtnDepois'),
-  pwaInstrucoes:$('pwaInstrucoes'),pwaBeneficios:$('pwaBeneficios'),
-  musicaNome:$('musicaNome'),musicaArtista:$('musicaArtista'),
-  topBar:$('topBar'),fabContainer:$('fabContainer'),
+  feedbackText:$('feedbackText'),equalizer:$('equalizer'),queueMenuBtn:$('queueMenuBtn'),
+  recentMenuBtn:$('recentMenuBtn'),speedMenuBtn:$('speedMenuBtn'),queueSheet:$('queueSheet'),
+  recentSheet:$('recentSheet'),speedSheet:$('speedSheet'),sleepSheet:$('sleepSheet'),
+  queueList:$('queueList'),recentList:$('recentList'),fabTutorial:$('fabTutorial'),
+  tutorialMenuBtn:$('tutorialMenuBtn'),tutorialModal:$('tutorialModal'),
+  closeTutorialBtn:$('closeTutorialBtn'),bannerPropagandaFull:$('bannerPropagandaFull'),
+  propFullFecharBtn:$('propFullFecharBtn'),propFullCtaBtn:$('propFullCtaBtn'),
+  btnWhatsBlock:$('btnWhatsBlock'),menuInstalarBtn:$('menuInstalarBtn'),
+  pwaInstallModal:$('pwaInstallModal'),pwaBtnInstalar:$('pwaBtnInstalar'),
+  pwaBtnDepois:$('pwaBtnDepois'),pwaInstrucoes:$('pwaInstrucoes'),
+  pwaBeneficios:$('pwaBeneficios'),musicaNome:$('musicaNome'),
+  musicaArtista:$('musicaArtista'),topBar:$('topBar'),fabContainer:$('fabContainer'),
   cardMensagem:$('cardMensagem'),fabBemVindo:$('fabBemVindo'),
-  btnBaixarOffline:$('btnBaixarOffline'),
-  btnCoracaoInfo:$('btnCoracaoInfo'),
+  btnBaixarOffline:$('btnBaixarOffline'),btnCoracaoInfo:$('btnCoracaoInfo'),
   volumeControl:$('volumeControl'),volumeValor:$('volumeValor'),volumeIcon:$('volumeIcon'),
-  downloadModal:$('downloadModal'),downloadTitulo:$('downloadTitulo'),downloadSub:$('downloadSub'),
-  downloadProgressFill:$('downloadProgressFill'),downloadContador:$('downloadContador'),
-  downloadAtual:$('downloadAtual'),downloadCancelBtn:$('downloadCancelBtn'),downloadCloseBtn:$('downloadCloseBtn'),
-  offlineManager:$('offlineManager'),offlineStats:$('offlineStats'),offlineLista:$('offlineLista'),
-  offlineLimparBtn:$('offlineLimparBtn'),offlineFecharBtn:$('offlineFecharBtn'),
-  fabGerenciarOffline:$('fabGerenciarOffline'),menuGerenciarOffline:$('menuGerenciarOffline'),
-  debugPanel:$('debugPanel'),debugToggle:$('debugToggle')
+  downloadModal:$('downloadModal'),downloadTitulo:$('downloadTitulo'),
+  downloadSub:$('downloadSub'),downloadProgressFill:$('downloadProgressFill'),
+  downloadContador:$('downloadContador'),downloadAtual:$('downloadAtual'),
+  downloadCancelBtn:$('downloadCancelBtn'),downloadCloseBtn:$('downloadCloseBtn'),
+  offlineManager:$('offlineManager'),offlineStats:$('offlineStats'),
+  offlineLista:$('offlineLista'),offlineLimparBtn:$('offlineLimparBtn'),
+  offlineFecharBtn:$('offlineFecharBtn'),fabGerenciarOffline:$('fabGerenciarOffline'),
+  menuGerenciarOffline:$('menuGerenciarOffline')
 };
 
-let fullscreenInterval = null;
-let fullscreenEmAndamento = false;
 function jaEstaFullscreen(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
 function forcarTelaCheia(){
   if(ehIOS()) return false;
   if(jaEstaFullscreen()) return true;
-  if(fullscreenEmAndamento) return false;
-  fullscreenEmAndamento = true;
   try{
     const el = document.documentElement;
     const opts = {navigationUI:'hide'};
-    if(el.requestFullscreen){el.requestFullscreen(opts).then(()=>{fullscreenEmAndamento=false;}).catch(()=>{fullscreenEmAndamento=false;});}
-    else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);fullscreenEmAndamento=false;}
-    else{fullscreenEmAndamento=false;}
-  }catch(e){fullscreenEmAndamento=false;}
+    if(el.requestFullscreen){el.requestFullscreen(opts).catch(()=>{});}
+    else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);}
+  }catch(e){}
 }
+let fullscreenInterval = null;
 function iniciarFullscreenGuard(){
   if(fullscreenInterval) clearInterval(fullscreenInterval);
   if(ehIOS()) return;
@@ -1181,14 +1038,14 @@ function iniciarFullscreenGuard(){
     if(!appState.playerAtivado) return;
     if(jaEstaFullscreen()) return;
     forcarTelaCheia();
-  }, 2000);
+  }, 3000);
 }
 function ativarFullscreenPrimeiroToque(){
   const handler = () => { if(!jaEstaFullscreen()) forcarTelaCheia(); document.removeEventListener('touchstart', handler); document.removeEventListener('click', handler); };
   document.addEventListener('touchstart', handler, {passive:true});
   document.addEventListener('click', handler);
 }
-function ajustarIOSFullscreen(){ if(!ehIOS()) return; const standalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches; if(standalone){ document.body.classList.add('pwa-standalone'); } document.body.style.position = 'fixed'; document.body.style.overflow = 'hidden'; }
+function ajustarIOSFullscreen(){ if(!ehIOS()) return; document.body.style.position = 'fixed'; document.body.style.overflow = 'hidden'; }
 function esconderBarraAndroid(){
   if(ehIOS()) return;
   const standalone = window.matchMedia('(display-mode: standalone)').matches;
@@ -1213,8 +1070,8 @@ async function updateTimerDisplay(){
 
 async function iniciarTimerCorrido(){
   const r = await SecureTimer.verificar();
-  if(r.motivo === 'manipulou_data'){ logErro('Data manipulada'); notif('⚠️ Data do dispositivo alterada!', 4000, 'error'); bloquear(); return; }
-  if(!r.liberado){ log('Bloqueado: '+r.motivo); bloquear(); return; }
+  if(r.motivo === 'manipulou_data'){ notif('⚠️ Data do dispositivo alterada!', 4000, 'error'); bloquear(); return; }
+  if(!r.liberado){ bloquear(); return; }
   await updateTimerDisplay();
   async function tick(){
     if(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ) === 'true') return;
@@ -1231,14 +1088,8 @@ function fadeInAudio(d=600){return new Promise(r=>{const volFinal=appState.volum
 
 function getUrls(m){
   const s=m.src||'';
-  if(!s){
-    logErro('Música sem src: '+m.title);
-    return [];
-  }
-  if(s.startsWith('http')){
-    const sep = s.includes('?') ? '&' : '?';
-    return [s + sep + 'v=' + CONFIG.APP_VERSION];
-  }
+  if(!s) return [];
+  if(s.startsWith('http')){ const sep = s.includes('?') ? '&' : '?'; return [s + sep + 'v=' + CONFIG.APP_VERSION]; }
   const n=s.replace(/^\.\//,'');
   const repo=GENRE_REPOS[m.genero]||'radiolojasjc-hub/play12';
   return ['https://raw.githubusercontent.com/'+repo+'/refs/heads/main/'+n+'?v='+CONFIG.APP_VERSION];
@@ -1299,20 +1150,33 @@ function atualizarPlaylist(){
   return appState.playlistAtual[appState.indiceAtual];
 }
 
+let timeoutSeguranca = null;
+
 async function tocar(){
-  if(!appState.isBackgroundActive){ logErro('Player não ativado ainda'); return; }
-  if(appState.carregandoMusica){ log('Já carregando...'); return; }
-  if(!appState.musicas.length){ logErro('Sem músicas'); notif('⚠️ Escolha um gênero primeiro!',2500,'warning'); return; }
+  if(!appState.isBackgroundActive) return;
+  if(appState.carregandoMusica) return;
+  if(!appState.musicas.length){ notif('⚠️ Escolha um gênero primeiro!',2500,'warning'); return; }
   
   appState.carregandoMusica=true;
+  
+  if(timeoutSeguranca) clearTimeout(timeoutSeguranca);
+  timeoutSeguranca = setTimeout(() => {
+    if(appState.carregandoMusica){
+      console.warn('⚠️ Timeout de segurança ativado');
+      appState.carregandoMusica = false;
+      dom.playBtn.classList.remove('loading');
+      dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
+      notif('⚠️ Tempo esgotado. Tente outra música.', 3000, 'warning');
+    }
+  }, CONFIG.TIMEOUT_SEGURANCA_MS);
+  
   try{
     dom.playBtn.innerHTML='<i class="fas fa-spinner"></i>';
     dom.playBtn.classList.add('loading');
     if(!dom.audio.paused&&dom.audio.src)await fadeOutAudio(400);
     const m=atualizarPlaylist();
-    if(!m){ logErro('Sem música na playlist'); return; }
+    if(!m) return;
     
-    log('▶️ Tocando: '+m.title+' — '+m.artist);
     atualizarLetreiro(m);atualizarBadgeGenero();updateHeart(m.id);appState.addHistorico(m);aplicarTema(m.genero);atualizarInfoMusica(m);
     dom.equalizer.classList.remove('paused');
     
@@ -1328,63 +1192,63 @@ async function tocar(){
     
     dom.audio.pause();dom.audio.removeAttribute('src');dom.audio.load();
     const urls=getUrls(m);
-    log('URLs: '+urls.length+' — '+urls[0]);
-    
     let ok=false;
+    
     if(!navigator.onLine){
-      log('Offline detectado, buscando cache...');
-      for(const u of urls){ const urlCache=await buscarMusicaOffline(u); if(urlCache){try{dom.audio.src=urlCache;dom.audio.load();await new Promise(r=>setTimeout(r,400));ok=true;logOk('Offline cache: OK');break;}catch(e){logErro('Offline: '+e.message);}} }
+      for(const u of urls){
+        const urlCache=await buscarMusicaOffline(u);
+        if(urlCache){
+          try{dom.audio.src=urlCache;dom.audio.load();await new Promise(r=>setTimeout(r,400));ok=true;break;}catch(e){}
+        }
+      }
     }
     
     if(!ok){
       for(const u of urls){
-        log('Tentando URL: '+u.slice(0,80)+'...');
         try{
           const carregou=await new Promise(r=>{
-            const t=setTimeout(()=>{ logErro('TIMEOUT 8s — '+u.slice(0,60)); dom.audio.oncanplay=null;dom.audio.onerror=null;r(false); },CONFIG.TIMEOUT_MUSICA_MS);
-            dom.audio.oncanplay=()=>{ clearTimeout(t); logOk('✅ oncanplay disparou!'); dom.audio.oncanplay=null;dom.audio.onerror=null; r(true); };
-            dom.audio.onerror=(e)=>{ clearTimeout(t); logErro('❌ onerror: '+(e.message||'erro')); dom.audio.oncanplay=null;dom.audio.onerror=null; r(false); };
+            const t=setTimeout(()=>{ dom.audio.oncanplay=null; dom.audio.onerror=null; r(false); },CONFIG.TIMEOUT_MUSICA_MS);
+            dom.audio.oncanplay=()=>{ clearTimeout(t); dom.audio.oncanplay=null; dom.audio.onerror=null; r(true); };
+            dom.audio.onerror=()=>{ clearTimeout(t); dom.audio.oncanplay=null; dom.audio.onerror=null; r(false); };
             dom.audio.src=u;
             dom.audio.load();
           });
           if(carregou){ ok=true; salvarMusicaOffline(u); break; }
-        }catch(e){ logErro('Exceção: '+e.message); }
+        }catch(e){}
       }
     }
     
     if(ok){
       try{
-        log('Play()...');
         dom.audio.volume=0;
         await dom.audio.play();
         await fadeInAudio(600);
-        appState.isPlaying=true;appState.errosSeguidos=0;
+        appState.isPlaying=true;
+        appState.errosSeguidos=0;
         dom.playBtn.classList.remove('loading');
         dom.playBtn.innerHTML='<i class="fas fa-pause"></i>';
-        if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing';
-        logOk('🎵 Tocando com sucesso!');
+        if('mediaSession' in navigator) navigator.mediaSession.playbackState='playing';
       }catch(e){
-        logErro('Erro no play(): '+e.message);
         dom.playBtn.classList.remove('loading');
         dom.playBtn.innerHTML='<i class="fas fa-play"></i>';
-        notif('⚠️ Não conseguiu tocar. Próxima...',2000,'warning');
+        notif('⚠️ Toque uma vez na tela primeiro',2500,'warning');
         setTimeout(next,500);
       }
     }else{
-      logErro('Todas URLs falharam');
       dom.playBtn.classList.remove('loading');
       dom.playBtn.innerHTML='<i class="fas fa-play"></i>';
       appState.errosSeguidos++;
       if(appState.errosSeguidos > 5){
-        notif('⚠️ Muitas músicas falharam. Verifique internet.',4000,'warning');
+        notif('⚠️ Muitas músicas falharam.',4000,'warning');
         appState.errosSeguidos = 0;
         return;
       }
       setTimeout(next,500);
     }
   }catch(e){
-    logErro('Erro geral tocar(): '+e.message);
+    console.error('Erro:', e);
   }finally{
+    if(timeoutSeguranca) clearTimeout(timeoutSeguranca);
     appState.carregandoMusica=false;
     dom.playBtn.classList.remove('loading');
   }
@@ -1392,7 +1256,7 @@ async function tocar(){
 
 function togglePlay(){
   vibrar(10);
-  if(!appState.isBackgroundActive){ logErro('Player não ativado'); notif('🔊 Toque uma vez na tela e tente de novo',2500,'warning'); return; }
+  if(!appState.isBackgroundActive){ notif('🔊 Toque uma vez na tela primeiro',2500,'warning'); return; }
   if(dom.audio.paused)tocar();
   else{ dom.audio.pause(); appState.isPlaying=false; dom.playBtn.innerHTML='<i class="fas fa-play"></i>'; dom.equalizer.classList.add('paused'); if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused'; }
   showControls();
@@ -1417,8 +1281,7 @@ function manterAudioAtivo(){
   dom.audio.addEventListener('ended',()=>{if(appState.isPlaying&&!appState.carregandoMusica)next();});
 }
 async function ativarPlayer(){
-  if(appState.playerAtivado){ log('Player já ativado'); return; }
-  log('🎵 Ativando player...');
+  if(appState.playerAtivado) return;
   appState.playerAtivado=true;
   updateProgress(30);
   try{
@@ -1426,7 +1289,6 @@ async function ativarPlayer(){
     dom.backgroundAudio.loop=true;
     dom.backgroundAudio.volume=.001;
     await dom.backgroundAudio.play();
-    logOk('Áudio silencioso ativo');
     appState.isBackgroundActive=true;
     manterAudioAtivo();
     if('wakeLock' in navigator){try{appState.wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}
@@ -1435,25 +1297,20 @@ async function ativarPlayer(){
     iniciarFullscreenGuard();
     await iniciarTimerCorrido();
     updateProgress(100);
-    setTimeout(tocar,500);
   }catch(e){
-    logErro('Erro ativarPlayer: '+e.message);
     appState.isBackgroundActive=true;
     updateProgress(100);
     forcarTelaCheia();
     iniciarFullscreenGuard();
     iniciarTimerCorrido();
-    setTimeout(tocar,500);
   }
 }
 
 function updateFavBadge(){
-  if(dom.fabBadgeFav)dom.fabBadgeFav.textContent=appState.favorites.length;
   const badge=$('fabBadgeFav');
   if(badge)badge.textContent=appState.favorites.length;
 }
 function updateHeart(id){
-  const ehFav=appState.favorites.some(f=>f.id===id);
   atualizarCoracaoInfo();
 }
 function atualizarCoracaoInfo(){
@@ -1517,7 +1374,6 @@ function renderizarGeneros(){
 
 async function selecionarGenero(g){
   vibrar(15);showLoad(true);
-  log('Carregando gênero: '+g);
   const m=await cacheManager.get(g,GENRE_URLS[g]);
   if(!m||!m.length){showLoad(false);notif('❌ Erro '+g+' — tente outro',2500,'error');return;}
   dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';dom.equalizer.classList.add('paused');
@@ -1791,7 +1647,7 @@ async function carregarMidias(url,options={}){
       at._ft=setTimeout(()=>{proximaMidia();agendar();},CONFIG.MIDIA_DURACAO_MS);
     }
     agendar();
-  }catch(e){console.error('Erro mídias:',e);}
+  }catch(e){}
 }
 
 async function ativarModoTVDireto(){
@@ -1804,7 +1660,6 @@ async function ativarModoTVDireto(){
   const btnX = document.createElement('button');
   btnX.id = 'btnSairModoTV';
   btnX.innerHTML = '✕';
-  btnX.title = 'Sair do Modo TV';
   btnX.onclick = () => sairModoTVDireto();
   document.body.appendChild(btnX);
   notif('📺 Modo TV ativado', 2000, 'success');
@@ -1948,7 +1803,6 @@ function abrirWhatsAppPropaganda(){vibrar(20);const msg=encodeURIComponent('🎵
 
 async function iniciar(){
   try{
-    log('🚀 Iniciando v30...');
     try{const v=localStorage.getItem('vdb_versao_limpeza');if(v!==CONFIG.APP_VERSION){for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith('cache_')&&!k.includes(CONFIG.APP_VERSION))localStorage.removeItem(k);}localStorage.setItem('vdb_versao_limpeza',CONFIG.APP_VERSION);}}catch(e){}
     appState.favorites=appState.getFavorites();updateFavBadge();updateProgress(10);
     if(dom.infoDispositivo)dom.infoDispositivo.textContent='🆔 '+appState.fingerprint;
@@ -1973,7 +1827,7 @@ async function iniciar(){
     for(const r of ress){
       if(r){ appState.musicas=r.m;appState.modoAtual=r.g;appState.playlistAtual=shuffle(r.m);aplicarTema(r.g); const mm=appState.playlistAtual[0];if(mm){atualizarLetreiro(mm);updateHeart(mm.id);atualizarInfoMusica(mm);} atualizarBadgeGenero();pronto=true;break; }
     }
-    if(!pronto){appState.musicas=[];appState.playlistAtual=[];atualizarBadgeGenero();notif('⚠️ Escolha um gênero pra começar',3000,'warning');}
+    if(!pronto){appState.musicas=[];appState.playlistAtual=[];atualizarBadgeGenero();}
     renderizarGeneros();updateProgress(90);
     const decorrido=now()-loadingStart;
     if(decorrido<CONFIG.LOADING_DURACAO_MS)await sleep(CONFIG.LOADING_DURACAO_MS-decorrido);
@@ -2081,9 +1935,6 @@ async function iniciar(){
       if(e.target.closest('#downloadModal')) return;
       if(e.target.closest('#offlineManager')) return;
       if(e.target.closest('.volume-slider')) return;
-      if(e.target.closest('#debugPanel')) return;
-      if(e.target.closest('#debugToggle')) return;
-      if(e.target.closest('.adminPanel')) return;
       if(e.target.closest('#adminPanel')) return;
       if(dom.bottomControls.classList.contains('escondido')) trazerCardDeVolta();
     });
@@ -2107,17 +1958,6 @@ async function iniciar(){
     dom.magicUpdateMenuBtn.onclick=()=>{fecharMenu();atualizarAppMagico();};
     dom.reloadPlaylistBtn.onclick=()=>{fecharMenu();location.reload();};
     dom.forceUpdateBtn.onclick=async()=>{fecharMenu();notif('🔄 Atualizando...',1500,'info');if(appState.modoTV)await carregarMidias(MIDIAS_TV_URL, {fallback: MIDIAS_TV_FALLBACK});else await carregarMidias(MIDIAS_PADRAO_URL, {fallback: MIDIAS_FALLBACK});notif('✅ Atualizado!',2000,'success');};
-    if(dom.debugMenuBtn){
-      dom.debugMenuBtn.onclick = () => {
-        fecharMenu();
-        const p = dom.debugPanel;
-        const t = dom.debugToggle;
-        if(p){ p.classList.toggle('ativo'); t.classList.toggle('ativo'); }
-      };
-    }
-    if(dom.debugToggle){
-      dom.debugToggle.onclick = () => { dom.debugPanel.classList.toggle('ativo'); dom.debugToggle.classList.toggle('ativo'); };
-    }
     document.querySelectorAll('.speed-btn').forEach(b=>{b.onclick=()=>{vibrar(10);document.querySelectorAll('.speed-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');dom.audio.playbackRate=parseFloat(b.dataset.speed);notif('⚡ '+b.dataset.speed+'x',1500,'info');};});
     document.querySelectorAll('.sheet-option[data-sleep]').forEach(b=>{b.onclick=()=>{vibrar(10);const min=parseInt(b.dataset.sleep);clearTimeout(appState.sleepTimer);if(min>0){appState.sleepTimer=setTimeout(()=>{dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';notif('💤 Desligada!',2000,'info');},min*60000);notif('⏰ '+min+' min',2000,'info');}else notif('🚫 Cancelado',1500,'info');dom.sleepSheet.classList.remove('open');};});
 
@@ -2216,10 +2056,7 @@ async function iniciar(){
     setTimeout(()=>{mostrarPropagandaFull();agendarPropaganda();},30000);
 
     dom.audio.volume = appState.volume;
-    log('✅ Iniciado com sucesso!');
   }catch(e){
-    logErro('❌ Erro iniciar: '+e.message);
-    console.error('❌ Erro:',e);
     dom.loadingScreen.style.display='none';
     dom.playerContainer.classList.add('visible');
     notif('⚠️ Erro ao iniciar: '+e.message,5000,'error');
