@@ -74,15 +74,17 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .glass-subtitulo{text-align:center;font-family:'Rajdhani',sans-serif;font-size:.75rem;color:#c4b5fd;letter-spacing:6px;font-weight:700;text-transform:uppercase;margin-bottom:14px;opacity:.8}
 .glass-divisor{width:80px;height:2px;margin:0 auto 20px;background:linear-gradient(90deg,transparent,#a855f7,#22d3ee,#a855f7,transparent);border-radius:2px;box-shadow:0 0 12px rgba(168,85,247,.8)}
 .glass-musica-info{text-align:center;padding:8px 16px;background:transparent;border:none;box-shadow:none;margin-bottom:8px}
-.glass-musica-label{font-family:'Rajdhani',sans-serif;font-size:.7rem;color:#22d3ee;letter-spacing:4px;font-weight:700;text-transform:uppercase;margin-bottom:10px;opacity:.85}
+
+/* CORAÇÃO EM CIMA DO TOCANDO AGORA */
+.musica-topo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.glass-musica-label{font-family:'Rajdhani',sans-serif;font-size:.7rem;color:#22d3ee;letter-spacing:4px;font-weight:700;text-transform:uppercase;opacity:.85;transition:all 0.4s ease}
+.glass-musica-label.favorita{color:#f472b6;text-shadow:0 0 10px rgba(244,114,182,0.8), 0 0 20px rgba(244,114,182,0.5)}
+.btn-coracao-topo{flex-shrink:0;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg, rgba(244,114,182,0.15), rgba(168,85,247,0.1));border:2px solid rgba(244,114,182,0.4);color:rgba(244,114,182,0.7);font-size:1.15rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);box-shadow:0 4px 15px rgba(244,114,182,0.2)}
+.btn-coracao-topo:active{transform:scale(0.88)}
+.btn-coracao-topo.ativo{background:linear-gradient(135deg, #f472b6, #a855f7);color:#fff;border-color:#f472b6;box-shadow:0 0 20px rgba(244,114,182,0.7), 0 0 40px rgba(244,114,182,0.4)}
+
 .glass-musica-nome{font-family:'Rajdhani',sans-serif;font-size:1.6rem;color:#fff;font-weight:900;letter-spacing:1px;line-height:1.2;margin-bottom:8px;text-shadow:0 0 15px rgba(168,85,247,.6);word-break:break-word}
 .glass-musica-artista{font-family:'Rajdhani',sans-serif;font-size:1rem;color:#c4b5fd;font-weight:600;letter-spacing:1px;opacity:.9}
-
-.musica-linha{display:flex;align-items:center;justify-content:center;gap:14px;padding:0 8px}
-.musica-texto{flex:1;text-align:center;min-width:0}
-.btn-coracao-info{flex-shrink:0;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg, rgba(244,114,182,0.15), rgba(168,85,247,0.1));border:2px solid rgba(244,114,182,0.4);color:rgba(244,114,182,0.7);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);box-shadow:0 4px 15px rgba(244,114,182,0.2)}
-.btn-coracao-info:active{transform:scale(0.88)}
-.btn-coracao-info.ativo{background:linear-gradient(135deg, #f472b6, #a855f7);color:#fff;border-color:#f472b6;box-shadow:0 0 20px rgba(244,114,182,0.7), 0 0 40px rgba(244,114,182,0.4)}
 
 .glass-controles{display:flex;justify-content:center;align-items:center;gap:18px;padding:16px 20px;background:linear-gradient(135deg, rgba(0,0,0,.5), rgba(26,10,46,.6));border:1px solid rgba(168,85,247,.2);border-radius:24px;box-shadow:0 8px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08);margin-bottom:8px}
 .ctrl-btn{background:linear-gradient(135deg, rgba(168,85,247,.15), rgba(34,211,238,.1));border:1px solid rgba(168,85,247,.35);color:#fff;width:56px;height:56px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 15px rgba(168,85,247,.25)}
@@ -321,7 +323,7 @@ body.modo-tv-ativo .equalizer{display:none !important}
   .play-big{width:68px;height:68px;font-size:1.4rem}
   .ctrl-btn{width:50px;height:50px}
   .logo-texto{font-size:.85rem;letter-spacing:3px}
-  .btn-coracao-info{width:40px;height:40px;font-size:1.15rem}
+  .btn-coracao-topo{width:34px;height:34px;font-size:1rem}
 }
 </style>
 </head>
@@ -363,16 +365,14 @@ body.modo-tv-ativo .equalizer{display:none !important}
     </div>
 
     <div class="glass-musica-info">
-      <div class="glass-musica-label">🎵 TOCANDO AGORA</div>
-      <div class="musica-linha">
-        <div class="musica-texto">
-          <div class="glass-musica-nome" id="musicaNome">Escolha um gênero</div>
-          <div class="glass-musica-artista" id="musicaArtista">VAI DE BOA! MUSIC</div>
-        </div>
-        <button class="btn-coracao-info" id="btnCoracaoInfo" title="Favoritar">
+      <div class="musica-topo">
+        <div class="glass-musica-label" id="labelTocandoAgora">🎵 TOCANDO AGORA</div>
+        <button class="btn-coracao-topo" id="btnCoracaoInfo" title="Favoritar">
           <i class="far fa-heart"></i>
         </button>
       </div>
+      <div class="glass-musica-nome" id="musicaNome">Escolha um gênero</div>
+      <div class="glass-musica-artista" id="musicaArtista">VAI DE BOA! MUSIC</div>
     </div>
 
     <div class="glass-controles">
@@ -538,7 +538,7 @@ body.modo-tv-ativo .equalizer{display:none !important}
       <div class="titulo-tut">COMO USAR</div>
     </div>
     <div class="tutorial-item"><div class="icon-tut">🎵</div><div><div class="tt">Tocar música</div><div class="td">Toque no ▶️ grande pra tocar.</div></div></div>
-    <div class="tutorial-item"><div class="icon-tut">❤️</div><div><div class="tt">Favoritar</div><div class="td">Toque no coração ao lado do nome.</div></div></div>
+    <div class="tutorial-item"><div class="icon-tut">❤️</div><div><div class="tt">Favoritar</div><div class="td">Toque no coração em cima do "TOCANDO AGORA".</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">🎸</div><div><div class="tt">Trocar gênero</div><div class="td">Toque em ➕ → Gêneros.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">📻</div><div><div class="tt">Rádio VDB</div><div class="td">Toque em ➕ → Rádio VDB.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">📥</div><div><div class="tt">Baixar Offline</div><div class="td">Escolha um gênero e toque em "BAIXAR OFFLINE".</div></div></div>
@@ -677,9 +677,6 @@ body.modo-tv-ativo .equalizer{display:none !important}
 (function(){
 'use strict';
 
-/* ============================================================
-   ⚙️ CONFIG
-   ============================================================ */
 const CONFIG = {
   WHATSAPP: '5512988461978',
   _SALT: 'vdb_music_2024_x9k7',
@@ -688,15 +685,15 @@ const CONFIG = {
   PRECO: 'R$ 39,90',
   LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
   LETREIRO_DURACAO: 60,
-  APP_VERSION: 'v32',
+  APP_VERSION: 'v33',
   LOADING_DURACAO_MS: 3500,
   PROPAGANDA_INTERVALO_MS: 120000,
   PWA_INSTALL_DELAY_MS: 30000,
   PWA_INSTALL_INTERVALO_HORAS: 6,
   CARD_DURACAO_MS: 30000,
   MIDIA_DURACAO_MS: 30000,
-  TIMEOUT_MUSICA_MS: 20000,       // ← AUMENTADO: 20 segundos
-  TIMEOUT_SEGURANCA_MS: 25000     // ← FORÇA DESTRAVAR EM 25s
+  TIMEOUT_MUSICA_MS: 20000,
+  TIMEOUT_SEGURANCA_MS: 25000
 };
 
 const CACHE_OFFLINE_CONFIG = { ativado: true, maxMusicas: 500, maxBytesPorMusica: 10 * 1024 * 1024 };
@@ -773,9 +770,6 @@ const MIDIAS_TV_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/mac1.mp4'}
 ];
 
-/* ============================================================
-   🔧 HELPERS
-   ============================================================ */
 const $ = id => document.getElementById(id);
 const now = () => Date.now();
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -809,9 +803,6 @@ async function verificarSenhaPadrao(senha){
   return hash === CONFIG._HASH_MASTER;
 }
 
-/* ============================================================
-   🔐 TESTE BLINDADO
-   ============================================================ */
 const SecureTimer = {
   DB_NAME: 'vdb_secure', DB_VERSION: 1,
   CACHE_NAME: 'vdb_meta_cache', CACHE_KEY: '/vdb-meta.json',
@@ -898,7 +889,7 @@ const SecureTimer = {
     const expiracoes = await this._lerTodos(deviceId);
     if (expiracoes.length === 0) { const exp = Date.now() + CONFIG.TEMPO_TESTE_SEGUNDOS * 1000; await this._salvarTodos(deviceId, exp); return { liberado: true, motivo: 'novo', expiracao: exp }; }
     const expiracaoReal = Math.max(...expiracoes);
-    if (expiracoes.length < 3) await this._salvarTodos(deviceId, expiracaoReal);
+    if (expirocoes.length < 3) await this._salvarTodos(deviceId, expiracaoReal);
     if (Date.now() > expiracaoReal) return { liberado: false, motivo: 'expirado', expiracao: expiracaoReal };
     return { liberado: true, motivo: 'teste', expiracao: expiracaoReal };
   },
@@ -917,9 +908,6 @@ const SecureTimer = {
   }
 };
 
-/* ============================================================
-   📦 APP STATE
-   ============================================================ */
 class AppState{
   constructor(){
     this.key='vdb_state';this.version=3;this.data=this._load();
@@ -956,9 +944,6 @@ class AppState{
 }
 const appState=new AppState();
 
-/* ============================================================
-   📦 CACHE
-   ============================================================ */
 class CacheManager{
   constructor(maxBytes=5*1024*1024){this.maxBytes=maxBytes;this.prefix='cache_';}
   getKey(g){return this.prefix+CONFIG.APP_VERSION+'_'+g;}
@@ -1026,9 +1011,6 @@ class Notifier{
 const notifier=new Notifier();
 const notif=(m,d=2000,t='info')=>notifier.show(m,d,t);
 
-/* ============================================================
-   🎛️ DOM
-   ============================================================ */
 const dom={
   loadingScreen:$('loadingScreen'),loadingProgressFill:$('loadingProgressFill'),
   playerContainer:$('playerContainer'),timerLib:$('timerLib'),blockOverlay:$('blockOverlay'),
@@ -1083,9 +1065,6 @@ const dom={
   menuGerenciarOffline:$('menuGerenciarOffline')
 };
 
-/* ============================================================
-   🖥️ FULLSCREEN
-   ============================================================ */
 let fullscreenInterval = null;
 function jaEstaFullscreen(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
 function forcarTelaCheia(){
@@ -1132,9 +1111,6 @@ document.addEventListener('click', () => {
 
 function updateProgress(p){dom.loadingProgressFill.style.width=Math.min(p,100)+'%';}
 
-/* ============================================================
-   ⏱️ TIMER
-   ============================================================ */
 async function updateTimerDisplay(){
   if(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ) === 'true'){
     dom.timerLib.innerHTML = '<i class="fas fa-lock-open"></i> Lib';
@@ -1161,9 +1137,6 @@ async function iniciarTimerCorrido(){
   tick();
 }
 
-/* ============================================================
-   🎵 PLAYER
-   ============================================================ */
 function fadeOutAudio(d=400){return new Promise(r=>{if(dom.audio.paused||!dom.audio.src){r();return;}const sv=dom.audio.volume;const st=20,stt=d/st;let s=0;const fi=setInterval(()=>{s++;dom.audio.volume=Math.max(0,sv*(1-s/st));if(s>=st){clearInterval(fi);r();}},stt);});}
 function fadeInAudio(d=600){return new Promise(r=>{const volFinal=appState.volume||1;dom.audio.volume=0;const st=25,stt=d/st;let s=0;const fi=setInterval(()=>{s++;const e=1-Math.pow(1-s/st,2);dom.audio.volume=Math.min(volFinal,e*volFinal);if(s>=st){clearInterval(fi);dom.audio.volume=volFinal;r();}},stt);});}
 
@@ -1194,6 +1167,40 @@ function atualizarInfoMusica(m){
   if(dom.musicaNome)dom.musicaNome.textContent=sanitize(m.title)||'Música';
   if(dom.musicaArtista)dom.musicaArtista.textContent=sanitize(m.artist)||'Artista';
   atualizarCoracaoInfo();
+}
+
+function atualizarCoracaoInfo(){
+  if(!dom.btnCoracaoInfo) return;
+  const labelEl = document.getElementById('labelTocandoAgora');
+  const m = appState.playlistAtual[appState.indiceAtual] || appState.playlistAtual[0];
+  
+  if(!m){
+    dom.btnCoracaoInfo.classList.remove('ativo');
+    dom.btnCoracaoInfo.innerHTML = '<i class="far fa-heart"></i>';
+    if(labelEl){
+      labelEl.classList.remove('favorita');
+      labelEl.innerHTML = '🎵 TOCANDO AGORA';
+    }
+    return;
+  }
+  
+  const ehFav = appState.favorites.some(f => f.id === m.id);
+  
+  if(ehFav){
+    dom.btnCoracaoInfo.classList.add('ativo');
+    dom.btnCoracaoInfo.innerHTML = '<i class="fas fa-heart"></i>';
+    if(labelEl){
+      labelEl.classList.add('favorita');
+      labelEl.innerHTML = '❤️ TOCANDO AGORA ❤️';
+    }
+  } else {
+    dom.btnCoracaoInfo.classList.remove('ativo');
+    dom.btnCoracaoInfo.innerHTML = '<i class="far fa-heart"></i>';
+    if(labelEl){
+      labelEl.classList.remove('favorita');
+      labelEl.innerHTML = '🎵 TOCANDO AGORA';
+    }
+  }
 }
 
 let hideControlsTimeout=null;
@@ -1231,43 +1238,29 @@ function atualizarPlaylist(){
   return appState.playlistAtual[appState.indiceAtual];
 }
 
-/* ============================================================
-   ▶️ TOCAR (CORRIGIDO DE VERDADE)
-   ============================================================ */
 let timeoutSeguranca = null;
 
 async function tocar(){
-  // Verificações iniciais
   if(appState.carregandoMusica) return;
   if(!appState.isBackgroundActive){ notif('🔊 Toque na tela primeiro', 2000, 'warning'); return; }
   if(!appState.musicas.length){ notif('⚠️ Escolha um gênero', 2000, 'warning'); return; }
   
-  // Marca carregando IMEDIATAMENTE
   appState.carregandoMusica = true;
   dom.playBtn.classList.add('loading');
   dom.playBtn.innerHTML = '<i class="fas fa-spinner"></i>';
   
-  // ⏱️ TIMEOUT DE SEGURANÇA - destrava em 25 segundos SEMPRE
   if(timeoutSeguranca) clearTimeout(timeoutSeguranca);
   timeoutSeguranca = setTimeout(() => {
-    console.warn('⚠️ Timeout de segurança - destravando');
     appState.carregandoMusica = false;
     dom.playBtn.classList.remove('loading');
     dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
   }, CONFIG.TIMEOUT_SEGURANCA_MS);
   
   try {
-    // Fade out se já tiver tocando
     if(!dom.audio.paused && dom.audio.src) await fadeOutAudio(400);
-    
-    // Pega a música
     const m = atualizarPlaylist();
-    if(!m){ 
-      notif('⚠️ Sem música na playlist', 2000, 'warning');
-      return; 
-    }
+    if(!m){ notif('⚠️ Sem música na playlist', 2000, 'warning'); return; }
     
-    // Atualiza interface
     atualizarLetreiro(m);
     atualizarBadgeGenero();
     updateHeart(m.id);
@@ -1276,7 +1269,6 @@ async function tocar(){
     atualizarInfoMusica(m);
     dom.equalizer.classList.remove('paused');
     
-    // Media Session
     if('mediaSession' in navigator){
       try{
         navigator.mediaSession.metadata = new MediaMetadata({
@@ -1292,7 +1284,6 @@ async function tocar(){
       }catch(e){}
     }
     
-    // Prepara áudio
     dom.audio.pause();
     dom.audio.removeAttribute('src');
     dom.audio.load();
@@ -1300,18 +1291,11 @@ async function tocar(){
     const urls = getUrls(m);
     let ok = false;
     
-    // Tenta tocar da internet ou cache
     if(!navigator.onLine){
       for(const u of urls){
         const urlCache = await buscarMusicaOffline(u);
         if(urlCache){
-          try{
-            dom.audio.src = urlCache;
-            dom.audio.load();
-            await new Promise(r => setTimeout(r, 500));
-            ok = true;
-            break;
-          }catch(e){}
+          try{ dom.audio.src = urlCache; dom.audio.load(); await new Promise(r => setTimeout(r, 500)); ok = true; break; }catch(e){}
         }
       }
     }
@@ -1320,36 +1304,17 @@ async function tocar(){
       for(const u of urls){
         try{
           const carregou = await new Promise(r => {
-            const t = setTimeout(() => {
-              dom.audio.oncanplay = null;
-              dom.audio.onerror = null;
-              r(false);
-            }, CONFIG.TIMEOUT_MUSICA_MS);
-            
-            dom.audio.oncanplay = () => {
-              clearTimeout(t);
-              dom.audio.oncanplay = null;
-              dom.audio.onerror = null;
-              r(true);
-            };
-            
-            dom.audio.onerror = () => {
-              clearTimeout(t);
-              dom.audio.oncanplay = null;
-              dom.audio.onerror = null;
-              r(false);
-            };
-            
+            const t = setTimeout(() => { dom.audio.oncanplay = null; dom.audio.onerror = null; r(false); }, CONFIG.TIMEOUT_MUSICA_MS);
+            dom.audio.oncanplay = () => { clearTimeout(t); dom.audio.oncanplay = null; dom.audio.onerror = null; r(true); };
+            dom.audio.onerror = () => { clearTimeout(t); dom.audio.oncanplay = null; dom.audio.onerror = null; r(false); };
             dom.audio.src = u;
             dom.audio.load();
           });
-          
           if(carregou){ ok = true; salvarMusicaOffline(u); break; }
         }catch(e){}
       }
     }
     
-    // Toca de verdade
     if(ok){
       try{
         dom.audio.volume = 0;
@@ -1366,7 +1331,6 @@ async function tocar(){
         notif('⚠️ Toque na tela e tente de novo', 2500, 'warning');
       }
     } else {
-      // Nenhuma URL funcionou - vai pra próxima
       dom.playBtn.classList.remove('loading');
       dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
       appState.errosSeguidos++;
@@ -1380,11 +1344,9 @@ async function tocar(){
   } catch(e){
     console.error('Erro tocar:', e);
   } finally {
-    // ⚠️ SEMPRE LIMPA - mesmo se der erro
     if(timeoutSeguranca) clearTimeout(timeoutSeguranca);
     appState.carregandoMusica = false;
     dom.playBtn.classList.remove('loading');
-    // Se não tá tocando, volta pro ícone de play
     if(dom.audio.paused){
       dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
     }
@@ -1453,19 +1415,11 @@ async function ativarPlayer(){
 
 function updateFavBadge(){ const badge=$('fabBadgeFav'); if(badge) badge.textContent=appState.favorites.length; }
 function updateHeart(id){ atualizarCoracaoInfo(); }
-function atualizarCoracaoInfo(){
-  if(!dom.btnCoracaoInfo) return;
-  const m = appState.playlistAtual[appState.indiceAtual] || appState.playlistAtual[0];
-  if(!m){ dom.btnCoracaoInfo.classList.remove('ativo'); dom.btnCoracaoInfo.innerHTML='<i class="far fa-heart"></i>'; return; }
-  const ehFav = appState.favorites.some(f => f.id === m.id);
-  if(ehFav){ dom.btnCoracaoInfo.classList.add('ativo'); dom.btnCoracaoInfo.innerHTML='<i class="fas fa-heart"></i>'; }
-  else{ dom.btnCoracaoInfo.classList.remove('ativo'); dom.btnCoracaoInfo.innerHTML='<i class="far fa-heart"></i>'; }
-}
 function toggleFav(m){
   vibrar(20);if(!m)return;
   const i=appState.favorites.findIndex(f=>f.id===m.id);
   if(i>-1){appState.removeFavorite(m.id);notif('💔 Removido',1500,'info');}
-  else{appState.addFavorite(m);notif('❤️ Adicionado',1500,'success');}
+  else{appState.addFavorite(m);notif('❤️ Adicionado!',1500,'success');}
   updateFavBadge();updateHeart(m.id);
 }
 function renderizarFavoritosModal(){
@@ -1509,11 +1463,7 @@ function renderizarGeneros(){
 async function selecionarGenero(g){
   vibrar(15);showLoad(true);
   const m = await cacheManager.get(g, GENRE_URLS[g]);
-  if(!m || !m.length){
-    showLoad(false);
-    notif('❌ Erro ao carregar '+g, 2500, 'error');
-    return;
-  }
+  if(!m || !m.length){ showLoad(false); notif('❌ Erro ao carregar '+g, 2500, 'error'); return; }
   dom.audio.pause();
   appState.isPlaying = false;
   dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
@@ -1902,7 +1852,50 @@ function jaEstaInstalado(){return window.matchMedia('(display-mode: standalone)'
 function mostrarBotaoInstalar(){if(!btnInstalarFixo)return;if(!ehMobile()||jaEstaInstalado()){btnInstalarFixo.style.display='none';return;}btnInstalarFixo.style.display='flex';}
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;setTimeout(mostrarBotaoInstalar,500);});
 window.addEventListener('appinstalled',()=>{btnInstalarFixo.style.display='none';notif('🎉 Instalado!',3000,'success');});
-if(btnInstalarFixo){btnInstalarFixo.onclick=async()=>{if(deferredInstallPrompt){deferredInstallPrompt.prompt();deferredInstallPrompt=null;}else{notif('Use o menu do navegador',3000,'info');}};}
+
+if(btnInstalarFixo){
+  btnInstalarFixo.onclick = async () => {
+    vibrar(20);
+    if(deferredInstallPrompt){
+      try{
+        deferredInstallPrompt.prompt();
+        const r = await deferredInstallPrompt.userChoice;
+        if(r.outcome === 'accepted'){
+          notif('🎉 Instalando!', 2500, 'success');
+          btnInstalarFixo.style.display = 'none';
+        }
+        deferredInstallPrompt = null;
+      }catch(e){
+        mostrarInstrucoesInstalar();
+      }
+    } else {
+      mostrarInstrucoesInstalar();
+    }
+  };
+}
+
+function mostrarInstrucoesInstalar(){
+  const modal = document.getElementById('instrucoesInstalar');
+  if(!modal){ notif('📱 Menu do navegador → Instalar app', 4000, 'info'); return; }
+  
+  const titulo = modal.querySelector('h3');
+  const passos = modal.querySelectorAll('.passo');
+  
+  if(ehIOS()){
+    if(titulo) titulo.innerHTML = '📲 INSTALAR NO IPHONE';
+    if(passos[0]) passos[0].innerHTML = '<div class="num">1</div><div>Toque em <b>Compartilhar</b> <i class="fas fa-share-square"></i> no Safari</div>';
+    if(passos[1]) passos[1].innerHTML = '<div class="num">2</div><div>Role e toque em <b>"Adicionar à Tela de Início"</b></div>';
+    if(passos[2]) passos[2].innerHTML = '<div class="num">3</div><div>Toque em <b>"Adicionar"</b> e pronto! 🎵</div>';
+  } else {
+    if(titulo) titulo.innerHTML = '📲 INSTALAR NO ANDROID';
+    if(passos[0]) passos[0].innerHTML = '<div class="num">1</div><div>Toque nos <b>3 pontinhos</b> ⋮ do Chrome</div>';
+    if(passos[1]) passos[1].innerHTML = '<div class="num">2</div><div>Toque em <b>"Instalar app"</b> ou <b>"Adicionar à tela inicial"</b></div>';
+    if(passos[2]) passos[2].innerHTML = '<div class="num">3</div><div>Confirme e pronto! 🎵</div>';
+  }
+  
+  modal.classList.add('active');
+}
+
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{});});}
 
 async function forcarRecarregarTudo(){
@@ -1926,9 +1919,6 @@ function esconderPropagandaFull(){const banner=$('bannerPropagandaFull');if(bann
 function agendarPropaganda(){clearTimeout(propagandaTimer);propagandaTimer=setTimeout(()=>{mostrarPropagandaFull();agendarPropaganda();},CONFIG.PROPAGANDA_INTERVALO_MS);}
 function abrirWhatsAppPropaganda(){vibrar(20);const msg=encodeURIComponent('🎵 Olá! Quero o VAI DE BOA! VITALÍCIO por '+CONFIG.PRECO);window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+msg,'_blank');esconderPropagandaFull();propagandaJaFoiFechada=true;clearTimeout(propagandaTimer);}
 
-/* ============================================================
-   🚀 INICIAR
-   ============================================================ */
 async function iniciar(){
   try{
     try{const v=localStorage.getItem('vdb_versao_limpeza');if(v!==CONFIG.APP_VERSION){for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith('cache_')&&!k.includes(CONFIG.APP_VERSION))localStorage.removeItem(k);}localStorage.setItem('vdb_versao_limpeza',CONFIG.APP_VERSION);}}catch(e){}
@@ -1996,7 +1986,6 @@ async function iniciar(){
     ativarFullscreenPrimeiroToque();
     esconderBarraAndroid();
 
-    /* Controles */
     dom.playBtn.onclick = togglePlay;
     dom.prevBtn.onclick = prev;
     dom.nextBtn.onclick = next;
@@ -2008,7 +1997,6 @@ async function iniciar(){
       }
     };
 
-    /* Coração */
     if(dom.btnCoracaoInfo){
       dom.btnCoracaoInfo.onclick = (e) => {
         e.stopPropagation();
@@ -2024,7 +2012,6 @@ async function iniciar(){
     }
     setTimeout(atualizarCoracaoInfo, 1000);
 
-    /* Volume */
     if(dom.volumeControl){
       const volumeSalvo = parseInt(localStorage.getItem('vdb_volume') || '100');
       dom.volumeControl.value = volumeSalvo;
@@ -2043,7 +2030,6 @@ async function iniciar(){
       });
     }
 
-    /* Botão Baixar Offline */
     if(dom.btnBaixarOffline){
       dom.btnBaixarOffline.onclick = () => {
         vibrar(15);
@@ -2067,7 +2053,6 @@ async function iniciar(){
 
     setTimeout(()=>{showControls();},2000);
 
-    /* Clique no letreiro → busca */
     if(dom.infoScroll){
       dom.infoScroll.addEventListener('click',e=>{
         e.stopPropagation();
@@ -2087,7 +2072,6 @@ async function iniciar(){
       });
     }
 
-    /* Clique na tela traz card de volta */
     document.addEventListener('click', e => {
       if(e.target.closest('button')) return;
       if(e.target.closest('.genre-card')) return;
@@ -2098,7 +2082,7 @@ async function iniciar(){
       if(e.target.closest('.fav-modal')) return;
       if(e.target.closest('.fab-container')) return;
       if(e.target.closest('.top-bar')) return;
-      if(e.target.closest('.btn-coracao-info')) return;
+      if(e.target.closest('.btn-coracao-topo')) return;
       if(e.target.closest('.vdb-dialog-overlay')) return;
       if(e.target.closest('.tutorial-modal')) return;
       if(e.target.closest('.volume-slider')) return;
@@ -2106,7 +2090,6 @@ async function iniciar(){
       if(dom.bottomControls.classList.contains('escondido')) trazerCardDeVolta();
     });
 
-    /* Menu */
     dom.menuButton.onclick = e => {
       e.stopPropagation();
       vibrar(10);
@@ -2155,7 +2138,6 @@ async function iniciar(){
       };
     });
 
-    /* FAB */
     dom.fabMain.onclick = () => {
       vibrar(10);
       dom.fabSub.classList.toggle('open');
@@ -2172,7 +2154,7 @@ async function iniciar(){
     dom.fabYoutube.onclick = () => { window.open('https://sites.google.com/view/rogersjc/in%C3%ADcio'); fecharFab(); };
     dom.fabShare.onclick = () => { navigator.clipboard.writeText(location.href).then(()=>notif('📋 Link copiado!',1500,'success')); fecharFab(); };
     dom.fabQrCode.onclick = () => { gerarQrCode(); fecharFab(); };
-    dom.fabInstalar.onclick = () => { if(deferredInstallPrompt) deferredInstallPrompt.prompt(); else notif('Use o menu do navegador', 3000, 'info'); fecharFab(); };
+    dom.fabInstalar.onclick = () => { if(btnInstalarFixo) btnInstalarFixo.click(); fecharFab(); };
     dom.fullscreenMenuBtn.onclick = () => { fecharMenu(); if(jaEstaFullscreen()){ if(document.exitFullscreen) document.exitFullscreen().catch(()=>{}); } else { forcarTelaCheia(); } };
     dom.liberarAgoraBtn.onclick = () => { fecharMenu(); liberarAgora(); };
     dom.cadastroMenuBtn.onclick = () => { fecharMenu(); abrirCadastro(); };
@@ -2186,7 +2168,9 @@ async function iniciar(){
     dom.btnLiberar.onclick = handleLiberar;
     if(dom.btnWhatsBlock) dom.btnWhatsBlock.onclick = abrirWhatsBlock;
 
-    /* Admin */
+    const fecharInst = document.getElementById('fecharInstrucoesBtn');
+    if(fecharInst) fecharInst.onclick = () => document.getElementById('instrucoesInstalar').classList.remove('active');
+
     setup8CliquesLogo();
     dom.adminGerarBtn.onclick = async () => {
       const f = dom.adminFingerprintInput.value.trim();
@@ -2224,7 +2208,6 @@ async function iniciar(){
     dom.adminCloseBtn.onclick = () => dom.adminPanel.classList.remove('open');
     if(dom.adminCloseTopBtn) dom.adminCloseTopBtn.onclick = () => dom.adminPanel.classList.remove('open');
 
-    /* Áudio eventos */
     dom.audio.ontimeupdate = () => {
       if(dom.audio.duration){
         dom.progressFill.style.width = (dom.audio.currentTime / dom.audio.duration * 100) + '%';
