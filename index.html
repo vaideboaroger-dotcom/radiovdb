@@ -28,13 +28,22 @@
   --safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);
   --theme-1:#a855f7;--theme-2:#22d3ee;
   --z-media:0;--z-card:20;--z-topbar:35;--z-fab:40;--z-modal:100;
-  --z-dialog:200;--z-block:500;--z-admin:600;--z-propaganda:700;--z-notif:9999;
+  --z-dialog:200;--z-block:500;--z-admin:600;--z-propaganda:700;--z-notif:9999;--z-debug:99999;
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-touch-callout:none}
 html{background:#000;height:100vh;height:100dvh}
 body{position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;overscroll-behavior:none;background:#000;width:100%}
 :fullscreen,:-webkit-full-screen{background:#000}
 html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
+
+#debugPanel{position:fixed;bottom:0;left:0;right:0;max-height:40vh;overflow-y:auto;background:rgba(0,0,0,.92);color:#0f0;font-family:monospace;font-size:.65rem;padding:8px;z-index:var(--z-debug);display:none;border-top:2px solid #0f0;user-select:text}
+#debugPanel.ativo{display:block}
+#debugPanel .debug-linha{padding:2px 0;border-bottom:1px solid rgba(255,255,255,.1);word-break:break-all}
+#debugPanel .debug-erro{color:#f44}
+#debugPanel .debug-info{color:#0ff}
+#debugPanel .debug-ok{color:#0f0}
+#debugToggle{position:fixed;top:60px;right:8px;z-index:var(--z-debug);background:rgba(255,0,0,.7);color:#fff;border:none;border-radius:20px;padding:6px 12px;font-size:.7rem;font-weight:700;cursor:pointer;display:none}
+#debugToggle.ativo{display:block}
 
 #loadingScreen{position:fixed;inset:0;background:radial-gradient(circle at 20% 20%, rgba(168,85,247,.45), transparent 55%),radial-gradient(circle at 80% 80%, rgba(34,211,238,.35), transparent 55%),linear-gradient(135deg,#0a0616 0%,#140a2e 50%,#0a0616 100%);display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:22px;text-align:center;width:100%}
 .loading-logo-wrapper{position:relative;width:150px;height:150px;display:flex;align-items:center;justify-content:center;z-index:2}
@@ -86,7 +95,6 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .glass-musica-nome{font-family:'Rajdhani',sans-serif;font-size:1.6rem;color:#fff;font-weight:900;letter-spacing:1px;line-height:1.2;margin-bottom:8px;text-shadow:0 0 15px rgba(168,85,247,.6);word-break:break-word}
 .glass-musica-artista{font-family:'Rajdhani',sans-serif;font-size:1rem;color:#c4b5fd;font-weight:600;letter-spacing:1px;opacity:.9}
 
-/* ❤️ CORAÇÃO AO LADO DA MÚSICA */
 .musica-linha{display:flex;align-items:center;justify-content:center;gap:14px;padding:0 8px}
 .musica-texto{flex:1;text-align:center;min-width:0}
 .btn-coracao-info{flex-shrink:0;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg, rgba(244,114,182,0.15), rgba(168,85,247,0.1));border:2px solid rgba(244,114,182,0.4);color:rgba(244,114,182,0.7);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);box-shadow:0 4px 15px rgba(244,114,182,0.2)}
@@ -108,7 +116,6 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .progress-bar{height:8px;background:rgba(0,0,0,.5);cursor:pointer;border-radius:8px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--theme-1),var(--theme-2));width:0%;border-radius:8px;box-shadow:0 0 12px var(--theme-2);transition:width .2s linear}
 
-/* 🔊 SLIDER DE VOLUME */
 .volume-slider{display:flex;align-items:center;gap:10px;padding:10px 16px;background:linear-gradient(135deg, rgba(0,0,0,.5), rgba(26,10,46,.6));border:1px solid rgba(168,85,247,.2);border-radius:16px;margin-top:8px;box-shadow:0 8px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08)}
 .volume-slider i{color:#22d3ee;font-size:.9rem;width:18px;text-align:center}
 .volume-slider input[type="range"]{flex:1;-webkit-appearance:none;appearance:none;height:6px;background:rgba(0,0,0,.5);border-radius:6px;outline:none;cursor:pointer;box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
@@ -123,14 +130,10 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 .btn-baixar-offline.ja-offline{background:linear-gradient(135deg,#10b981,#065f46);cursor:default;opacity:.7}
 .btn-baixar-offline.escondido-offline{opacity:0;max-height:0;padding:0 !important;margin:0 !important;pointer-events:none}
 
-#btnTrazerCard{position:fixed;bottom:calc(24px + var(--safe-bottom));right:20px;z-index:calc(var(--z-fab) - 1);width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#22d3ee);border:2px solid rgba(255,255,255,.3);color:#fff;font-size:1.4rem;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 6px 25px rgba(168,85,247,.7), 0 0 40px rgba(168,85,247,.4);animation:pulseTrazer 2.5s ease-in-out infinite}
-#btnTrazerCard.visivel{display:flex}
-@keyframes pulseTrazer{0%,100%{transform:scale(1);box-shadow:0 6px 25px rgba(168,85,247,.7)}50%{transform:scale(1.1);box-shadow:0 8px 40px rgba(168,85,247,1)}}
+.fab-container{position:fixed;bottom:calc(24px + var(--safe-bottom));right:20px;z-index:var(--z-fab);display:flex;flex-direction:column;align-items:flex-end;gap:8px;transition:opacity .4s ease}
+.fab-main{background:rgba(168, 85, 247, 0.3);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:1.1rem;border:2px solid rgba(168, 85, 247, 0.5);box-shadow:0 4px 20px rgba(168, 85, 247, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)}
+.fab-main:active{transform:scale(0.9);background:rgba(168, 85, 247, 0.5)}
 
-.fab-container{position:fixed;bottom:calc(24px + var(--safe-bottom));right:20px;z-index:var(--z-fab);display:flex;flex-direction:column;align-items:flex-end;gap:8px;transition:opacity .6s ease}
-.fab-container.escondido{opacity:0;pointer-events:none}
-.fab-main{background:rgba(168, 85, 247, 0.25);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:1.1rem;border:2px solid rgba(168, 85, 247, 0.5);box-shadow:0 4px 20px rgba(168, 85, 247, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)}
-.fab-main:active{transform:scale(0.9);background:rgba(168, 85, 247, 0.4)}
 .fab-bemvindo{position:fixed;bottom:calc(90px + var(--safe-bottom));right:20px;z-index:calc(var(--z-fab) + 1);font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:2px;color:#fff;text-shadow:0 0 8px rgba(168,85,247,.9),0 0 16px rgba(34,211,238,.6);opacity:0;transition:opacity .5s ease, transform .5s ease;pointer-events:none;white-space:nowrap;background:rgba(0,0,0,.7);padding:8px 14px;border-radius:20px;border:1px solid rgba(168,85,247,.4)}
 .fab-bemvindo.visivel{opacity:1;animation:bemVindoPulse 1.5s ease-in-out infinite}
 @keyframes bemVindoPulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.05);opacity:1}}
@@ -334,14 +337,11 @@ html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 
 #dicaCliques{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fbbf24;padding:8px 16px;border-radius:20px;font-size:.75rem;font-weight:700;z-index:99999;border:1px solid rgba(251,191,36,.4);pointer-events:none;letter-spacing:1px;opacity:0;transition:opacity .3s}
 
-/* MODO TV ATIVO - Esconde tudo */
 body.modo-tv-ativo .top-bar,
 body.modo-tv-ativo .info-scroll,
 body.modo-tv-ativo .glass-card,
 body.modo-tv-ativo .fab-container,
-body.modo-tv-ativo .equalizer,
-body.modo-tv-ativo .fav-heart-center,
-body.modo-tv-ativo #btnTrazerCard{display:none !important}
+body.modo-tv-ativo .equalizer{display:none !important}
 
 #btnSairModoTV{position:fixed !important;top:20px !important;right:20px !important;z-index:99999 !important;width:40px !important;height:40px !important;border-radius:50% !important;background:rgba(0,0,0,0.5) !important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,0.2) !important;color:rgba(255,255,255,0.7) !important;font-size:1.1rem !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;transition:all 0.3s ease !important;opacity:0.5}
 #btnSairModoTV:hover, #btnSairModoTV:active{opacity:1;background:rgba(239,68,68,0.7) !important;color:#fff !important;transform:scale(1.1)}
@@ -425,10 +425,8 @@ body.modo-tv-ativo #btnTrazerCard{display:none !important}
       <span>BAIXAR OFFLINE</span>
     </button>
 
-    <div class="glass-mensagem" id="cardMensagem">✨ Bem-vindo! Aproveite as músicas ✨</div>
+    <div class="glass-mensagem" id="cardMensagem">✨ Toque em qualquer lugar pra voltar ao card ✨</div>
   </div>
-
-  <button id="btnTrazerCard">🎵</button>
 
   <div class="fab-container" id="fabContainer">
     <div class="fab-sub" id="fabSub">
@@ -476,6 +474,8 @@ body.modo-tv-ativo #btnTrazerCard{display:none !important}
       <button class="menu-item" id="liberarAgoraBtn"><i class="fas fa-unlock"></i><span>Liberar Agora</span></button>
       <div class="menu-categoria">📱 App</div>
       <button class="menu-item" id="menuInstalarBtn"><i class="fas fa-download"></i><span>Instalar App</span></button>
+      <div class="menu-categoria">🐛 Debug</div>
+      <button class="menu-item" id="debugMenuBtn"><i class="fas fa-bug"></i><span>Mostrar Logs</span></button>
       <div class="menu-categoria">🔄 Atualizações</div>
       <button class="menu-item" id="reloadPlaylistBtn"><i class="fas fa-sync"></i><span>Recarregar</span></button>
       <button class="menu-item" id="forceUpdateBtn"><i class="fas fa-sync-alt"></i><span>Atualizar Mídias</span></button>
@@ -573,6 +573,7 @@ body.modo-tv-ativo #btnTrazerCard{display:none !important}
     <div class="tutorial-item"><div class="icon-tut">📻</div><div><div class="tt">Rádio VDB</div><div class="td">Toque em ➕ → Rádio VDB.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">📥</div><div><div class="tt">Baixar Offline</div><div class="td">Escolha um gênero e toque em "BAIXAR OFFLINE".</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">🔍</div><div><div class="tt">Buscar música</div><div class="td">Toque no letreiro do topo.</div></div></div>
+    <div class="tutorial-item"><div class="icon-tut">👆</div><div><div class="tt">Card volta</div><div class="td">Se o card sumir, toque em qualquer lugar da tela.</div></div></div>
     <button class="tutorial-btn-fechar" id="closeTutorialBtn">ENTENDI ✅</button>
   </div>
 </div>
@@ -705,9 +706,32 @@ body.modo-tv-ativo #btnTrazerCard{display:none !important}
 
 <div id="dicaCliques"></div>
 
+<button id="debugToggle">🐛 DEBUG</button>
+<div id="debugPanel"></div>
+
 <script>
 (function(){
 'use strict';
+
+const debugLogs = [];
+function log(msg, tipo='info'){
+  const t = new Date().toLocaleTimeString();
+  const linha = {msg: String(msg), tipo, tempo: t};
+  debugLogs.push(linha);
+  if(debugLogs.length > 200) debugLogs.shift();
+  console.log('['+tipo+'] '+msg);
+  const el = document.getElementById('debugPanel');
+  if(el && el.classList.contains('ativo')){
+    const div = document.createElement('div');
+    div.className = 'debug-linha debug-'+tipo;
+    div.textContent = '['+t+'] '+msg;
+    el.appendChild(div);
+    el.scrollTop = el.scrollHeight;
+  }
+}
+function logErro(msg){ log(msg, 'erro'); }
+function logOk(msg){ log(msg, 'ok'); }
+function logInfo(msg){ log(msg, 'info'); }
 
 const CONFIG = {
   WHATSAPP: '5512988461978',
@@ -717,15 +741,15 @@ const CONFIG = {
   PRECO: 'R$ 39,90',
   LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 🐵 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
   LETREIRO_DURACAO: 60,
-  APP_VERSION: 'v29',
+  APP_VERSION: 'v30',
   NOME_APP: 'VAI DE BOA! MUSIC',
-  MOSTRAR_BANNER_SEMPRE: true,
   LOADING_DURACAO_MS: 3500,
   PROPAGANDA_INTERVALO_MS: 120000,
   PWA_INSTALL_DELAY_MS: 30000,
   PWA_INSTALL_INTERVALO_HORAS: 6,
   CARD_DURACAO_MS: 30000,
-  MIDIA_DURACAO_MS: 30000
+  MIDIA_DURACAO_MS: 30000,
+  TIMEOUT_MUSICA_MS: 8000
 };
 
 const CACHE_OFFLINE_CONFIG = {
@@ -799,16 +823,11 @@ const MIDIAS_TV_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/ra
 
 const MIDIAS_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/mc1.mp4'},
-  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/mc2.mp4'},
-  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'},
-  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'},
-  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/lan.mp4'}
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/mc2.mp4'}
 ];
 
 const MIDIAS_TV_FALLBACK = [
-  {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/mac1.mp4'},
-  {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/amytv.mp4'},
-  {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/tvbob.mp4'}
+  {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/mac1.mp4'}
 ];
 
 const $ = id => document.getElementById(id);
@@ -848,71 +867,46 @@ async function verificarSenhaPadrao(senha){
 }
 
 const SecureTimer = {
-  DB_NAME: 'vdb_secure',
-  DB_VERSION: 1,
-  CACHE_NAME: 'vdb_meta_cache',
-  CACHE_KEY: '/vdb-meta.json',
+  DB_NAME: 'vdb_secure', DB_VERSION: 1,
+  CACHE_NAME: 'vdb_meta_cache', CACHE_KEY: '/vdb-meta.json',
   SALT: 'vdb_x9k7_music_2024_secret',
-  CHAVE_LOCAL: 'vdb_ts',
-  CHAVE_DEVICE: 'vdb_dev',
-  CHAVE_DATA: 'vdb_lastdate',
-  CHAVE_TRAPACA: 'vdb_trapaca',
-  CHAVE_DESBLOQ: 'vdb_desbloq',
-  CHAVE_BLOQ_PERM: 'vdb_bloq_perm',
+  CHAVE_LOCAL: 'vdb_ts', CHAVE_DEVICE: 'vdb_dev', CHAVE_DATA: 'vdb_lastdate',
+  CHAVE_TRAPACA: 'vdb_trapaca', CHAVE_DESBLOQ: 'vdb_desbloq', CHAVE_BLOQ_PERM: 'vdb_bloq_perm',
 
   async getDeviceId() {
-    const dados = [
-      navigator.userAgent || '',
-      navigator.platform || '',
-      navigator.language || '',
-      navigator.hardwareConcurrency || 0,
-      screen.width + 'x' + screen.height + 'x' + screen.colorDepth,
-      Intl.DateTimeFormat().resolvedOptions().timeZone || '',
-      new Date().getTimezoneOffset()
-    ].join('|');
+    const dados = [navigator.userAgent||'', navigator.platform||'', navigator.language||'', navigator.hardwareConcurrency||0, screen.width+'x'+screen.height+'x'+screen.colorDepth, Intl.DateTimeFormat().resolvedOptions().timeZone||'', new Date().getTimezoneOffset()].join('|');
     return await sha256(dados);
   },
-
   async _getCryptoKey(deviceId) {
     const base = deviceId + '|' + this.SALT;
     const hash = await sha256(base);
     const raw = new TextEncoder().encode(hash.slice(0, 32));
     return await crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
   },
-
   async _encrypt(obj, chave) {
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const dados = new TextEncoder().encode(JSON.stringify(obj));
     const cifrado = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, chave, dados);
     const combinado = new Uint8Array(iv.length + cifrado.byteLength);
-    combinado.set(iv, 0);
-    combinado.set(new Uint8Array(cifrado), iv.length);
+    combinado.set(iv, 0); combinado.set(new Uint8Array(cifrado), iv.length);
     return btoa(String.fromCharCode(...combinado));
   },
-
   async _decrypt(b64, chave) {
     try {
       const combinado = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-      const iv = combinado.slice(0, 12);
-      const dados = combinado.slice(12);
+      const iv = combinado.slice(0, 12); const dados = combinado.slice(12);
       const decifrado = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, chave, dados);
       return JSON.parse(new TextDecoder().decode(decifrado));
     } catch (e) { return null; }
   },
-
   async _abrirDB() {
     return new Promise((resolve, reject) => {
       const req = indexedDB.open(this.DB_NAME, this.DB_VERSION);
-      req.onupgradeneeded = () => {
-        const db = req.result;
-        if (!db.objectStoreNames.contains('dados')) db.createObjectStore('dados');
-      };
+      req.onupgradeneeded = () => { const db = req.result; if (!db.objectStoreNames.contains('dados')) db.createObjectStore('dados'); };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error);
-      req.onblocked = () => reject(new Error('DB bloqueado'));
     });
   },
-
   async _salvarIDB(valor) {
     try {
       const db = await this._abrirDB();
@@ -924,7 +918,6 @@ const SecureTimer = {
       });
     } catch (e) { return false; }
   },
-
   async _lerIDB() {
     try {
       const db = await this._abrirDB();
@@ -936,38 +929,19 @@ const SecureTimer = {
       });
     } catch (e) { return null; }
   },
-
   async _salvarCache(valor) {
-    try {
-      if (!('caches' in window)) return false;
-      const cache = await caches.open(this.CACHE_NAME);
-      const blob = new Blob([valor], { type: 'text/plain' });
-      await cache.put(this.CACHE_KEY, new Response(blob));
-      return true;
-    } catch (e) { return false; }
+    try { if (!('caches' in window)) return false; const cache = await caches.open(this.CACHE_NAME); const blob = new Blob([valor], { type: 'text/plain' }); await cache.put(this.CACHE_KEY, new Response(blob)); return true; } catch (e) { return false; }
   },
-
   async _lerCache() {
-    try {
-      if (!('caches' in window)) return null;
-      const cache = await caches.open(this.CACHE_NAME);
-      const resp = await cache.match(this.CACHE_KEY);
-      if (!resp) return null;
-      return await resp.text();
-    } catch (e) { return null; }
+    try { if (!('caches' in window)) return null; const cache = await caches.open(this.CACHE_NAME); const resp = await cache.match(this.CACHE_KEY); if (!resp) return null; return await resp.text(); } catch (e) { return null; }
   },
-
   _checarVoltaData() {
     const ultima = parseInt(localStorage.getItem(this.CHAVE_DATA) || '0');
     const agora = Date.now();
-    if (ultima > 0 && agora < ultima - 60000) {
-      localStorage.setItem(this.CHAVE_TRAPACA, 'data');
-      return true;
-    }
+    if (ultima > 0 && agora < ultima - 60000) { localStorage.setItem(this.CHAVE_TRAPACA, 'data'); return true; }
     localStorage.setItem(this.CHAVE_DATA, String(agora));
     return false;
   },
-
   async _salvarTodos(deviceId, expiracao) {
     const chave = await this._getCryptoKey(deviceId);
     const payload = { exp: expiracao, dev: deviceId.slice(0, 16), criado: Date.now() };
@@ -976,14 +950,9 @@ const SecureTimer = {
     await this._salvarIDB(cifrado);
     await this._salvarCache(cifrado);
   },
-
   async _lerTodos(deviceId) {
     const chave = await this._getCryptoKey(deviceId);
-    const cifrados = [
-      localStorage.getItem(this.CHAVE_LOCAL),
-      await this._lerIDB(),
-      await this._lerCache()
-    ].filter(Boolean);
+    const cifrados = [localStorage.getItem(this.CHAVE_LOCAL), await this._lerIDB(), await this._lerCache()].filter(Boolean);
     const validos = [];
     for (const c of cifrados) {
       const dados = await this._decrypt(c, chave);
@@ -991,17 +960,10 @@ const SecureTimer = {
     }
     return validos;
   },
-
   async verificar() {
-    if (localStorage.getItem(this.CHAVE_BLOQ_PERM) === 'true') {
-      return { liberado: false, motivo: 'bloqueado_permanente' };
-    }
-    if (localStorage.getItem(this.CHAVE_DESBLOQ) === 'true') {
-      return { liberado: true, motivo: 'senha', expiracao: Infinity };
-    }
-    if (this._checarVoltaData()) {
-      return { liberado: false, motivo: 'manipulou_data' };
-    }
+    if (localStorage.getItem(this.CHAVE_BLOQ_PERM) === 'true') return { liberado: false, motivo: 'bloqueado_permanente' };
+    if (localStorage.getItem(this.CHAVE_DESBLOQ) === 'true') return { liberado: true, motivo: 'senha', expiracao: Infinity };
+    if (this._checarVoltaData()) return { liberado: false, motivo: 'manipulou_data' };
     const deviceId = await this.getDeviceId();
     localStorage.setItem(this.CHAVE_DEVICE, deviceId);
     const expiracoes = await this._lerTodos(deviceId);
@@ -1011,22 +973,16 @@ const SecureTimer = {
       return { liberado: true, motivo: 'novo', expiracao: exp };
     }
     const expiracaoReal = Math.max(...expiracoes);
-    if (expiracoes.length < 3) {
-      await this._salvarTodos(deviceId, expiracaoReal);
-    }
-    if (Date.now() > expiracaoReal) {
-      return { liberado: false, motivo: 'expirado', expiracao: expiracaoReal };
-    }
+    if (expiracoes.length < 3) await this._salvarTodos(deviceId, expiracaoReal);
+    if (Date.now() > expiracaoReal) return { liberado: false, motivo: 'expirado', expiracao: expiracaoReal };
     return { liberado: true, motivo: 'teste', expiracao: expiracaoReal };
   },
-
   async tempoRestante() {
     const r = await this.verificar();
     if (!r.liberado) return 0;
     if (r.expiracao === Infinity) return CONFIG.TEMPO_TESTE_SEGUNDOS;
     return Math.max(0, Math.floor((r.expiracao - Date.now()) / 1000));
   },
-
   async desbloquearPermanente() {
     localStorage.setItem(this.CHAVE_DESBLOQ, 'true');
     localStorage.removeItem(this.CHAVE_BLOQ_PERM);
@@ -1041,41 +997,32 @@ class AppState{
     this.key='vdb_state';this.version=3;this.data=this._load();
     this.favorites=this.data.favorites||[];this.fingerprint=this._getFP();
     this.desbloqueado=this.data.desbloqueado||false;
-    this.modoTV=this.data.modoTV||false;this.modoAtual=this.data.modoAtual||'BÔNUS';
+    this.modoTV=this.data.modoTV||false;this.modoAtual=this.data.modoAtual||'';
     this.musicas=this.data.musicas||[];this.playlistAtual=this.data.playlistAtual||[];
     this.indiceAtual=this.data.indiceAtual||0;this.isPlaying=false;
     this.shuffleMode=this.data.shuffleMode||false;this.historico=this.data.historico||[];
     this.sleepTimer=null;this.isBackgroundActive=false;this.playerAtivado=false;
     this.carregandoMusica=false;this.errosSeguidos=0;
     this.volume=parseInt(localStorage.getItem('vdb_volume')||'100')/100;
+    if(this.volume === 0) this.volume = 1;
     try{this.recentes=new Set(JSON.parse(localStorage.getItem('vdb_recentes')||'[]'));}catch(e){this.recentes=new Set();}
     this.bloqueadoPermanente=localStorage.getItem(SecureTimer.CHAVE_BLOQ_PERM)==='true';
     this._saveTimer=null;
   }
-  _load(){try{const r=localStorage.getItem(this.key);if(r){const p=JSON.parse(r);if(p.version===3)return p;}}catch(e){}return {version:3,favorites:[],desbloqueado:false,modoTV:false,modoAtual:'BÔNUS',musicas:[],playlistAtual:[],indiceAtual:0,shuffleMode:false,historico:[]};}
+  _load(){try{const r=localStorage.getItem(this.key);if(r){const p=JSON.parse(r);if(p.version===3)return p;}}catch(e){}return {version:3,favorites:[],desbloqueado:false,modoTV:false,modoAtual:'',musicas:[],playlistAtual:[],indiceAtual:0,shuffleMode:false,historico:[]};}
   _save(imediato=false){
     if(this._saveTimer)clearTimeout(this._saveTimer);
     const salvar=()=>{
       this.data={version:3,favorites:this.favorites,desbloqueado:this.desbloqueado,modoTV:this.modoTV,modoAtual:this.modoAtual,indiceAtual:this.indiceAtual,shuffleMode:this.shuffleMode,historico:this.historico};
       try{localStorage.setItem(this.key,JSON.stringify(this.data));}catch(e){}
     };
-    if(imediato)salvar();
-    else this._saveTimer=setTimeout(salvar,800);
+    if(imediato)salvar(); else this._saveTimer=setTimeout(salvar,800);
   }
   _getFP(){try{const n=navigator.userAgent||'',p=navigator.platform||'',l=navigator.language||'';const s=screen.width+'x'+screen.height+'x'+screen.colorDepth;const t=Intl.DateTimeFormat().resolvedOptions().timeZone||'';return btoa(n+'|'+p+'|'+l+'|'+s+'|'+t).slice(0,64);}catch(e){return 'fallback_'+now();}}
   addFavorite(m){if(!this.favorites.find(f=>f.id===m.id)){this.favorites.push({id:m.id,title:m.title,artist:m.artist,src:m.src,genero:m.genero,data:now()});this._save();}}
   removeFavorite(id){this.favorites=this.favorites.filter(f=>f.id!==id);this._save();}
   getFavorites(){return this.favorites;}
-  addHistorico(m){
-    this.historico=this.historico.filter(h=>h.id!==m.id);
-    this.historico.unshift({...m,data:now()});
-    if(this.historico.length>20)this.historico.pop();
-    this._save();
-    this.recentes.add(m.id);
-    if(this.historico.length%10===0){
-      try{localStorage.setItem('vdb_recentes',JSON.stringify([...this.recentes].slice(0,20)));}catch(e){}
-    }
-  }
+  addHistorico(m){ this.historico=this.historico.filter(h=>h.id!==m.id); this.historico.unshift({...m,data:now()}); if(this.historico.length>20)this.historico.pop(); this._save(); this.recentes.add(m.id); if(this.historico.length%10===0){ try{localStorage.setItem('vdb_recentes',JSON.stringify([...this.recentes].slice(0,20)));}catch(e){} } }
   getSenhasHistorico(){try{return JSON.parse(localStorage.getItem('vdb_historico_senhas')||'[]');}catch(e){return [];}}
   addSenhaHistorico(s,t){const h=this.getSenhasHistorico();h.unshift({senha:s,tipo:t,data:new Date().toLocaleString()});if(h.length>20)h.pop();localStorage.setItem('vdb_historico_senhas',JSON.stringify(h));}
 }
@@ -1088,21 +1035,23 @@ class CacheManager{
   async get(genero,url,timeoutMs=9000){
     const k=this.getKey(genero);
     try{
+      log('Buscando gênero: '+genero);
       const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),timeoutMs);
       const rs=await fetch(this._cacheBust(url),{signal:ctrl.signal});clearTimeout(tid);
       if(!rs.ok)throw new Error('HTTP '+rs.status);
-      let j=await rs.json();if(!Array.isArray(j))j=j.musicas||j.data||Object.values(j)[0];
+      let j=await rs.json();
+      if(!Array.isArray(j))j=j.musicas||j.data||Object.values(j)[0];
       const ms=(j||[]).filter(m=>m&&m.src&&m.title).map(m=>({...m,id:'fav_'+(m.title+'_'+(m.artist||'Artista')).toLowerCase().replace(/[^a-z0-9]+/g,'_'),genero:genero,artist:m.artist||'Artista'}));
-      if(ms&&ms.length){try{localStorage.setItem(k,JSON.stringify({timestamp:now(),dados:ms}));this._limpar();}catch(e){}return ms;}
+      if(ms&&ms.length){try{localStorage.setItem(k,JSON.stringify({timestamp:now(),dados:ms}));this._limpar();}catch(e){}logOk(genero+': '+ms.length+' músicas');return ms;}
+      logErro(genero+': vazio');
       return null;
-    }catch(e){const r2=localStorage.getItem(k);if(r2){try{return JSON.parse(r2).dados;}catch(e2){}}return null;}
+    }catch(e){logErro(genero+': '+e.message);const r2=localStorage.getItem(k);if(r2){try{const d=JSON.parse(r2).dados;logInfo(genero+': usando cache antigo');return d;}catch(e2){}}return null;}
   }
   _limpar(){let t=0;const it=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(this.prefix)){const v=localStorage.getItem(k);t+=v?v.length:0;it.push({key:k,size:v?v.length:0});}}if(t>this.maxBytes){it.sort((a,b)=>a.size-b.size);while(t>this.maxBytes&&it.length){const x=it.shift();localStorage.removeItem(x.key);t-=x.size;}}}
 }
 const cacheManager=new CacheManager();
 
 const CACHE_MUSICAS = 'vdb-musicas-offline';
-
 async function abrirCacheMusicas(){if(!('caches' in window))return null;try{return await caches.open(CACHE_MUSICAS);}catch(e){return null;}}
 async function salvarMusicaOffline(url){if(!CACHE_OFFLINE_CONFIG.ativado)return false;if(!url||!url.startsWith('http'))return false;try{const cache=await abrirCacheMusicas();if(!cache)return false;const existe=await cache.match(url);if(existe)return true;const resp=await fetch(url,{mode:'cors'});if(!resp.ok)return false;const tamanho=parseInt(resp.headers.get('content-length')||'0');if(tamanho&&tamanho>CACHE_OFFLINE_CONFIG.maxBytesPorMusica)return false;const clone=resp.clone();await cache.put(url,clone);return true;}catch(e){return false;}}
 async function buscarMusicaOffline(url){try{const cache=await abrirCacheMusicas();if(!cache)return null;const resposta=await cache.match(url);if(!resposta)return null;const blob=await resposta.blob();return URL.createObjectURL(blob);}catch(e){return null;}}
@@ -1156,8 +1105,7 @@ const dom={
   playBtn:$('playBtn'),progressFill:$('progressFill'),currentTime:$('currentTime'),
   totalTime:$('totalTime'),bottomControls:$('bottomControls'),shuffleBtn:$('shuffleBtn'),
   loadingOverlay:$('loadingOverlay'),menuPopup:$('menuPopup'),progressBar:$('progressBar'),
-  mediaContainer:$('mediaContainer'),heartBtn:$('heartBtn'),favHeartCenter:$('favHeartCenter'),
-  genresModal:$('genresModal'),genresGrid:$('genresGrid'),favModal:$('favModal'),
+  mediaContainer:$('mediaContainer'),genresModal:$('genresModal'),genresGrid:$('genresGrid'),favModal:$('favModal'),
   favListModal:$('favListModal'),feedbackModal:$('feedbackModal'),infoScroll:$('infoScroll'),
   menuButton:$('menuButton'),logoTexto:$('logoTexto'),senhaInput:$('senhaInput'),
   btnLiberar:$('btnLiberar'),erroSenha:$('erroSenha'),infoDispositivo:$('infoDispositivo'),
@@ -1177,7 +1125,7 @@ const dom={
   liberarAgoraBtn:$('liberarAgoraBtn'),cadastroMenuBtn:$('cadastroMenuBtn'),
   reloadPlaylistBtn:$('reloadPlaylistBtn'),sleepMenuBtn:$('sleepMenuBtn'),
   forceUpdateBtn:$('forceUpdateBtn'),hardReloadBtn:$('hardReloadBtn'),
-  magicUpdateMenuBtn:$('magicUpdateMenuBtn'),
+  magicUpdateMenuBtn:$('magicUpdateMenuBtn'),debugMenuBtn:$('debugMenuBtn'),
   qrCodeModal:$('qrCodeModal'),qrCodeImage:$('qrCodeImage'),qrCloseBtn:$('qrCloseBtn'),
   prevBtn:$('prevBtn'),nextBtn:$('nextBtn'),closeFavBtn:$('closeFavBtn'),
   feedbackText:$('feedbackText'),
@@ -1192,7 +1140,7 @@ const dom={
   pwaBtnInstalar:$('pwaBtnInstalar'),pwaBtnDepois:$('pwaBtnDepois'),
   pwaInstrucoes:$('pwaInstrucoes'),pwaBeneficios:$('pwaBeneficios'),
   musicaNome:$('musicaNome'),musicaArtista:$('musicaArtista'),
-  btnTrazerCard:$('btnTrazerCard'),topBar:$('topBar'),fabContainer:$('fabContainer'),
+  topBar:$('topBar'),fabContainer:$('fabContainer'),
   cardMensagem:$('cardMensagem'),fabBemVindo:$('fabBemVindo'),
   btnBaixarOffline:$('btnBaixarOffline'),
   btnCoracaoInfo:$('btnCoracaoInfo'),
@@ -1202,14 +1150,13 @@ const dom={
   downloadAtual:$('downloadAtual'),downloadCancelBtn:$('downloadCancelBtn'),downloadCloseBtn:$('downloadCloseBtn'),
   offlineManager:$('offlineManager'),offlineStats:$('offlineStats'),offlineLista:$('offlineLista'),
   offlineLimparBtn:$('offlineLimparBtn'),offlineFecharBtn:$('offlineFecharBtn'),
-  fabGerenciarOffline:$('fabGerenciarOffline'),menuGerenciarOffline:$('menuGerenciarOffline')
+  fabGerenciarOffline:$('fabGerenciarOffline'),menuGerenciarOffline:$('menuGerenciarOffline'),
+  debugPanel:$('debugPanel'),debugToggle:$('debugToggle')
 };
 
 let fullscreenInterval = null;
 let fullscreenEmAndamento = false;
-
 function jaEstaFullscreen(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
-
 function forcarTelaCheia(){
   if(ehIOS()) return false;
   if(jaEstaFullscreen()) return true;
@@ -1220,22 +1167,15 @@ function forcarTelaCheia(){
     const opts = {navigationUI:'hide'};
     if(el.requestFullscreen){el.requestFullscreen(opts).then(()=>{fullscreenEmAndamento=false;}).catch(()=>{fullscreenEmAndamento=false;});}
     else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);fullscreenEmAndamento=false;}
-    else if(el.mozRequestFullScreen){el.mozRequestFullScreen();fullscreenEmAndamento=false;}
     else{fullscreenEmAndamento=false;}
   }catch(e){fullscreenEmAndamento=false;}
 }
-
 function iniciarFullscreenGuard(){
   if(fullscreenInterval) clearInterval(fullscreenInterval);
   if(ehIOS()) return;
-  const reentrar = () => {
-    if(document.hidden) return;
-    if(!appState.playerAtivado) return;
-    setTimeout(()=>{ if(!jaEstaFullscreen()) forcarTelaCheia(); }, 300);
-  };
+  const reentrar = () => { if(document.hidden) return; if(!appState.playerAtivado) return; setTimeout(()=>{ if(!jaEstaFullscreen()) forcarTelaCheia(); }, 300); };
   document.addEventListener('fullscreenchange', reentrar);
   document.addEventListener('webkitfullscreenchange', reentrar);
-  document.addEventListener('mozfullscreenchange', reentrar);
   fullscreenInterval = setInterval(()=>{
     if(document.hidden) return;
     if(!appState.playerAtivado) return;
@@ -1243,55 +1183,28 @@ function iniciarFullscreenGuard(){
     forcarTelaCheia();
   }, 2000);
 }
-
 function ativarFullscreenPrimeiroToque(){
-  const handler = () => {
-    if(!jaEstaFullscreen()) forcarTelaCheia();
-    document.removeEventListener('touchstart', handler);
-    document.removeEventListener('click', handler);
-  };
+  const handler = () => { if(!jaEstaFullscreen()) forcarTelaCheia(); document.removeEventListener('touchstart', handler); document.removeEventListener('click', handler); };
   document.addEventListener('touchstart', handler, {passive:true});
   document.addEventListener('click', handler);
 }
-
-function ajustarIOSFullscreen(){
-  if(!ehIOS()) return;
-  const standalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
-  if(standalone){ document.body.classList.add('pwa-standalone'); }
-  else{ document.body.classList.add('ios-browser'); }
-  document.documentElement.style.height = '100vh';
-  document.body.style.height = '100vh';
-  document.body.style.position = 'fixed';
-  document.body.style.overflow = 'hidden';
-}
-
+function ajustarIOSFullscreen(){ if(!ehIOS()) return; const standalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches; if(standalone){ document.body.classList.add('pwa-standalone'); } document.body.style.position = 'fixed'; document.body.style.overflow = 'hidden'; }
 function esconderBarraAndroid(){
   if(ehIOS()) return;
   const standalone = window.matchMedia('(display-mode: standalone)').matches;
   if(standalone) return;
   const tentar = () => { if(window.scrollY === 0){ window.scrollTo(0, 1); setTimeout(() => window.scrollTo(0, 0), 100); } };
-  setTimeout(tentar, 500);
-  setTimeout(tentar, 2000);
+  setTimeout(tentar, 500); setTimeout(tentar, 2000);
 }
-
 document.addEventListener('gesturestart', e => e.preventDefault());
 document.addEventListener('touchmove', e => { if(e.touches.length > 1) e.preventDefault(); }, {passive:false});
-
-document.addEventListener('touchstart', () => {
-  if(appState.playerAtivado && !jaEstaFullscreen() && !ehIOS()) forcarTelaCheia();
-}, {passive: true, capture: true});
-document.addEventListener('click', () => {
-  if(appState.playerAtivado && !jaEstaFullscreen() && !ehIOS()) forcarTelaCheia();
-}, {capture: true});
+document.addEventListener('touchstart', () => { if(appState.playerAtivado && !jaEstaFullscreen() && !ehIOS()) forcarTelaCheia(); }, {passive: true, capture: true});
+document.addEventListener('click', () => { if(appState.playerAtivado && !jaEstaFullscreen() && !ehIOS()) forcarTelaCheia(); }, {capture: true});
 
 function updateProgress(p){dom.loadingProgressFill.style.width=Math.min(p,100)+'%';}
 
 async function updateTimerDisplay(){
-  if(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ) === 'true'){
-    dom.timerLib.innerHTML = '<i class="fas fa-lock-open"></i> Lib';
-    dom.timerLib.style.color = '#00b894';
-    return;
-  }
+  if(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ) === 'true'){ dom.timerLib.innerHTML = '<i class="fas fa-lock-open"></i> Lib'; dom.timerLib.style.color = '#00b894'; return; }
   const t = await SecureTimer.tempoRestante();
   if(t <= 0){ dom.timerLib.innerHTML = '<i class="fas fa-lock"></i> Bloqueado'; dom.timerLib.style.color = '#f472b6'; return; }
   dom.timerLib.innerHTML = '<i class="fas fa-clock"></i> ' + fmtTempo(t);
@@ -1300,8 +1213,8 @@ async function updateTimerDisplay(){
 
 async function iniciarTimerCorrido(){
   const r = await SecureTimer.verificar();
-  if(r.motivo === 'manipulou_data'){ notif('⚠️ Data do dispositivo alterada!', 4000, 'error'); bloquear(); return; }
-  if(!r.liberado){ bloquear(); return; }
+  if(r.motivo === 'manipulou_data'){ logErro('Data manipulada'); notif('⚠️ Data do dispositivo alterada!', 4000, 'error'); bloquear(); return; }
+  if(!r.liberado){ log('Bloqueado: '+r.motivo); bloquear(); return; }
   await updateTimerDisplay();
   async function tick(){
     if(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ) === 'true') return;
@@ -1315,7 +1228,21 @@ async function iniciarTimerCorrido(){
 
 function fadeOutAudio(d=400){return new Promise(r=>{if(dom.audio.paused||!dom.audio.src){r();return;}const sv=dom.audio.volume;const st=20,stt=d/st;let s=0;const fi=setInterval(()=>{s++;dom.audio.volume=Math.max(0,sv*(1-s/st));if(s>=st){clearInterval(fi);r();}},stt);});}
 function fadeInAudio(d=600){return new Promise(r=>{const volFinal=appState.volume||1;dom.audio.volume=0;const st=25,stt=d/st;let s=0;const fi=setInterval(()=>{s++;const e=1-Math.pow(1-s/st,2);dom.audio.volume=Math.min(volFinal,e*volFinal);if(s>=st){clearInterval(fi);dom.audio.volume=volFinal;r();}},stt);});}
-function getUrls(m){const s=m.src||'';if(!s)return [];if(s.startsWith('http'))return [s+(s.includes('?')?'&':'?')+'v='+CONFIG.APP_VERSION];const n=s.replace(/^\.\//,'').replace(/[^a-zA-Z0-9\-_.]/g,'');const repo=GENRE_REPOS[m.genero]||'radiolojasjc-hub/play12';return ['https://raw.githubusercontent.com/'+repo+'/refs/heads/main/'+n+'?v='+CONFIG.APP_VERSION];}
+
+function getUrls(m){
+  const s=m.src||'';
+  if(!s){
+    logErro('Música sem src: '+m.title);
+    return [];
+  }
+  if(s.startsWith('http')){
+    const sep = s.includes('?') ? '&' : '?';
+    return [s + sep + 'v=' + CONFIG.APP_VERSION];
+  }
+  const n=s.replace(/^\.\//,'');
+  const repo=GENRE_REPOS[m.genero]||'radiolojasjc-hub/play12';
+  return ['https://raw.githubusercontent.com/'+repo+'/refs/heads/main/'+n+'?v='+CONFIG.APP_VERSION];
+}
 
 function ehModoRadio(){return appState.modoAtual&&appState.modoAtual.indexOf('VDB')>-1;}
 function atualizarBadgeGenero(){
@@ -1327,7 +1254,7 @@ function atualizarBadgeGenero(){
 }
 function atualizarLetreiro(m){
   const radio=ehModoRadio();
-  if(m){dom.scrollText.innerHTML=(radio?'🔴 <b>AO VIVO:</b> ':'🎵 <b>TOCANDO:</b> ')+sanitize(m.title)+' — <i>'+sanitize(m.artist)+'</i> • VAI DE BOA! MUSIC • '+CONFIG.LETREIRO;}
+  if(m){dom.scrollText.innerHTML=(radio?'🔴 <b>AO VIVO:</b> ':'🎵 <b>TOCANDO:</b> ')+sanitize(m.title)+' — <i>'+sanitize(m.artist)+'</i> • VAI DE BOA! MUSIC';}
   else{dom.scrollText.innerHTML='🎵 '+CONFIG.LETREIRO;}
 }
 function atualizarInfoMusica(m){
@@ -1343,32 +1270,25 @@ let cardJaEscondeu=false;
 function showControls(){
   if(cardJaEscondeu)return;
   dom.bottomControls.classList.remove('escondido');
-  if(dom.btnTrazerCard)dom.btnTrazerCard.classList.remove('visivel');
   clearTimeout(hideControlsTimeout);
   hideControlsTimeout=setTimeout(esconderCardAuto,CONFIG.CARD_DURACAO_MS);
 }
-
 function esconderCardAuto(){
   if(cardJaEscondeu)return;
   cardJaEscondeu=true;
   dom.bottomControls.classList.add('escondido');
   if(dom.topBar)dom.topBar.classList.add('escondido');
   if(dom.infoScroll)dom.infoScroll.classList.add('escondido');
-  if(dom.fabContainer)dom.fabContainer.classList.add('escondido');
   if(dom.equalizer)dom.equalizer.classList.add('escondido');
-  if(dom.btnTrazerCard)dom.btnTrazerCard.classList.add('visivel');
   setTimeout(()=>{cardJaEscondeu=false;},1200);
 }
-
 function trazerCardDeVolta(){
   vibrar(10);
   cardJaEscondeu=false;
   dom.bottomControls.classList.remove('escondido');
   if(dom.topBar)dom.topBar.classList.remove('escondido');
   if(dom.infoScroll)dom.infoScroll.classList.remove('escondido');
-  if(dom.fabContainer)dom.fabContainer.classList.remove('escondido');
   if(dom.equalizer)dom.equalizer.classList.remove('escondido');
-  if(dom.btnTrazerCard)dom.btnTrazerCard.classList.remove('visivel');
   clearTimeout(hideControlsTimeout);
   hideControlsTimeout=setTimeout(esconderCardAuto,CONFIG.CARD_DURACAO_MS);
 }
@@ -1380,16 +1300,22 @@ function atualizarPlaylist(){
 }
 
 async function tocar(){
-  if(!appState.isBackgroundActive||appState.carregandoMusica||!appState.musicas.length)return;
+  if(!appState.isBackgroundActive){ logErro('Player não ativado ainda'); return; }
+  if(appState.carregandoMusica){ log('Já carregando...'); return; }
+  if(!appState.musicas.length){ logErro('Sem músicas'); notif('⚠️ Escolha um gênero primeiro!',2500,'warning'); return; }
+  
   appState.carregandoMusica=true;
   try{
     dom.playBtn.innerHTML='<i class="fas fa-spinner"></i>';
     dom.playBtn.classList.add('loading');
     if(!dom.audio.paused&&dom.audio.src)await fadeOutAudio(400);
     const m=atualizarPlaylist();
-    if(!m)return;
+    if(!m){ logErro('Sem música na playlist'); return; }
+    
+    log('▶️ Tocando: '+m.title+' — '+m.artist);
     atualizarLetreiro(m);atualizarBadgeGenero();updateHeart(m.id);appState.addHistorico(m);aplicarTema(m.genero);atualizarInfoMusica(m);
     dom.equalizer.classList.remove('paused');
+    
     if('mediaSession' in navigator){
       try{
         navigator.mediaSession.metadata=new MediaMetadata({title:m.title||'VAI DE BOA!',artist:m.artist||'Artista',album:m.genero||'Música',artwork:[{src:'favicon30.png',sizes:'512x512',type:'image/png'}]});
@@ -1399,48 +1325,74 @@ async function tocar(){
         navigator.mediaSession.setActionHandler('nexttrack',next);
       }catch(e){}
     }
+    
     dom.audio.pause();dom.audio.removeAttribute('src');dom.audio.load();
-    const urls=getUrls(m).slice(0,8);let ok=false;
+    const urls=getUrls(m);
+    log('URLs: '+urls.length+' — '+urls[0]);
+    
+    let ok=false;
     if(!navigator.onLine){
-      for(const u of urls){ const urlCache=await buscarMusicaOffline(u); if(urlCache){try{dom.audio.src=urlCache;dom.audio.load();await new Promise(r=>setTimeout(r,400));ok=true;break;}catch(e){}} }
+      log('Offline detectado, buscando cache...');
+      for(const u of urls){ const urlCache=await buscarMusicaOffline(u); if(urlCache){try{dom.audio.src=urlCache;dom.audio.load();await new Promise(r=>setTimeout(r,400));ok=true;logOk('Offline cache: OK');break;}catch(e){logErro('Offline: '+e.message);}} }
     }
+    
     if(!ok){
       for(const u of urls){
+        log('Tentando URL: '+u.slice(0,80)+'...');
         try{
           const carregou=await new Promise(r=>{
-            const t=setTimeout(()=>{dom.audio.oncanplay=null;dom.audio.onerror=null;r(false);},6000);
-            dom.audio.oncanplay=()=>{clearTimeout(t);dom.audio.oncanplay=null;dom.audio.onerror=null;r(true);};
-            dom.audio.onerror=()=>{clearTimeout(t);dom.audio.oncanplay=null;dom.audio.onerror=null;r(false);};
-            dom.audio.src=u;dom.audio.load();
+            const t=setTimeout(()=>{ logErro('TIMEOUT 8s — '+u.slice(0,60)); dom.audio.oncanplay=null;dom.audio.onerror=null;r(false); },CONFIG.TIMEOUT_MUSICA_MS);
+            dom.audio.oncanplay=()=>{ clearTimeout(t); logOk('✅ oncanplay disparou!'); dom.audio.oncanplay=null;dom.audio.onerror=null; r(true); };
+            dom.audio.onerror=(e)=>{ clearTimeout(t); logErro('❌ onerror: '+(e.message||'erro')); dom.audio.oncanplay=null;dom.audio.onerror=null; r(false); };
+            dom.audio.src=u;
+            dom.audio.load();
           });
-          if(carregou){ok=true;salvarMusicaOffline(u);break;}
-        }catch(e){}
+          if(carregou){ ok=true; salvarMusicaOffline(u); break; }
+        }catch(e){ logErro('Exceção: '+e.message); }
       }
     }
+    
     if(ok){
       try{
-        dom.audio.volume=0;await dom.audio.play();await fadeInAudio(600);
+        log('Play()...');
+        dom.audio.volume=0;
+        await dom.audio.play();
+        await fadeInAudio(600);
         appState.isPlaying=true;appState.errosSeguidos=0;
         dom.playBtn.classList.remove('loading');
         dom.playBtn.innerHTML='<i class="fas fa-pause"></i>';
         if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing';
+        logOk('🎵 Tocando com sucesso!');
       }catch(e){
+        logErro('Erro no play(): '+e.message);
         dom.playBtn.classList.remove('loading');
         dom.playBtn.innerHTML='<i class="fas fa-play"></i>';
-        setTimeout(next,100);
+        notif('⚠️ Não conseguiu tocar. Próxima...',2000,'warning');
+        setTimeout(next,500);
       }
     }else{
+      logErro('Todas URLs falharam');
       dom.playBtn.classList.remove('loading');
       dom.playBtn.innerHTML='<i class="fas fa-play"></i>';
-      setTimeout(next,100);
+      appState.errosSeguidos++;
+      if(appState.errosSeguidos > 5){
+        notif('⚠️ Muitas músicas falharam. Verifique internet.',4000,'warning');
+        appState.errosSeguidos = 0;
+        return;
+      }
+      setTimeout(next,500);
     }
-  }catch(e){ console.error('Erro tocar:', e); }
-  finally{ appState.carregandoMusica=false; dom.playBtn.classList.remove('loading'); }
+  }catch(e){
+    logErro('Erro geral tocar(): '+e.message);
+  }finally{
+    appState.carregandoMusica=false;
+    dom.playBtn.classList.remove('loading');
+  }
 }
 
 function togglePlay(){
   vibrar(10);
-  if(!appState.isBackgroundActive){notif('🔊 Aguarde...',1500,'warning');return;}
+  if(!appState.isBackgroundActive){ logErro('Player não ativado'); notif('🔊 Toque uma vez na tela e tente de novo',2500,'warning'); return; }
   if(dom.audio.paused)tocar();
   else{ dom.audio.pause(); appState.isPlaying=false; dom.playBtn.innerHTML='<i class="fas fa-play"></i>'; dom.equalizer.classList.add('paused'); if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused'; }
   showControls();
@@ -1465,7 +1417,8 @@ function manterAudioAtivo(){
   dom.audio.addEventListener('ended',()=>{if(appState.isPlaying&&!appState.carregandoMusica)next();});
 }
 async function ativarPlayer(){
-  if(appState.playerAtivado)return;
+  if(appState.playerAtivado){ log('Player já ativado'); return; }
+  log('🎵 Ativando player...');
   appState.playerAtivado=true;
   updateProgress(30);
   try{
@@ -1473,6 +1426,7 @@ async function ativarPlayer(){
     dom.backgroundAudio.loop=true;
     dom.backgroundAudio.volume=.001;
     await dom.backgroundAudio.play();
+    logOk('Áudio silencioso ativo');
     appState.isBackgroundActive=true;
     manterAudioAtivo();
     if('wakeLock' in navigator){try{appState.wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}
@@ -1483,6 +1437,7 @@ async function ativarPlayer(){
     updateProgress(100);
     setTimeout(tocar,500);
   }catch(e){
+    logErro('Erro ativarPlayer: '+e.message);
     appState.isBackgroundActive=true;
     updateProgress(100);
     forcarTelaCheia();
@@ -1498,10 +1453,7 @@ function updateFavBadge(){
   if(badge)badge.textContent=appState.favorites.length;
 }
 function updateHeart(id){
-  if(!dom.heartBtn)return;
   const ehFav=appState.favorites.some(f=>f.id===id);
-  dom.heartBtn.className=ehFav?'fav-heart active':'fav-heart';
-  dom.heartBtn.innerHTML=ehFav?'<i class="fas fa-heart"></i>':'<i class="far fa-heart"></i>';
   atualizarCoracaoInfo();
 }
 function atualizarCoracaoInfo(){
@@ -1519,7 +1471,6 @@ function toggleFav(m){
   else{appState.addFavorite(m);notif('❤️ Adicionado',1500,'success');}
   updateFavBadge();updateHeart(m.id);atualizarCoracaoInfo();
 }
-function toggleFavAtual(){if(!appState.playlistAtual.length)return;const m=appState.playlistAtual[appState.indiceAtual%appState.playlistAtual.length]||appState.playlistAtual[0];if(m)toggleFav(m);}
 function renderizarFavoritosModal(){
   dom.favListModal.innerHTML='';
   const f=appState.getFavorites();
@@ -1528,19 +1479,24 @@ function renderizarFavoritosModal(){
   f.forEach(m=>{
     const it=document.createElement('div');it.className='fav-item-modal';
     it.innerHTML='<div style="flex:1;min-width:0"><span class="title">'+sanitize(m.title)+'</span><span class="artist">'+sanitize(m.artist)+'</span></div><button class="remove-fav" title="Remover"><i class="fas fa-times-circle"></i></button>';
-    it.querySelector('.title').onclick=()=>{dom.favModal.classList.remove('open');tocarFavoritaEspecifica(m.id);notif('🎵 Tocando: '+m.title,1500,'success');};
-    it.querySelector('.artist').onclick=()=>{dom.favModal.classList.remove('open');tocarFavoritaEspecifica(m.id);notif('🎵 Tocando: '+m.title,1500,'success');};
-    it.querySelector('.remove-fav').onclick=(e)=>{e.stopPropagation();vibrar(15);toggleFav(m);renderizarFavoritosModal();atualizarCoracaoInfo();};
+    it.querySelector('.title').onclick=()=>{dom.favModal.classList.remove('open');tocarFavoritaEspecifica(m.id);};
+    it.querySelector('.artist').onclick=()=>{dom.favModal.classList.remove('open');tocarFavoritaEspecifica(m.id);};
+    it.querySelector('.remove-fav').onclick=(e)=>{e.stopPropagation();vibrar(15);toggleFav(m);renderizarFavoritosModal();};
     dom.favListModal.appendChild(it);
   });
 }
 function tocarFavoritaEspecifica(id){
   let m=appState.musicas.find(x=>x.id===id);
   if(!m)m=appState.favorites.find(x=>x.id===id);
-  if(!m)return;
+  if(!m){ notif('⚠️ Música não encontrada',2000,'warning'); return; }
   appState.playlistAtual=shuffle(appState.favorites.map(x=>({...x})));
   const i=appState.playlistAtual.findIndex(x=>x.id===id);
-  if(i>-1){appState.indiceAtual=i;if(appState.isBackgroundActive)tocar();notif('🎵 Tocando!',1500,'success');}
+  if(i>-1){
+    appState.indiceAtual=i;
+    appState.musicas=appState.favorites.map(x=>({...x}));
+    if(appState.isBackgroundActive)tocar();
+    notif('🎵 Tocando: '+m.title,1500,'success');
+  }
 }
 
 let generosRenderizados = false;
@@ -1561,14 +1517,15 @@ function renderizarGeneros(){
 
 async function selecionarGenero(g){
   vibrar(15);showLoad(true);
+  log('Carregando gênero: '+g);
   const m=await cacheManager.get(g,GENRE_URLS[g]);
-  if(!m||!m.length){showLoad(false);notif('❌ Erro '+g,2000,'error');return;}
+  if(!m||!m.length){showLoad(false);notif('❌ Erro '+g+' — tente outro',2500,'error');return;}
   dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';dom.equalizer.classList.add('paused');
   appState.musicas=m;appState.modoAtual=g;appState.playlistAtual=shuffle(m);appState.indiceAtual=0;aplicarTema(g);
   const mm=appState.playlistAtual[0];if(mm){atualizarLetreiro(mm);updateHeart(mm.id);atualizarInfoMusica(mm);}
   atualizarBadgeGenero();showLoad(false);
   if(appState.isBackgroundActive)setTimeout(tocar,300);
-  appState._save();notif('🎵 '+g,1500,'success');
+  appState._save();notif('🎵 '+g+' ('+m.length+' músicas)',2000,'success');
   trazerCardDeVolta();
   mostrarBtnOffline();
 }
@@ -1610,7 +1567,6 @@ function gerarSenhaUniversal(){
   const sig = Math.abs(hashSimples).toString(16).padStart(16, '0').slice(0, 16);
   return 'UNIV:' + ts + ':' + sig;
 }
-
 async function validarSenha(s){
   if(!s) return {valida:false};
   const hashMaster = await sha256(CONFIG._SALT + s);
@@ -1629,7 +1585,6 @@ async function validarSenha(s){
   }
   return {valida:false};
 }
-
 async function bloquear(){
   appState.desbloqueado = false;
   appState.bloqueadoPermanente = true;
@@ -1641,7 +1596,6 @@ async function bloquear(){
   localStorage.setItem(SecureTimer.CHAVE_BLOQ_PERM, 'true');
   notif('⏰ Tempo expirou!', 3000, 'warning');
 }
-
 async function handleLiberar(){
   const s = dom.senhaInput.value.trim();
   if(!s){ dom.erroSenha.textContent = '⚠️ Digite a senha'; return; }
@@ -1663,7 +1617,6 @@ async function handleLiberar(){
     vibrar([50, 30, 50]);
   }
 }
-
 async function liberarAgora(){
   const s = await vdbDialog({title:'🔑 LIBERAR',msg:'Digite sua senha:',input:'text',okText:'Liberar'});
   if(!s) return;
@@ -1710,18 +1663,8 @@ function setup8CliquesLogo(){
     }
   });
 }
-function mostrarDicaCliques(faltam){
-  const dica = document.getElementById('dicaCliques');
-  if(!dica) return;
-  dica.textContent = '🔑 Faltam ' + faltam + ' cliques';
-  dica.style.opacity = '1';
-  clearTimeout(dica._timer);
-  dica._timer = setTimeout(() => { dica.style.opacity = '0'; }, 1500);
-}
-function esconderDicaCliques(){
-  const dica = document.getElementById('dicaCliques');
-  if(dica) dica.style.opacity = '0';
-}
+function mostrarDicaCliques(faltam){ const dica = document.getElementById('dicaCliques'); if(!dica) return; dica.textContent = '🔑 Faltam ' + faltam + ' cliques'; dica.style.opacity = '1'; clearTimeout(dica._timer); dica._timer = setTimeout(() => { dica.style.opacity = '0'; }, 1500); }
+function esconderDicaCliques(){ const dica = document.getElementById('dicaCliques'); if(dica) dica.style.opacity = '0'; }
 
 function vdbDialog({title,msg,input,placeholder,okText,cancelText}){
   return new Promise(resolve=>{
@@ -1798,7 +1741,6 @@ function limparMidias(){
   els.forEach(el => { if(el.tagName === 'VIDEO'){ try{ el.pause(); el.removeAttribute('src'); el.load(); }catch(e){} } el.remove(); });
   dom.mediaContainer.innerHTML = '';
 }
-
 async function carregarMidias(url,options={}){
   const {fallback=MIDIAS_FALLBACK}=options;
   try{
@@ -1867,7 +1809,6 @@ async function ativarModoTVDireto(){
   document.body.appendChild(btnX);
   notif('📺 Modo TV ativado', 2000, 'success');
 }
-
 async function sairModoTVDireto(){
   vibrar(20);
   document.body.classList.remove('modo-tv-ativo');
@@ -1877,12 +1818,8 @@ async function sairModoTVDireto(){
   await carregarMidias(MIDIAS_PADRAO_URL, {fallback: MIDIAS_FALLBACK});
   notif('📺 Modo normal', 2000, 'info');
 }
-
 function esconderBotaoSairTV(){const b=document.getElementById('btnSairModoTV');if(b)b.remove();}
-window.toggleModoTV = async function(){
-  if(appState.modoTV){ await sairModoTVDireto(); }
-  else{ await ativarModoTVDireto(); }
-};
+window.toggleModoTV = async function(){ if(appState.modoTV){ await sairModoTVDireto(); } else{ await ativarModoTVDireto(); } };
 
 let timeoutEsconderOffline = null;
 function mostrarBtnOffline(){
@@ -1895,9 +1832,7 @@ function mostrarBtnOffline(){
   clearTimeout(timeoutEsconderOffline);
   timeoutEsconderOffline = setTimeout(() => { dom.btnBaixarOffline.classList.add('escondido-offline'); }, 120000);
 }
-
 async function atualizarBtnBaixarOffline(){ mostrarBtnOffline(); }
-
 async function abrirModalDownload(genero){
   const musicas = appState.musicas;
   if(!musicas || !musicas.length){ notif('⚠️ Escolha um gênero primeiro', 2000, 'warning'); return; }
@@ -1927,7 +1862,6 @@ async function abrirModalDownload(genero){
   mostrarBtnOffline();
   setTimeout(()=>{ dom.downloadModal.classList.remove('active'); }, 2000);
 }
-
 async function abrirGerenciadorOffline(){
   const mgr = dom.offlineManager;
   if(!mgr) return;
@@ -2014,6 +1948,7 @@ function abrirWhatsAppPropaganda(){vibrar(20);const msg=encodeURIComponent('🎵
 
 async function iniciar(){
   try{
+    log('🚀 Iniciando v30...');
     try{const v=localStorage.getItem('vdb_versao_limpeza');if(v!==CONFIG.APP_VERSION){for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith('cache_')&&!k.includes(CONFIG.APP_VERSION))localStorage.removeItem(k);}localStorage.setItem('vdb_versao_limpeza',CONFIG.APP_VERSION);}}catch(e){}
     appState.favorites=appState.getFavorites();updateFavBadge();updateProgress(10);
     if(dom.infoDispositivo)dom.infoDispositivo.textContent='🆔 '+appState.fingerprint;
@@ -2038,7 +1973,7 @@ async function iniciar(){
     for(const r of ress){
       if(r){ appState.musicas=r.m;appState.modoAtual=r.g;appState.playlistAtual=shuffle(r.m);aplicarTema(r.g); const mm=appState.playlistAtual[0];if(mm){atualizarLetreiro(mm);updateHeart(mm.id);atualizarInfoMusica(mm);} atualizarBadgeGenero();pronto=true;break; }
     }
-    if(!pronto){appState.musicas=[{id:'f1',title:'Escolha um gênero',artist:'VAI DE BOA!',src:'',genero:'BÔNUS'}];appState.playlistAtual=shuffle(appState.musicas);atualizarBadgeGenero();}
+    if(!pronto){appState.musicas=[];appState.playlistAtual=[];atualizarBadgeGenero();notif('⚠️ Escolha um gênero pra começar',3000,'warning');}
     renderizarGeneros();updateProgress(90);
     const decorrido=now()-loadingStart;
     if(decorrido<CONFIG.LOADING_DURACAO_MS)await sleep(CONFIG.LOADING_DURACAO_MS-decorrido);
@@ -2052,38 +1987,26 @@ async function iniciar(){
     esconderBarraAndroid();
     setTimeout(()=>{if(!jaEstaInstalado()&&ehMobile())mostrarModalPWA();},CONFIG.PWA_INSTALL_DELAY_MS+2000);
 
-    /* Controles */
     dom.playBtn.onclick=togglePlay;
     dom.prevBtn.onclick=prev;
     dom.nextBtn.onclick=next;
     dom.shuffleBtn.onclick=toggleShuffle;
     dom.progressBar.onclick=e=>{if(dom.audio.duration){const r=e.currentTarget.getBoundingClientRect();dom.audio.currentTime=((e.clientX-r.left)/r.width)*dom.audio.duration;}};
-    if(dom.btnTrazerCard){dom.btnTrazerCard.onclick=e=>{e.stopPropagation();trazerCardDeVolta();};}
 
-    /* Coração ao lado */
     if(dom.btnCoracaoInfo){
       dom.btnCoracaoInfo.onclick = (e) => {
         e.stopPropagation();
         vibrar(20);
         const m = appState.playlistAtual[appState.indiceAtual] || appState.playlistAtual[0];
-        if(!m) return;
+        if(!m){ notif('⚠️ Nenhuma música tocando',1500,'warning'); return; }
         const jaFav = appState.favorites.some(f => f.id === m.id);
-        if(jaFav){
-          appState.removeFavorite(m.id);
-          notif('💔 Removido das favoritas', 1500, 'info');
-        }else{
-          appState.addFavorite(m);
-          notif('❤️ Adicionado às favoritas!', 1500, 'success');
-          dom.btnCoracaoInfo.style.transform = 'scale(1.3)';
-          setTimeout(() => dom.btnCoracaoInfo.style.transform = '', 300);
-        }
-        updateFavBadge();
-        atualizarCoracaoInfo();
+        if(jaFav){ appState.removeFavorite(m.id); notif('💔 Removido das favoritas', 1500, 'info'); }
+        else{ appState.addFavorite(m); notif('❤️ Adicionado às favoritas!', 1500, 'success'); dom.btnCoracaoInfo.style.transform = 'scale(1.3)'; setTimeout(() => dom.btnCoracaoInfo.style.transform = '', 300); }
+        updateFavBadge(); atualizarCoracaoInfo();
       };
     }
     setTimeout(atualizarCoracaoInfo, 1000);
 
-    /* Volume */
     if(dom.volumeControl){
       const volumeSalvo = parseInt(localStorage.getItem('vdb_volume') || '100');
       dom.volumeControl.value = volumeSalvo;
@@ -2102,7 +2025,6 @@ async function iniciar(){
       });
     }
 
-    /* Baixar Offline */
     if(dom.btnBaixarOffline){
       dom.btnBaixarOffline.onclick = () => {
         vibrar(15);
@@ -2125,7 +2047,6 @@ async function iniciar(){
       };
     }
     setInterval(mostrarBtnOffline, 5000);
-
     setTimeout(()=>{showControls();},2000);
 
     if(dom.infoScroll){
@@ -2141,12 +2062,30 @@ async function iniciar(){
       });
     }
 
-    document.addEventListener('click',e=>{
-      if(e.target.closest('#btnTrazerCard'))return;
-      if(e.target.closest('#logoTexto'))return;
-      if(e.target.closest('#infoScroll'))return;
-      if(e.target.closest('button')||e.target.closest('.genre-card')||e.target.closest('.fav-item-modal')||e.target.closest('.menu-popup')||e.target.closest('.glass-card')||e.target.closest('.bottom-sheet')||e.target.closest('.genres-modal')||e.target.closest('.fav-modal')||e.target.closest('.fab-container')||e.target.closest('.top-bar')||e.target.closest('.btn-coracao-info')||e.target.closest('.vdb-dialog-overlay')||e.target.closest('.tutorial-modal')||e.target.closest('.banner-propaganda-full')||e.target.closest('#pwaInstallModal')||e.target.closest('#downloadModal')||e.target.closest('#offlineManager')||e.target.closest('.volume-slider'))return;
-      if(dom.bottomControls.classList.contains('escondido'))trazerCardDeVolta();
+    document.addEventListener('click', e => {
+      if(e.target.closest('button')) return;
+      if(e.target.closest('.genre-card')) return;
+      if(e.target.closest('.fav-item-modal')) return;
+      if(e.target.closest('.menu-popup')) return;
+      if(e.target.closest('.glass-card')) return;
+      if(e.target.closest('.bottom-sheet')) return;
+      if(e.target.closest('.genres-modal')) return;
+      if(e.target.closest('.fav-modal')) return;
+      if(e.target.closest('.fab-container')) return;
+      if(e.target.closest('.top-bar')) return;
+      if(e.target.closest('.btn-coracao-info')) return;
+      if(e.target.closest('.vdb-dialog-overlay')) return;
+      if(e.target.closest('.tutorial-modal')) return;
+      if(e.target.closest('.banner-propaganda-full')) return;
+      if(e.target.closest('#pwaInstallModal')) return;
+      if(e.target.closest('#downloadModal')) return;
+      if(e.target.closest('#offlineManager')) return;
+      if(e.target.closest('.volume-slider')) return;
+      if(e.target.closest('#debugPanel')) return;
+      if(e.target.closest('#debugToggle')) return;
+      if(e.target.closest('.adminPanel')) return;
+      if(e.target.closest('#adminPanel')) return;
+      if(dom.bottomControls.classList.contains('escondido')) trazerCardDeVolta();
     });
 
     dom.menuButton.onclick=e=>{
@@ -2168,6 +2107,17 @@ async function iniciar(){
     dom.magicUpdateMenuBtn.onclick=()=>{fecharMenu();atualizarAppMagico();};
     dom.reloadPlaylistBtn.onclick=()=>{fecharMenu();location.reload();};
     dom.forceUpdateBtn.onclick=async()=>{fecharMenu();notif('🔄 Atualizando...',1500,'info');if(appState.modoTV)await carregarMidias(MIDIAS_TV_URL, {fallback: MIDIAS_TV_FALLBACK});else await carregarMidias(MIDIAS_PADRAO_URL, {fallback: MIDIAS_FALLBACK});notif('✅ Atualizado!',2000,'success');};
+    if(dom.debugMenuBtn){
+      dom.debugMenuBtn.onclick = () => {
+        fecharMenu();
+        const p = dom.debugPanel;
+        const t = dom.debugToggle;
+        if(p){ p.classList.toggle('ativo'); t.classList.toggle('ativo'); }
+      };
+    }
+    if(dom.debugToggle){
+      dom.debugToggle.onclick = () => { dom.debugPanel.classList.toggle('ativo'); dom.debugToggle.classList.toggle('ativo'); };
+    }
     document.querySelectorAll('.speed-btn').forEach(b=>{b.onclick=()=>{vibrar(10);document.querySelectorAll('.speed-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');dom.audio.playbackRate=parseFloat(b.dataset.speed);notif('⚡ '+b.dataset.speed+'x',1500,'info');};});
     document.querySelectorAll('.sheet-option[data-sleep]').forEach(b=>{b.onclick=()=>{vibrar(10);const min=parseInt(b.dataset.sleep);clearTimeout(appState.sleepTimer);if(min>0){appState.sleepTimer=setTimeout(()=>{dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';notif('💤 Desligada!',2000,'info');},min*60000);notif('⏰ '+min+' min',2000,'info');}else notif('🚫 Cancelado',1500,'info');dom.sleepSheet.classList.remove('open');};});
 
@@ -2241,16 +2191,9 @@ async function iniciar(){
         dom.progressFill.style.width=(dom.audio.currentTime/dom.audio.duration*100)+'%';
         dom.currentTime.textContent=fmt(dom.audio.currentTime);
         dom.totalTime.textContent=fmt(dom.audio.duration);
-        if('mediaSession' in navigator&&navigator.mediaSession.setPositionState){ try{navigator.mediaSession.setPositionState({duration:dom.audio.duration,playbackRate:dom.audio.playbackRate,position:Math.min(dom.audio.currentTime,dom.audio.duration)});}catch(e){} }
       }
     };
     dom.audio.onended=()=>{if(!appState.carregandoMusica)next();};
-    dom.audio.onerror=()=>{
-      if(appState.carregandoMusica) return;
-      appState.errosSeguidos++;
-      if(appState.errosSeguidos > 5){ appState.isPlaying = false; dom.playBtn.innerHTML = '<i class="fas fa-play"></i>'; notif('⚠️ Muitas músicas falharam.', 4000, 'warning'); appState.errosSeguidos = 0; return; }
-      setTimeout(next, 500);
-    };
 
     document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key===' '){e.preventDefault();togglePlay();}if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();if(e.key==='s'||e.key==='S')toggleShuffle();});
     document.addEventListener('click',e=>{if(!dom.menuPopup.contains(e.target)&&e.target!==dom.menuButton&&!dom.menuButton.contains(e.target))fecharMenu();});
@@ -2272,14 +2215,14 @@ async function iniciar(){
     if(dom.propFullCtaBtn)dom.propFullCtaBtn.onclick=e=>{e.stopPropagation();abrirWhatsAppPropaganda();};
     setTimeout(()=>{mostrarPropagandaFull();agendarPropaganda();},30000);
 
-    /* Aplica volume salvo no áudio */
     dom.audio.volume = appState.volume;
-
+    log('✅ Iniciado com sucesso!');
   }catch(e){
+    logErro('❌ Erro iniciar: '+e.message);
     console.error('❌ Erro:',e);
     dom.loadingScreen.style.display='none';
     dom.playerContainer.classList.add('visible');
-    notif('⚠️ Erro ao iniciar',5000,'error');
+    notif('⚠️ Erro ao iniciar: '+e.message,5000,'error');
   }
 }
 
