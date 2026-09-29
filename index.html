@@ -27,14 +27,14 @@
   --primary:#a855f7;--secondary:#22d3ee;--accent:#f472b6;--gold:#fbbf24;
   --safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);
   --theme-1:#a855f7;--theme-2:#22d3ee;
-  /* Escala Z-INDEX unificada */
   --z-media:0;--z-card:20;--z-topbar:35;--z-fab:40;--z-modal:100;
   --z-dialog:200;--z-block:500;--z-admin:600;--z-propaganda:700;--z-notif:9999;
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-touch-callout:none}
-html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;top:0;left:0}
-html,body{height:100dvh!important;min-height:100vh;overscroll-behavior:none;touch-action:manipulation}
+html{background:#000;height:100vh;height:100dvh}
+body{position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;overscroll-behavior:none;background:#000;width:100%}
 :fullscreen,:-webkit-full-screen{background:#000}
+html:fullscreen,body:fullscreen{width:100vw;height:100vh;overflow:hidden}
 
 #loadingScreen{position:fixed;inset:0;background:radial-gradient(circle at 20% 20%, rgba(168,85,247,.45), transparent 55%),radial-gradient(circle at 80% 80%, rgba(34,211,238,.35), transparent 55%),linear-gradient(135deg,#0a0616 0%,#140a2e 50%,#0a0616 100%);display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:22px;text-align:center;width:100%}
 .loading-logo-wrapper{position:relative;width:150px;height:150px;display:flex;align-items:center;justify-content:center;z-index:2}
@@ -78,34 +78,17 @@ html,body{height:100dvh!important;min-height:100vh;overscroll-behavior:none;touc
 .fav-heart:active{transform:scale(.88)}
 .fav-heart.active{color:#f472b6;filter:drop-shadow(0 0 15px rgba(244,114,182,.9))}
 
-.glass-card{
-  position:fixed;inset:0;z-index:var(--z-card);
-  background:
-    radial-gradient(circle at 20% 20%, rgba(168,85,247,.35), transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(139,92,246,.3), transparent 50%),
-    linear-gradient(160deg, rgba(10,6,22,.92) 0%, rgba(0,0,0,.95) 50%, rgba(26,10,46,.92) 100%);
-  backdrop-filter:blur(24px) saturate(160%);
-  -webkit-backdrop-filter:blur(24px) saturate(160%);
-  display:flex;flex-direction:column;
-  padding:80px 24px calc(30px + var(--safe-bottom));
-  padding-top:max(80px,calc(66px + env(safe-area-inset-top)));
-  gap:20px;opacity:1;visibility:visible;
-  transition:opacity .8s cubic-bezier(.4,0,.2,1), transform .8s cubic-bezier(.4,0,.2,1), visibility .8s;
-  overflow-y:auto;overflow-x:hidden;
-}
+.glass-card{position:fixed;inset:0;z-index:var(--z-card);background:radial-gradient(circle at 20% 20%, rgba(168,85,247,.35), transparent 50%),radial-gradient(circle at 80% 80%, rgba(139,92,246,.3), transparent 50%),linear-gradient(160deg, rgba(10,6,22,.92) 0%, rgba(0,0,0,.95) 50%, rgba(26,10,46,.92) 100%);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);display:flex;flex-direction:column;padding:80px 24px calc(30px + var(--safe-bottom));padding-top:max(80px,calc(66px + env(safe-area-inset-top)));gap:20px;opacity:1;visibility:visible;transition:opacity .8s cubic-bezier(.4,0,.2,1), transform .8s cubic-bezier(.4,0,.2,1), visibility .8s;overflow-y:auto;overflow-x:hidden}
 .glass-card.escondido{opacity:0;visibility:hidden;transform:scale(1.05) translateY(-20px);pointer-events:none}
 .glass-card::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;opacity:.6}
-
 .glass-titulo{text-align:center;font-family:'Audiowide',sans-serif;font-size:1.8rem;font-weight:900;color:#fff;letter-spacing:8px;text-transform:uppercase;text-shadow:0 0 10px rgba(255,255,255,.9),0 0 20px rgba(168,85,247,.8),0 0 40px rgba(168,85,247,.6),0 0 80px rgba(34,211,238,.4);animation:brilhoTitulo 3s ease-in-out infinite;margin-bottom:4px;margin-top:70px}
 @keyframes brilhoTitulo{0%,100%{text-shadow:0 0 10px rgba(255,255,255,.9),0 0 20px rgba(168,85,247,.8),0 0 40px rgba(168,85,247,.6),0 0 80px rgba(34,211,238,.4)}50%{text-shadow:0 0 20px rgba(255,255,255,1),0 0 40px rgba(168,85,247,1),0 0 80px rgba(168,85,247,.8),0 0 120px rgba(34,211,238,.6)}}
 .glass-subtitulo{text-align:center;font-family:'Rajdhani',sans-serif;font-size:.75rem;color:#c4b5fd;letter-spacing:6px;font-weight:700;text-transform:uppercase;margin-bottom:14px;opacity:.8}
 .glass-divisor{width:80px;height:2px;margin:0 auto 20px;background:linear-gradient(90deg,transparent,#a855f7,#22d3ee,#a855f7,transparent);border-radius:2px;box-shadow:0 0 12px rgba(168,85,247,.8)}
-
 .glass-musica-info{text-align:center;padding:8px 16px;background:transparent;border:none;box-shadow:none;margin-bottom:8px}
 .glass-musica-label{font-family:'Rajdhani',sans-serif;font-size:.7rem;color:#22d3ee;letter-spacing:4px;font-weight:700;text-transform:uppercase;margin-bottom:10px;opacity:.85}
 .glass-musica-nome{font-family:'Rajdhani',sans-serif;font-size:1.6rem;color:#fff;font-weight:900;letter-spacing:1px;line-height:1.2;margin-bottom:8px;text-shadow:0 0 15px rgba(168,85,247,.6);word-break:break-word}
 .glass-musica-artista{font-family:'Rajdhani',sans-serif;font-size:1rem;color:#c4b5fd;font-weight:600;letter-spacing:1px;opacity:.9}
-
 .glass-controles{display:flex;justify-content:center;align-items:center;gap:18px;padding:16px 20px;background:linear-gradient(135deg, rgba(0,0,0,.5), rgba(26,10,46,.6));border:1px solid rgba(168,85,247,.2);border-radius:24px;box-shadow:0 8px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08);margin-bottom:8px}
 .ctrl-btn{background:linear-gradient(135deg, rgba(168,85,247,.15), rgba(34,211,238,.1));border:1px solid rgba(168,85,247,.35);color:#fff;width:56px;height:56px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 15px rgba(168,85,247,.25)}
 .ctrl-btn:active{transform:scale(.88);background:linear-gradient(135deg, rgba(168,85,247,.4), rgba(34,211,238,.3))}
@@ -114,13 +97,15 @@ html,body{height:100dvh!important;min-height:100vh;overscroll-behavior:none;touc
 .play-big.loading i{animation:spinSlow 1s linear infinite}
 @keyframes spinSlow{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 .shuffle-btn.active{background:linear-gradient(135deg,rgba(168,85,247,.6),rgba(34,211,238,.4));color:#fff}
-
 .glass-progresso{padding:14px 18px;background:linear-gradient(135deg, rgba(0,0,0,.5), rgba(26,10,46,.6));border:1px solid rgba(168,85,247,.2);border-radius:20px;box-shadow:0 8px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08)}
 .progress-time{display:flex;justify-content:space-between;font-size:.75rem;color:#c4b5fd;font-weight:700;letter-spacing:1.5px;margin-bottom:8px;font-family:'Rajdhani',sans-serif}
 .progress-bar{height:8px;background:rgba(0,0,0,.5);cursor:pointer;border-radius:8px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--theme-1),var(--theme-2));width:0%;border-radius:8px;box-shadow:0 0 12px var(--theme-2);transition:width .2s linear}
-
 .glass-mensagem{text-align:center;font-family:'Rajdhani',sans-serif;font-size:.85rem;color:#c4b5fd;font-weight:600;letter-spacing:2px;opacity:.85;margin-top:8px}
+
+.btn-baixar-offline{width:100%;padding:12px;background:linear-gradient(135deg,#10b981,#059669);border:none;border-radius:18px;color:#fff;font-weight:700;font-size:.85rem;cursor:pointer;margin-top:8px;letter-spacing:1px;display:none;align-items:center;justify-content:center;gap:8px}
+.btn-baixar-offline:active{transform:scale(.97)}
+.btn-baixar-offline.ja-offline{background:linear-gradient(135deg,#10b981,#065f46);cursor:default;opacity:.7}
 
 #btnTrazerCard{position:fixed;bottom:calc(24px + var(--safe-bottom));right:20px;z-index:calc(var(--z-fab) - 1);width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#22d3ee);border:2px solid rgba(255,255,255,.3);color:#fff;font-size:1.4rem;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 6px 25px rgba(168,85,247,.7), 0 0 40px rgba(168,85,247,.4);animation:pulseTrazer 2.5s ease-in-out infinite}
 #btnTrazerCard.visivel{display:flex}
@@ -175,6 +160,9 @@ html,body{height:100dvh!important;min-height:100vh;overscroll-behavior:none;touc
 .genre-card::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:50%;background:var(--c1,#22d3ee);border-radius:0 4px 4px 0;box-shadow:0 0 12px var(--c1,#22d3ee)}
 .genre-card:active{transform:scale(.96)}
 .genre-card .genre-name{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#fff}
+.genre-card.offline::after{content:'✓';position:absolute;top:6px;right:8px;background:#10b981;color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;box-shadow:0 0 8px rgba(16,185,129,.8)}
+.genre-card.baixando::after{content:'↓';background:#fbbf24;animation:pulseDown 1s infinite}
+@keyframes pulseDown{0%,100%{opacity:1}50%{opacity:.4}}
 .close-genres{width:100%;padding:14px;background:linear-gradient(135deg,#a855f7,#22d3ee);border:none;border-radius:25px;color:#fff;font-size:.85rem;cursor:pointer;font-weight:700;margin-top:12px;letter-spacing:3px;text-transform:uppercase}
 
 .fav-modal,.bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(145deg,rgba(20,15,35,.98),rgba(10,5,20,.98));backdrop-filter:blur(20px);border-radius:28px 28px 0 0;padding:18px 16px 24px;transform:translateY(100%);transition:transform .4s;max-height:70vh;overflow:hidden;border-top:1px solid rgba(168,85,247,.3);z-index:var(--z-modal)}
@@ -295,6 +283,40 @@ html,body{height:100dvh!important;min-height:100vh;overscroll-behavior:none;touc
 .prop-full-beneficio{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;background:rgba(255,255,255,.06);border:1px solid rgba(168,85,247,.3);border-radius:14px;color:#fff;font-weight:700;margin-bottom:10px}
 .prop-full-cta{background:linear-gradient(135deg,#25d366,#128C7E);border:none;border-radius:40px;padding:20px 40px;width:100%;font-family:'Audiowide',sans-serif;font-size:1.1rem;color:#fff;font-weight:900;letter-spacing:3px;margin-top:14px;cursor:pointer}
 
+/* Download modal */
+.download-modal{position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);z-index:100010;display:none;align-items:center;justify-content:center;padding:20px}
+.download-modal.active{display:flex}
+.download-box{background:linear-gradient(145deg,#1a1a2e,#0a0a14);border-radius:28px;padding:28px 24px;max-width:420px;width:100%;border:2px solid rgba(168,85,247,.4);text-align:center}
+.download-header{margin-bottom:20px}
+.download-icon{font-size:3rem;margin-bottom:8px}
+.download-titulo{font-family:'Audiowide',sans-serif;font-size:1.2rem;color:#fff;letter-spacing:3px;margin-bottom:6px}
+.download-sub{color:#22d3ee;font-size:.85rem;font-weight:700}
+.download-progress-bar{height:12px;background:rgba(0,0,0,.5);border-radius:12px;overflow:hidden;margin-bottom:12px;box-shadow:inset 0 2px 4px rgba(0,0,0,.6)}
+.download-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#a855f7,#22d3ee,#f472b6);background-size:200% 100%;animation:shine 2s linear infinite;border-radius:12px;transition:width .3s ease}
+@keyframes shine{0%{background-position:0 50%}100%{background-position:200% 50%}}
+.download-info{display:flex;justify-content:space-between;font-size:.8rem;color:#aaa;margin-bottom:16px;font-weight:700}
+.download-btns{display:flex;gap:8px}
+.download-btn{flex:1;padding:14px;border-radius:22px;border:none;font-weight:700;font-size:.9rem;cursor:pointer}
+.download-btn.cancel{background:linear-gradient(135deg,#f472b6,#ef4444);color:#fff}
+.download-btn.close{background:linear-gradient(135deg,#a855f7,#22d3ee);color:#fff}
+
+/* Offline manager */
+.offline-manager{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(20px);z-index:100011;display:none;align-items:center;justify-content:center;padding:20px}
+.offline-manager.active{display:flex}
+.offline-box{background:linear-gradient(145deg,#1a1a2e,#0a0a14);border-radius:28px;padding:24px 20px;max-width:460px;width:100%;border:2px solid rgba(168,85,247,.4);max-height:90vh;overflow-y:auto}
+.offline-box h3{text-align:center;color:#22d3ee;font-family:'Audiowide',sans-serif;font-size:1.1rem;letter-spacing:3px;margin-bottom:16px}
+.offline-stats{background:rgba(168,85,247,.1);border-radius:14px;padding:14px;margin-bottom:14px;text-align:center;color:#fff;font-weight:700;font-size:.85rem}
+.offline-stats b{color:#22d3ee}
+.offline-lista{max-height:40vh;overflow-y:auto;margin-bottom:14px}
+.offline-item{padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.offline-item .nome{color:#fff;font-weight:700;font-size:.85rem}
+.offline-item .qtd{color:#22d3ee;font-size:.75rem;font-weight:700}
+.offline-item .remove{background:transparent;border:none;color:#f472b6;cursor:pointer;font-size:1rem}
+.offline-btn-limpar{width:100%;padding:12px;background:linear-gradient(135deg,#ef4444,#991b1b);border:none;border-radius:22px;color:#fff;font-weight:700;cursor:pointer;margin-bottom:8px}
+.offline-btn-fechar{width:100%;padding:12px;background:linear-gradient(135deg,#a855f7,#22d3ee);border:none;border-radius:22px;color:#fff;font-weight:700;cursor:pointer}
+
+#dicaCliques{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fbbf24;padding:8px 16px;border-radius:20px;font-size:.75rem;font-weight:700;z-index:99999;border:1px solid rgba(251,191,36,.4);pointer-events:none;letter-spacing:1px;opacity:0;transition:opacity .3s}
+
 @media(max-width:480px){
   .glass-titulo{font-size:1.4rem;letter-spacing:5px;margin-top:50px}
   .glass-musica-nome{font-size:1.35rem}
@@ -364,6 +386,11 @@ html,body{height:100dvh!important;min-height:100vh;overscroll-behavior:none;touc
       <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
     </div>
 
+    <button class="btn-baixar-offline" id="btnBaixarOffline">
+      <i class="fas fa-download"></i>
+      <span>BAIXAR OFFLINE</span>
+    </button>
+
     <div class="glass-mensagem" id="cardMensagem">✨ Bem-vindo! Aproveite as músicas ✨</div>
   </div>
 
@@ -375,6 +402,7 @@ html,body{height:100dvh!important;min-height:100vh;overscroll-behavior:none;touc
       <button class="fab-sub-btn" id="fabGeneros"><i class="fas fa-guitar"></i>Gêneros</button>
       <button class="fab-sub-btn" id="fabRadio"><i class="fas fa-broadcast-tower"></i>Rádio VDB</button>
       <button class="fab-sub-btn" id="fabModoTV"><i class="fas fa-tv"></i>Modo TV</button>
+      <button class="fab-sub-btn" id="fabGerenciarOffline"><i class="fas fa-hdd" style="color:#10b981"></i>Offline</button>
       <button class="fab-sub-btn" id="fabTutorial"><i class="fas fa-question-circle"></i>Como Usar</button>
       <button class="fab-sub-btn" id="fabCadastro"><i class="fas fa-user"></i>Cadastro</button>
       <button class="fab-sub-btn" id="fabFeedback"><i class="fas fa-star"></i>Feedback</button>
@@ -403,6 +431,8 @@ html,body{height:100dvh!important;min-height:100vh;overscroll-behavior:none;touc
       <button class="menu-item" id="recentMenuBtn"><i class="fas fa-history"></i><span>Recentes</span></button>
       <button class="menu-item" id="speedMenuBtn"><i class="fas fa-tachometer-alt"></i><span>Velocidade</span></button>
       <button class="menu-item" id="sleepMenuBtn"><i class="fas fa-moon"></i><span>Sleep Timer</span></button>
+      <div class="menu-categoria">📥 Offline</div>
+      <button class="menu-item" id="menuGerenciarOffline"><i class="fas fa-hdd"></i><span>Gerenciar Offline</span></button>
       <div class="menu-categoria">👤 Conta</div>
       <button class="menu-item" id="tutorialMenuBtn"><i class="fas fa-question-circle"></i><span>Como Usar</span></button>
       <button class="menu-item" id="cadastroMenuBtn"><i class="fas fa-user"></i><span>Cadastro</span></button>
@@ -504,8 +534,8 @@ html,body{height:100dvh!important;min-height:100vh;overscroll-behavior:none;touc
     <div class="tutorial-item"><div class="icon-tut">❤️</div><div><div class="tt">Favoritar</div><div class="td">Toque no coração do meio.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">🎸</div><div><div class="tt">Trocar gênero</div><div class="td">Toque em ➕ → Gêneros.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">📻</div><div><div class="tt">Rádio VDB</div><div class="td">Toque em ➕ → Rádio VDB.</div></div></div>
+    <div class="tutorial-item"><div class="icon-tut">📥</div><div><div class="tt">Baixar Offline</div><div class="td">Toque em "BAIXAR OFFLINE" no player.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">🔍</div><div><div class="tt">Buscar música</div><div class="td">Toque no letreiro do topo.</div></div></div>
-    <div class="tutorial-item"><div class="icon-tut">🎵</div><div><div class="tt">Card de vidro</div><div class="td">Some após 30s. Toque no 🎵 pra voltar.</div></div></div>
     <button class="tutorial-btn-fechar" id="closeTutorialBtn">ENTENDI ✅</button>
   </div>
 </div>
@@ -605,6 +635,41 @@ html,body{height:100dvh!important;min-height:100vh;overscroll-behavior:none;touc
   </div>
 </div>
 
+<!-- Modal de Download -->
+<div class="download-modal" id="downloadModal">
+  <div class="download-box">
+    <div class="download-header">
+      <div class="download-icon">📥</div>
+      <div class="download-titulo" id="downloadTitulo">BAIXAR OFFLINE</div>
+      <div class="download-sub" id="downloadSub">Preparando...</div>
+    </div>
+    <div class="download-progress-bar">
+      <div class="download-progress-fill" id="downloadProgressFill"></div>
+    </div>
+    <div class="download-info">
+      <span id="downloadContador">0 / 0</span>
+      <span id="downloadAtual"></span>
+    </div>
+    <div class="download-btns">
+      <button class="download-btn cancel" id="downloadCancelBtn">🛑 CANCELAR</button>
+      <button class="download-btn close" id="downloadCloseBtn" style="display:none">✕ FECHAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Gerenciar Offline -->
+<div class="offline-manager" id="offlineManager">
+  <div class="offline-box">
+    <h3>📥 MÚSICAS OFFLINE</h3>
+    <div class="offline-stats" id="offlineStats">Carregando...</div>
+    <div class="offline-lista" id="offlineLista"></div>
+    <button class="offline-btn-limpar" id="offlineLimparBtn">🗑️ LIMPAR TUDO</button>
+    <button class="offline-btn-fechar" id="offlineFecharBtn">✕ FECHAR</button>
+  </div>
+</div>
+
+<div id="dicaCliques"></div>
+
 <script>
 (function(){
 'use strict';
@@ -614,15 +679,14 @@ html,body{height:100dvh!important;min-height:100vh;overscroll-behavior:none;touc
    ============================================================ */
 const CONFIG = {
   WHATSAPP: '5512988461978',
-  // 🔐 CRIPTOGRAFIA REAL — SHA-256 + salt
-  // 👇 COLE AQUI O HASH GERADO NO CONSOLE (instruções acima)
+  // 🔐 SHA-256 + salt
   _SALT: 'vdb_music_2024_x9k7',
   _HASH_MASTER: 'COLE_AQUI_O_HASH_DA_SUA_SENHA',
   TEMPO_TESTE_SEGUNDOS: 86400,
   PRECO: 'R$ 39,90',
   LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 🐵 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
   LETREIRO_DURACAO: 60,
-  APP_VERSION: 'v27',
+  APP_VERSION: 'v28',
   NOME_APP: 'VAI DE BOA! MUSIC',
   MOSTRAR_BANNER_SEMPRE: true,
   LOADING_DURACAO_MS: 3500,
@@ -631,6 +695,12 @@ const CONFIG = {
   PWA_INSTALL_INTERVALO_HORAS: 6,
   CARD_DURACAO_MS: 30000,
   MIDIA_DURACAO_MS: 30000
+};
+
+const CACHE_OFFLINE_CONFIG = {
+  ativado: true,
+  maxMusicas: 500,
+  maxBytesPorMusica: 8 * 1024 * 1024
 };
 
 const GENRE_COLORS = {
@@ -693,7 +763,6 @@ Object.keys(GENRE_URLS).forEach(g => {
   GENRE_REPOS[g] = m ? m[1] + '/' + m[2] : 'radiolojasjc-hub/play12';
 });
 
-const CACHE_OFFLINE_CONFIG = { ativado:true, maxMusicas:50 };
 const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
 const MIDIAS_TV_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/modotv.json';
 
@@ -720,6 +789,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const fmt = s => { if(!s||isNaN(s))return '0:00'; const m=Math.floor(s/60); const sg=Math.floor(s%60); return m+':'+(sg<10?'0':'')+sg; };
 const vibrar = (padrao=15) => { try{ if(!navigator.vibrate) return; navigator.vibrate(padrao); }catch(e){} };
 function fmtTempo(s){if(s<0)s=0;s=Math.floor(s);const d=Math.floor(s/86400),h=Math.floor((s%86400)/3600);const m=Math.floor((s%3600)/60),sg=Math.floor(s%60);if(d>0)return d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');if(h>0)return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');return String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');}
+function fmtBytes(b){if(!b||b<1024)return (b||0)+' B';if(b<1024*1024)return (b/1024).toFixed(1)+' KB';if(b<1024*1024*1024)return (b/1024/1024).toFixed(1)+' MB';return (b/1024/1024/1024).toFixed(2)+' GB';}
 function sanitize(t){if(!t)return '';const d=document.createElement('div');d.textContent=t;return d.textContent;}
 function shuffle(arr){
   const x=[...arr];
@@ -750,7 +820,7 @@ async function verificarSenhaPadrao(senha){
 }
 
 /* ============================================================
-   🔐 SISTEMA DE TESTE BLINDADO (100% client-side)
+   🔐 SISTEMA DE TESTE BLINDADO
    ============================================================ */
 const SecureTimer = {
   DB_NAME: 'vdb_secure',
@@ -1010,10 +1080,150 @@ class CacheManager{
   _limpar(){let t=0;const it=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(this.prefix)){const v=localStorage.getItem(k);t+=v?v.length:0;it.push({key:k,size:v?v.length:0});}}if(t>this.maxBytes){it.sort((a,b)=>a.size-b.size);while(t>this.maxBytes&&it.length){const x=it.shift();localStorage.removeItem(x.key);t-=x.size;}}}
 }
 const cacheManager=new CacheManager();
-const CACHE_MUSICAS='vdb-musicas-offline';
-async function abrirCacheMusicas(){if(!('caches' in window))return null;try{return await caches.open(CACHE_MUSICAS);}catch(e){return null;}}
-async function salvarMusicaOffline(url){if(!CACHE_OFFLINE_CONFIG.ativado)return;if(!url||!url.startsWith('http'))return;try{const cache=await abrirCacheMusicas();if(!cache)return;const existe=await cache.match(url);if(existe)return;const chaves=await cache.keys();if(chaves.length>=CACHE_OFFLINE_CONFIG.maxMusicas)await cache.delete(chaves[0]);await cache.add(url);}catch(e){}}
-async function buscarMusicaOffline(url){try{const cache=await abrirCacheMusicas();if(!cache)return null;const resposta=await cache.match(url);if(!resposta)return null;const blob=await resposta.blob();return URL.createObjectURL(blob);}catch(e){return null;}}
+
+/* ============================================================
+   📥 SISTEMA DE DOWNLOAD OFFLINE
+   ============================================================ */
+const CACHE_MUSICAS = 'vdb-musicas-offline';
+
+async function abrirCacheMusicas(){
+  if(!('caches' in window)) return null;
+  try{ return await caches.open(CACHE_MUSICAS); }catch(e){ return null; }
+}
+
+async function listarMusicasOffline(){
+  try{
+    const cache = await abrirCacheMusicas();
+    if(!cache) return [];
+    const chaves = await cache.keys();
+    return chaves.map(k => k.url);
+  }catch(e){ return []; }
+}
+
+async function estaOffline(url){
+  try{
+    const cache = await abrirCacheMusicas();
+    if(!cache) return false;
+    const r = await cache.match(url);
+    return !!r;
+  }catch(e){ return false; }
+}
+
+async function salvarMusicaOffline(url){
+  if(!CACHE_OFFLINE_CONFIG.ativado) return false;
+  if(!url || !url.startsWith('http')) return false;
+  try{
+    const cache = await abrirCacheMusicas();
+    if(!cache) return false;
+    const existe = await cache.match(url);
+    if(existe) return true;
+    const resp = await fetch(url, { mode: 'cors' });
+    if(!resp.ok) return false;
+    const tamanho = parseInt(resp.headers.get('content-length') || '0');
+    if(tamanho && tamanho > CACHE_OFFLINE_CONFIG.maxBytesPorMusica) return false;
+    const clone = resp.clone();
+    await cache.put(url, clone);
+    return true;
+  }catch(e){ return false; }
+}
+
+async function removerMusicaOffline(url){
+  try{
+    const cache = await abrirCacheMusicas();
+    if(!cache) return false;
+    return await cache.delete(url);
+  }catch(e){ return false; }
+}
+
+async function limparTudoOffline(){
+  try{
+    const cache = await abrirCacheMusicas();
+    if(!cache) return false;
+    const chaves = await cache.keys();
+    for(const k of chaves) await cache.delete(k);
+    return true;
+  }catch(e){ return false; }
+}
+
+async function tamanhoUsadoOffline(){
+  try{
+    if(navigator.storage && navigator.storage.estimate){
+      const est = await navigator.storage.estimate();
+      return { usado: est.usage || 0, total: est.quota || 0 };
+    }
+  }catch(e){}
+  return { usado: 0, total: 0 };
+}
+
+async function buscarMusicaOffline(url){
+  try{
+    const cache = await abrirCacheMusicas();
+    if(!cache) return null;
+    const resposta = await cache.match(url);
+    if(!resposta) return null;
+    const blob = await resposta.blob();
+    return URL.createObjectURL(blob);
+  }catch(e){ return null; }
+}
+
+let downloadEmAndamento = false;
+let downloadCancelado = false;
+
+async function baixarGeneroCompleto(genero, musicas, onProgress){
+  if(downloadEmAndamento){
+    notif('⚠️ Já tem download em andamento', 2000, 'warning');
+    return false;
+  }
+  if(!musicas || !musicas.length){
+    notif('⚠️ Sem músicas para baixar', 2000, 'warning');
+    return false;
+  }
+  downloadEmAndamento = true;
+  downloadCancelado = false;
+  let baixadas = 0;
+  let falhas = 0;
+  const total = musicas.length;
+  for(let i = 0; i < musicas.length; i++){
+    if(downloadCancelado) break;
+    const m = musicas[i];
+    const urls = getUrls(m);
+    let ok = false;
+    for(const u of urls){
+      if(downloadCancelado) break;
+      const salvou = await salvarMusicaOffline(u);
+      if(salvou){ ok = true; break; }
+    }
+    if(ok) baixadas++; else falhas++;
+    if(onProgress){
+      onProgress({ atual: i + 1, total, baixadas, falhas, musicaAtual: m.title });
+    }
+    if((i + 1) % 10 === 0){
+      try{
+        const meta = JSON.parse(localStorage.getItem('vdb_offline_meta') || '{}');
+        meta[genero] = { baixadas, total, data: now() };
+        localStorage.setItem('vdb_offline_meta', JSON.stringify(meta));
+      }catch(e){}
+    }
+    await sleep(50);
+  }
+  try{
+    const meta = JSON.parse(localStorage.getItem('vdb_offline_meta') || '{}');
+    meta[genero] = { baixadas, total, data: now(), completo: baixadas === total };
+    localStorage.setItem('vdb_offline_meta', JSON.stringify(meta));
+  }catch(e){}
+  downloadEmAndamento = false;
+  downloadCancelado = false;
+  return { baixadas, falhas, total };
+}
+
+function cancelarDownload(){ downloadCancelado = true; notif('🛑 Cancelando...', 1500, 'info'); }
+function generoEstaOffline(genero){
+  try{
+    const meta = JSON.parse(localStorage.getItem('vdb_offline_meta') || '{}');
+    const info = meta[genero];
+    return info && info.completo;
+  }catch(e){ return false; }
+}
 
 /* ============================================================
    📢 NOTIFIER
@@ -1082,16 +1292,25 @@ const dom={
   pwaInstrucoes:$('pwaInstrucoes'),pwaBeneficios:$('pwaBeneficios'),
   musicaNome:$('musicaNome'),musicaArtista:$('musicaArtista'),
   btnTrazerCard:$('btnTrazerCard'),topBar:$('topBar'),fabContainer:$('fabContainer'),
-  cardMensagem:$('cardMensagem'),fabBemVindo:$('fabBemVindo')
+  cardMensagem:$('cardMensagem'),fabBemVindo:$('fabBemVindo'),
+  btnBaixarOffline:$('btnBaixarOffline'),
+  downloadModal:$('downloadModal'),downloadTitulo:$('downloadTitulo'),downloadSub:$('downloadSub'),
+  downloadProgressFill:$('downloadProgressFill'),downloadContador:$('downloadContador'),
+  downloadAtual:$('downloadAtual'),downloadCancelBtn:$('downloadCancelBtn'),downloadCloseBtn:$('downloadCloseBtn'),
+  offlineManager:$('offlineManager'),offlineStats:$('offlineStats'),offlineLista:$('offlineLista'),
+  offlineLimparBtn:$('offlineLimparBtn'),offlineFecharBtn:$('offlineFecharBtn'),
+  fabGerenciarOffline:$('fabGerenciarOffline'),menuGerenciarOffline:$('menuGerenciarOffline')
 };
 
 /* ============================================================
-   🖥️ FULLSCREEN
+   🖥️ FULLSCREEN AGRESSIVO — MANTÉM SEMPRE
    ============================================================ */
 let fullscreenInterval = null;
 let fullscreenEmAndamento = false;
 
-function jaEstaFullscreen(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
+function jaEstaFullscreen(){
+  return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);
+}
 
 function forcarTelaCheia(){
   if(ehIOS()) return false;
@@ -1100,36 +1319,81 @@ function forcarTelaCheia(){
   fullscreenEmAndamento = true;
   try{
     const el = document.documentElement;
-    if(el.requestFullscreen){el.requestFullscreen({navigationUI:'hide'}).then(()=>{fullscreenEmAndamento=false;}).catch(()=>{fullscreenEmAndamento=false;});}
-    else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);fullscreenEmAndamento=false;}
-    else if(el.mozRequestFullScreen){el.mozRequestFullScreen();fullscreenEmAndamento=false;}
-    else{fullscreenEmAndamento=false;}
+    const opts = {navigationUI:'hide'};
+    if(el.requestFullscreen){
+      el.requestFullscreen(opts).then(()=>{fullscreenEmAndamento=false;}).catch(()=>{fullscreenEmAndamento=false;});
+    }else if(el.webkitRequestFullscreen){
+      el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);fullscreenEmAndamento=false;
+    }else if(el.mozRequestFullScreen){
+      el.mozRequestFullScreen();fullscreenEmAndamento=false;
+    }else{fullscreenEmAndamento=false;}
   }catch(e){fullscreenEmAndamento=false;}
 }
 
 function iniciarFullscreenGuard(){
-  if(fullscreenInterval) return;
+  if(fullscreenInterval) clearInterval(fullscreenInterval);
   if(ehIOS()) return;
+  const reentrar = () => {
+    if(document.hidden) return;
+    if(!appState.playerAtivado) return;
+    setTimeout(()=>{ if(!jaEstaFullscreen()) forcarTelaCheia(); }, 300);
+  };
+  document.addEventListener('fullscreenchange', reentrar);
+  document.addEventListener('webkitfullscreenchange', reentrar);
+  document.addEventListener('mozfullscreenchange', reentrar);
   fullscreenInterval = setInterval(()=>{
     if(document.hidden) return;
     if(!appState.playerAtivado) return;
     if(jaEstaFullscreen()) return;
     forcarTelaCheia();
-  }, 15000);
+  }, 2000);
 }
 
 function ativarFullscreenPrimeiroToque(){
-  const handler=()=>{
-    if(!jaEstaFullscreen())forcarTelaCheia();
-    document.removeEventListener('touchstart',handler);
-    document.removeEventListener('click',handler);
+  const handler = () => {
+    if(!jaEstaFullscreen()) forcarTelaCheia();
+    document.removeEventListener('touchstart', handler);
+    document.removeEventListener('click', handler);
   };
-  document.addEventListener('touchstart',handler,{passive:true});
-  document.addEventListener('click',handler);
+  document.addEventListener('touchstart', handler, {passive:true});
+  document.addEventListener('click', handler);
 }
 
-document.addEventListener('gesturestart',e=>e.preventDefault());
-document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
+function ajustarIOSFullscreen(){
+  if(!ehIOS()) return;
+  const standalone = window.navigator.standalone === true ||
+                     window.matchMedia('(display-mode: standalone)').matches;
+  if(standalone){ document.body.classList.add('pwa-standalone'); }
+  else{ document.body.classList.add('ios-browser'); }
+  document.documentElement.style.height = '100vh';
+  document.body.style.height = '100vh';
+  document.body.style.position = 'fixed';
+  document.body.style.overflow = 'hidden';
+}
+
+function esconderBarraAndroid(){
+  if(ehIOS()) return;
+  const standalone = window.matchMedia('(display-mode: standalone)').matches;
+  if(standalone) return;
+  const tentar = () => {
+    if(window.scrollY === 0){
+      window.scrollTo(0, 1);
+      setTimeout(() => window.scrollTo(0, 0), 100);
+    }
+  };
+  setTimeout(tentar, 500);
+  setTimeout(tentar, 2000);
+}
+
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('touchmove', e => { if(e.touches.length > 1) e.preventDefault(); }, {passive:false});
+
+document.addEventListener('touchstart', () => {
+  if(appState.playerAtivado && !jaEstaFullscreen() && !ehIOS()) forcarTelaCheia();
+}, {passive: true, capture: true});
+document.addEventListener('click', () => {
+  if(appState.playerAtivado && !jaEstaFullscreen() && !ehIOS()) forcarTelaCheia();
+}, {capture: true});
 
 /* ============================================================
    🎵 PLAYER
@@ -1159,10 +1423,7 @@ async function iniciarTimerCorrido(){
     bloquear();
     return;
   }
-  if(!r.liberado){
-    bloquear();
-    return;
-  }
+  if(!r.liberado){ bloquear(); return; }
   await updateTimerDisplay();
   async function tick(){
     if(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ) === 'true') return;
@@ -1282,8 +1543,7 @@ async function tocar(){
     if(ok){
       try{
         dom.audio.volume=0;await dom.audio.play();await fadeInAudio(600);
-        appState.isPlaying=true;
-        appState.errosSeguidos=0;
+        appState.isPlaying=true;appState.errosSeguidos=0;
         dom.playBtn.classList.remove('loading');
         dom.playBtn.innerHTML='<i class="fas fa-pause"></i>';
         if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing';
@@ -1405,6 +1665,8 @@ function renderizarGeneros(){
   GENRE_ORDEM.forEach(g=>{
     const c=GENRE_COLORS[g]||COR_PADRAO;
     const cd=document.createElement('button');cd.type='button';cd.className='genre-card';cd.style.setProperty('--c1',c.c1);
+    cd.dataset.genero = g;
+    if(generoEstaOffline(g)) cd.classList.add('offline');
     const n=document.createElement('div');n.className='genre-name';n.textContent=g;cd.appendChild(n);
     cd.onclick=()=>{selecionarGenero(g);dom.genresModal.classList.remove('open');};
     dom.genresGrid.appendChild(cd);
@@ -1423,6 +1685,7 @@ async function selecionarGenero(g){
   if(appState.isBackgroundActive)setTimeout(tocar,300);
   appState._save();notif('🎵 '+g,1500,'success');
   trazerCardDeVolta();
+  atualizarBtnBaixarOffline();
 }
 function showLoad(s){dom.loadingOverlay.classList.toggle('active',s);}
 
@@ -1445,6 +1708,7 @@ async function ativarModoRadio(){
     if(appState.isBackgroundActive)setTimeout(tocar,300);
     appState._save();notif('🔴 AO VIVO',2000,'success');
     trazerCardDeVolta();
+    atualizarBtnBaixarOffline();
   }catch(e){showLoad(false);notif('❌ Erro',2000,'error');}
 }
 function verificarMudancaPeriodo(){if(!ehModoRadio())return;const p=getPeriodoAtual();const c=RADIO_CONFIG[p];if(appState.modoAtual!==c.nome){notif('🔄 Novo período',2000,'info');ativarModoRadio();}}
@@ -1555,7 +1819,7 @@ async function liberarAgora(){
 }
 
 /* ============================================================
-   🧩 ADMIN
+   🧩 ADMIN — 8 CLIKES → PEDE SENHA → ABRE GERENCIADOR
    ============================================================ */
 function carregarHistorico(){
   const h=appState.getSenhasHistorico();
@@ -1568,23 +1832,71 @@ function carregarHistorico(){
   });
 }
 
-let cliqueTimestamps=[];
+let cliqueTimestamps = [];
+
 function setup8CliquesLogo(){
-  const alvo=document.getElementById('logoTexto');
-  if(!alvo)return;
-  alvo.addEventListener('click',e=>{
+  const alvo = document.getElementById('logoTexto');
+  if(!alvo) return;
+
+  alvo.addEventListener('click', async (e) => {
     e.stopPropagation();
-    const t=now();
-    cliqueTimestamps=cliqueTimestamps.filter(x=>t-x<3000);
+    const t = now();
+    cliqueTimestamps = cliqueTimestamps.filter(x => t - x < 3000);
     cliqueTimestamps.push(t);
-    if(cliqueTimestamps.length>=8){
-      cliqueTimestamps=[];
-      vibrar(50);
+
+    // Feedback visual a partir do 3º clique
+    if(cliqueTimestamps.length >= 3 && cliqueTimestamps.length < 8){
+      vibrar(8);
+      mostrarDicaCliques(8 - cliqueTimestamps.length);
+    }
+
+    // 8 cliques → PEDE SENHA
+    if(cliqueTimestamps.length >= 8){
+      cliqueTimestamps = [];
+      vibrar([50, 30, 50]);
+      esconderDicaCliques();
+
+      // 🔒 PEDE SENHA ADMIN
+      const senha = await vdbDialog({
+        title: '🔒 ACESSO ADMIN',
+        msg: 'Digite a senha de administrador:',
+        input: 'password',
+        placeholder: 'Senha admin',
+        okText: 'Entrar'
+      });
+
+      if(!senha){ notif('❌ Cancelado', 1500, 'warning'); return; }
+
+      // ✅ VERIFICA
+      const ok = await verificarSenhaPadrao(senha);
+
+      if(!ok){
+        notif('❌ Senha incorreta!', 2500, 'error');
+        vibrar([100, 50, 100]);
+        return;
+      }
+
+      // ✅ CORRETA → ABRE GERENCIADOR
+      vibrar([30, 30, 30]);
       dom.adminPanel.classList.add('open');
       carregarHistorico();
-      notif('👑 Painel Admin!',2000,'success');
+      notif('👑 Bem-vindo, admin!', 2000, 'success');
     }
   });
+}
+
+function mostrarDicaCliques(faltam){
+  const dica = document.getElementById('dicaCliques');
+  if(!dica) return;
+  dica.textContent = '🔑 Faltam ' + faltam + ' cliques';
+  dica.style.opacity = '1';
+  clearTimeout(dica._timer);
+  dica._timer = setTimeout(() => { dica.style.opacity = '0'; }, 1500);
+}
+
+function esconderDicaCliques(){
+  const dica = document.getElementById('dicaCliques');
+  if(dica) dica.style.opacity = '0';
 }
 
 /* ============================================================
@@ -1679,7 +1991,7 @@ function mostrarCoracaoTemp(){
 }
 
 /* ============================================================
-   🎬 MÍDIAS DE FUNDO (com limpeza de memória)
+   🎬 MÍDIAS DE FUNDO
    ============================================================ */
 function limparMidias(){
   const els = dom.mediaContainer.querySelectorAll('video, img');
@@ -1761,6 +2073,117 @@ async function toggleModoTV(){
 }
 
 /* ============================================================
+   📥 GERENCIADOR DE DOWNLOAD
+   ============================================================ */
+async function abrirModalDownload(genero){
+  const musicas = appState.musicas;
+  if(!musicas || !musicas.length){ notif('⚠️ Escolha um gênero primeiro', 2000, 'warning'); return; }
+  if(generoEstaOffline(genero)){ notif('✅ Já está offline!', 2000, 'success'); return; }
+
+  dom.downloadModal.classList.add('active');
+  dom.downloadTitulo.textContent = 'BAIXANDO ' + genero;
+  dom.downloadSub.textContent = 'Preparando...';
+  dom.downloadProgressFill.style.width = '0%';
+  dom.downloadContador.textContent = '0 / ' + musicas.length;
+  dom.downloadAtual.textContent = '';
+  dom.downloadCancelBtn.style.display = 'block';
+  dom.downloadCloseBtn.style.display = 'none';
+
+  const card = document.querySelector('.genre-card[data-genero="'+genero+'"]');
+  if(card) card.classList.add('baixando');
+
+  const resultado = await baixarGeneroCompleto(genero, musicas, (prog) => {
+    const pct = (prog.atual / prog.total) * 100;
+    dom.downloadProgressFill.style.width = pct + '%';
+    dom.downloadContador.textContent = prog.atual + ' / ' + prog.total;
+    dom.downloadAtual.textContent = (prog.musicaAtual || '').slice(0, 30);
+  });
+
+  if(card) card.classList.remove('baixando');
+
+  if(downloadCancelado){
+    dom.downloadSub.textContent = '🛑 Cancelado';
+  }else{
+    dom.downloadSub.textContent = '✅ Concluído!';
+    if(card) card.classList.add('offline');
+    notif('✅ ' + resultado.baixadas + ' músicas offline!', 3000, 'success');
+  }
+
+  dom.downloadCancelBtn.style.display = 'none';
+  dom.downloadCloseBtn.style.display = 'block';
+  dom.downloadProgressFill.style.width = '100%';
+  atualizarBtnBaixarOffline();
+
+  setTimeout(()=>{ dom.downloadModal.classList.remove('active'); }, 2000);
+}
+
+async function atualizarBtnBaixarOffline(){
+  const btn = dom.btnBaixarOffline;
+  if(!btn) return;
+  const genero = appState.modoAtual;
+  if(ehModoRadio() || !genero || !appState.musicas.length){
+    btn.style.display = 'none';
+    return;
+  }
+  btn.style.display = 'flex';
+  if(generoEstaOffline(genero)){
+    btn.classList.add('ja-offline');
+    btn.innerHTML = '<i class="fas fa-check-circle"></i><span>DISPONÍVEL OFFLINE</span>';
+  }else{
+    btn.classList.remove('ja-offline');
+    btn.innerHTML = '<i class="fas fa-download"></i><span>BAIXAR "' + genero + '" OFFLINE</span>';
+  }
+}
+
+async function abrirGerenciadorOffline(){
+  const mgr = dom.offlineManager;
+  if(!mgr) return;
+  mgr.classList.add('active');
+
+  const stats = dom.offlineStats;
+  const lista = dom.offlineLista;
+  stats.innerHTML = 'Calculando...';
+  lista.innerHTML = '';
+
+  const t = await tamanhoUsadoOffline();
+  const meta = JSON.parse(localStorage.getItem('vdb_offline_meta') || '{}');
+
+  let totalBaixadas = 0;
+  Object.keys(meta).forEach(g => { totalBaixadas += (meta[g].baixadas || 0); });
+
+  stats.innerHTML = '📊 <b>' + totalBaixadas + '</b> músicas salvas<br>💾 <b>' + fmtBytes(t.usado) + '</b> usados de ' + fmtBytes(t.total);
+
+  const generos = Object.keys(meta);
+  if(!generos.length){
+    lista.innerHTML = '<div style="color:#666;text-align:center;padding:20px">Nenhum gênero baixado ainda</div>';
+  }else{
+    generos.forEach(g => {
+      const info = meta[g];
+      const item = document.createElement('div');
+      item.className = 'offline-item';
+      item.innerHTML = '<div><div class="nome">'+g+'</div><div class="qtd">'+info.baixadas+'/'+info.total+' músicas '+(info.completo ? '✓' : '')+'</div></div><button class="remove" data-genero="'+g+'">🗑️</button>';
+      item.querySelector('.remove').onclick = async () => {
+        if(!confirm('Remover "' + g + '" do offline?')) return;
+        const cache = await abrirCacheMusicas();
+        if(cache){
+          const chaves = await cache.keys();
+          for(const k of chaves){
+            if(k.url.includes('/' + g.toLowerCase() + '/') || k.url.includes('_' + g.toLowerCase())){
+              await cache.delete(k);
+            }
+          }
+        }
+        delete meta[g];
+        localStorage.setItem('vdb_offline_meta', JSON.stringify(meta));
+        abrirGerenciadorOffline();
+        notif('🗑️ ' + g + ' removido', 1500, 'info');
+      };
+      lista.appendChild(item);
+    });
+  }
+}
+
+/* ============================================================
    📲 PWA
    ============================================================ */
 const btnInstalarFixo=$('btnInstalarFixo');
@@ -1824,7 +2247,7 @@ let propagandaJaFoiFechada=false;
 function mostrarPropagandaFull(){
   if(propagandaJaFoiFechada)return;
   if(!appState.playerAtivado)return;
-  const modalAberto=document.querySelector('.menu-popup.open, .genres-modal.open, .fav-modal.open, .tutorial-modal.open, .vdb-dialog-overlay.active, .bottom-sheet.open, #pwaInstallModal.active');
+  const modalAberto=document.querySelector('.menu-popup.open, .genres-modal.open, .fav-modal.open, .tutorial-modal.open, .vdb-dialog-overlay.active, .bottom-sheet.open, #pwaInstallModal.active, #downloadModal.active, #offlineManager.active');
   if(modalAberto){clearTimeout(propagandaTimer);propagandaTimer=setTimeout(mostrarPropagandaFull,30000);return;}
   const banner=$('bannerPropagandaFull');if(banner)banner.classList.add('visivel');
 }
@@ -1845,7 +2268,6 @@ async function iniciar(){
     await carregarMidiasPadrao();updateProgress(30);
 
     const resultado = await SecureTimer.verificar();
-
     if (resultado.motivo === 'manipulou_data') {
       notif('⚠️ Manipulação detectada!', 4000, 'error');
       dom.blockOverlay.classList.add('active');
@@ -1886,6 +2308,8 @@ async function iniciar(){
     mostrarBotaoInstalar();updateTimerDisplay();
     setTimeout(()=>{if(!jaEstaFullscreen())forcarTelaCheia();},300);
     ativarFullscreenPrimeiroToque();
+    ajustarIOSFullscreen();
+    esconderBarraAndroid();
     setTimeout(()=>{if(!jaEstaInstalado()&&ehMobile())mostrarModalPWA();},CONFIG.PWA_INSTALL_DELAY_MS+2000);
 
     /* Controles */
@@ -1896,6 +2320,46 @@ async function iniciar(){
     dom.progressBar.onclick=e=>{if(dom.audio.duration){const r=e.currentTarget.getBoundingClientRect();dom.audio.currentTime=((e.clientX-r.left)/r.width)*dom.audio.duration;}};
     if(dom.heartBtn)dom.heartBtn.onclick=e=>{e.stopPropagation();toggleFavAtual();mostrarCoracaoTemp();};
     if(dom.btnTrazerCard){dom.btnTrazerCard.onclick=e=>{e.stopPropagation();trazerCardDeVolta();};}
+
+    /* Botão Baixar Offline */
+    if(dom.btnBaixarOffline){
+      dom.btnBaixarOffline.onclick = () => {
+        vibrar(15);
+        if(generoEstaOffline(appState.modoAtual)){
+          notif('✅ Já disponível offline!', 2000, 'success');
+          return;
+        }
+        abrirModalDownload(appState.modoAtual);
+      };
+    }
+    if(dom.downloadCancelBtn){
+      dom.downloadCancelBtn.onclick = () => cancelarDownload();
+    }
+    if(dom.downloadCloseBtn){
+      dom.downloadCloseBtn.onclick = () => {
+        dom.downloadModal.classList.remove('active');
+        atualizarBtnBaixarOffline();
+      };
+    }
+    if(dom.fabGerenciarOffline){
+      dom.fabGerenciarOffline.onclick = () => { abrirGerenciadorOffline(); fecharFab(); };
+    }
+    if(dom.menuGerenciarOffline){
+      dom.menuGerenciarOffline.onclick = () => { fecharMenu(); abrirGerenciadorOffline(); };
+    }
+    if(dom.offlineFecharBtn) dom.offlineFecharBtn.onclick = () => dom.offlineManager.classList.remove('active');
+    if(dom.offlineLimparBtn){
+      dom.offlineLimparBtn.onclick = async () => {
+        if(!confirm('Apagar TODAS as músicas offline?')) return;
+        await limparTudoOffline();
+        localStorage.removeItem('vdb_offline_meta');
+        abrirGerenciadorOffline();
+        notif('🗑️ Tudo limpo!', 2000, 'success');
+      };
+    }
+    setInterval(atualizarBtnBaixarOffline, 2000);
+    setTimeout(atualizarBtnBaixarOffline, 3000);
+
     setTimeout(()=>{showControls();},2000);
 
     /* Clique no letreiro → busca */
@@ -1920,7 +2384,7 @@ async function iniciar(){
       if(e.target.closest('#btnTrazerCard'))return;
       if(e.target.closest('#logoTexto'))return;
       if(e.target.closest('#infoScroll'))return;
-      if(e.target.closest('button')||e.target.closest('.genre-card')||e.target.closest('.fav-item-modal')||e.target.closest('.menu-popup')||e.target.closest('.glass-card')||e.target.closest('.bottom-sheet')||e.target.closest('.genres-modal')||e.target.closest('.fav-modal')||e.target.closest('.fab-container')||e.target.closest('.top-bar')||e.target.closest('.fav-heart-center')||e.target.closest('.vdb-dialog-overlay')||e.target.closest('.tutorial-modal')||e.target.closest('.banner-propaganda-full')||e.target.closest('#pwaInstallModal'))return;
+      if(e.target.closest('button')||e.target.closest('.genre-card')||e.target.closest('.fav-item-modal')||e.target.closest('.menu-popup')||e.target.closest('.glass-card')||e.target.closest('.bottom-sheet')||e.target.closest('.genres-modal')||e.target.closest('.fav-modal')||e.target.closest('.fab-container')||e.target.closest('.top-bar')||e.target.closest('.fav-heart-center')||e.target.closest('.vdb-dialog-overlay')||e.target.closest('.tutorial-modal')||e.target.closest('.banner-propaganda-full')||e.target.closest('#pwaInstallModal')||e.target.closest('#downloadModal')||e.target.closest('#offlineManager'))return;
       if(dom.bottomControls.classList.contains('escondido'))trazerCardDeVolta();
     });
     setTimeout(mostrarCoracaoTemp,2000);
@@ -1948,7 +2412,7 @@ async function iniciar(){
     document.querySelectorAll('.sheet-option[data-sleep]').forEach(b=>{b.onclick=()=>{vibrar(10);const min=parseInt(b.dataset.sleep);clearTimeout(appState.sleepTimer);if(min>0){appState.sleepTimer=setTimeout(()=>{dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';notif('💤 Desligada!',2000,'info');},min*60000);notif('⏰ '+min+' min',2000,'info');}else notif('🚫 Cancelado',1500,'info');dom.sleepSheet.classList.remove('open');};});
 
     dom.fabMain.onclick=()=>{vibrar(10);dom.fabSub.classList.toggle('open');dom.fabMain.innerHTML=dom.fabSub.classList.contains('open')?'<i class="fas fa-times"></i>':'<i class="fas fa-plus"></i>';};
-    function fecharFab(){dom.fabSub.classList.remove('open');dom.fabMain.innerHTML='<i class="fas fa-plus"></i>';}
+    window.fecharFab=function(){dom.fabSub.classList.remove('open');dom.fabMain.innerHTML='<i class="fas fa-plus"></i>';};
     dom.fabFavoritos.onclick=()=>{vibrar(10);renderizarFavoritosModal();dom.favModal.classList.add('open');fecharFab();};
     dom.fabGeneros.onclick=()=>{dom.genresModal.classList.add('open');fecharFab();};
     dom.fabRadio.onclick=()=>{ativarModoRadio();fecharFab();};
@@ -1973,7 +2437,7 @@ async function iniciar(){
     dom.btnLiberar.onclick=handleLiberar;
     if(dom.btnWhatsBlock)dom.btnWhatsBlock.onclick=abrirWhatsBlock;
 
-    /* Admin */
+    /* Admin - 8 cliques → senha → gerenciador */
     setup8CliquesLogo();
 
     dom.adminGerarBtn.onclick = async () => {
@@ -2030,33 +2494,34 @@ async function iniciar(){
       if(appState.errosSeguidos > 5){
         appState.isPlaying = false;
         dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
-        notif('⚠️ Muitas músicas falharam. Verifique a conexão.', 4000, 'warning');
+        notif('⚠️ Muitas músicas falharam.', 4000, 'warning');
         appState.errosSeguidos = 0;
         return;
       }
       setTimeout(next, 500);
     };
 
-    /* Teclado */
     document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key===' '){e.preventDefault();togglePlay();}if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();if(e.key==='s'||e.key==='S')toggleShuffle();});
     document.addEventListener('click',e=>{if(!dom.menuPopup.contains(e.target)&&e.target!==dom.menuButton&&!dom.menuButton.contains(e.target))fecharMenu();});
 
-    /* Visibilidade */
     document.addEventListener('visibilitychange',()=>{
       if(document.visibilityState==='visible'){
+        if(appState.playerAtivado && !jaEstaFullscreen() && !ehIOS()){
+          setTimeout(forcarTelaCheia, 100);
+          setTimeout(forcarTelaCheia, 500);
+          setTimeout(forcarTelaCheia, 1500);
+        }
         updateTimerDisplay();
         if(appState.isPlaying&&dom.audio&&dom.audio.paused&&dom.audio.src&&!appState.carregandoMusica)dom.audio.play().catch(()=>{});
         if(appState.isBackgroundActive&&dom.backgroundAudio.paused){
           dom.backgroundAudio.src=getSilentAudioUrl();dom.backgroundAudio.loop=true;dom.backgroundAudio.volume=.001;dom.backgroundAudio.play().catch(()=>{});
         }
         verificarMudancaPeriodo();
-        if(!jaEstaFullscreen()&&appState.playerAtivado)forcarTelaCheia();
       }
     });
 
     window.addEventListener('beforeunload',()=>{appState._save(true);});
 
-    /* Propaganda */
     if(dom.bannerPropagandaFull)dom.bannerPropagandaFull.onclick=e=>{if(e.target.closest('.prop-full-fechar'))return;abrirWhatsAppPropaganda();};
     if(dom.propFullFecharBtn)dom.propFullFecharBtn.onclick=e=>{e.stopPropagation();vibrar(10);esconderPropagandaFull();propagandaJaFoiFechada=true;clearTimeout(propagandaTimer);};
     if(dom.propFullCtaBtn)dom.propFullCtaBtn.onclick=e=>{e.stopPropagation();abrirWhatsAppPropaganda();};
