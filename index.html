@@ -19,9 +19,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Rajdhani:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════════════════════════
-   🎨 CORES E VARIÁVEIS GLOBAIS
-   ═══════════════════════════════════════════════════════════════ */
 :root{
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bottom:env(safe-area-inset-bottom,0px);
@@ -31,10 +28,6 @@
   --theme-1:#2563eb;
   --theme-2:#1e40af;
 }
-
-/* ═══════════════════════════════════════════════════════════════
-   🌍 RESET GERAL
-   ═══════════════════════════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-touch-callout:none;
   font-family:'Rajdhani',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
 input,textarea,[contenteditable]{user-select:text!important;-webkit-user-select:text!important}
@@ -44,15 +37,12 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:var(--cor-1);border-radius:4px}
 
-/* ═══════════════════════════════════════════════════════════════
-   ⏳ TELA DE CARREGAMENTO
-   ═══════════════════════════════════════════════════════════════ */
 #loadingScreen{position:fixed;inset:0;background:
   radial-gradient(circle at 20% 20%, var(--cor-3), transparent 55%),
   radial-gradient(circle at 80% 80%, var(--cor-2), transparent 55%),
   linear-gradient(135deg, var(--cor-2) 0%, var(--cor-1) 100%);
-  display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:22px;text-align:center;width:100%;transition:background .6s}
-.loading-logo-wrapper{position:relative;width:150px;height:150px;display:flex;align-items:center;justify-content:center}
+  display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:22px;text-align:center;width:100%}
+.loading-logo-wrapper{width:150px;height:150px;display:flex;align-items:center;justify-content:center}
 .loading-logo{width:104px;height:104px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.25);animation:pulseLogo 2.5s ease-in-out infinite;box-shadow:0 0 50px rgba(255,255,255,.4)}
 @keyframes pulseLogo{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 .loading-text{font-family:'Audiowide',sans-serif;font-size:1.5rem;color:#fff;letter-spacing:5px;font-weight:900;text-shadow:0 3px 15px rgba(0,0,0,.5)}
@@ -60,9 +50,6 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 .loading-progress-container{width:240px;height:5px;background:rgba(0,0,0,.3);border-radius:5px;overflow:hidden}
 .loading-progress-fill{height:100%;width:0%;background:#fff;transition:width .4s ease;border-radius:5px}
 
-/* ═══════════════════════════════════════════════════════════════
-   🎬 TELA PRINCIPAL
-   ═══════════════════════════════════════════════════════════════ */
 #playerContainer{position:fixed;inset:0;z-index:10;display:none}
 #playerContainer.visible{display:block}
 
@@ -72,8 +59,7 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
     radial-gradient(circle at 20% 20%, var(--cor-3), transparent 60%),
     radial-gradient(circle at 80% 80%, var(--cor-2), transparent 60%),
     linear-gradient(180deg, var(--cor-1) 0%, var(--cor-2) 100%);
-  display:flex;flex-direction:column;
-  transition:background .6s ease;
+  display:flex;flex-direction:column;transition:background .6s ease;
 }
 #telaPrincipal.oculta{opacity:0;visibility:hidden;pointer-events:none}
 
@@ -82,97 +68,113 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 .media-container .active{opacity:1;z-index:3}
 .media-container .inactive{opacity:0;z-index:2}
 
-/* TOPO */
-.topo{
-  position:relative;z-index:35;
-  background:rgba(0,0,0,.18);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  border-bottom:1px solid rgba(255,255,255,.12);
-  transition:opacity .6s ease;
-}
-.topo.escondido{opacity:0;pointer-events:none}
-
-.linha-1{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 16px 6px;
+/* ═══ TOPO — TIMER + MENU + LETREIRO + TÍTULO + GÊNERO ═══ */
+.info-topo{
+  position:fixed;top:0;left:0;right:0;z-index:35;
   padding-top:max(10px,var(--safe-top));
-  gap:10px;
+  padding-bottom:14px;
+  background:linear-gradient(180deg,rgba(0,0,0,.6),transparent);
+  display:flex;flex-direction:column;align-items:stretch;gap:6px;
+  transition:opacity .6s ease;pointer-events:none;
 }
-.logo-texto{
-  font-family:'Audiowide',sans-serif;
-  font-size:.9rem;font-weight:900;
-  letter-spacing:3px;color:#fff;
-  text-shadow:0 2px 8px rgba(0,0,0,.5);
-  white-space:nowrap;cursor:pointer;transition:color .3s;
-}
-.logo-texto.ao-vivo{color:#ff9a9a;text-shadow:0 2px 8px rgba(0,0,0,.5),0 0 15px #ff6b6b}
-.right-side{display:flex;align-items:center;gap:12px}
-.timer-texto{
-  font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:800;
-  color:#fff;font-variant-numeric:tabular-nums;
-  text-shadow:0 2px 6px rgba(0,0,0,.5);white-space:nowrap;
-}
-.menu-btn-limpo{background:transparent;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:4px;transition:opacity .2s}
-.menu-btn-limpo:active{opacity:.5;transform:scale(.9)}
+.info-topo > *{pointer-events:auto}
+.info-topo.escondido{opacity:0;pointer-events:none}
 
-/* LETREIRO (LINHA 2) — COM ÍCONE DE BUSCA */
-.linha-2{
-  padding:4px 16px 10px;
-  overflow:hidden;height:26px;
-  display:flex;align-items:center;gap:8px;
+/* ✅ LINHA DO TOPO: TIMER + MENU */
+.topo-linha{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;
+  height:26px;
+  width:100%;
+}
+.timer-texto{
+  font-family:'Rajdhani',sans-serif;
+  font-size:.75rem;font-weight:800;
+  color:#fff;font-variant-numeric:tabular-nums;
+  text-shadow:0 2px 6px rgba(0,0,0,.6);
+  white-space:nowrap;
+}
+.timer-texto.liberado{color:#10b981}
+.menu-btn-limpo{
+  background:rgba(0,0,0,.4);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:50%;
+  color:#fff;font-size:1rem;
+  width:32px;height:32px;
+  cursor:pointer;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .2s, background .2s;
+  backdrop-filter:blur(8px);
+}
+.menu-btn-limpo:active{transform:scale(.88);background:rgba(255,255,255,.2)}
+
+/* LETREIRO */
+.letreiro-wrap{
+  width:100%;height:24px;padding:0 16px;
+  overflow:hidden;display:flex;align-items:center;gap:8px;
   cursor:pointer;
 }
-.linha-2 i.fa-magnifying-glass{
-  color:rgba(255,255,255,.6);
-  font-size:.75rem;
-  flex-shrink:0;
-}
+.letreiro-wrap i.fa-magnifying-glass{color:rgba(255,255,255,.6);font-size:.7rem;flex-shrink:0}
 .letreiro{
-  font-size:.75rem;font-weight:700;
-  color:rgba(255,255,255,.95);
-  white-space:nowrap;
-  animation:scrollText 60s linear infinite;
-  text-shadow:0 1px 4px rgba(0,0,0,.6);
-  flex:1;overflow:hidden;
+  font-size:.72rem;font-weight:700;color:rgba(255,255,255,.95);
+  white-space:nowrap;animation:scrollText 60s linear infinite;
+  text-shadow:0 1px 4px rgba(0,0,0,.6);flex:1;overflow:hidden;
 }
 @keyframes scrollText{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
 .letreiro b{color:#fff;font-weight:900}
 .letreiro i{font-style:normal;color:rgba(255,255,255,.9)}
 
+/* ✅ TÍTULO GRANDE COM EFEITOS */
+.titulo-grande{
+  font-family:'Audiowide',sans-serif;
+  font-size:1.8rem;font-weight:900;letter-spacing:6px;color:#fff;
+  margin-top:24px;
+  text-shadow:0 0 15px rgba(255,255,255,.7), 0 0 30px var(--cor-3), 0 0 50px var(--cor-1);
+  animation:tituloEfeito 4s ease-in-out infinite;
+  cursor:default;user-select:none;text-align:center;
+  align-self:center;
+}
+@keyframes tituloEfeito{
+  0%,100%{transform:scale(1) translateY(0);color:#fff;opacity:1;letter-spacing:6px}
+  20%{transform:scale(1.08) translateY(-3px);color:var(--cor-3);opacity:.9}
+  40%{transform:scale(.95) translateY(2px);color:#fff;opacity:1}
+  60%{transform:scale(1.05) translateY(-2px);color:var(--cor-1);opacity:.85;letter-spacing:8px}
+  80%{transform:scale(1) translateY(0);color:#fff;opacity:1}
+}
+
+.genero-atual{
+  font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:800;
+  letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.85);
+  padding:4px 14px;background:rgba(0,0,0,.4);
+  border:1px solid rgba(255,255,255,.15);border-radius:20px;
+  backdrop-filter:blur(8px);text-shadow:0 1px 3px rgba(0,0,0,.5);
+  align-self:center;
+}
+
 .corpo-tela{flex:1;position:relative;z-index:1;pointer-events:none}
 
-/* PAINEL DE BAIXO (MÚSICA + CONTROLES) */
+/* PAINEL DE BAIXO */
 .painel-baixo{
   position:relative;z-index:20;
   padding:20px 22px calc(24px + var(--safe-bottom));
   background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.35) 100%);
   text-align:center;display:flex;flex-direction:column;gap:12px;
-  transition:opacity .8s ease, transform .8s ease;
-  pointer-events:none;
+  transition:opacity .8s ease, transform .8s ease;pointer-events:none;
 }
 .painel-baixo > *{pointer-events:auto}
 .painel-baixo.escondido{opacity:0;transform:translateY(30px);pointer-events:none}
 
-/* CORAÇÃO */
 .btn-coracao-topo{
-  background:rgba(255,255,255,.15);
-  border:1.5px solid rgba(255,255,255,.3);
-  border-radius:50%;width:46px;height:46px;
-  color:#fff;font-size:1.35rem;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto;
-  transition:transform .2s, background .2s, color .25s, border-color .25s;
+  background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+  border-radius:50%;width:46px;height:46px;color:#fff;font-size:1.35rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  margin:0 auto;transition:transform .2s, background .2s, color .25s, border-color .25s;
   backdrop-filter:blur(6px);
 }
 .btn-coracao-topo:active{transform:scale(.85);background:rgba(255,255,255,.25)}
-.btn-coracao-topo.ativo{
-  color:#f472b6;background:rgba(244,114,182,.25);border-color:#f472b6;
-  animation:heartBeat 1.4s ease-in-out infinite;
-}
+.btn-coracao-topo.ativo{color:#f472b6;background:rgba(244,114,182,.25);border-color:#f472b6;animation:heartBeat 1.4s ease-in-out infinite}
 @keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 
-/* NOME DA MÚSICA */
 .glass-musica-label{font-size:.65rem;font-weight:800;letter-spacing:4px;color:rgba(255,255,255,.7);text-transform:uppercase;text-shadow:0 1px 4px rgba(0,0,0,.4)}
 .glass-musica-label.favorita{color:#ffb0d0}
 .glass-musica-nome{
@@ -182,18 +184,12 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 }
 .glass-musica-artista{font-size:.9rem;font-weight:600;color:rgba(255,255,255,.88);text-shadow:0 2px 6px rgba(0,0,0,.4)}
 
-/* BOTÕES DE MÚSICA — LIMPOS, SEM CÍRCULO */
-.glass-controles{
-  display:flex;justify-content:center;align-items:center;
-  gap:32px;margin-top:6px;
-}
+.glass-controles{display:flex;justify-content:center;align-items:center;gap:32px;margin-top:6px}
 .ctrl-btn{
-  background:transparent;border:none;color:#fff;
-  font-size:1.6rem;cursor:pointer;padding:8px;
+  background:transparent;border:none;color:#fff;font-size:1.6rem;cursor:pointer;padding:8px;
   display:flex;align-items:center;justify-content:center;
   transition:transform .15s, opacity .15s;
-  filter:drop-shadow(0 3px 10px rgba(0,0,0,.7));
-  width:auto;height:auto;
+  filter:drop-shadow(0 3px 10px rgba(0,0,0,.7));width:auto;height:auto;
 }
 .ctrl-btn:active{transform:scale(.85);opacity:.7}
 .play-big{background:transparent;color:#fff;font-size:2rem;box-shadow:none;width:auto;height:auto;padding:8px}
@@ -201,52 +197,67 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 .play-big.loading i{animation:spinSlow 1s linear infinite}
 @keyframes spinSlow{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 
-/* BARRA DE PROGRESSO */
 .glass-progresso{padding:6px 4px 0}
 .progress-time{
   display:flex;justify-content:space-between;font-size:.68rem;font-weight:700;
   color:rgba(255,255,255,.85);font-variant-numeric:tabular-nums;margin-bottom:6px;
   text-shadow:0 1px 4px rgba(0,0,0,.4);
 }
-.progress-bar{
-  height:4px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden;
-  cursor:pointer;touch-action:none;transition:height .15s;
-}
+.progress-bar{height:4px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden;cursor:pointer;touch-action:none;transition:height .15s}
 .progress-bar:hover{height:6px}
 .progress-fill{height:100%;width:0%;background:#fff;border-radius:4px;transition:width .2s linear;pointer-events:none}
 
-/* ═══════════════════════════════════════════════════════════════
-   📺 TELA DE ANÚNCIOS
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ ANÚNCIOS ═══ */
 #telaAnuncios{
   position:fixed;inset:0;z-index:8;background:#000;
-  opacity:0;visibility:hidden;pointer-events:none;
-  transition:opacity .6s ease;
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s ease;
 }
 #telaAnuncios.ativa{opacity:1;visibility:visible;pointer-events:auto}
 .media-anuncios{position:absolute;inset:0;overflow:hidden}
-.media-anuncios video,.media-anuncios img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:0;transition:opacity 1.2s ease;
-}
+.media-anuncios video,.media-anuncios img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease}
 .media-anuncios .active{opacity:1;z-index:3}
 .media-anuncios .inactive{opacity:0;z-index:2}
 
-/* ═══════════════════════════════════════════════════════════════
-   ➕ BOTÃO FLUTUANTE (+) E MENU
-   ═══════════════════════════════════════════════════════════════ */
+#controlesAnuncio{
+  position:fixed;inset:0;z-index:9;display:none;
+  align-items:center;justify-content:center;flex-direction:column;gap:20px;
+  background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.4) 100%);
+  pointer-events:none;
+}
+#controlesAnuncio.visivel{display:flex;pointer-events:auto;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+#controlesAnuncio .btn-voltar{
+  position:absolute;bottom:calc(40px + var(--safe-bottom));left:50%;
+  transform:translateX(-50%);padding:14px 28px;
+  background:rgba(0,0,0,.75);border:2px solid rgba(255,255,255,.35);
+  border-radius:40px;color:#fff;font-family:'Rajdhani',sans-serif;
+  font-weight:800;font-size:.9rem;letter-spacing:2px;cursor:pointer;
+  display:flex;align-items:center;gap:10px;backdrop-filter:blur(12px);
+  text-transform:uppercase;
+}
+#controlesAnuncio .btn-voltar:active{transform:translateX(-50%) scale(.95);background:var(--cor-1)}
+
+#controlesAnuncio .btn-play-mini{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:70px;height:70px;border-radius:50%;
+  background:rgba(0,0,0,.65);border:2px solid rgba(255,255,255,.4);
+  color:#fff;font-size:1.6rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(12px);
+}
+#controlesAnuncio .btn-play-mini:active{transform:translate(-50%,-50%) scale(.9)}
+
+/* ═══ FAB (+) ═══ */
 .fab-container{
   position:fixed;bottom:calc(30px + var(--safe-bottom));right:22px;
   z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:8px;
   transition:opacity .6s ease;
 }
 .fab-container.escondido{opacity:0;pointer-events:none}
-
 .fab-main{
-  background:transparent;border:none;color:#fff;
-  font-size:2.6rem;font-weight:300;line-height:1;
-  cursor:pointer;padding:8px;
-  display:flex;align-items:center;justify-content:center;
+  background:transparent;border:none;color:#fff;font-size:2.6rem;font-weight:300;line-height:1;
+  cursor:pointer;padding:8px;display:flex;align-items:center;justify-content:center;
   text-shadow:0 2px 12px rgba(0,0,0,.7), 0 0 20px rgba(255,255,255,.3);
   transition:transform .2s, opacity .2s;
 }
@@ -255,8 +266,8 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 
 .fab-bemvindo{
   position:fixed;bottom:calc(100px + var(--safe-bottom));right:22px;z-index:51;
-  font-size:.7rem;font-weight:700;letter-spacing:.1em;color:#fff;
-  opacity:0;transition:opacity .5s;pointer-events:none;white-space:nowrap;
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;color:#fff;opacity:0;
+  transition:opacity .5s;pointer-events:none;white-space:nowrap;
   background:rgba(0,0,0,.85);padding:8px 14px;border-radius:20px;
   border:1px solid rgba(255,255,255,.3);
 }
@@ -266,12 +277,10 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
   background:rgba(10,10,20,.95);
   backdrop-filter:blur(30px) saturate(180%);
   -webkit-backdrop-filter:blur(30px) saturate(180%);
-  border-radius:20px;padding:8px;
-  display:none;flex-direction:column;gap:3px;
+  border-radius:20px;padding:8px;display:none;flex-direction:column;gap:3px;
   border:1px solid rgba(255,255,255,.15);
   max-height:70vh;overflow-y:auto;
-  box-shadow:0 10px 40px rgba(0,0,0,.8);
-  min-width:215px;
+  box-shadow:0 10px 40px rgba(0,0,0,.8);min-width:215px;
 }
 .fab-sub.open{display:flex}
 .fab-sub-btn{
@@ -284,16 +293,12 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 .fab-sub-btn .badge-fav{color:#f472b6;font-size:.85rem;font-weight:900;margin-left:auto}
 .fab-sub-btn i{width:20px;text-align:center;font-size:.9rem;opacity:.85}
 
-/* ═══════════════════════════════════════════════════════════════
-   ⚙️ MENU POPUP (⋮)
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ MENU ═══ */
 .menu-popup{
-  position:fixed;top:calc(78px + var(--safe-top));right:12px;
+  position:fixed;top:calc(20px + var(--safe-top));right:12px;
   background:rgba(15,15,25,.96);
-  backdrop-filter:blur(30px);
-  -webkit-backdrop-filter:blur(30px);
-  border-radius:24px;padding:14px;z-index:60;
-  display:none;flex-direction:column;gap:10px;
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  border-radius:24px;padding:14px;z-index:60;display:none;flex-direction:column;gap:10px;
   border:1px solid rgba(255,255,255,.15);
   min-width:280px;max-width:92vw;
   box-shadow:0 20px 60px rgba(0,0,0,.8);
@@ -320,9 +325,7 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 .menu-item:active{background:rgba(255,255,255,.1)}
 .menu-item i{width:20px;text-align:center;font-size:.9rem;color:var(--cor-3)}
 
-/* ═══════════════════════════════════════════════════════════════
-   🎸 MODAL DE GÊNEROS
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ GÊNEROS ═══ */
 .genres-modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.9);backdrop-filter:blur(30px);padding:70px 16px 20px;display:none;flex-direction:column}
 .genres-modal.open{display:flex}
 .genres-modal .header{text-align:center;margin-bottom:14px}
@@ -334,32 +337,18 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
   background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
   text-align:left;width:100%;overflow:hidden;transition:transform .15s;
 }
-.genre-card::before{
-  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
-  width:4px;height:50%;background:var(--c1,var(--cor-3));
-  border-radius:0 4px 4px 0;box-shadow:0 0 10px var(--c1,var(--cor-3));
-}
+.genre-card::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:50%;background:var(--c1,var(--cor-3));border-radius:0 4px 4px 0;box-shadow:0 0 10px var(--c1,var(--cor-3))}
 .genre-card:active{transform:scale(.96)}
 .genre-card .genre-name{font-size:.95rem;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:#fff}
 .genre-card.offline::after{content:'✓';position:absolute;top:6px;right:8px;background:#10b981;color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900}
-.close-genres{
-  width:100%;padding:14px;
-  background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
-  border:none;border-radius:25px;color:#fff;
-  font-size:.85rem;cursor:pointer;font-weight:900;
-  margin-top:12px;letter-spacing:3px;text-transform:uppercase;
-}
+.close-genres{width:100%;padding:14px;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;border-radius:25px;color:#fff;font-size:.85rem;cursor:pointer;font-weight:900;margin-top:12px;letter-spacing:3px;text-transform:uppercase}
 
-/* ═══════════════════════════════════════════════════════════════
-   ❤️ MODAIS (FAVORITAS / BOTTOM SHEETS)
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ MODAIS GERAIS ═══ */
 .fav-modal,.bottom-sheet{
   position:fixed;bottom:0;left:0;right:0;
   background:rgba(15,15,25,.97);
-  backdrop-filter:blur(30px);
-  -webkit-backdrop-filter:blur(30px);
-  border-radius:28px 28px 0 0;
-  padding:18px 16px 24px;
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  border-radius:28px 28px 0 0;padding:18px 16px 24px;
   transform:translateY(100%);transition:transform .4s;
   max-height:70vh;overflow:hidden;
   border-top:1px solid rgba(255,255,255,.15);
@@ -382,26 +371,15 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 .speed-btn{padding:8px 16px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;font-size:.78rem;font-weight:700;cursor:pointer}
 .speed-btn.active{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border-color:transparent}
 
-/* ═══════════════════════════════════════════════════════════════
-   🎨 MODAL DE TEMAS
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ TEMAS ═══ */
 #themeModal{position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);z-index:80;display:none;align-items:center;justify-content:center;padding:20px}
 #themeModal.active{display:flex}
-.theme-box{
-  background:rgba(15,15,25,.97);backdrop-filter:blur(40px);
-  border-radius:28px;padding:24px 20px;max-width:440px;width:100%;
-  border:1px solid rgba(255,255,255,.15);max-height:88vh;overflow-y:auto;
-}
+.theme-box{background:rgba(15,15,25,.97);backdrop-filter:blur(40px);border-radius:28px;padding:24px 20px;max-width:440px;width:100%;border:1px solid rgba(255,255,255,.15);max-height:88vh;overflow-y:auto}
 .theme-box h3{text-align:center;font-family:'Audiowide',sans-serif;font-size:1.1rem;color:#fff;letter-spacing:3px;margin-bottom:6px}
 .theme-box p{text-align:center;color:rgba(255,255,255,.55);font-size:.78rem;margin-bottom:18px;font-weight:600}
 .theme-section{font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin:14px 0 8px 4px}
 .theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
-.theme-card{
-  position:relative;border-radius:14px;cursor:pointer;padding:10px 4px;
-  border:2px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  transition:transform .15s, border-color .15s;min-height:78px;
-}
+.theme-card{position:relative;border-radius:14px;cursor:pointer;padding:10px 4px;border:2px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:transform .15s, border-color .15s;min-height:78px}
 .theme-card:active{transform:scale(.94)}
 .theme-card.ativo{border-color:#fff;background:rgba(255,255,255,.1)}
 .theme-card.ativo::after{content:'✓';position:absolute;top:4px;right:6px;background:#fff;color:#000;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:900}
@@ -409,145 +387,70 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 .theme-card .nome-tema{font-size:.62rem;font-weight:700;color:#fff;letter-spacing:.02em;text-transform:uppercase;text-align:center}
 .theme-close{width:100%;padding:13px;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;border-radius:25px;color:#fff;font-weight:900;font-size:.88rem;cursor:pointer;letter-spacing:2px;text-transform:uppercase;margin-top:14px}
 
-/* ═══════════════════════════════════════════════════════════════
-   🔍 MODAL DE BUSCA (NOVO!)
-   ═══════════════════════════════════════════════════════════════ */
-.search-modal{
-  position:fixed;inset:0;z-index:100002;
-  background:rgba(0,0,0,.95);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  display:none;align-items:center;justify-content:center;
-  padding:20px;padding-top:calc(20px + var(--safe-top));
-}
+/* ═══ BUSCA ═══ */
+.search-modal{position:fixed;inset:0;z-index:100002;background:rgba(0,0,0,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:20px;padding-top:calc(20px + var(--safe-top))}
 .search-modal.open{display:flex}
-.search-box{
-  background:linear-gradient(145deg,rgba(20,20,35,.98),rgba(10,10,20,.98));
-  border-radius:24px;padding:18px;width:100%;max-width:480px;
-  max-height:88vh;border:1px solid rgba(255,255,255,.15);
-  box-shadow:0 20px 60px rgba(0,0,0,.8);
-  display:flex;flex-direction:column;gap:14px;
-}
+.search-box{background:linear-gradient(145deg,rgba(20,20,35,.98),rgba(10,10,20,.98));border-radius:24px;padding:18px;width:100%;max-width:480px;max-height:88vh;border:1px solid rgba(255,255,255,.15);box-shadow:0 20px 60px rgba(0,0,0,.8);display:flex;flex-direction:column;gap:14px}
 .search-header{display:flex;gap:8px;align-items:center}
-#searchInput{
-  flex:1;padding:14px 18px;border-radius:30px;
-  border:2px solid rgba(255,255,255,.15);
-  background:rgba(255,255,255,.06);color:#fff;
-  font-size:1rem;outline:none;user-select:text;
-}
+#searchInput{flex:1;padding:14px 18px;border-radius:30px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;outline:none;user-select:text}
 #searchInput:focus{border-color:var(--cor-3);box-shadow:0 0 20px rgba(59,130,246,.4)}
-#searchCloseBtn{
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
-  border-radius:50%;color:#fff;width:44px;height:44px;
-  font-size:1.1rem;cursor:pointer;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-}
+#searchCloseBtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:50%;color:#fff;width:44px;height:44px;font-size:1.1rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 #searchCloseBtn:active{transform:scale(.9)}
 .search-filters{display:flex;gap:8px}
-.search-filters select{
-  flex:1;padding:12px 14px;border-radius:16px;
-  border:1px solid rgba(255,255,255,.15);
-  background:rgba(255,255,255,.06);color:#fff;
-  font-size:.82rem;font-weight:700;outline:none;cursor:pointer;
-}
+.search-filters select{flex:1;padding:12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:.82rem;font-weight:700;outline:none;cursor:pointer}
 .search-filters select option{background:#1a1a2e;color:#fff}
 .search-count{font-size:.72rem;color:rgba(255,255,255,.6);font-weight:700;text-align:center;letter-spacing:.05em;padding:4px 0}
 .search-results{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;max-height:50vh}
-.search-result-item{
-  padding:12px 14px;border-radius:14px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s;
-}
+.search-result-item{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s}
 .search-result-item:active{background:rgba(255,255,255,.12)}
-.search-result-item .icon{
-  width:38px;height:38px;border-radius:50%;
-  background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
-  display:flex;align-items:center;justify-content:center;
-  font-size:.9rem;color:#fff;flex-shrink:0;
-}
-.search-result-item .info{flex:1;min-width:0}
-.search-result-item .title{color:#fff;font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.search-result-item .artist{color:rgba(255,255,255,.6);font-size:.75rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-result-item .icon{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));display:flex;align-items:center;justify-content:center;font-size:.9rem;color:#fff;flex-shrink:0}
+.search-result-item .info{flex:1 1 0;min-width:0;overflow:hidden;display:flex;flex-direction:column}
+.search-result-item .title{color:#fff;font-weight:700;font-size:.9rem;display:block;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-result-item .artist{color:rgba(255,255,255,.6);font-size:.75rem;display:block;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .search-result-item .genero{font-size:.65rem;color:var(--cor-3);font-weight:800;padding:4px 10px;background:rgba(59,130,246,.15);border-radius:12px;flex-shrink:0}
 .search-empty{text-align:center;padding:30px 20px;color:rgba(255,255,255,.5);font-size:.85rem}
 .search-empty i{font-size:3rem;opacity:.3;display:block;margin-bottom:12px}
 
-/* ═══════════════════════════════════════════════════════════════
-   ❤️ MODAL RÁDIO FAVORITAS (NOVO!)
-   ═══════════════════════════════════════════════════════════════ */
-.fav-radio-modal{
-  position:fixed;inset:0;z-index:100002;
-  background:rgba(0,0,0,.95);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  display:none;align-items:center;justify-content:center;padding:20px;
-}
+/* ═══ RÁDIO FAVORITAS ═══ */
+.fav-radio-modal{position:fixed;inset:0;z-index:100002;background:rgba(0,0,0,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:20px}
 .fav-radio-modal.open{display:flex}
-.fav-radio-box{
-  background:linear-gradient(145deg,rgba(30,20,40,.98),rgba(15,10,25,.98));
-  border-radius:28px;padding:28px 24px;
-  max-width:380px;width:100%;
-  border:2px solid rgba(244,114,182,.4);
-  box-shadow:0 20px 60px rgba(0,0,0,.8);
-  text-align:center;
-}
+.fav-radio-box{background:linear-gradient(145deg,rgba(30,20,40,.98),rgba(15,10,25,.98));border-radius:28px;padding:28px 24px;max-width:380px;width:100%;border:2px solid rgba(244,114,182,.4);box-shadow:0 20px 60px rgba(0,0,0,.8);text-align:center}
 .fav-radio-icon{font-size:3rem;margin-bottom:12px;animation:heartBeat 1.5s ease-in-out infinite}
 .fav-radio-header h3{font-family:'Audiowide',sans-serif;font-size:1.05rem;color:#fff;letter-spacing:3px;margin-bottom:6px;font-weight:900}
 .fav-radio-header p{font-size:.78rem;color:rgba(255,255,255,.6);margin-bottom:20px;font-weight:600}
-.fav-radio-info{
-  background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.3);
-  border-radius:16px;padding:16px;color:#fff;font-weight:800;
-  font-size:.9rem;margin-bottom:20px;letter-spacing:.5px;
-}
+.fav-radio-info{background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.3);border-radius:16px;padding:16px;color:#fff;font-weight:800;font-size:.9rem;margin-bottom:20px;letter-spacing:.5px}
 .fav-radio-actions{display:flex;flex-direction:column;gap:10px}
-.fav-radio-btn{
-  padding:14px;border-radius:25px;border:none;
-  font-weight:900;font-size:.9rem;cursor:pointer;letter-spacing:2px;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:transform .15s;
-}
+.fav-radio-btn{padding:14px;border-radius:25px;border:none;font-weight:900;font-size:.9rem;cursor:pointer;letter-spacing:2px;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s}
 .fav-radio-btn:active{transform:scale(.95)}
 .fav-radio-btn.tocar{background:linear-gradient(135deg,#f472b6,#a855f7);color:#fff}
 .fav-radio-btn.embaralhar{background:linear-gradient(135deg,#8b5cf6,#6366f1);color:#fff}
 .fav-radio-btn.cancelar{background:rgba(255,255,255,.08);color:#aaa;border:1px solid rgba(255,255,255,.15)}
 
-/* ═══════════════════════════════════════════════════════════════
-   🎯 MODO TV — BOTÃO SAIR (NOVO!)
-   ═══════════════════════════════════════════════════════════════ */
-body.modo-tv .topo,
+/* ═══ MODO TV ═══ */
+body.modo-tv .info-topo,
 body.modo-tv .painel-baixo,
 body.modo-tv .fab-container,
 body.modo-tv .menu-popup{display:none !important}
 
 #btnSairModoTV{
-  position:fixed;top:calc(20px + var(--safe-top));right:20px;
-  z-index:99999;width:44px;height:44px;
-  background:rgba(0,0,0,.7);
-  border:2px solid rgba(255,255,255,.35);
-  border-radius:50%;color:#fff;font-size:1.2rem;
-  cursor:pointer;display:none;align-items:center;justify-content:center;
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  position:fixed;top:calc(20px + var(--safe-top));right:20px;z-index:99999;
+  width:44px;height:44px;background:rgba(0,0,0,.7);
+  border:2px solid rgba(255,255,255,.35);border-radius:50%;
+  color:#fff;font-size:1.2rem;cursor:pointer;display:none;
+  align-items:center;justify-content:center;
+  backdrop-filter:blur(10px);
 }
 body.modo-tv #btnSairModoTV{display:flex}
 #btnSairModoTV:active{transform:scale(.88);background:rgba(239,68,68,.9)}
 
-/* ═══════════════════════════════════════════════════════════════
-   🔔 NOTIFICAÇÕES
-   ═══════════════════════════════════════════════════════════════ */
-.notification{
-  position:fixed;top:calc(120px + var(--safe-top));left:50%;transform:translateX(-50%);
-  background:rgba(15,15,20,.95);backdrop-filter:blur(20px);color:#fff;
-  padding:10px 18px;border-radius:20px;font-size:.78rem;z-index:100003;
-  opacity:0;transition:opacity .3s;pointer-events:none;
-  border:1px solid rgba(255,255,255,.15);font-weight:700;
-  box-shadow:0 10px 30px rgba(0,0,0,.5);
-}
+/* ═══ NOTIFICAÇÕES ═══ */
+.notification{position:fixed;top:calc(120px + var(--safe-top));left:50%;transform:translateX(-50%);background:rgba(15,15,20,.95);backdrop-filter:blur(20px);color:#fff;padding:10px 18px;border-radius:20px;font-size:.78rem;z-index:100003;opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid rgba(255,255,255,.15);font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .notification.show{opacity:1}
 #loadingOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;align-items:center;justify-content:center;color:#fff;font-size:2rem;backdrop-filter:blur(10px)}
 #loadingOverlay.active{display:flex}
 #loadingOverlay i{animation:spinSlow 1s linear infinite}
 
-/* ═══════════════════════════════════════════════════════════════
-   🔒 BLOQUEIO POR SENHA
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ BLOQUEIO ═══ */
 #blockOverlay{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:10000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
 #blockOverlay.active{display:flex}
 .block-content{max-width:420px;width:100%}
@@ -561,9 +464,7 @@ body.modo-tv #btnSairModoTV{display:flex}
 .fp-text{color:rgba(255,255,255,.6);font-size:.62rem;word-break:break-all;font-family:monospace;flex:1}
 .btn-copiar-fp{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;padding:8px 14px;border-radius:12px;font-size:.65rem;cursor:pointer;font-weight:700}
 
-/* ═══════════════════════════════════════════════════════════════
-   👑 PAINEL ADMIN
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ ADMIN ═══ */
 #adminPanel{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,10,.98);border-radius:20px;padding:20px;z-index:99999;width:92%;max-width:460px;border:2px solid #fbbf24;max-height:90vh;overflow-y:auto}
 #adminPanel.open{display:block}
 #adminPanel h2{text-align:center;font-size:1.15rem;color:#fbbf24;margin-bottom:12px;font-weight:900}
@@ -578,9 +479,7 @@ body.modo-tv #btnSairModoTV{display:flex}
 #adminPanel .row{display:flex;gap:6px;margin-top:6px}
 #adminPanel .btn-copiar{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px;border-radius:20px;cursor:pointer;font-size:.72rem;font-weight:700}
 
-/* ═══════════════════════════════════════════════════════════════
-   💬 DIÁLOGOS E OUTROS MODAIS
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ DIÁLOGOS ═══ */
 .vdb-dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(14px);z-index:100004;display:none;align-items:center;justify-content:center;padding:20px}
 .vdb-dialog-overlay.active{display:flex}
 .vdb-dialog{background:rgba(15,15,25,.98);border-radius:24px;padding:24px 20px;max-width:400px;width:100%;border:1px solid rgba(255,255,255,.15)}
@@ -620,17 +519,8 @@ body.modo-tv #btnSairModoTV{display:flex}
 .btn-feedback{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;padding:12px;border-radius:25px;color:#fff;font-weight:900;cursor:pointer;width:100%;margin-top:10px}
 #closeFeedbackBtn{background:transparent;border:none;color:#888;padding:10px;cursor:pointer;font-size:.82rem;font-weight:700}
 
-/* ═══════════════════════════════════════════════════════════════
-   📱 INSTALAÇÃO PWA
-   ═══════════════════════════════════════════════════════════════ */
-#btnInstalarFixo{
-  position:fixed;bottom:calc(30px + var(--safe-bottom));right:22px;
-  z-index:999999;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
-  color:#fff;border:none;border-radius:32px;padding:13px 22px;
-  font-weight:900;font-size:.78rem;letter-spacing:.05em;
-  cursor:pointer;display:none;align-items:center;gap:8px;
-  text-transform:uppercase;box-shadow:0 8px 24px rgba(0,0,0,.5);
-}
+/* ═══ PWA ═══ */
+#btnInstalarFixo{position:fixed;bottom:calc(30px + var(--safe-bottom));right:22px;z-index:999999;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));color:#fff;border:none;border-radius:32px;padding:13px 22px;font-weight:900;font-size:.78rem;letter-spacing:.05em;cursor:pointer;display:none;align-items:center;gap:8px;text-transform:uppercase;box-shadow:0 8px 24px rgba(0,0,0,.5)}
 #btnInstalarFixo:active{transform:scale(.95)}
 #instrucoesInstalar,#pwaInstallModal{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:1000002;display:none;align-items:center;justify-content:center;padding:20px}
 #instrucoesInstalar.active,#pwaInstallModal.active{display:flex}
@@ -643,14 +533,8 @@ body.modo-tv #btnSairModoTV{display:flex}
 .pwa-sub{color:rgba(255,255,255,.7);font-size:.82rem;margin-bottom:16px;font-weight:700}
 .pwa-btn-depois{background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:30px;padding:12px;width:100%;color:#aaa;font-size:.78rem;cursor:pointer;margin-top:10px;font-weight:700}
 
-/* ═══════════════════════════════════════════════════════════════
-   🎬 BANNER PROPAGANDA
-   ═══════════════════════════════════════════════════════════════ */
-.banner-propaganda-full{
-  position:fixed;inset:0;z-index:100005;background:#000;
-  display:none;align-items:center;justify-content:center;
-  padding:24px;opacity:0;transition:opacity .5s;overflow-y:auto;
-}
+/* ═══ BANNER PROPAGANDA ═══ */
+.banner-propaganda-full{position:fixed;inset:0;z-index:100005;background:#000;display:none;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .5s;overflow-y:auto}
 .banner-propaganda-full.visivel{display:flex;opacity:1}
 .prop-full-content{position:relative;text-align:center;max-width:360px;width:100%}
 .prop-full-fechar{position:fixed;top:20px;right:20px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:1.15rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
@@ -663,9 +547,7 @@ body.modo-tv #btnSairModoTV{display:flex}
 .prop-full-beneficio{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#fff;font-weight:700;margin-bottom:8px;font-size:.82rem}
 .prop-full-cta{background:#25d366;border:none;border-radius:40px;padding:18px 32px;width:100%;font-family:'Audiowide',sans-serif;font-size:1rem;color:#fff;font-weight:900;letter-spacing:2px;margin-top:16px;cursor:pointer}
 
-/* ═══════════════════════════════════════════════════════════════
-   💾 DOWNLOAD OFFLINE
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══ DOWNLOAD OFFLINE ═══ */
 .download-modal{position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);z-index:100010;display:none;align-items:center;justify-content:center;padding:20px}
 .download-modal.active{display:flex}
 .download-box{background:rgba(15,15,25,.98);border-radius:28px;padding:28px 24px;max-width:420px;width:100%;border:1px solid rgba(255,255,255,.15);text-align:center}
@@ -697,22 +579,32 @@ body.modo-tv #btnSairModoTV{display:flex}
 
 #dicaCliques{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fbbf24;padding:8px 16px;border-radius:20px;font-size:.72rem;font-weight:800;z-index:99999;border:1px solid #fbbf24;pointer-events:none;letter-spacing:.05em;opacity:0;transition:opacity .3s}
 
-/* ═══════════════════════════════════════════════════════════════
-   📱 RESPONSIVO (TELAS PEQUENAS)
-   ═══════════════════════════════════════════════════════════════ */
+/* ✅ BEM-VINDO */
+.bem-vindo{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Audiowide',sans-serif;font-size:1.3rem;letter-spacing:5px;color:#fff;
+  text-shadow:0 0 20px rgba(255,255,255,.8), 0 0 40px var(--cor-3);
+  z-index:40;pointer-events:none;opacity:0;text-align:center;white-space:nowrap;
+}
+.bem-vindo.show{animation:bemVindoAnim 4s ease-out forwards}
+@keyframes bemVindoAnim{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}
+  20%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}
+  40%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  80%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.15)}
+}
+
 @media(max-width:480px){
   .glass-musica-nome{font-size:1.3rem}
   .ctrl-btn{font-size:1.4rem}
   .play-big{font-size:1.8rem}
-  .logo-texto{font-size:.82rem;letter-spacing:3px}
+  .titulo-grande{font-size:1.4rem;letter-spacing:4px}
   .letreiro{font-size:.7rem}
 }
 </style>
 </head><body>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     ⏳ TELA DE CARREGAMENTO
-     ═══════════════════════════════════════════════════════════════ -->
 <div id="loadingScreen">
   <div class="loading-logo-wrapper"><img src="favicon30.png" alt="VDB" class="loading-logo"></div>
   <span class="loading-text">VAI DE BOA!</span>
@@ -720,32 +612,26 @@ body.modo-tv #btnSairModoTV{display:flex}
   <div class="loading-progress-container"><div class="loading-progress-fill" id="loadingProgressFill"></div></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     🎬 PLAYER — TELA PRINCIPAL
-     ═══════════════════════════════════════════════════════════════ -->
 <div id="playerContainer">
 
   <div id="telaPrincipal">
     <div class="media-container" id="mediaContainer"></div>
 
-    <!-- TOPO -->
-    <div class="topo" id="topBar">
-      <div class="linha-1">
-        <span class="logo-texto" id="logoTexto">VAI DE BOA!</span>
-        <div class="right-side">
-          <span class="timer-texto" id="timerLib">24:00:00</span>
-          <button class="menu-btn-limpo" id="menuButton"><i class="fas fa-ellipsis-v"></i></button>
-        </div>
+    <div class="info-topo" id="infoTopo">
+      <div class="topo-linha">
+        <span class="timer-texto" id="timerLib">24:00:00</span>
+        <button class="menu-btn-limpo" id="menuButton"><i class="fas fa-ellipsis-v"></i></button>
       </div>
-      <div class="linha-2" id="letreiroClick">
+      <div class="letreiro-wrap" id="letreiroClick">
         <i class="fas fa-magnifying-glass"></i>
         <p class="letreiro" id="scrollText">🎵 VAI DE BOA!</p>
       </div>
+      <div class="titulo-grande" id="tituloGrande">VAI DE BOA!</div>
+      <div class="genero-atual" id="generoAtual">🎵 BÔNUS</div>
     </div>
 
     <div class="corpo-tela"></div>
 
-    <!-- PAINEL DE BAIXO -->
     <div class="painel-baixo" id="bottomControls">
       <button class="btn-coracao-topo" id="btnCoracaoInfo" aria-label="Favoritar">
         <i class="far fa-heart"></i>
@@ -767,12 +653,16 @@ body.modo-tv #btnSairModoTV{display:flex}
     </div>
   </div>
 
-  <!-- TELA ANÚNCIOS -->
   <div id="telaAnuncios">
     <div class="media-anuncios" id="mediaAnuncios"></div>
+    <div id="controlesAnuncio">
+      <button class="btn-play-mini" id="btnPlayAnuncio"><i class="fas fa-play"></i></button>
+      <button class="btn-voltar" id="btnVoltarPrincipal">
+        <i class="fas fa-arrow-left"></i> VOLTAR
+      </button>
+    </div>
   </div>
 
-  <!-- FAB (➕) -->
   <div class="fab-container" id="fabContainer">
     <div class="fab-sub" id="fabSub">
       <button class="fab-sub-btn" id="fabBuscar"><i class="fas fa-search" style="color:#22d3ee"></i>Buscar Música</button>
@@ -796,7 +686,6 @@ body.modo-tv #btnSairModoTV{display:flex}
     <div class="fab-bemvindo" id="fabBemVindo">Bem-vindo!</div>
   </div>
 
-  <!-- MENU (⋮) -->
   <div class="menu-popup" id="menuPopup">
     <div class="menu-header">
       <span class="titulo">⚙️ OPÇÕES</span>
@@ -833,9 +722,6 @@ body.modo-tv #btnSairModoTV{display:flex}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     🔒 BLOQUEIO POR SENHA
-     ═══════════════════════════════════════════════════════════════ -->
 <div id="blockOverlay" class="active">
   <div class="block-content">
     <img src="favicon30.png" alt="VDB" style="width:80px;border-radius:50%;margin-bottom:10px">
@@ -849,9 +735,6 @@ body.modo-tv #btnSairModoTV{display:flex}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     👑 PAINEL ADMIN
-     ═══════════════════════════════════════════════════════════════ -->
 <div id="adminPanel">
   <button id="adminCloseTopBtn" style="position:absolute;top:10px;right:14px;background:transparent;border:none;color:#888;font-size:1.3rem;cursor:pointer">✕</button>
   <h2>👑 GERENCIADOR DE SENHAS</h2>
@@ -876,9 +759,6 @@ body.modo-tv #btnSairModoTV{display:flex}
   <button class="btn-fechar" id="adminCloseBtn" style="background:rgba(255,255,255,.06);border:none;padding:12px;border-radius:20px;color:#aaa;cursor:pointer;width:100%;margin-top:10px;font-weight:900">✕ Fechar Painel</button>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     🎨 MODAL DE TEMAS
-     ═══════════════════════════════════════════════════════════════ -->
 <div id="themeModal">
   <div class="theme-box">
     <h3>🎨 Cores do App</h3>
@@ -891,9 +771,6 @@ body.modo-tv #btnSairModoTV{display:flex}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     🔍 MODAL DE BUSCA
-     ═══════════════════════════════════════════════════════════════ -->
 <div id="searchModal" class="search-modal">
   <div class="search-box">
     <div class="search-header">
@@ -901,9 +778,7 @@ body.modo-tv #btnSairModoTV{display:flex}
       <button id="searchCloseBtn"><i class="fas fa-times"></i></button>
     </div>
     <div class="search-filters">
-      <select id="searchGenero">
-        <option value="">🎸 Todos os gêneros</option>
-      </select>
+      <select id="searchGenero"><option value="">🎸 Todos os gêneros</option></select>
       <select id="searchOrdem">
         <option value="relevancia">✨ Relevância</option>
         <option value="az">🔤 A-Z</option>
@@ -916,9 +791,6 @@ body.modo-tv #btnSairModoTV{display:flex}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     ❤️ MODAL RÁDIO FAVORITAS
-     ═══════════════════════════════════════════════════════════════ -->
 <div id="favRadioModal" class="fav-radio-modal">
   <div class="fav-radio-box">
     <div class="fav-radio-header">
@@ -928,40 +800,25 @@ body.modo-tv #btnSairModoTV{display:flex}
     </div>
     <div class="fav-radio-info" id="favRadioInfo">Carregando...</div>
     <div class="fav-radio-actions">
-      <button class="fav-radio-btn tocar" id="favRadioTocar">
-        <i class="fas fa-play"></i> TOCAR AGORA
-      </button>
-      <button class="fav-radio-btn embaralhar" id="favRadioEmbaralhar">
-        <i class="fas fa-shuffle"></i> EMBARALHAR
-      </button>
-      <button class="fav-radio-btn cancelar" id="favRadioFechar">
-        <i class="fas fa-times"></i> FECHAR
-      </button>
+      <button class="fav-radio-btn tocar" id="favRadioTocar"><i class="fas fa-play"></i> TOCAR AGORA</button>
+      <button class="fav-radio-btn embaralhar" id="favRadioEmbaralhar"><i class="fas fa-shuffle"></i> EMBARALHAR</button>
+      <button class="fav-radio-btn cancelar" id="favRadioFechar"><i class="fas fa-times"></i> FECHAR</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     🎸 MODAL DE GÊNEROS
-     ═══════════════════════════════════════════════════════════════ -->
 <div class="genres-modal" id="genresModal">
   <div class="header"><div class="titulo">🎸 ESTILOS MUSICAIS</div></div>
   <div class="genres-grid" id="genresGrid"></div>
   <button class="close-genres" id="closeGenresBtn">✕ FECHAR</button>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     ❤️ MODAL FAVORITAS
-     ═══════════════════════════════════════════════════════════════ -->
 <div class="fav-modal" id="favModal">
   <h3>❤️ SUAS FAVORITAS</h3>
   <div class="fav-list-modal" id="favListModal"></div>
   <button class="close-fav" id="closeFavBtn">FECHAR</button>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     📋 BOTTOM SHEETS (FILA, RECENTES, VELOCIDADE, SLEEP)
-     ═══════════════════════════════════════════════════════════════ -->
 <div class="bottom-sheet" id="queueSheet">
   <h3>🎵 PRÓXIMAS NA FILA</h3>
   <div id="queueList" style="max-height:50vh;overflow-y:auto"></div>
@@ -996,9 +853,6 @@ body.modo-tv #btnSairModoTV{display:flex}
   <button class="sheet-close" data-close="sleepSheet">✕ FECHAR</button>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     📱 MODAIS PWA / INSTALAÇÃO
-     ═══════════════════════════════════════════════════════════════ -->
 <button id="btnInstalarFixo"><i class="fas fa-download"></i> INSTALAR APP</button>
 
 <div id="instrucoesInstalar">
@@ -1031,9 +885,6 @@ body.modo-tv #btnSairModoTV{display:flex}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     📖 TUTORIAL / FEEDBACK / QR CODE
-     ═══════════════════════════════════════════════════════════════ -->
 <div class="tutorial-modal" id="tutorialModal">
   <div class="tutorial-box">
     <div class="tutorial-header">
@@ -1042,9 +893,9 @@ body.modo-tv #btnSairModoTV{display:flex}
     </div>
     <div class="tutorial-item"><div class="icon-tut">🎵</div><div><div class="tt">Tocar música</div><div class="td">Toque no ▶️ grande pra tocar.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">❤️</div><div><div class="tt">Favoritar</div><div class="td">Toque no coração.</div></div></div>
-    <div class="tutorial-item"><div class="icon-tut">🔍</div><div><div class="tt">Buscar música</div><div class="td">Toque no letreiro (topo) ou em ➕ → Buscar.</div></div></div>
+    <div class="tutorial-item"><div class="icon-tut">🔍</div><div><div class="tt">Buscar</div><div class="td">Toque no letreiro ou em ➕ → Buscar.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">🎨</div><div><div class="tt">Mudar cor</div><div class="td">Toque em ➕ → 🎨 Cores do App.</div></div></div>
-    <div class="tutorial-item"><div class="icon-tut">📺</div><div><div class="tt">Modo TV</div><div class="td">Toque em ➕ → 📺 Modo TV. Use em TVs e PCs grandes.</div></div></div>
+    <div class="tutorial-item"><div class="icon-tut">📺</div><div><div class="tt">Modo TV</div><div class="td">Toque em ➕ → 📺 Modo TV. Use em TVs e PCs.</div></div></div>
     <button class="tutorial-btn-fechar" id="closeTutorialBtn">ENTENDI ✅</button>
   </div>
 </div>
@@ -1083,9 +934,6 @@ body.modo-tv #btnSairModoTV{display:flex}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     📢 BANNER PROPAGANDA
-     ═══════════════════════════════════════════════════════════════ -->
 <div class="banner-propaganda-full" id="bannerPropagandaFull">
   <button class="prop-full-fechar" id="propFullFecharBtn">✕</button>
   <div class="prop-full-content">
@@ -1103,9 +951,6 @@ body.modo-tv #btnSairModoTV{display:flex}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     💾 DOWNLOAD OFFLINE
-     ═══════════════════════════════════════════════════════════════ -->
 <div class="download-modal" id="downloadModal">
   <div class="download-box">
     <div class="download-header">
@@ -1113,13 +958,8 @@ body.modo-tv #btnSairModoTV{display:flex}
       <div class="download-titulo" id="downloadTitulo">BAIXAR OFFLINE</div>
       <div class="download-sub" id="downloadSub">Preparando...</div>
     </div>
-    <div class="download-progress-bar">
-      <div class="download-progress-fill" id="downloadProgressFill"></div>
-    </div>
-    <div class="download-info">
-      <span id="downloadContador">0 / 0</span>
-      <span id="downloadAtual"></span>
-    </div>
+    <div class="download-progress-bar"><div class="download-progress-fill" id="downloadProgressFill"></div></div>
+    <div class="download-info"><span id="downloadContador">0 / 0</span><span id="downloadAtual"></span></div>
     <div class="download-btns">
       <button class="download-btn cancel" id="downloadCancelBtn">🛑 CANCELAR</button>
       <button class="download-btn close" id="downloadCloseBtn" style="display:none">✕ FECHAR</button>
@@ -1137,9 +977,7 @@ body.modo-tv #btnSairModoTV{display:flex}
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     🔔 AVISOS E ÁUDIOS INVISÍVEIS
-     ═══════════════════════════════════════════════════════════════ -->
+<div class="bem-vindo" id="bemVindo">SEJA BEM-VINDO! 🎵</div>
 <div class="notification" id="notification"></div>
 <div id="loadingOverlay"><i class="fas fa-spinner fa-spin"></i></div>
 <audio id="musicPlayer" preload="none"></audio>
@@ -1150,9 +988,6 @@ body.modo-tv #btnSairModoTV{display:flex}
 (function(){
 'use strict';
 
-/* ═══════════════════════════════════════════════════════════════
-   ⚙️ CONFIGURAÇÕES DO APP
-   ═══════════════════════════════════════════════════════════════ */
 const CONFIG = {
   WHATSAPP: '5512988461978',
   _SALT: 'vdb_music_2024_x9k7',
@@ -1160,21 +995,20 @@ const CONFIG = {
   TEMPO_TESTE_SEGUNDOS: 86400,
   PRECO: 'R$ 39,90',
   LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
-  APP_VERSION: 'v47',
+  APP_VERSION: 'v49',
   LOADING_DURACAO_MS: 3500,
   PROPAGANDA_INTERVALO_MS: 120000,
   PWA_INSTALL_DELAY_MS: 30000,
   PWA_INSTALL_INTERVALO_HORAS: 6,
   CARD_DURACAO_MS: 30000,
   MIDIA_DURACAO_MS: 30000,
-  MIDIA_MAX_SEGURANCA_MS: 90000
+  MIDIA_MAX_SEGURANCA_MS: 90000,
+  CICLO_PRINCIPAL_MS: 30000,
+  CICLO_ANUNCIO_MS: 20000
 };
 
 const CACHE_OFFLINE_CONFIG = { ativado: true, maxMusicas: 500, maxBytesPorMusica: 8 * 1024 * 1024 };
 
-/* ═══════════════════════════════════════════════════════════════
-   🎨 TEMAS DE CORES
-   ═══════════════════════════════════════════════════════════════ */
 const TEMAS = {
   azul:      {nome:'Azul',      c1:'#2563eb', c2:'#1e40af', c3:'#3b82f6', grupo:'modernas'},
   roxo:      {nome:'Roxo',      c1:'#7c3aed', c2:'#5b21b6', c3:'#a855f7', grupo:'modernas'},
@@ -1202,9 +1036,6 @@ const TEMAS = {
   amarelo:   {nome:'Amarelo',   c1:'#eab308', c2:'#ca8a04', c3:'#facc15', grupo:'classicas'}
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   🎨 CORES DOS GÊNEROS
-   ═══════════════════════════════════════════════════════════════ */
 const GENRE_COLORS = {
   'BÔNUS':{c1:'#22d3ee'},'POP/MIX':{c1:'#60a5fa'},'MPB':{c1:'#2dd4bf'},
   'SERTANEJO':{c1:'#fbbf24'},'ROMÂNTICA':{c1:'#f472b6'},'FLASHBACK':{c1:'#a855f7'},
@@ -1219,9 +1050,6 @@ const GENRE_COLORS = {
 };
 const COR_PADRAO = {c1:'#22d3ee'};
 
-/* ═══════════════════════════════════════════════════════════════
-   📻 RÁDIO VDB (POR PERÍODO)
-   ═══════════════════════════════════════════════════════════════ */
 const RADIO_CONFIG = {
   madrugada:{nome:'VDB MADRUGADA',generos:['MODÃO SERTANEJO','MODA RAIZ']},
   manha:{nome:'VDB MANHÃ',generos:['FORRÓ','SERTANEJO','PAGODE']},
@@ -1229,9 +1057,6 @@ const RADIO_CONFIG = {
   noite:{nome:'VDB NOITE',generos:['SERTANEJO','PAGODE','FORRÓ']}
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   🌐 URLS DOS GÊNEROS
-   ═══════════════════════════════════════════════════════════════ */
 const GENRE_URLS = {
   'BÔNUS':'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json',
   'FLASHBACK':'https://raw.githubusercontent.com/radiolojasjc-hub/flashbacktop/refs/heads/main/flashback.json',
@@ -1271,9 +1096,6 @@ Object.keys(GENRE_URLS).forEach(g => {
   GENRE_REPOS[g] = m ? m[1] + '/' + m[2] : 'radiolojasjc-hub/play12';
 });
 
-/* ═══════════════════════════════════════════════════════════════
-   🎬 MÍDIAS (VÍDEOS DE FUNDO)
-   ═══════════════════════════════════════════════════════════════ */
 const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
 const MIDIAS_ANUNCIO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/modotv.json';
 const MIDIAS_TV_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/modotv.json';
@@ -1281,7 +1103,9 @@ const MIDIAS_TV_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/ra
 const MIDIAS_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/mc1.mp4'},
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/mc2.mp4'},
-  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'},
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'},
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/lan.mp4'}
 ];
 
 const MIDIAS_ANUNCIO_FALLBACK = [
@@ -1295,35 +1119,16 @@ const MIDIAS_TV_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/tvbob.mp4'}
 ];
 
-/* ═══════════════════════════════════════════════════════════════
-   🛠️ FUNÇÕES UTILITÁRIAS
-   ═══════════════════════════════════════════════════════════════ */
 const $ = id => document.getElementById(id);
 const now = () => Date.now();
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const fmt = s => { if(!s||isNaN(s))return '0:00'; const m=Math.floor(s/60); const sg=Math.floor(s%60); return m+':'+(sg<10?'0':'')+sg; };
 const vibrar = (padrao=15) => { try{ if(!navigator.vibrate) return; navigator.vibrate(padrao); }catch(e){} };
-
-function fmtTempo(s){
-  if(s<0)s=0;s=Math.floor(s);
-  const d=Math.floor(s/86400),h=Math.floor((s%86400)/3600);
-  const m=Math.floor((s%3600)/60),sg=Math.floor(s%60);
-  if(d>0)return d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
-  if(h>0)return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
-  return String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
-}
+function fmtTempo(s){if(s<0)s=0;s=Math.floor(s);const d=Math.floor(s/86400),h=Math.floor((s%86400)/3600);const m=Math.floor((s%3600)/60),sg=Math.floor(s%60);if(d>0)return d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');if(h>0)return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');return String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');}
 function fmtBytes(b){if(!b||b<1024)return (b||0)+' B';if(b<1024*1024)return (b/1024).toFixed(1)+' KB';if(b<1024*1024*1024)return (b/1024/1024).toFixed(1)+' MB';return (b/1024/1024/1024).toFixed(2)+' GB';}
 function sanitize(t){if(!t)return '';const d=document.createElement('div');d.textContent=t;return d.textContent;}
-function shuffle(arr){
-  const x=[...arr];
-  const recentes=appState.recentes||new Set();
-  const filtrado=x.filter(m=>!recentes.has(m.id));
-  const base=filtrado.length>5?filtrado:x;
-  for(let i=base.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[base[i],base[j]]=[base[j],base[i]];}
-  return base;
-}
+function shuffle(arr){const x=[...arr];const recentes=appState.recentes||new Set();const filtrado=x.filter(m=>!recentes.has(m.id));const base=filtrado.length>5?filtrado:x;for(let i=base.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[base[i],base[j]]=[base[j],base[i]];}return base;}
 function copiarTexto(t,msg){if(!t)return notif('⚠️ Nada!',1500,'warning');navigator.clipboard.writeText(t).then(()=>notif(msg||'📋 Copiado!',1500,'success')).catch(()=>{const i=document.createElement('input');i.value=t;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();notif(msg||'📋 Copiado!',1500,'success');});}
-
 function aplicarTemaCor(nomeTema){
   const t = TEMAS[nomeTema] || TEMAS.azul;
   const root = document.documentElement;
@@ -1336,17 +1141,12 @@ function aplicarTemaCor(nomeTema){
   if(metaTheme) metaTheme.setAttribute('content', t.c1);
   try{ localStorage.setItem('vdb_tema_cor', nomeTema); }catch(e){}
 }
-
 function getPeriodoAtual(){const h=new Date().getHours();if(h>=0&&h<6)return 'madrugada';if(h>=6&&h<12)return 'manha';if(h>=12&&h<18)return 'tarde';return 'noite';}
 function ehIOS(){return /iPhone|iPad|iPod/i.test(navigator.userAgent);}
 function ehMobile(){return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);}
-
 async function sha256(texto){const enc=new TextEncoder().encode(texto);const buf=await crypto.subtle.digest('SHA-256',enc);return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
 async function verificarSenhaPadrao(senha){if(!senha)return false;const hash=await sha256(CONFIG._SALT+senha);return hash===CONFIG._HASH_MASTER;}
 
-/* ═══════════════════════════════════════════════════════════════
-   ⏰ TIMER DE TESTE
-   ═══════════════════════════════════════════════════════════════ */
 const SecureTimer = {
   CHAVE_DESBLOQ:'vdb_desbloq', CHAVE_BLOQ_PERM:'vdb_bloq_perm',
   async verificar(){
@@ -1361,12 +1161,9 @@ const SecureTimer = {
   async desbloquearPermanente(){localStorage.setItem(this.CHAVE_DESBLOQ,'true');localStorage.removeItem(this.CHAVE_BLOQ_PERM);}
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   💾 ESTADO GLOBAL DO APP
-   ═══════════════════════════════════════════════════════════════ */
 class AppState{
   constructor(){
-    this.key='vdb_state_v47';this.data=this._load();
+    this.key='vdb_state_v49';this.data=this._load();
     this.favorites=this.data.favorites||[];this.fingerprint=this._getFP();
     this.desbloqueado=this.data.desbloqueado||false;
     this.modoAtual=this.data.modoAtual||'BÔNUS';
@@ -1389,9 +1186,6 @@ class AppState{
 }
 const appState=new AppState();
 
-/* ═══════════════════════════════════════════════════════════════
-   🗂️ CACHE DE GÊNEROS (LOCALSTORAGE)
-   ═══════════════════════════════════════════════════════════════ */
 class CacheManager{
   constructor(maxBytes=5*1024*1024){this.maxBytes=maxBytes;this.prefix='cache_';}
   getKey(g){return this.prefix+CONFIG.APP_VERSION+'_'+g;}
@@ -1412,9 +1206,6 @@ class CacheManager{
 }
 const cacheManager=new CacheManager();
 
-/* ═══════════════════════════════════════════════════════════════
-   📴 CACHE OFFLINE (SERVICE WORKER CACHE)
-   ═══════════════════════════════════════════════════════════════ */
 const CACHE_MUSICAS='vdb-musicas-offline';
 async function abrirCacheMusicas(){if(!('caches' in window))return null;try{return await caches.open(CACHE_MUSICAS);}catch(e){return null;}}
 async function estaOffline(url){try{const c=await abrirCacheMusicas();if(!c)return false;return!!(await c.match(url));}catch(e){return false;}}
@@ -1445,9 +1236,6 @@ async function baixarGeneroCompleto(genero,musicas,onProgress){
 function cancelarDownload(){downloadCancelado=true;notif('🛑 Cancelando...',1500,'info');}
 function generoEstaOffline(g){try{const meta=JSON.parse(localStorage.getItem('vdb_offline_meta')||'{}');return meta[g]&&meta[g].completo;}catch(e){return false;}}
 
-/* ═══════════════════════════════════════════════════════════════
-   🔔 SISTEMA DE NOTIFICAÇÕES
-   ═══════════════════════════════════════════════════════════════ */
 class Notifier{
   constructor(){this.queue=[];this.showing=false;this.el=$('notification');}
   show(m,d=2000,t='info'){this.queue.push({msg:m,duration:d,type:t});this.process();}
@@ -1456,9 +1244,6 @@ class Notifier{
 const notifier=new Notifier();
 const notif=(m,d=2000,t='info')=>notifier.show(m,d,t);
 
-/* ═══════════════════════════════════════════════════════════════
-   🎯 DOM — REFERÊNCIAS AOS ELEMENTOS
-   ═══════════════════════════════════════════════════════════════ */
 const dom={
   loadingScreen:$('loadingScreen'),loadingProgressFill:$('loadingProgressFill'),playerContainer:$('playerContainer'),
   timerLib:$('timerLib'),blockOverlay:$('blockOverlay'),scrollText:$('scrollText'),audio:$('musicPlayer'),
@@ -1469,7 +1254,7 @@ const dom={
   telaPrincipal:$('telaPrincipal'),telaAnuncios:$('telaAnuncios'),
   genresModal:$('genresModal'),genresGrid:$('genresGrid'),favModal:$('favModal'),
   favListModal:$('favListModal'),feedbackModal:$('feedbackModal'),
-  menuButton:$('menuButton'),logoTexto:$('logoTexto'),senhaInput:$('senhaInput'),
+  menuButton:$('menuButton'),logoTexto:$('tituloGrande'),senhaInput:$('senhaInput'),
   btnLiberar:$('btnLiberar'),erroSenha:$('erroSenha'),infoDispositivo:$('infoDispositivo'),
   btnCopiarFingerprint:$('btnCopiarFingerprint'),adminPanel:$('adminPanel'),
   adminFingerprintInput:$('adminFingerprintInput'),adminSenhaGerada:$('adminSenhaGerada'),
@@ -1502,8 +1287,8 @@ const dom={
   pwaBtnInstalar:$('pwaBtnInstalar'),pwaBtnDepois:$('pwaBtnDepois'),
   pwaInstrucoes:$('pwaInstrucoes'),pwaBeneficios:$('pwaBeneficios'),
   musicaNome:$('musicaNome'),musicaArtista:$('musicaArtista'),
-  topBar:$('topBar'),fabContainer:$('fabContainer'),btnCoracaoInfo:$('btnCoracaoInfo'),
-  letreiroClick:$('letreiroClick'),
+  topBar:$('infoTopo'),fabContainer:$('fabContainer'),btnCoracaoInfo:$('btnCoracaoInfo'),
+  letreiroClick:$('letreiroClick'),generoAtual:$('generoAtual'),
   downloadModal:$('downloadModal'),downloadTitulo:$('downloadTitulo'),downloadSub:$('downloadSub'),
   downloadProgressFill:$('downloadProgressFill'),downloadContador:$('downloadContador'),
   downloadAtual:$('downloadAtual'),downloadCancelBtn:$('downloadCancelBtn'),downloadCloseBtn:$('downloadCloseBtn'),
@@ -1515,46 +1300,12 @@ const dom={
   themeGridClassicas:$('themeGridClassicas'),themeCloseBtn:$('themeCloseBtn')
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   ⛶ TELA CHEIA AUTOMÁTICA
-   ═══════════════════════════════════════════════════════════════ */
 let fullscreenInterval=null, fullscreenEmAndamento=false;
 function jaEstaFullscreen(){return!!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
-function forcarTelaCheia(){
-  if(ehIOS())return false;
-  if(jaEstaFullscreen())return true;
-  if(fullscreenEmAndamento)return false;
-  fullscreenEmAndamento=true;
-  try{const el=document.documentElement;const opts={navigationUI:'hide'};
-    if(el.requestFullscreen){el.requestFullscreen(opts).then(()=>{fullscreenEmAndamento=false;}).catch(()=>{fullscreenEmAndamento=false;});}
-    else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);fullscreenEmAndamento=false;}
-    else{fullscreenEmAndamento=false;}
-  }catch(e){fullscreenEmAndamento=false;}
-}
-function iniciarFullscreenGuard(){
-  if(fullscreenInterval)clearInterval(fullscreenInterval);
-  if(ehIOS())return;
-  fullscreenInterval=setInterval(()=>{
-    if(document.hidden)return;
-    if(!appState.playerAtivado)return;
-    if(jaEstaFullscreen())return;
-    forcarTelaCheia();
-  },1500);
-}
-function ativarFullscreenPrimeiroToque(){
-  const h=()=>{if(!jaEstaFullscreen())forcarTelaCheia();document.removeEventListener('touchstart',h);document.removeEventListener('click',h);};
-  document.addEventListener('touchstart',h,{passive:true});
-  document.addEventListener('click',h);
-}
-function ajustarIOSFullscreen(){
-  if(!ehIOS())return;
-  const s=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
-  if(s)document.body.classList.add('pwa-standalone');else document.body.classList.add('ios-browser');
-  document.documentElement.style.height='100vh';
-  document.body.style.height='100vh';
-  document.body.style.position='fixed';
-  document.body.style.overflow='hidden';
-}
+function forcarTelaCheia(){if(ehIOS())return false;if(jaEstaFullscreen())return true;if(fullscreenEmAndamento)return false;fullscreenEmAndamento=true;try{const el=document.documentElement;const opts={navigationUI:'hide'};if(el.requestFullscreen){el.requestFullscreen(opts).then(()=>{fullscreenEmAndamento=false;}).catch(()=>{fullscreenEmAndamento=false;});}else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);fullscreenEmAndamento=false;}else{fullscreenEmAndamento=false;}}catch(e){fullscreenEmAndamento=false;}}
+function iniciarFullscreenGuard(){if(fullscreenInterval)clearInterval(fullscreenInterval);if(ehIOS())return;fullscreenInterval=setInterval(()=>{if(document.hidden)return;if(!appState.playerAtivado)return;if(jaEstaFullscreen())return;forcarTelaCheia();},1500);}
+function ativarFullscreenPrimeiroToque(){const h=()=>{if(!jaEstaFullscreen())forcarTelaCheia();document.removeEventListener('touchstart',h);document.removeEventListener('click',h);};document.addEventListener('touchstart',h,{passive:true});document.addEventListener('click',h);}
+function ajustarIOSFullscreen(){if(!ehIOS())return;const s=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;if(s)document.body.classList.add('pwa-standalone');else document.body.classList.add('ios-browser');document.documentElement.style.height='100vh';document.body.style.height='100vh';document.body.style.position='fixed';document.body.style.overflow='hidden';}
 
 document.addEventListener('gesturestart',e=>e.preventDefault());
 document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
@@ -1562,15 +1313,22 @@ document.addEventListener('touchstart',()=>{if(!jaEstaFullscreen()&&!ehIOS())for
 document.addEventListener('click',()=>{if(!jaEstaFullscreen()&&!ehIOS())forcarTelaCheia();},{capture:true});
 setInterval(()=>{if(document.hidden)return;if(ehIOS())return;if(jaEstaFullscreen())return;if(!appState.playerAtivado)return;forcarTelaCheia();},800);
 
-/* ═══════════════════════════════════════════════════════════════
-   ⏱️ TIMER CORRIDO (TEMPO DE TESTE)
-   ═══════════════════════════════════════════════════════════════ */
 function updateProgress(p){dom.loadingProgressFill.style.width=Math.min(p,100)+'%';}
 
+/* ✅ TIMER */
 async function updateTimerDisplay(){
-  if(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ)==='true'){dom.timerLib.innerHTML='<i class="fas fa-lock-open"></i> Lib';dom.timerLib.style.color='#10b981';return;}
+  if(!dom.timerLib) return;
+  if(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ)==='true'){
+    dom.timerLib.innerHTML='<i class="fas fa-lock-open"></i> Lib';
+    dom.timerLib.style.color='#10b981';
+    return;
+  }
   const t=await SecureTimer.tempoRestante();
-  if(t<=0){dom.timerLib.innerHTML='<i class="fas fa-lock"></i> Bloqueado';dom.timerLib.style.color='#ff8888';return;}
+  if(t<=0){
+    dom.timerLib.innerHTML='<i class="fas fa-lock"></i> Bloqueado';
+    dom.timerLib.style.color='#ff8888';
+    return;
+  }
   dom.timerLib.innerHTML='<i class="fas fa-clock"></i> '+fmtTempo(t);
   dom.timerLib.style.color='#fff';
 }
@@ -1588,80 +1346,39 @@ async function iniciarTimerCorrido(){
   tick();
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   🔊 FADE DE ÁUDIO
-   ═══════════════════════════════════════════════════════════════ */
 function fadeOutAudio(d=400){return new Promise(r=>{if(dom.audio.paused||!dom.audio.src){r();return;}const sv=dom.audio.volume;const st=20,stt=d/st;let s=0;const fi=setInterval(()=>{s++;dom.audio.volume=Math.max(0,sv*(1-s/st));if(s>=st){clearInterval(fi);r();}},stt);});}
 function fadeInAudio(d=600,vol=1){return new Promise(r=>{dom.audio.volume=0;const st=25,stt=d/st;let s=0;const fi=setInterval(()=>{s++;const e=1-Math.pow(1-s/st,2);dom.audio.volume=Math.min(vol,e*vol);if(s>=st){clearInterval(fi);dom.audio.volume=vol;r();}},stt);});}
-
 function getUrls(m){const s=m.src||'';if(!s)return[];if(s.startsWith('http'))return[s+(s.includes('?')?'&':'?')+'v='+CONFIG.APP_VERSION];const n=s.replace(/^\.\//,'').replace(/[^a-zA-Z0-9\-_.]/g,'');const repo=GENRE_REPOS[m.genero]||'radiolojasjc-hub/play12';return['https://raw.githubusercontent.com/'+repo+'/refs/heads/main/'+n+'?v='+CONFIG.APP_VERSION];}
 
-/* ═══════════════════════════════════════════════════════════════
-   📻 RÁDIO VDB
-   ═══════════════════════════════════════════════════════════════ */
 function ehModoRadio(){return appState.modoAtual&&appState.modoAtual.indexOf('VDB')>-1;}
-function atualizarBadgeGenero(){const l=document.getElementById('logoTexto');if(l){if(ehModoRadio()){l.textContent='AO VIVO';l.classList.add('ao-vivo');}else{l.textContent='VAI DE BOA!';l.classList.remove('ao-vivo');}}}
+function atualizarBadgeGenero(){
+  if(dom.generoAtual){
+    if(ehModoRadio()) dom.generoAtual.textContent='🔴 AO VIVO • '+appState.modoAtual;
+    else if(appState.modoAtual==='FAVORITAS') dom.generoAtual.textContent='❤️ FAVORITAS';
+    else dom.generoAtual.textContent='🎵 '+appState.modoAtual;
+  }
+}
 function atualizarLetreiro(m){const r=ehModoRadio();if(m){dom.scrollText.innerHTML=(r?'🔴 <b>AO VIVO:</b> ':'🎵 <b>TOCANDO:</b> ')+sanitize(m.title)+' — <i>'+sanitize(m.artist)+'</i> • VAI DE BOA! MUSIC • '+CONFIG.LETREIRO;}else{dom.scrollText.innerHTML='🎵 '+CONFIG.LETREIRO;}}
 function atualizarInfoMusica(m){if(!m)return;if(dom.musicaNome)dom.musicaNome.textContent=sanitize(m.title)||'Música';if(dom.musicaArtista)dom.musicaArtista.textContent=sanitize(m.artist)||'Artista';atualizarCoracaoTopo();}
 
-/* ═══════════════════════════════════════════════════════════════
-   ⏰ CONTROLE DE VISIBILIDADE DOS CONTROLES
-   ═══════════════════════════════════════════════════════════════ */
 let hideControlsTimeout=null, cardJaEscondeu=false;
 function showControls(){if(cardJaEscondeu)return;dom.bottomControls.classList.remove('escondido');if(dom.topBar)dom.topBar.classList.remove('escondido');clearTimeout(hideControlsTimeout);hideControlsTimeout=setTimeout(esconderCardAuto,CONFIG.CARD_DURACAO_MS);}
 function esconderCardAuto(){if(cardJaEscondeu)return;if(appState.telaAtual!=='principal')return;cardJaEscondeu=true;dom.bottomControls.classList.add('escondido');if(dom.topBar)dom.topBar.classList.add('escondido');if(dom.fabContainer)dom.fabContainer.classList.add('escondido');setTimeout(()=>{cardJaEscondeu=false;},1200);}
 function trazerCardDeVolta(){if(appState.telaAtual!=='principal')return;vibrar(10);cardJaEscondeu=false;dom.bottomControls.classList.remove('escondido');if(dom.topBar)dom.topBar.classList.remove('escondido');if(dom.fabContainer)dom.fabContainer.classList.remove('escondido');clearTimeout(hideControlsTimeout);hideControlsTimeout=setTimeout(esconderCardAuto,CONFIG.CARD_DURACAO_MS);}
 function atualizarPlaylist(){if(!appState.playlistAtual.length)return null;if(appState.indiceAtual>=appState.playlistAtual.length){appState.playlistAtual=shuffle(appState.musicas);appState.indiceAtual=0;}return appState.playlistAtual[appState.indiceAtual];}
 
-/* ═══════════════════════════════════════════════════════════════
-   🔇 AUDIOGUARD — PAUSA EM ÁUDIO EXTERNO
-   ═══════════════════════════════════════════════════════════════ */
 const AudioGuard = {
-  pausadoPorExterno: false,
-  pausaManual: false,
-  ultimaPosicao: 0,
-
+  pausadoPorExterno: false, pausaManual: false, ultimaPosicao: 0,
   init(){
     document.addEventListener('visibilitychange', () => {
       if(document.visibilityState === 'hidden'){
         if(appState.isPlaying && dom.audio && !dom.audio.paused){
           this.pausadoPorExterno = true;
           this.ultimaPosicao = dom.audio.currentTime;
-          try{ dom.audio.pause(); }catch(e){}
-          console.log('🔇 Pausado (background)');
-        }
-      } else {
-        if(this.pausadoPorExterno){
-          setTimeout(() => notif('▶️ Toque no play pra continuar', 2500, 'info'), 400);
         }
       }
     });
-
-    dom.audio.addEventListener('pause', () => {
-      if(this.pausaManual) return;
-      if(appState.isPlaying && dom.audio.currentTime > 0 && !dom.audio.ended){
-        this.pausadoPorExterno = true;
-        this.ultimaPosicao = dom.audio.currentTime;
-        appState.isPlaying = false;
-        try{
-          dom.playBtn.innerHTML = '<i class="fas fa-play"></i>';
-          if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
-        }catch(e){}
-        setTimeout(() => notif('🔇 Áudio externo detectado', 2000, 'info'), 300);
-      }
-    });
-
-    window.addEventListener('pagehide', () => {
-      if(appState.isPlaying){
-        this.pausadoPorExterno = true;
-        this.ultimaPosicao = dom.audio.currentTime;
-        try{ dom.audio.pause(); }catch(e){}
-      }
-    });
-
-    console.log('✅ AudioGuard ativo');
   },
-
   marcarPausaManual(){
     this.pausaManual = true;
     this.pausadoPorExterno = false;
@@ -1669,20 +1386,15 @@ const AudioGuard = {
   }
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   🎵 TOCAR MÚSICA
-   ═══════════════════════════════════════════════════════════════ */
 async function tocar(){
   if(!appState.isBackgroundActive||appState.carregandoMusica||!appState.musicas.length)return;
   appState.carregandoMusica=true;
   try{
-    dom.playBtn.innerHTML='<i class="fas fa-spinner"></i>';
-    dom.playBtn.classList.add('loading');
+    dom.playBtn.innerHTML='<i class="fas fa-spinner"></i>';dom.playBtn.classList.add('loading');
     if(!dom.audio.paused&&dom.audio.src)await fadeOutAudio(400);
     const m=atualizarPlaylist();
     if(!m){appState.carregandoMusica=false;return;}
     atualizarLetreiro(m);atualizarBadgeGenero();updateHeart();appState.addHistorico(m);atualizarInfoMusica(m);
-    
     if('mediaSession' in navigator){
       try{
         navigator.mediaSession.metadata=new MediaMetadata({title:m.title||'VAI DE BOA!',artist:m.artist||'Artista',album:m.genero||'Música',artwork:[{src:'favicon30.png',sizes:'512x512',type:'image/png'}]});
@@ -1692,17 +1404,14 @@ async function tocar(){
         navigator.mediaSession.setActionHandler('nexttrack',next);
       }catch(e){}
     }
-    
     dom.audio.pause();dom.audio.removeAttribute('src');dom.audio.load();
     const urls=getUrls(m).slice(0,8);let ok=false;
-    
     if(!navigator.onLine){
       for(const u of urls){
         const c=await buscarMusicaOffline(u);
         if(c){try{dom.audio.src=c;dom.audio.load();await new Promise(r=>setTimeout(r,400));ok=true;break;}catch(e){}}
       }
     }
-    
     if(!ok){
       for(const u of urls){
         try{
@@ -1716,7 +1425,6 @@ async function tocar(){
         }catch(e){}
       }
     }
-    
     if(ok){
       try{
         const vu=parseFloat(localStorage.getItem('vdb_volume')||'1');
@@ -1741,24 +1449,10 @@ async function tocar(){
   finally{appState.carregandoMusica=false;dom.playBtn.classList.remove('loading');}
 }
 
-function togglePlay(){
-  vibrar(10);
-  if(!appState.isBackgroundActive){notif('🔊 Aguarde...',1500,'warning');return;}
-  AudioGuard.marcarPausaManual();
-  if(dom.audio.paused)tocar();
-  else{
-    dom.audio.pause();appState.isPlaying=false;
-    dom.playBtn.innerHTML='<i class="fas fa-play"></i>';
-    if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused';
-  }
-  showControls();
-}
+function togglePlay(){vibrar(10);if(!appState.isBackgroundActive){notif('🔊 Aguarde...',1500,'warning');return;}AudioGuard.marcarPausaManual();if(dom.audio.paused)tocar();else{dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused';}showControls();}
 function next(){vibrar(10);if(appState.carregandoMusica||!appState.playlistAtual.length)return;appState.indiceAtual=(appState.indiceAtual+1)%appState.playlistAtual.length;if(appState.isBackgroundActive)setTimeout(tocar,100);showControls();}
 function prev(){vibrar(10);if(appState.carregandoMusica||!appState.playlistAtual.length)return;appState.indiceAtual=(appState.indiceAtual-1+appState.playlistAtual.length)%appState.playlistAtual.length;if(appState.isBackgroundActive)setTimeout(tocar,100);showControls();}
 
-/* ═══════════════════════════════════════════════════════════════
-   🔇 ÁUDIO SILENCIOSO (MANTER ATIVO)
-   ═══════════════════════════════════════════════════════════════ */
 function criarSilentAudio(){const sr=44100,ns=sr*5;const b=new ArrayBuffer(44+ns*2);const v=new DataView(b);const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};w(0,'RIFF');v.setUint32(4,36+ns*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,ns*2,true);return new Blob([b],{type:'audio/wav'});}
 let sb=null,su=null;
 function getSilentAudioUrl(){if(!sb)sb=criarSilentAudio();if(!su)su=URL.createObjectURL(sb);return su;}
@@ -1775,9 +1469,7 @@ function manterAudioAtivo(){
   dom.audio.addEventListener('ended',()=>{if(appState.isPlaying&&!appState.carregandoMusica)next();});
 }
 async function ativarPlayer(){
-  if(appState.playerAtivado)return;
-  appState.playerAtivado=true;
-  updateProgress(30);
+  if(appState.playerAtivado)return;appState.playerAtivado=true;updateProgress(30);
   try{
     dom.backgroundAudio.src=getSilentAudioUrl();
     dom.backgroundAudio.loop=true;
@@ -1792,6 +1484,7 @@ async function ativarPlayer(){
     await iniciarTimerCorrido();
     updateProgress(100);
     setTimeout(tocar,500);
+    setTimeout(mostrarBemVindo,1000);
   }catch(e){
     appState.isBackgroundActive=true;
     updateProgress(100);
@@ -1799,12 +1492,10 @@ async function ativarPlayer(){
     iniciarFullscreenGuard();
     iniciarTimerCorrido();
     setTimeout(tocar,500);
+    setTimeout(mostrarBemVindo,1000);
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   ❤️ FAVORITAS
-   ═══════════════════════════════════════════════════════════════ */
 function updateFavBadge(){if(dom.fabBadgeFav)dom.fabBadgeFav.textContent=appState.favorites.length;}
 function updateHeart(){atualizarCoracaoTopo();}
 function atualizarCoracaoTopo(){
@@ -1821,14 +1512,8 @@ function toggleFavAtual(){if(!appState.playlistAtual.length)return;const m=appSt
 function renderizarFavoritosModal(){dom.favListModal.innerHTML='';const f=appState.getFavorites();if(!f.length){dom.favListModal.innerHTML='<div style="color:#aaa;padding:20px;text-align:center">💔 Nenhuma</div>';return;}f.forEach(m=>{const it=document.createElement('div');it.className='fav-item-modal';it.innerHTML='<div><span class="title">'+sanitize(m.title)+'</span><span class="artist">'+sanitize(m.artist)+'</span></div><button class="remove-fav"><i class="fas fa-times-circle"></i></button>';it.querySelector('.title').onclick=()=>{dom.favModal.classList.remove('open');tocarFavoritaEspecifica(m.id);};it.querySelector('.remove-fav').onclick=e=>{e.stopPropagation();toggleFav(m);renderizarFavoritosModal();};dom.favListModal.appendChild(it);});}
 function tocarFavoritaEspecifica(id){let m=appState.musicas.find(x=>x.id===id);if(!m)m=appState.favorites.find(x=>x.id===id);if(!m)return;appState.playlistAtual=shuffle(appState.favorites.map(x=>({...x})));const i=appState.playlistAtual.findIndex(x=>x.id===id);if(i>-1){appState.indiceAtual=i;if(appState.isBackgroundActive)tocar();notif('🎵 Tocando!',1500,'success');}}
 
-/* ═══════════════════════════════════════════════════════════════
-   🔍 BUSCA COM FILTROS (NOVO!)
-   ═══════════════════════════════════════════════════════════════ */
 const SearchManager = {
-  generoAtual: '',
-  ordemAtual: 'relevancia',
-  termoAtual: '',
-
+  generoAtual: '', ordemAtual: 'relevancia', termoAtual: '',
   init(){
     const selGenero = document.getElementById('searchGenero');
     if(selGenero && !selGenero.dataset.pronto){
@@ -1841,136 +1526,89 @@ const SearchManager = {
       selGenero.dataset.pronto = '1';
       selGenero.onchange = () => { this.generoAtual = selGenero.value; this.buscar(); };
     }
-
     const selOrdem = document.getElementById('searchOrdem');
     if(selOrdem && !selOrdem.dataset.pronto){
       selOrdem.dataset.pronto = '1';
       selOrdem.onchange = () => { this.ordemAtual = selOrdem.value; this.buscar(); };
     }
-
     const input = document.getElementById('searchInput');
     if(input && !input.dataset.pronto){
       input.dataset.pronto = '1';
       let timeout = null;
-      input.oninput = () => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-          this.termoAtual = input.value.trim().toLowerCase();
-          this.buscar();
-        }, 200);
-      };
+      input.oninput = () => { clearTimeout(timeout); timeout = setTimeout(() => { this.termoAtual = input.value.trim().toLowerCase(); this.buscar(); }, 200); };
       input.onkeydown = (e) => { if(e.key === 'Escape') this.fechar(); };
     }
-
     const btnClose = document.getElementById('searchCloseBtn');
-    if(btnClose && !btnClose.dataset.pronto){
-      btnClose.dataset.pronto = '1';
-      btnClose.onclick = () => this.fechar();
-    }
-
+    if(btnClose && !btnClose.dataset.pronto){ btnClose.dataset.pronto = '1'; btnClose.onclick = () => this.fechar(); }
     const modal = document.getElementById('searchModal');
-    if(modal && !modal.dataset.pronto){
-      modal.dataset.pronto = '1';
-      modal.onclick = (e) => { if(e.target === modal) this.fechar(); };
-    }
+    if(modal && !modal.dataset.pronto){ modal.dataset.pronto = '1'; modal.onclick = (e) => { if(e.target === modal) this.fechar(); }; }
   },
-
   abrir(){
     const modal = document.getElementById('searchModal');
     if(!modal) return;
+    const selGenero = document.getElementById('searchGenero');
+    if(selGenero && appState.modoAtual && !ehModoRadio() && appState.modoAtual !== 'FAVORITAS'){
+      selGenero.value = appState.modoAtual;
+      this.generoAtual = appState.modoAtual;
+    }
     modal.classList.add('open');
     setTimeout(() => { const i = document.getElementById('searchInput'); if(i) i.focus(); }, 200);
     this.buscar();
   },
-
-  fechar(){
-    const modal = document.getElementById('searchModal');
-    if(modal) modal.classList.remove('open');
-  },
-
+  fechar(){ const modal = document.getElementById('searchModal'); if(modal) modal.classList.remove('open'); },
   buscar(){
     const container = document.getElementById('searchResults');
     const countEl = document.getElementById('searchCount');
     if(!container) return;
-
     if(!this.termoAtual && !this.generoAtual){
       container.innerHTML = `<div class="search-empty"><i class="fas fa-search"></i>Digite o nome da música ou escolha um gênero</div>`;
       if(countEl) countEl.textContent = '🎵 ' + appState.musicas.length + ' músicas disponíveis';
       return;
     }
-
     let resultados = appState.musicas;
     if(this.termoAtual){
-      resultados = resultados.filter(m =>
-        m.title.toLowerCase().includes(this.termoAtual) ||
-        (m.artist && m.artist.toLowerCase().includes(this.termoAtual))
-      );
+      resultados = resultados.filter(m => m.title.toLowerCase().includes(this.termoAtual) || (m.artist && m.artist.toLowerCase().includes(this.termoAtual)));
     }
-    if(this.generoAtual){
-      resultados = resultados.filter(m => m.genero === this.generoAtual);
-    }
-
+    if(this.generoAtual){ resultados = resultados.filter(m => m.genero === this.generoAtual); }
     if(this.ordemAtual === 'az') resultados = [...resultados].sort((a,b) => a.title.localeCompare(b.title));
     else if(this.ordemAtual === 'za') resultados = [...resultados].sort((a,b) => b.title.localeCompare(a.title));
     else if(this.ordemAtual === 'aleatorio') resultados = shuffle(resultados);
-
-    if(countEl){
-      countEl.textContent = resultados.length === 0 ? '❌ Nenhuma encontrada' : '✅ ' + resultados.length + ' encontrada(s)';
-    }
-
+    if(countEl){ countEl.textContent = resultados.length === 0 ? '❌ Nenhuma encontrada' : '✅ ' + resultados.length + ' encontrada(s)'; }
     if(!resultados.length){
       container.innerHTML = `<div class="search-empty"><i class="fas fa-frown"></i>Nenhuma música encontrada</div>`;
       return;
     }
-
     container.innerHTML = '';
     resultados.slice(0, 100).forEach(m => {
       const item = document.createElement('div');
       item.className = 'search-result-item';
-      item.innerHTML = `
-        <div class="icon"><i class="fas fa-music"></i></div>
-        <div class="info">
-          <div class="title">${sanitize(m.title)}</div>
-          <span class="artist">${sanitize(m.artist)}</span>
-        </div>
-        <span class="genero">${m.genero || ''}</span>
-      `;
+      item.innerHTML = `<div class="icon"><i class="fas fa-music"></i></div><div class="info"><div class="title">${sanitize(m.title)}</div><span class="artist">${sanitize(m.artist)}</span></div><span class="genero">${m.genero || ''}</span>`;
       item.onclick = () => this.tocarResultado(m);
       container.appendChild(item);
     });
   },
-
   tocarResultado(m){
     vibrar(15);
     const idx = appState.playlistAtual.findIndex(x => x.id === m.id);
     if(idx > -1){ appState.indiceAtual = idx; }
-    else {
-      const restantes = appState.musicas.filter(x => x.id !== m.id);
-      appState.playlistAtual = [m, ...shuffle(restantes)];
-      appState.indiceAtual = 0;
-    }
+    else { const restantes = appState.musicas.filter(x => x.id !== m.id); appState.playlistAtual = [m, ...shuffle(restantes)]; appState.indiceAtual = 0; }
     if(appState.isBackgroundActive) tocar();
     this.fechar();
     notif('🎵 ' + m.title, 1500, 'success');
   }
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   ❤️ RÁDIO FAVORITAS (NOVO!)
-   ═══════════════════════════════════════════════════════════════ */
 const FavRadio = {
   init(){
     const btnTocar = document.getElementById('favRadioTocar');
     const btnEmb = document.getElementById('favRadioEmbaralhar');
     const btnFechar = document.getElementById('favRadioFechar');
     const modal = document.getElementById('favRadioModal');
-
     if(btnTocar && !btnTocar.dataset.pronto){ btnTocar.dataset.pronto = '1'; btnTocar.onclick = () => this.tocar(false); }
     if(btnEmb && !btnEmb.dataset.pronto){ btnEmb.dataset.pronto = '1'; btnEmb.onclick = () => this.tocar(true); }
     if(btnFechar && !btnFechar.dataset.pronto){ btnFechar.dataset.pronto = '1'; btnFechar.onclick = () => this.fechar(); }
     if(modal && !modal.dataset.pronto){ modal.dataset.pronto = '1'; modal.onclick = (e) => { if(e.target === modal) this.fechar(); }; }
   },
-
   abrir(){
     const modal = document.getElementById('favRadioModal');
     const info = document.getElementById('favRadioInfo');
@@ -1982,12 +1620,7 @@ const FavRadio = {
     }
     modal.classList.add('open');
   },
-
-  fechar(){
-    const modal = document.getElementById('favRadioModal');
-    if(modal) modal.classList.remove('open');
-  },
-
+  fechar(){ const modal = document.getElementById('favRadioModal'); if(modal) modal.classList.remove('open'); },
   tocar(embaralhar){
     const f = appState.favorites;
     if(!f.length){ notif('⚠️ Nenhuma favorita ainda', 2000, 'warning'); this.fechar(); return; }
@@ -2001,6 +1634,7 @@ const FavRadio = {
     document.documentElement.style.setProperty('--cor-3', '#ec4899');
     const m = appState.playlistAtual[0];
     if(m){ atualizarLetreiro(m); atualizarInfoMusica(m); updateHeart(); }
+    atualizarBadgeGenero();
     if(appState.isBackgroundActive) setTimeout(tocar, 200);
     this.fechar();
     trazerCardDeVolta();
@@ -2008,15 +1642,11 @@ const FavRadio = {
   }
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   🎸 GÊNEROS — RENDERIZAR E SELECIONAR
-   ═══════════════════════════════════════════════════════════════ */
 function renderizarGeneros(){
   dom.genresGrid.innerHTML='';
   GENRE_ORDEM.forEach(g=>{
     const c=GENRE_COLORS[g]||COR_PADRAO;
-    const cd=document.createElement('button');
-    cd.type='button';cd.className='genre-card';cd.style.setProperty('--c1',c.c1);
+    const cd=document.createElement('button');cd.type='button';cd.className='genre-card';cd.style.setProperty('--c1',c.c1);
     cd.dataset.genero=g;
     if(generoEstaOffline(g))cd.classList.add('offline');
     const n=document.createElement('div');n.className='genre-name';n.textContent=g;cd.appendChild(n);
@@ -2024,7 +1654,6 @@ function renderizarGeneros(){
     dom.genresGrid.appendChild(cd);
   });
 }
-
 function showLoad(s){dom.loadingOverlay.classList.toggle('active',s);}
 
 async function selecionarGenero(g){
@@ -2033,6 +1662,7 @@ async function selecionarGenero(g){
   if(!m||!m.length){showLoad(false);notif('❌ Erro '+g,2000,'error');return;}
   dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';
   appState.musicas=m;appState.modoAtual=g;appState.playlistAtual=shuffle(m);appState.indiceAtual=0;
+  aplicarTemaCor(appState.temaCor);
   const mm=appState.playlistAtual[0];if(mm){atualizarLetreiro(mm);updateHeart();atualizarInfoMusica(mm);}
   atualizarBadgeGenero();showLoad(false);
   if(appState.isBackgroundActive)setTimeout(tocar,300);
@@ -2040,9 +1670,6 @@ async function selecionarGenero(g){
   trazerCardDeVolta();
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   📻 ATIVAR RÁDIO VDB (POR PERÍODO)
-   ═══════════════════════════════════════════════════════════════ */
 async function ativarModoRadio(){
   vibrar(20);
   const periodo=getPeriodoAtual();const config=RADIO_CONFIG[periodo];
@@ -2063,55 +1690,35 @@ async function ativarModoRadio(){
   }catch(e){showLoad(false);notif('❌ Erro',2000,'error');}
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   📺 MODO TV (NOVO!)
-   ═══════════════════════════════════════════════════════════════ */
 let modoTVAtivo = false;
-
 async function ativarModoTV(){
-  vibrar(20);
-  modoTVAtivo = true;
+  vibrar(20);modoTVAtivo = true;
   document.body.classList.add('modo-tv');
-  
   if(!document.getElementById('btnSairModoTV')){
     const btn = document.createElement('button');
-    btn.id = 'btnSairModoTV';
-    btn.innerHTML = '✕';
+    btn.id = 'btnSairModoTV';btn.innerHTML = '✕';
     btn.onclick = (e) => { e.stopPropagation(); desativarModoTV(); };
     document.body.appendChild(btn);
   }
-  
   await carregarMidias(dom.mediaContainer, MIDIAS_TV_URL, { fallback: MIDIAS_TV_FALLBACK });
-  
   dom.telaPrincipal.classList.remove('oculta');
   dom.telaAnuncios.classList.remove('ativa');
   if(dom.bottomControls) dom.bottomControls.classList.add('escondido');
   if(dom.topBar) dom.topBar.classList.add('escondido');
   if(dom.fabContainer) dom.fabContainer.classList.add('escondido');
-  
   notif('📺 Modo TV ativado', 2000, 'success');
 }
-
 async function desativarModoTV(){
-  vibrar(20);
-  modoTVAtivo = false;
+  vibrar(20);modoTVAtivo = false;
   document.body.classList.remove('modo-tv');
-  
-  const btn = document.getElementById('btnSairModoTV');
-  if(btn) btn.remove();
-  
+  const btn = document.getElementById('btnSairModoTV');if(btn) btn.remove();
   await carregarMidias(dom.mediaContainer, MIDIAS_PADRAO_URL, { fallback: MIDIAS_FALLBACK });
-  
   if(dom.bottomControls) dom.bottomControls.classList.remove('escondido');
   if(dom.topBar) dom.topBar.classList.remove('escondido');
   if(dom.fabContainer) dom.fabContainer.classList.remove('escondido');
-  
   notif('🎵 Modo Normal', 2000, 'info');
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   🎨 TEMAS — RENDERIZAR
-   ═══════════════════════════════════════════════════════════════ */
 function renderizarTemas(){
   if(!dom.themeGridModernas||!dom.themeGridClassicas)return;
   dom.themeGridModernas.innerHTML='';dom.themeGridClassicas.innerHTML='';
@@ -2128,9 +1735,6 @@ function renderizarTemas(){
 function abrirModalTemas(){vibrar(10);renderizarTemas();dom.themeModal.classList.add('active');}
 function fecharModalTemas(){dom.themeModal.classList.remove('active');}
 
-/* ═══════════════════════════════════════════════════════════════
-   🔐 SENHAS E SEGURANÇA
-   ═══════════════════════════════════════════════════════════════ */
 function gerarSenhaAleatoria(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<12;i++)s+=c.charAt(Math.floor(Math.random()*c.length));return s;}
 function gerarSenhaDispositivo(fp){return btoa(fp+':'+gerarSenhaAleatoria());}
 function gerarSenhaUniversal(){const ts=now().toString(36);const base='UNIV_'+ts;const chave=CONFIG._SALT+base;let h=0;for(let i=0;i<chave.length;i++){h=((h<<5)-h)+chave.charCodeAt(i);h|=0;}const sig=Math.abs(h).toString(16).padStart(16,'0').slice(0,16);return'UNIV:'+ts+':'+sig;}
@@ -2143,67 +1747,14 @@ async function validarSenha(s){
   if(s.startsWith('UNIV:')){const p=s.split(':');if(p.length===3){const ts=p[1];const sig=p[2];const chave=CONFIG._SALT+'UNIV_'+ts;let h=0;for(let i=0;i<chave.length;i++){h=((h<<5)-h)+chave.charCodeAt(i);h|=0;}const esp=Math.abs(h).toString(16).padStart(16,'0').slice(0,16);if(sig===esp)return{valida:true,msg:'✅ Universal!'};}}
   return{valida:false};
 }
-
-async function bloquear(){
-  appState.desbloqueado=false;
-  dom.blockOverlay.classList.add('active');
-  dom.blockOverlay.style.display='flex';
-  dom.audio.pause();appState.isPlaying=false;
-  dom.playBtn.innerHTML='<i class="fas fa-play"></i>';
-  localStorage.setItem(SecureTimer.CHAVE_BLOQ_PERM,'true');
-  notif('⏰ Tempo expirou!',3000,'warning');
-}
-
-async function handleLiberar(){
-  const s=dom.senhaInput.value.trim();
-  if(!s){dom.erroSenha.textContent='⚠️ Digite a senha';return;}
-  const r=await validarSenha(s);
-  if(r.valida){
-    appState.desbloqueado=true;
-    dom.blockOverlay.classList.remove('active');
-    dom.blockOverlay.style.display='none';
-    dom.erroSenha.textContent='';
-    dom.senhaInput.value='';
-    await SecureTimer.desbloquearPermanente();
-    notif(r.msg,3000,'success');
-    if(!appState.playerAtivado)setTimeout(ativarPlayer,500);
-    appState._save();
-  }else{
-    dom.erroSenha.innerHTML='❌ Inválida!';
-    dom.senhaInput.value='';
-    notif('❌ Inválida!',2000,'error');
-    vibrar([50,30,50]);
-  }
-}
-
-async function liberarAgora(){
-  const s=await vdbDialog({title:'🔑 LIBERAR',msg:'Digite sua senha:',input:'text',okText:'Liberar'});
-  if(!s)return;
-  const r=await validarSenha(s);
-  if(r.valida){
-    appState.desbloqueado=true;
-    dom.blockOverlay.classList.remove('active');
-    dom.blockOverlay.style.display='none';
-    await SecureTimer.desbloquearPermanente();
-    notif('✅ Liberado!',3000,'success');
-    appState._save();
-  }else{notif('❌ Inválida!',2000,'error');}
-}
-
-function carregarHistorico(){
-  const h=appState.getSenhasHistorico();
-  dom.historicoSenhas.innerHTML='';
-  h.forEach(it=>{
-    const d=document.createElement('div');
-    const ti=it.tipo==='universal'?'🌍':'📱';
-    d.innerHTML='<span style="font-size:.62rem;color:#aaa">'+ti+' '+it.data+'</span>';
-    dom.historicoSenhas.appendChild(d);
-  });
-}
+async function bloquear(){appState.desbloqueado=false;dom.blockOverlay.classList.add('active');dom.blockOverlay.style.display='flex';dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';localStorage.setItem(SecureTimer.CHAVE_BLOQ_PERM,'true');notif('⏰ Tempo expirou!',3000,'warning');}
+async function handleLiberar(){const s=dom.senhaInput.value.trim();if(!s){dom.erroSenha.textContent='⚠️ Digite a senha';return;}const r=await validarSenha(s);if(r.valida){appState.desbloqueado=true;dom.blockOverlay.classList.remove('active');dom.blockOverlay.style.display='none';dom.erroSenha.textContent='';dom.senhaInput.value='';await SecureTimer.desbloquearPermanente();notif(r.msg,3000,'success');if(!appState.playerAtivado)setTimeout(ativarPlayer,500);appState._save();}else{dom.erroSenha.innerHTML='❌ Inválida!';dom.senhaInput.value='';notif('❌ Inválida!',2000,'error');vibrar([50,30,50]);}}
+async function liberarAgora(){const s=await vdbDialog({title:'🔑 LIBERAR',msg:'Digite sua senha:',input:'text',okText:'Liberar'});if(!s)return;const r=await validarSenha(s);if(r.valida){appState.desbloqueado=true;dom.blockOverlay.classList.remove('active');dom.blockOverlay.style.display='none';await SecureTimer.desbloquearPermanente();notif('✅ Liberado!',3000,'success');appState._save();}else{notif('❌ Inválida!',2000,'error');}}
+function carregarHistorico(){const h=appState.getSenhasHistorico();dom.historicoSenhas.innerHTML='';h.forEach(it=>{const d=document.createElement('div');const ti=it.tipo==='universal'?'🌍':'📱';d.innerHTML='<span style="font-size:.62rem;color:#aaa">'+ti+' '+it.data+'</span>';dom.historicoSenhas.appendChild(d);});}
 
 let cliqueTimestamps=[];
 function setup8CliquesLogo(){
-  const alvo=document.getElementById('logoTexto');if(!alvo)return;
+  const alvo=document.getElementById('tituloGrande');if(!alvo)return;
   alvo.addEventListener('click',async(e)=>{
     e.stopPropagation();
     const t=now();cliqueTimestamps=cliqueTimestamps.filter(x=>t-x<3000);cliqueTimestamps.push(t);
@@ -2214,19 +1765,13 @@ function setup8CliquesLogo(){
       if(!senha){notif('❌ Cancelado',1500,'warning');return;}
       const ok=await verificarSenhaPadrao(senha);
       if(!ok){notif('❌ Senha incorreta!',2500,'error');vibrar([100,50,100]);return;}
-      vibrar([30,30,30]);
-      dom.adminPanel.classList.add('open');
-      carregarHistorico();
-      notif('👑 Admin!',2000,'success');
+      vibrar([30,30,30]);dom.adminPanel.classList.add('open');carregarHistorico();notif('👑 Admin!',2000,'success');
     }
   });
 }
 function mostrarDicaCliques(f){const d=document.getElementById('dicaCliques');if(!d)return;d.textContent='🔑 Faltam '+f+' cliques';d.style.opacity='1';clearTimeout(d._timer);d._timer=setTimeout(()=>{d.style.opacity='0';},1500);}
 function esconderDicaCliques(){const d=document.getElementById('dicaCliques');if(d)d.style.opacity='0';}
 
-/* ═══════════════════════════════════════════════════════════════
-   💬 DIÁLOGO GENÉRICO
-   ═══════════════════════════════════════════════════════════════ */
 function vdbDialog({title,msg,input,placeholder,okText,cancelText}){
   return new Promise(resolve=>{
     const ov=$('vdbDialogOverlay'),ti=$('vdbDialogTitle'),me=$('vdbDialogMsg');
@@ -2243,11 +1788,7 @@ function vdbDialog({title,msg,input,placeholder,okText,cancelText}){
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   📱 WHATSAPP E CADASTRO
-   ═══════════════════════════════════════════════════════════════ */
 function abrirWhatsBlock(){const m=encodeURIComponent('🔑 Olá! Meu teste acabou.\n\n🆔 ID: '+appState.fingerprint+'\n\nQuero liberar!');window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+m,'_blank');}
-
 function abrirCadastro(){
   const mo=document.createElement('div');
   mo.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:10001;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(20px)';
@@ -2263,12 +1804,8 @@ function abrirCadastro(){
     mo.remove();notif('✅ Enviado!',3000,'success');
   };
 }
-
 function gerarQrCode(){dom.qrCodeImage.src='https://api.qrserver.com/v1/create-qr-code/?size=400x400&data='+encodeURIComponent(window.location.href);dom.qrCodeModal.classList.add('active');}
 
-/* ═══════════════════════════════════════════════════════════════
-   📋 FILA E RECENTES
-   ═══════════════════════════════════════════════════════════════ */
 function renderizarFila(){
   dom.queueList.innerHTML='';
   const t=appState.playlistAtual.length;const i0=appState.indiceAtual;
@@ -2291,9 +1828,6 @@ function renderizarRecentes(){
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   👆 CONTROLE DE GESTOS (SWIPE)
-   ═══════════════════════════════════════════════════════════════ */
 class TouchManager{
   constructor(){this.st=60;this.tsx=0;this.tsy=0;this.is=false;this.d=null;this.setup();}
   setup(){document.addEventListener('touchstart',this.hts.bind(this),{passive:true});document.addEventListener('touchmove',this.htm.bind(this),{passive:true});document.addEventListener('touchend',this.hte.bind(this),{passive:true});}
@@ -2303,11 +1837,7 @@ class TouchManager{
 }
 new TouchManager();
 
-/* ═══════════════════════════════════════════════════════════════
-   🎬 CARREGAR MÍDIAS (VÍDEOS DE FUNDO)
-   ═══════════════════════════════════════════════════════════════ */
 let midiaToken=0, midiaTimerAtual=null;
-
 async function carregarMidias(container,url,options={}){
   const{fallback=MIDIAS_FALLBACK}=options;
   const meuToken=++midiaToken;
@@ -2319,12 +1849,7 @@ async function carregarMidias(container,url,options={}){
       const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),9000);
       const r=await fetch(url+'?v='+CONFIG.APP_VERSION+'&t='+now(),{signal:ctrl.signal});
       clearTimeout(tid);
-      if(r.ok){
-        const d=await r.json();
-        if(Array.isArray(d))ms=d;
-        else if(d.medias)ms=d.medias;
-        else if(d.midias)ms=d.midias;
-      }
+      if(r.ok){const d=await r.json();if(Array.isArray(d))ms=d;else if(d.medias)ms=d.medias;else if(d.midias)ms=d.midias;}
     }catch(e){}
     if(meuToken!==midiaToken)return;
     if(!ms.length)ms=fallback;
@@ -2350,40 +1875,15 @@ async function carregarMidias(container,url,options={}){
     if(meuToken!==midiaToken){els.forEach(x=>x.remove());return;}
     if(!els.length)return;
     let idx=0;
-    function proximaMidia(){
-      if(meuToken!==midiaToken)return;if(!els.length)return;
-      const at=els[idx];const pi=(idx+1)%els.length;const px=els[pi];
-      if(!px)return;
-      if(px.dataset.erro==='1'){idx=pi;setTimeout(proximaMidia,100);return;}
-      if(px.tagName==='VIDEO'){try{px.currentTime=0;}catch(e){}px.play().catch(()=>{});}
-      if(at){at.classList.remove('active');at.classList.add('inactive');}
-      px.classList.add('active');px.classList.remove('inactive');
-      if(at&&at.tagName==='VIDEO'){setTimeout(()=>{try{at.pause();at.currentTime=0;}catch(e){}},800);}
-      idx=pi;
-    }
+    function proximaMidia(){if(meuToken!==midiaToken)return;if(!els.length)return;const at=els[idx];const pi=(idx+1)%els.length;const px=els[pi];if(!px)return;if(px.dataset.erro==='1'){idx=pi;setTimeout(proximaMidia,100);return;}if(px.tagName==='VIDEO'){try{px.currentTime=0;}catch(e){}px.play().catch(()=>{});}if(at){at.classList.remove('active');at.classList.add('inactive');}px.classList.add('active');px.classList.remove('inactive');if(at&&at.tagName==='VIDEO'){setTimeout(()=>{try{at.pause();at.currentTime=0;}catch(e){}},800);}idx=pi;}
     if(els[0]&&els[0].tagName==='VIDEO'&&els[0].dataset.erro!=='1'){els[0].play().catch(()=>{});}
-    function agendar(){
-      if(meuToken!==midiaToken)return;
-      const at=els[idx];
-      if(!at){midiaTimerAtual=setTimeout(()=>{proximaMidia();agendar();},3000);return;}
-      if(at.dataset.erro==='1'){proximaMidia();midiaTimerAtual=setTimeout(agendar,500);return;}
-      if(at.tagName==='VIDEO'&&isFinite(at.duration)&&at.duration>0){
-        const li=Math.min(at.duration*1000,CONFIG.MIDIA_MAX_SEGURANCA_MS);
-        midiaTimerAtual=setTimeout(()=>{proximaMidia();agendar();},li+300);
-      }else{
-        midiaTimerAtual=setTimeout(()=>{proximaMidia();agendar();},CONFIG.MIDIA_DURACAO_MS);
-      }
-    }
+    function agendar(){if(meuToken!==midiaToken)return;const at=els[idx];if(!at){midiaTimerAtual=setTimeout(()=>{proximaMidia();agendar();},3000);return;}if(at.dataset.erro==='1'){proximaMidia();midiaTimerAtual=setTimeout(agendar,500);return;}if(at.tagName==='VIDEO'&&isFinite(at.duration)&&at.duration>0){const li=Math.min(at.duration*1000,CONFIG.MIDIA_MAX_SEGURANCA_MS);midiaTimerAtual=setTimeout(()=>{proximaMidia();agendar();},li+300);}else{midiaTimerAtual=setTimeout(()=>{proximaMidia();agendar();},CONFIG.MIDIA_DURACAO_MS);}}
     agendar();
   }catch(e){console.error('Erro mídias:',e);}
 }
-
 async function carregarMidiasPadrao(){await carregarMidias(dom.mediaContainer,MIDIAS_PADRAO_URL,{fallback:MIDIAS_FALLBACK});}
 async function carregarMidiasAnuncio(){await carregarMidias(dom.mediaAnuncios,MIDIAS_ANUNCIO_URL,{fallback:MIDIAS_ANUNCIO_FALLBACK});}
 
-/* ═══════════════════════════════════════════════════════════════
-   🔄 TROCAR TELA (PRINCIPAL ↔ ANÚNCIOS)
-   ═══════════════════════════════════════════════════════════════ */
 async function trocarTela(destino){
   vibrar(15);
   if(destino==='anuncios'){
@@ -2392,7 +1892,6 @@ async function trocarTela(destino){
     dom.telaAnuncios.classList.add('ativa');
     if(dom.fabContainer)dom.fabContainer.classList.remove('escondido');
     await carregarMidiasAnuncio();
-    notif('📺 Anúncio',1500,'info');
   }else{
     appState.telaAtual='principal';
     dom.telaAnuncios.classList.remove('ativa');
@@ -2400,29 +1899,67 @@ async function trocarTela(destino){
     await carregarMidiasPadrao();
     if(dom.topBar)dom.topBar.classList.remove('escondido');
     if(dom.fabContainer)dom.fabContainer.classList.remove('escondido');
-    notif('🎵 Voltou!',1500,'success');
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   📢 PROPAGANDA (BANNER FULL)
-   ═══════════════════════════════════════════════════════════════ */
-let propagandaTimer=null, propagandaJaFoiFechada=false;
-function mostrarPropagandaFull(){
-  if(propagandaJaFoiFechada)return;
-  if(!appState.playerAtivado)return;
-  if(appState.telaAtual!=='principal')return;
-  const m=document.querySelector('.menu-popup.open, .genres-modal.open, .fav-modal.open, .tutorial-modal.open, .vdb-dialog-overlay.active, .bottom-sheet.open, #pwaInstallModal.active, #downloadModal.active, #offlineManager.active, #themeModal.active');
-  if(m){clearTimeout(propagandaTimer);propagandaTimer=setTimeout(mostrarPropagandaFull,30000);return;}
-  const b=$('bannerPropagandaFull');if(b)b.classList.add('visivel');
+let controlesAnuncioTimer = null;
+function initControlesAnuncio(){
+  const tela = document.getElementById('telaAnuncios');
+  const controles = document.getElementById('controlesAnuncio');
+  if(!tela || !controles) return;
+  tela.addEventListener('click', (e) => {
+    if(e.target.closest('#controlesAnuncio')) return;
+    controles.classList.add('visivel');
+    clearTimeout(controlesAnuncioTimer);
+    controlesAnuncioTimer = setTimeout(() => { controles.classList.remove('visivel'); }, 5000);
+  });
+  const btnVoltar = document.getElementById('btnVoltarPrincipal');
+  if(btnVoltar) btnVoltar.onclick = (e) => {
+    e.stopPropagation();
+    trocarTela('principal');
+    controles.classList.remove('visivel');
+  };
+  const btnPlay = document.getElementById('btnPlayAnuncio');
+  if(btnPlay) btnPlay.onclick = (e) => {
+    e.stopPropagation();
+    vibrar(10);
+    togglePlay();
+    btnPlay.innerHTML = dom.audio.paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
+    clearTimeout(controlesAnuncioTimer);
+    controlesAnuncioTimer = setTimeout(() => controles.classList.remove('visivel'), 5000);
+  };
 }
+
+let cicloTimer = null;
+function agendarProximoCiclo() {
+  clearTimeout(cicloTimer);
+  const tempo = appState.telaAtual === 'principal' ? CONFIG.CICLO_PRINCIPAL_MS : CONFIG.CICLO_ANUNCIO_MS;
+  cicloTimer = setTimeout(async () => {
+    if(!appState.playerAtivado) { agendarProximoCiclo(); return; }
+    const modal = document.querySelector('.search-modal.open, .genres-modal.open, .fav-modal.open, .tutorial-modal.open, .bottom-sheet.open, #pwaInstallModal.active, #offlineManager.active, #themeModal.active, .menu-popup.open, .fav-radio-modal.open');
+    if(modal){ agendarProximoCiclo(); return; }
+    if(appState.telaAtual === 'principal'){ await trocarTela('anuncios'); }
+    else { await trocarTela('principal'); }
+    agendarProximoCiclo();
+  }, tempo);
+}
+function iniciarCiclo() { agendarProximoCiclo(); }
+
+function mostrarBemVindo(){
+  const el = document.getElementById('bemVindo');
+  if(!el) return;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4500);
+}
+
+let propagandaTimer=null, propagandaJaFoiFechada=false;
+function mostrarPropagandaFull(){if(propagandaJaFoiFechada)return;if(!appState.playerAtivado)return;if(appState.telaAtual!=='principal')return;const m=document.querySelector('.menu-popup.open, .genres-modal.open, .fav-modal.open, .tutorial-modal.open, .vdb-dialog-overlay.active, .bottom-sheet.open, #pwaInstallModal.active, #downloadModal.active, #offlineManager.active, #themeModal.active');if(m){clearTimeout(propagandaTimer);propagandaTimer=setTimeout(mostrarPropagandaFull,30000);return;}const b=$('bannerPropagandaFull');if(b)b.classList.add('visivel');}
 function esconderPropagandaFull(){const b=$('bannerPropagandaFull');if(b)b.classList.remove('visivel');}
 function agendarPropaganda(){clearTimeout(propagandaTimer);propagandaTimer=setTimeout(()=>{mostrarPropagandaFull();agendarPropaganda();},CONFIG.PROPAGANDA_INTERVALO_MS);}
 function abrirWhatsAppPropaganda(){vibrar(20);const m=encodeURIComponent('🎵 Olá! Quero o VAI DE BOA! MUSIC VITALÍCIO por '+CONFIG.PRECO);window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+m,'_blank');esconderPropagandaFull();propagandaJaFoiFechada=true;clearTimeout(propagandaTimer);}
 
-/* ═══════════════════════════════════════════════════════════════
-   💾 DOWNLOAD OFFLINE — MODAIS
-   ═══════════════════════════════════════════════════════════════ */
 async function abrirModalDownload(genero){
   const musicas=appState.musicas;
   if(!musicas||!musicas.length){notif('⚠️ Escolha um gênero primeiro',2000,'warning');return;}
@@ -2437,12 +1974,7 @@ async function abrirModalDownload(genero){
   dom.downloadCloseBtn.style.display='none';
   const card=document.querySelector('.genre-card[data-genero="'+genero+'"]');
   if(card)card.classList.add('baixando');
-  const res=await baixarGeneroCompleto(genero,musicas,(prog)=>{
-    const pct=(prog.atual/prog.total)*100;
-    dom.downloadProgressFill.style.width=pct+'%';
-    dom.downloadContador.textContent=prog.atual+' / '+prog.total;
-    dom.downloadAtual.textContent=(prog.musicaAtual||'').slice(0,30);
-  });
+  const res=await baixarGeneroCompleto(genero,musicas,(prog)=>{const pct=(prog.atual/prog.total)*100;dom.downloadProgressFill.style.width=pct+'%';dom.downloadContador.textContent=prog.atual+' / '+prog.total;dom.downloadAtual.textContent=(prog.musicaAtual||'').slice(0,30);});
   if(card)card.classList.remove('baixando');
   if(downloadCancelado){dom.downloadSub.textContent='🛑 Cancelado';}
   else{dom.downloadSub.textContent='✅ Concluído!';notif('✅ '+res.baixadas+' músicas offline!',3000,'success');}
@@ -2452,7 +1984,6 @@ async function abrirModalDownload(genero){
   dom.downloadProgressFill.style.width='100%';
   setTimeout(()=>{dom.downloadModal.classList.remove('active');},2000);
 }
-
 async function abrirGerenciadorOffline(){
   const mgr=dom.offlineManager;if(!mgr)return;
   mgr.classList.add('active');
@@ -2468,22 +1999,12 @@ async function abrirGerenciadorOffline(){
     gs.forEach(g=>{
       const info=meta[g];const item=document.createElement('div');item.className='offline-item';
       item.innerHTML='<div><div class="nome">'+g+'</div><div class="qtd">'+info.baixadas+'/'+info.total+' '+(info.completo?'✓':'')+'</div></div><button class="remove">🗑️</button>';
-      item.querySelector('.remove').onclick=async()=>{
-        if(!confirm('Remover "'+g+'"?'))return;
-        const c=await abrirCacheMusicas();
-        if(c){const ks=await c.keys();for(const k of ks){if(k.url.includes('/'+g.toLowerCase()+'/')||k.url.includes('_'+g.toLowerCase())){await c.delete(k);}}}
-        delete meta[g];localStorage.setItem('vdb_offline_meta',JSON.stringify(meta));
-        abrirGerenciadorOffline();renderizarGeneros();
-        notif('🗑️ '+g+' removido',1500,'info');
-      };
+      item.querySelector('.remove').onclick=async()=>{if(!confirm('Remover "'+g+'"?'))return;const c=await abrirCacheMusicas();if(c){const ks=await c.keys();for(const k of ks){if(k.url.includes('/'+g.toLowerCase()+'/')||k.url.includes('_'+g.toLowerCase())){await c.delete(k);}}}delete meta[g];localStorage.setItem('vdb_offline_meta',JSON.stringify(meta));abrirGerenciadorOffline();renderizarGeneros();notif('🗑️ '+g+' removido',1500,'info');};
       lista.appendChild(item);
     });
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   📱 INSTALAÇÃO PWA
-   ═══════════════════════════════════════════════════════════════ */
 const btnInstalarFixo=$('btnInstalarFixo'),instrucoesInstalar=$('instrucoesInstalar');
 let deferredInstallPrompt=null, pwaJaFoiMostradoNestaSessao=false;
 function jaEstaInstalado(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}
@@ -2527,31 +2048,16 @@ if(dom.menuInstalarBtn)dom.menuInstalarBtn.onclick=()=>{fecharMenu();if(deferred
 const fecharInst=document.getElementById('fecharInstrucoesBtn');
 if(fecharInst)fecharInst.onclick=()=>instrucoesInstalar.classList.remove('active');
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.warn('SW:',e));});}
-
-async function forcarRecarregarTudo(){
-  notif('🔄 Limpando...',2000,'info');
-  try{if(navigator.serviceWorker){const r=await navigator.serviceWorker.getRegistrations();await Promise.all(r.map(x=>x.unregister()));}if('caches' in window){const n=await caches.keys();await Promise.all(n.map(x=>caches.delete(x)));}}catch(e){}
-  setTimeout(()=>{window.location.href=window.location.pathname+'?hard='+Date.now();},1000);
-}
-async function atualizarAppMagico(){
-  const ok=await vdbDialog({title:'🪄 ATUALIZAR',msg:'Deseja atualizar agora?',okText:'Atualizar'});
-  if(!ok)return;
-  notif('⏳ Atualizando...',1500,'info');
-  try{if('caches' in window){const k=await caches.keys();await Promise.all(k.map(x=>caches.delete(x)));}if(navigator.serviceWorker){const r=await navigator.serviceWorker.getRegistrations();await Promise.all(r.map(x=>x.unregister()));}}catch(e){}
-  setTimeout(()=>{window.location.href=window.location.pathname+'?update='+Date.now();},800);
-}
+async function forcarRecarregarTudo(){notif('🔄 Limpando...',2000,'info');try{if(navigator.serviceWorker){const r=await navigator.serviceWorker.getRegistrations();await Promise.all(r.map(x=>x.unregister()));}if('caches' in window){const n=await caches.keys();await Promise.all(n.map(x=>caches.delete(x)));}}catch(e){}setTimeout(()=>{window.location.href=window.location.pathname+'?hard='+Date.now();},1000);}
+async function atualizarAppMagico(){const ok=await vdbDialog({title:'🪄 ATUALIZAR',msg:'Deseja atualizar agora?',okText:'Atualizar'});if(!ok)return;notif('⏳ Atualizando...',1500,'info');try{if('caches' in window){const k=await caches.keys();await Promise.all(k.map(x=>caches.delete(x)));}if(navigator.serviceWorker){const r=await navigator.serviceWorker.getRegistrations();await Promise.all(r.map(x=>x.unregister()));}}catch(e){}setTimeout(()=>{window.location.href=window.location.pathname+'?update='+Date.now();},800);}
 function fecharMenu(){dom.menuPopup.classList.remove('open');const s=$('menuSubmenu');if(s)s.classList.remove('open');}
 function fecharFab(){dom.fabSub.classList.remove('open');dom.fabMain.innerHTML='<i class="fas fa-plus"></i>';}
 
-/* ═══════════════════════════════════════════════════════════════
-   🎬 FUNÇÃO PRINCIPAL — INICIAR APP
-   ═══════════════════════════════════════════════════════════════ */
 async function iniciar(){
   try{
     try{const v=localStorage.getItem('vdb_versao_limpeza');if(v!==CONFIG.APP_VERSION){for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith('cache_')&&!k.includes(CONFIG.APP_VERSION))localStorage.removeItem(k);}localStorage.setItem('vdb_versao_limpeza',CONFIG.APP_VERSION);}}catch(e){}
 
     aplicarTemaCor(appState.temaCor);
-
     appState.favorites=appState.getFavorites();updateFavBadge();updateProgress(10);
     if(dom.infoDispositivo)dom.infoDispositivo.textContent='🆔 '+appState.fingerprint;
     dom.scrollText.innerHTML='🎵 '+CONFIG.LETREIRO;
@@ -2559,21 +2065,13 @@ async function iniciar(){
 
     await carregarMidiasPadrao();
     updateProgress(30);
-    setTimeout(()=>{if(jaEstaFullscreen())document.body.classList.add('em-fullscreen');},500);
 
     const resultado=await SecureTimer.verificar();
     if(resultado.liberado){
       appState.desbloqueado=(resultado.motivo==='senha');
-      dom.blockOverlay.classList.remove('active');
-      dom.blockOverlay.style.display='none';
-      if(resultado.motivo==='senha'){dom.timerLib.innerHTML='<i class="fas fa-lock-open"></i> Lib';dom.timerLib.style.color='#10b981';}
-      updateProgress(60);
-      setTimeout(ativarPlayer,800);
-    }else{
-      dom.blockOverlay.classList.add('active');
-      dom.blockOverlay.style.display='flex';
-      updateProgress(60);
-    }
+      dom.blockOverlay.classList.remove('active');dom.blockOverlay.style.display='none';
+      updateProgress(60);setTimeout(ativarPlayer,800);
+    }else{dom.blockOverlay.classList.add('active');dom.blockOverlay.style.display='flex';updateProgress(60);}
 
     updateProgress(70);
     const promessas=GENRE_ORDEM.slice(0,6).map(async(g)=>{try{const m=await cacheManager.get(g,GENRE_URLS[g]);return m&&m.length?{g,m}:null;}catch(e){return null;}});
@@ -2592,53 +2090,38 @@ async function iniciar(){
     dom.loadingScreen.style.display='none';
     dom.playerContainer.classList.add('visible');
     updateProgress(100);
-    mostrarBotaoInstalar();updateTimerDisplay();
+    mostrarBotaoInstalar();
+    updateTimerDisplay();
     setTimeout(()=>{if(!jaEstaFullscreen())forcarTelaCheia();},300);
     ativarFullscreenPrimeiroToque();
     ajustarIOSFullscreen();
     setTimeout(()=>{if(!jaEstaInstalado()&&ehMobile())mostrarModalPWA();},CONFIG.PWA_INSTALL_DELAY_MS+2000);
 
-    /* ═══ BOTÕES PRINCIPAIS ═══ */
     dom.playBtn.onclick=togglePlay;
     dom.prevBtn.onclick=prev;
     dom.nextBtn.onclick=next;
 
-    const seekFromEvent=(e)=>{
-      if(!dom.audio.duration)return;
-      const t=e.touches?e.touches[0]:e;
-      const r=dom.progressBar.getBoundingClientRect();
-      const pct=Math.max(0,Math.min(1,(t.clientX-r.left)/r.width));
-      dom.audio.currentTime=pct*dom.audio.duration;
-    };
+    const seekFromEvent=(e)=>{if(!dom.audio.duration)return;const t=e.touches?e.touches[0]:e;const r=dom.progressBar.getBoundingClientRect();const pct=Math.max(0,Math.min(1,(t.clientX-r.left)/r.width));dom.audio.currentTime=pct*dom.audio.duration;};
     dom.progressBar.addEventListener('click',seekFromEvent);
     dom.progressBar.addEventListener('touchend',(e)=>{seekFromEvent(e);e.preventDefault();},{passive:false});
 
     if(dom.btnCoracaoInfo)dom.btnCoracaoInfo.onclick=(e)=>{e.stopPropagation();vibrar(20);toggleFavAtual();};
-
     setTimeout(()=>{showControls();},2000);
 
-    /* ═══ BUSCA (letreiro) ═══ */
-    if(dom.letreiroClick){
-      dom.letreiroClick.addEventListener('click',e=>{
-        e.stopPropagation();
-        vibrar(10);
-        SearchManager.abrir();
-      });
-    }
+    if(dom.letreiroClick){dom.letreiroClick.addEventListener('click',e=>{e.stopPropagation();vibrar(10);SearchManager.abrir();});}
     SearchManager.init();
     FavRadio.init();
     AudioGuard.init();
+    initControlesAnuncio();
 
-    /* ═══ CLIQUE FORA DO CARD ═══ */
     document.addEventListener('click',e=>{
       if(e.target.closest('#btnTrazerCard'))return;
-      if(e.target.closest('#logoTexto'))return;
-      if(e.target.closest('.linha-2'))return;
-      if(e.target.closest('button')||e.target.closest('.genre-card')||e.target.closest('.fav-item-modal')||e.target.closest('.menu-popup')||e.target.closest('.painel-baixo')||e.target.closest('.bottom-sheet')||e.target.closest('.genres-modal')||e.target.closest('.fav-modal')||e.target.closest('.fab-container')||e.target.closest('.topo')||e.target.closest('.vdb-dialog-overlay')||e.target.closest('.tutorial-modal')||e.target.closest('.banner-propaganda-full')||e.target.closest('#pwaInstallModal')||e.target.closest('#downloadModal')||e.target.closest('#offlineManager')||e.target.closest('#themeModal')||e.target.closest('.theme-card')||e.target.closest('#telaAnuncios')||e.target.closest('.search-modal')||e.target.closest('.fav-radio-modal'))return;
+      if(e.target.closest('#tituloGrande'))return;
+      if(e.target.closest('.letreiro-wrap'))return;
+      if(e.target.closest('button')||e.target.closest('.genre-card')||e.target.closest('.fav-item-modal')||e.target.closest('.menu-popup')||e.target.closest('.painel-baixo')||e.target.closest('.bottom-sheet')||e.target.closest('.genres-modal')||e.target.closest('.fav-modal')||e.target.closest('.fab-container')||e.target.closest('.info-topo')||e.target.closest('.vdb-dialog-overlay')||e.target.closest('.tutorial-modal')||e.target.closest('.banner-propaganda-full')||e.target.closest('#pwaInstallModal')||e.target.closest('#downloadModal')||e.target.closest('#offlineManager')||e.target.closest('#themeModal')||e.target.closest('.theme-card')||e.target.closest('#telaAnuncios')||e.target.closest('.search-modal')||e.target.closest('.fav-radio-modal'))return;
       if(appState.telaAtual==='principal'&&dom.bottomControls.classList.contains('escondido'))trazerCardDeVolta();
     });
 
-    /* ═══ MENU (⋮) ═══ */
     dom.menuButton.onclick=e=>{e.stopPropagation();vibrar(10);if(dom.menuPopup.classList.contains('open'))fecharMenu();else{dom.menuPopup.classList.add('open');const s=$('menuSubmenu');if(s)s.classList.remove('open');}};
     const btnAbrir=$('btnAbrirOpcoes');
     if(btnAbrir)btnAbrir.onclick=e=>{e.stopPropagation();vibrar(10);const s=$('menuSubmenu');if(s)s.classList.toggle('open');};
@@ -2663,7 +2146,6 @@ async function iniciar(){
     document.querySelectorAll('.speed-btn').forEach(b=>{b.onclick=()=>{vibrar(10);document.querySelectorAll('.speed-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');dom.audio.playbackRate=parseFloat(b.dataset.speed);notif('⚡ '+b.dataset.speed+'x',1500,'info');};});
     document.querySelectorAll('.sheet-option[data-sleep]').forEach(b=>{b.onclick=()=>{vibrar(10);const min=parseInt(b.dataset.sleep);if(min>0){setTimeout(()=>{dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';notif('💤 Desligada!',2000,'info');},min*60000);notif('⏰ '+min+' min',2000,'info');}else notif('🚫 Cancelado',1500,'info');dom.sleepSheet.classList.remove('open');};});
 
-    /* ═══ FAB (➕) ═══ */
     dom.fabMain.onclick=()=>{vibrar(10);dom.fabSub.classList.toggle('open');dom.fabMain.innerHTML=dom.fabSub.classList.contains('open')?'<i class="fas fa-times"></i>':'<i class="fas fa-plus"></i>';};
     if(dom.fabBuscar)dom.fabBuscar.onclick=()=>{fecharFab();SearchManager.abrir();};
     dom.fabFavoritos.onclick=()=>{vibrar(10);renderizarFavoritosModal();dom.favModal.classList.add('open');fecharFab();};
@@ -2694,31 +2176,8 @@ async function iniciar(){
 
     setup8CliquesLogo();
 
-    /* ═══ ADMIN ═══ */
-    dom.adminGerarBtn.onclick=async()=>{
-      const f=dom.adminFingerprintInput.value.trim();
-      if(!f||f.length<10){notif('⚠️ Cole o fingerprint!',2000,'warning');return;}
-      const sp=await vdbDialog({title:'🔒 SENHA PADRÃO',msg:'Digite a senha de admin:',input:'password',placeholder:'Senha padrão',okText:'Confirmar'});
-      if(!sp)return;
-      const ok=await verificarSenhaPadrao(sp);
-      if(!ok){notif('❌ Senha incorreta!',2500,'error');return;}
-      const s=gerarSenhaDispositivo(f);
-      dom.adminSenhaGerada.value=s;
-      appState.addSenhaHistorico(s,'dispositivo');
-      carregarHistorico();
-      notif('✅ Gerada!',2000,'success');
-    };
-    dom.adminGerarUniversalBtn.onclick=async()=>{
-      const sp=await vdbDialog({title:'🔒 SENHA PADRÃO',msg:'Digite a senha de admin:',input:'password',placeholder:'Senha padrão',okText:'Confirmar'});
-      if(!sp)return;
-      const ok=await verificarSenhaPadrao(sp);
-      if(!ok){notif('❌ Senha incorreta!',2500,'error');return;}
-      const s=gerarSenhaUniversal();
-      dom.adminSenhaGerada.value=s;
-      appState.addSenhaHistorico(s,'universal');
-      carregarHistorico();
-      notif('✅ Universal!',2000,'success');
-    };
+    dom.adminGerarBtn.onclick=async()=>{const f=dom.adminFingerprintInput.value.trim();if(!f||f.length<10){notif('⚠️ Cole o fingerprint!',2000,'warning');return;}const sp=await vdbDialog({title:'🔒 SENHA PADRÃO',msg:'Digite a senha de admin:',input:'password',placeholder:'Senha padrão',okText:'Confirmar'});if(!sp)return;const ok=await verificarSenhaPadrao(sp);if(!ok){notif('❌ Senha incorreta!',2500,'error');return;}const s=gerarSenhaDispositivo(f);dom.adminSenhaGerada.value=s;appState.addSenhaHistorico(s,'dispositivo');carregarHistorico();notif('✅ Gerada!',2000,'success');};
+    dom.adminGerarUniversalBtn.onclick=async()=>{const sp=await vdbDialog({title:'🔒 SENHA PADRÃO',msg:'Digite a senha de admin:',input:'password',placeholder:'Senha padrão',okText:'Confirmar'});if(!sp)return;const ok=await verificarSenhaPadrao(sp);if(!ok){notif('❌ Senha incorreta!',2500,'error');return;}const s=gerarSenhaUniversal();dom.adminSenhaGerada.value=s;appState.addSenhaHistorico(s,'universal');carregarHistorico();notif('✅ Universal!',2000,'success');};
     dom.adminLimparBtn.onclick=()=>{dom.adminSenhaGerada.value='';notif('🗑️',1000,'info');};
     dom.btnCopiarSenha.onclick=()=>copiarTexto(dom.adminSenhaGerada.value,'📋 Copiada!');
     dom.adminCopiarSenhaBtn.onclick=()=>copiarTexto(dom.adminSenhaGerada.value,'📋 Copiada!');
@@ -2727,7 +2186,6 @@ async function iniciar(){
     dom.adminCloseBtn.onclick=()=>dom.adminPanel.classList.remove('open');
     if(dom.adminCloseTopBtn)dom.adminCloseTopBtn.onclick=()=>dom.adminPanel.classList.remove('open');
 
-    /* ═══ DOWNLOAD / OFFLINE ═══ */
     if(dom.downloadCancelBtn)dom.downloadCancelBtn.onclick=()=>cancelarDownload();
     if(dom.downloadCloseBtn)dom.downloadCloseBtn.onclick=()=>{dom.downloadModal.classList.remove('active');};
     if(dom.fabGerenciarOffline)dom.fabGerenciarOffline.onclick=()=>{abrirGerenciadorOffline();fecharFab();};
@@ -2736,7 +2194,6 @@ async function iniciar(){
     if(dom.offlineFecharBtn)dom.offlineFecharBtn.onclick=()=>{dom.offlineManager.classList.remove('active');renderizarGeneros();};
     if(dom.offlineLimparBtn)dom.offlineLimparBtn.onclick=async()=>{if(!confirm('Apagar TODAS as músicas offline?'))return;await limparTudoOffline();localStorage.removeItem('vdb_offline_meta');abrirGerenciadorOffline();renderizarGeneros();notif('🗑️ Tudo limpo!',2000,'success');};
 
-    /* ═══ EVENTOS DO PLAYER ═══ */
     dom.audio.ontimeupdate=()=>{
       if(dom.audio.duration){
         dom.progressFill.style.width=(dom.audio.currentTime/dom.audio.duration*100)+'%';
@@ -2748,31 +2205,16 @@ async function iniciar(){
     dom.audio.onended=()=>{if(!appState.carregandoMusica)next();};
     dom.audio.onerror=()=>{if(!appState.carregandoMusica)setTimeout(next,500);};
 
-    /* ═══ ATALHOS DE TECLADO ═══ */
-    document.addEventListener('keydown',e=>{
-      if(e.target.tagName==='INPUT')return;
-      if(e.key===' '){e.preventDefault();togglePlay();}
-      if(e.key==='ArrowRight')next();
-      if(e.key==='ArrowLeft')prev();
-    });
-
+    document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key===' '){e.preventDefault();togglePlay();}if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();});
     document.addEventListener('click',e=>{if(!dom.menuPopup.contains(e.target)&&e.target!==dom.menuButton&&!dom.menuButton.contains(e.target))fecharMenu();});
-
-    /* ═══ VISIBILIDADE ═══ */
-    document.addEventListener('visibilitychange',()=>{
-      if(document.visibilityState==='visible'){
-        updateTimerDisplay();
-        if(appState.isPlaying&&dom.audio&&dom.audio.paused&&dom.audio.src&&!appState.carregandoMusica)dom.audio.play().catch(()=>{});
-        if(appState.isBackgroundActive&&dom.backgroundAudio.paused){dom.backgroundAudio.src=getSilentAudioUrl();dom.backgroundAudio.loop=true;dom.backgroundAudio.volume=.001;dom.backgroundAudio.play().catch(()=>{});}
-      }
-    });
 
     window.addEventListener('beforeunload',()=>{appState._save();if(keepAliveInterval){clearInterval(keepAliveInterval);keepAliveInterval=null;}});
 
-    /* ═══ BANNER PROPAGANDA ═══ */
     if(dom.bannerPropagandaFull)dom.bannerPropagandaFull.onclick=e=>{if(e.target.closest('.prop-full-fechar'))return;abrirWhatsAppPropaganda();};
     if(dom.propFullFecharBtn)dom.propFullFecharBtn.onclick=e=>{e.stopPropagation();vibrar(10);esconderPropagandaFull();propagandaJaFoiFechada=true;clearTimeout(propagandaTimer);};
     if(dom.propFullCtaBtn)dom.propFullCtaBtn.onclick=e=>{e.stopPropagation();abrirWhatsAppPropaganda();};
+
+    setTimeout(iniciarCiclo, 10000);
     setTimeout(()=>{mostrarPropagandaFull();agendarPropaganda();},30000);
 
   }catch(e){
@@ -2786,9 +2228,6 @@ async function iniciar(){
 function abrirTutorial(){vibrar(10);if(dom.tutorialModal)dom.tutorialModal.classList.add('open');}
 function fecharTutorial(){if(dom.tutorialModal)dom.tutorialModal.classList.remove('open');}
 
-/* ═══════════════════════════════════════════════════════════════
-   ▶️ INICIA O APP
-   ═══════════════════════════════════════════════════════════════ */
 iniciar();
 })();
 </script>
