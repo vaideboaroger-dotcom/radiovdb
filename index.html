@@ -68,62 +68,55 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 .media-container .active{opacity:1;z-index:3}
 .media-container .inactive{opacity:0;z-index:2}
 
-/* ═══ TOPO ORGANIZADO ═══ */
+/* ═══ TOPO — TIMER + MENU + LETREIRO + TÍTULO + GÊNERO ═══ */
 .info-topo{
   position:fixed;top:0;left:0;right:0;z-index:35;
   padding-top:max(10px,var(--safe-top));
-  padding-bottom:10px;
-  background:linear-gradient(180deg,rgba(0,0,0,.65) 0%,rgba(0,0,0,.25) 70%,transparent 100%);
-  display:flex;flex-direction:column;gap:6px;
+  padding-bottom:14px;
+  background:linear-gradient(180deg,rgba(0,0,0,.6),transparent);
+  display:flex;flex-direction:column;align-items:stretch;gap:6px;
   transition:opacity .6s ease;pointer-events:none;
 }
 .info-topo > *{pointer-events:auto}
 .info-topo.escondido{opacity:0;pointer-events:none}
 
+/* ✅ LINHA DO TOPO: TIMER + MENU */
 .topo-linha{
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;height:28px;width:100%;
+  padding:0 16px;
+  height:26px;
+  width:100%;
 }
-
-.marca-topo{
-  font-family:'Audiowide',sans-serif;
-  font-size:.78rem;letter-spacing:3px;font-weight:900;color:#fff;
-  text-shadow:0 0 8px var(--cor-3),0 0 16px var(--cor-1);
-  cursor:pointer;user-select:none;
-  padding:2px 6px;border-radius:8px;
-}
-
 .timer-texto{
-  font-family:'Rajdhani',sans-serif;font-size:.72rem;font-weight:800;
+  font-family:'Rajdhani',sans-serif;
+  font-size:.75rem;font-weight:800;
   color:#fff;font-variant-numeric:tabular-nums;
-  text-shadow:0 2px 6px rgba(0,0,0,.6);white-space:nowrap;
-  min-width:70px;
+  text-shadow:0 2px 6px rgba(0,0,0,.6);
+  white-space:nowrap;
 }
 .timer-texto.liberado{color:#10b981}
-
 .menu-btn-limpo{
   background:rgba(0,0,0,.4);
   border:1px solid rgba(255,255,255,.2);
   border-radius:50%;
   color:#fff;font-size:1rem;
-  width:30px;height:30px;
+  width:32px;height:32px;
   cursor:pointer;padding:0;
   display:flex;align-items:center;justify-content:center;
   transition:transform .2s, background .2s;
   backdrop-filter:blur(8px);
-  flex-shrink:0;
 }
 .menu-btn-limpo:active{transform:scale(.88);background:rgba(255,255,255,.2)}
 
 /* LETREIRO */
 .letreiro-wrap{
-  width:100%;height:22px;padding:0 16px;
+  width:100%;height:24px;padding:0 16px;
   overflow:hidden;display:flex;align-items:center;gap:8px;
   cursor:pointer;
 }
 .letreiro-wrap i.fa-magnifying-glass{color:rgba(255,255,255,.6);font-size:.7rem;flex-shrink:0}
 .letreiro{
-  font-size:.7rem;font-weight:700;color:rgba(255,255,255,.95);
+  font-size:.72rem;font-weight:700;color:rgba(255,255,255,.95);
   white-space:nowrap;animation:scrollText 60s linear infinite;
   text-shadow:0 1px 4px rgba(0,0,0,.6);flex:1;overflow:hidden;
 }
@@ -131,30 +124,32 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 .letreiro b{color:#fff;font-weight:900}
 .letreiro i{font-style:normal;color:rgba(255,255,255,.9)}
 
-.topo-linha-2{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;height:30px;width:100%;
+/* ✅ TÍTULO GRANDE COM EFEITOS */
+.titulo-grande{
+  font-family:'Audiowide',sans-serif;
+  font-size:1.8rem;font-weight:900;letter-spacing:6px;color:#fff;
+  margin-top:24px;
+  text-shadow:0 0 15px rgba(255,255,255,.7), 0 0 30px var(--cor-3), 0 0 50px var(--cor-1);
+  animation:tituloEfeito 4s ease-in-out infinite;
+  cursor:default;user-select:none;text-align:center;
+  align-self:center;
+}
+@keyframes tituloEfeito{
+  0%,100%{transform:scale(1) translateY(0);color:#fff;opacity:1;letter-spacing:6px}
+  20%{transform:scale(1.08) translateY(-3px);color:var(--cor-3);opacity:.9}
+  40%{transform:scale(.95) translateY(2px);color:#fff;opacity:1}
+  60%{transform:scale(1.05) translateY(-2px);color:var(--cor-1);opacity:.85;letter-spacing:8px}
+  80%{transform:scale(1) translateY(0);color:#fff;opacity:1}
 }
 
 .genero-atual{
-  font-family:'Rajdhani',sans-serif;font-size:.68rem;font-weight:800;
-  letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.95);
-  padding:5px 14px;background:rgba(0,0,0,.5);
-  border:1px solid rgba(255,255,255,.18);border-radius:20px;
+  font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:800;
+  letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.85);
+  padding:4px 14px;background:rgba(0,0,0,.4);
+  border:1px solid rgba(255,255,255,.15);border-radius:20px;
   backdrop-filter:blur(8px);text-shadow:0 1px 3px rgba(0,0,0,.5);
+  align-self:center;
 }
-
-.btn-buscar-topo{
-  background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);
-  border-radius:50%;color:#fff;font-size:.85rem;
-  width:30px;height:30px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  backdrop-filter:blur(8px);transition:transform .2s,background .2s;
-}
-.btn-buscar-topo:active{transform:scale(.88);background:rgba(255,255,255,.25)}
-
-/* Elemento invisível só pro admin 8 cliques (caso queira usar) */
-#tituloGrande{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px}
 
 .corpo-tela{flex:1;position:relative;z-index:1;pointer-events:none}
 
@@ -550,10 +545,7 @@ body.modo-tv #btnSairModoTV{display:flex}
 .prop-full-preco-valor{font-family:'Audiowide',sans-serif;font-size:2.5rem;color:#000;font-weight:900}
 .prop-full-preco-label{font-size:.72rem;color:#000;font-weight:800;letter-spacing:2px;margin-top:4px}
 .prop-full-beneficio{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#fff;font-weight:700;margin-bottom:8px;font-size:.82rem}
-.prop-full-cta{background:#25d366;border:none;border-radius:40px;padding:18px 32px;width:100%;font-family:'Audiowide',sans-serif;font-size:1rem;color:#fff;font-weight:900;letter-spacing:2px;margin-top:16px;cursor:pointer;transition:transform .15s, background .2s}
-.prop-full-cta:active{transform:scale(.96)}
-.prop-full-cta.aguardando{background:#f59e0b;animation:pulseCta 0.8s ease-in-out infinite}
-@keyframes pulseCta{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.prop-full-cta{background:#25d366;border:none;border-radius:40px;padding:18px 32px;width:100%;font-family:'Audiowide',sans-serif;font-size:1rem;color:#fff;font-weight:900;letter-spacing:2px;margin-top:16px;cursor:pointer}
 
 /* ═══ DOWNLOAD OFFLINE ═══ */
 .download-modal{position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);z-index:100010;display:none;align-items:center;justify-content:center;padding:20px}
@@ -607,8 +599,8 @@ body.modo-tv #btnSairModoTV{display:flex}
   .glass-musica-nome{font-size:1.3rem}
   .ctrl-btn{font-size:1.4rem}
   .play-big{font-size:1.8rem}
-  .marca-topo{font-size:.7rem;letter-spacing:2px}
-  .letreiro{font-size:.68rem}
+  .titulo-grande{font-size:1.4rem;letter-spacing:4px}
+  .letreiro{font-size:.7rem}
 }
 </style>
 </head><body>
@@ -628,20 +620,15 @@ body.modo-tv #btnSairModoTV{display:flex}
     <div class="info-topo" id="infoTopo">
       <div class="topo-linha">
         <span class="timer-texto" id="timerLib">24:00:00</span>
-        <span class="marca-topo" id="marcaTopo">VAI DE BOA!</span>
-        <button class="menu-btn-limpo" id="menuButton" aria-label="Menu"><i class="fas fa-ellipsis-v"></i></button>
+        <button class="menu-btn-limpo" id="menuButton"><i class="fas fa-ellipsis-v"></i></button>
       </div>
       <div class="letreiro-wrap" id="letreiroClick">
         <i class="fas fa-magnifying-glass"></i>
         <p class="letreiro" id="scrollText">🎵 VAI DE BOA!</p>
       </div>
-      <div class="topo-linha-2">
-        <span class="genero-atual" id="generoAtual">🎵 BÔNUS</span>
-        <button class="btn-buscar-topo" id="btnBuscarTopo" aria-label="Buscar"><i class="fas fa-search"></i></button>
-      </div>
+      <div class="titulo-grande" id="tituloGrande">VAI DE BOA!</div>
+      <div class="genero-atual" id="generoAtual">🎵 BÔNUS</div>
     </div>
-
-    <span id="tituloGrande" aria-hidden="true"></span>
 
     <div class="corpo-tela"></div>
 
@@ -654,9 +641,9 @@ body.modo-tv #btnSairModoTV{display:flex}
       <div class="glass-musica-artista" id="musicaArtista">VAI DE BOA! MUSIC</div>
 
       <div class="glass-controles">
-        <button class="ctrl-btn" id="prevBtn" aria-label="Anterior"><i class="fas fa-backward-step"></i></button>
-        <button class="ctrl-btn play-big" id="playBtn" aria-label="Tocar"><i class="fas fa-play"></i></button>
-        <button class="ctrl-btn" id="nextBtn" aria-label="Próxima"><i class="fas fa-forward-step"></i></button>
+        <button class="ctrl-btn" id="prevBtn"><i class="fas fa-backward-step"></i></button>
+        <button class="ctrl-btn play-big" id="playBtn"><i class="fas fa-play"></i></button>
+        <button class="ctrl-btn" id="nextBtn"><i class="fas fa-forward-step"></i></button>
       </div>
 
       <div class="glass-progresso">
@@ -669,7 +656,7 @@ body.modo-tv #btnSairModoTV{display:flex}
   <div id="telaAnuncios">
     <div class="media-anuncios" id="mediaAnuncios"></div>
     <div id="controlesAnuncio">
-      <button class="btn-play-mini" id="btnPlayAnuncio" aria-label="Tocar/Pausar"><i class="fas fa-play"></i></button>
+      <button class="btn-play-mini" id="btnPlayAnuncio"><i class="fas fa-play"></i></button>
       <button class="btn-voltar" id="btnVoltarPrincipal">
         <i class="fas fa-arrow-left"></i> VOLTAR
       </button>
@@ -702,7 +689,7 @@ body.modo-tv #btnSairModoTV{display:flex}
   <div class="menu-popup" id="menuPopup">
     <div class="menu-header">
       <span class="titulo">⚙️ OPÇÕES</span>
-      <button class="fechar" id="closeMenuBtn" aria-label="Fechar"><i class="fas fa-times"></i></button>
+      <button class="fechar" id="closeMenuBtn"><i class="fas fa-times"></i></button>
     </div>
     <button class="menu-btn-grande" id="btnAbrirOpcoes">
       <span>VER OPÇÕES</span>
@@ -788,7 +775,7 @@ body.modo-tv #btnSairModoTV{display:flex}
   <div class="search-box">
     <div class="search-header">
       <input type="text" id="searchInput" placeholder="🔍 Buscar música ou artista..." autocomplete="off">
-      <button id="searchCloseBtn" aria-label="Fechar"><i class="fas fa-times"></i></button>
+      <button id="searchCloseBtn"><i class="fas fa-times"></i></button>
     </div>
     <div class="search-filters">
       <select id="searchGenero"><option value="">🎸 Todos os gêneros</option></select>
@@ -880,7 +867,7 @@ body.modo-tv #btnSairModoTV{display:flex}
 
 <div id="pwaInstallModal">
   <div class="pwa-box">
-    <img src="favicon30.png" style="width:100px;border-radius:50%;margin-bottom:14px" alt="VDB">
+    <img src="favicon30.png" style="width:100px;border-radius:50%;margin-bottom:14px">
     <div class="pwa-titulo">INSTALE O APP</div>
     <div class="pwa-sub">📱 MELHOR EXPERIÊNCIA</div>
     <div id="pwaBeneficios">
@@ -906,7 +893,7 @@ body.modo-tv #btnSairModoTV{display:flex}
     </div>
     <div class="tutorial-item"><div class="icon-tut">🎵</div><div><div class="tt">Tocar música</div><div class="td">Toque no ▶️ grande pra tocar.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">❤️</div><div><div class="tt">Favoritar</div><div class="td">Toque no coração.</div></div></div>
-    <div class="tutorial-item"><div class="icon-tut">🔍</div><div><div class="tt">Buscar</div><div class="td">Toque no letreiro, na lupa do topo ou em ➕ → Buscar.</div></div></div>
+    <div class="tutorial-item"><div class="icon-tut">🔍</div><div><div class="tt">Buscar</div><div class="td">Toque no letreiro ou em ➕ → Buscar.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">🎨</div><div><div class="tt">Mudar cor</div><div class="td">Toque em ➕ → 🎨 Cores do App.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">📺</div><div><div class="tt">Modo TV</div><div class="td">Toque em ➕ → 📺 Modo TV. Use em TVs e PCs.</div></div></div>
     <button class="tutorial-btn-fechar" id="closeTutorialBtn">ENTENDI ✅</button>
@@ -948,7 +935,7 @@ body.modo-tv #btnSairModoTV{display:flex}
 </div>
 
 <div class="banner-propaganda-full" id="bannerPropagandaFull">
-  <button class="prop-full-fechar" id="propFullFecharBtn" aria-label="Fechar">✕</button>
+  <button class="prop-full-fechar" id="propFullFecharBtn">✕</button>
   <div class="prop-full-content">
     <div class="prop-full-logo">🎵</div>
     <div class="prop-full-titulo">VAI DE BOA!</div>
@@ -1008,7 +995,7 @@ const CONFIG = {
   TEMPO_TESTE_SEGUNDOS: 86400,
   PRECO: 'R$ 39,90',
   LETREIRO: '🎵 VAI DE BOA! MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
-  APP_VERSION: 'v50',
+  APP_VERSION: 'v49',
   LOADING_DURACAO_MS: 3500,
   PROPAGANDA_INTERVALO_MS: 120000,
   PWA_INSTALL_DELAY_MS: 30000,
@@ -1017,8 +1004,7 @@ const CONFIG = {
   MIDIA_DURACAO_MS: 30000,
   MIDIA_MAX_SEGURANCA_MS: 90000,
   CICLO_PRINCIPAL_MS: 30000,
-  CICLO_ANUNCIO_MS: 20000,
-  CONTROLES_ANUNCIO_TIMEOUT: 4000
+  CICLO_ANUNCIO_MS: 20000
 };
 
 const CACHE_OFFLINE_CONFIG = { ativado: true, maxMusicas: 500, maxBytesPorMusica: 8 * 1024 * 1024 };
@@ -1110,21 +1096,23 @@ Object.keys(GENRE_URLS).forEach(g => {
   GENRE_REPOS[g] = m ? m[1] + '/' + m[2] : 'radiolojasjc-hub/play12';
 });
 
-/* ✅ MÍDIA PRINCIPAL = SÓ bv1.mp4 */
 const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
-const MIDIAS_FALLBACK = [
-  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}
-];
-
-/* ✅ ANÚNCIOS = tes.mp4 + lan.mp4 */
 const MIDIAS_ANUNCIO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/modotv.json';
-const MIDIAS_ANUNCIO_FALLBACK = [
+const MIDIAS_TV_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/modotv.json';
+
+const MIDIAS_FALLBACK = [
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/mc1.mp4'},
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/mc2.mp4'},
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'},
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'},
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/lan.mp4'}
 ];
 
-/* MODO TV (mantém o original) */
-const MIDIAS_TV_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/modotv.json';
+const MIDIAS_ANUNCIO_FALLBACK = [
+  {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/mac1.mp4'},
+  {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/amytv.mp4'}
+];
+
 const MIDIAS_TV_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/mac1.mp4'},
   {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/amytv.mp4'},
@@ -1138,20 +1126,7 @@ const fmt = s => { if(!s||isNaN(s))return '0:00'; const m=Math.floor(s/60); cons
 const vibrar = (padrao=15) => { try{ if(!navigator.vibrate) return; navigator.vibrate(padrao); }catch(e){} };
 function fmtTempo(s){if(s<0)s=0;s=Math.floor(s);const d=Math.floor(s/86400),h=Math.floor((s%86400)/3600);const m=Math.floor((s%3600)/60),sg=Math.floor(s%60);if(d>0)return d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');if(h>0)return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');return String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');}
 function fmtBytes(b){if(!b||b<1024)return (b||0)+' B';if(b<1024*1024)return (b/1024).toFixed(1)+' KB';if(b<1024*1024*1024)return (b/1024/1024).toFixed(1)+' MB';return (b/1024/1024/1024).toFixed(2)+' GB';}
-
-/* ✅ escapeHTML mais leve que sanitize */
-const escapeHTML = (() => {
-  const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
-  return (s) => String(s ?? '').replace(/[&<>"']/g, c => map[c]);
-})();
-function sanitize(t){ return escapeHTML(t); }
-
-/* ✅ normaliza acentos pra busca por artista */
-function normalizar(s){
-  return String(s || '').toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
-
+function sanitize(t){if(!t)return '';const d=document.createElement('div');d.textContent=t;return d.textContent;}
 function shuffle(arr){const x=[...arr];const recentes=appState.recentes||new Set();const filtrado=x.filter(m=>!recentes.has(m.id));const base=filtrado.length>5?filtrado:x;for(let i=base.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[base[i],base[j]]=[base[j],base[i]];}return base;}
 function copiarTexto(t,msg){if(!t)return notif('⚠️ Nada!',1500,'warning');navigator.clipboard.writeText(t).then(()=>notif(msg||'📋 Copiado!',1500,'success')).catch(()=>{const i=document.createElement('input');i.value=t;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();notif(msg||'📋 Copiado!',1500,'success');});}
 function aplicarTemaCor(nomeTema){
@@ -1188,7 +1163,7 @@ const SecureTimer = {
 
 class AppState{
   constructor(){
-    this.key='vdb_state_v50';this.data=this._load();
+    this.key='vdb_state_v49';this.data=this._load();
     this.favorites=this.data.favorites||[];this.fingerprint=this._getFP();
     this.desbloqueado=this.data.desbloqueado||false;
     this.modoAtual=this.data.modoAtual||'BÔNUS';
@@ -1263,7 +1238,7 @@ function generoEstaOffline(g){try{const meta=JSON.parse(localStorage.getItem('vd
 
 class Notifier{
   constructor(){this.queue=[];this.showing=false;this.el=$('notification');}
-  show(m,d=2000,t='info'){if(this.queue.length>=5)this.queue.shift();this.queue.push({msg:m,duration:d,type:t});this.process();}
+  show(m,d=2000,t='info'){this.queue.push({msg:m,duration:d,type:t});this.process();}
   async process(){if(this.showing||this.queue.length===0)return;this.showing=true;const it=this.queue.shift();const ic={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};this.el.innerHTML='<span style="margin-right:6px">'+(ic[it.type]||'')+'</span>'+it.msg;this.el.classList.add('show');await sleep(it.duration);this.el.classList.remove('show');this.showing=false;setTimeout(()=>this.process(),300);}
 }
 const notifier=new Notifier();
@@ -1279,7 +1254,7 @@ const dom={
   telaPrincipal:$('telaPrincipal'),telaAnuncios:$('telaAnuncios'),
   genresModal:$('genresModal'),genresGrid:$('genresGrid'),favModal:$('favModal'),
   favListModal:$('favListModal'),feedbackModal:$('feedbackModal'),
-  menuButton:$('menuButton'),logoTexto:$('marcaTopo'),senhaInput:$('senhaInput'),
+  menuButton:$('menuButton'),logoTexto:$('tituloGrande'),senhaInput:$('senhaInput'),
   btnLiberar:$('btnLiberar'),erroSenha:$('erroSenha'),infoDispositivo:$('infoDispositivo'),
   btnCopiarFingerprint:$('btnCopiarFingerprint'),adminPanel:$('adminPanel'),
   adminFingerprintInput:$('adminFingerprintInput'),adminSenhaGerada:$('adminSenhaGerada'),
@@ -1322,8 +1297,7 @@ const dom={
   fabGerenciarOffline:$('fabGerenciarOffline'),menuGerenciarOffline:$('menuGerenciarOffline'),
   menuBaixarOffline:$('menuBaixarOffline'),fabTemas:$('fabTemas'),temasMenuBtn:$('temasMenuBtn'),
   themeModal:$('themeModal'),themeGridModernas:$('themeGridModernas'),
-  themeGridClassicas:$('themeGridClassicas'),themeCloseBtn:$('themeCloseBtn'),
-  btnBuscarTopo:$('btnBuscarTopo'),marcaTopo:$('marcaTopo')
+  themeGridClassicas:$('themeGridClassicas'),themeCloseBtn:$('themeCloseBtn')
 };
 
 let fullscreenInterval=null, fullscreenEmAndamento=false;
@@ -1337,7 +1311,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault());
 document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
 document.addEventListener('touchstart',()=>{if(!jaEstaFullscreen()&&!ehIOS())forcarTelaCheia();},{passive:true,capture:true});
 document.addEventListener('click',()=>{if(!jaEstaFullscreen()&&!ehIOS())forcarTelaCheia();},{capture:true});
-setInterval(()=>{if(document.hidden)return;if(ehIOS())return;if(jaEstaFullscreen())return;if(!appState.playerAtivado)return;forcarTelaCheia();},1500);
+setInterval(()=>{if(document.hidden)return;if(ehIOS())return;if(jaEstaFullscreen())return;if(!appState.playerAtivado)return;forcarTelaCheia();},800);
 
 function updateProgress(p){dom.loadingProgressFill.style.width=Math.min(p,100)+'%';}
 
@@ -1384,7 +1358,7 @@ function atualizarBadgeGenero(){
     else dom.generoAtual.textContent='🎵 '+appState.modoAtual;
   }
 }
-function atualizarLetreiro(m){const r=ehModoRadio();if(m){dom.scrollText.innerHTML=(r?'🔴 <b>AO VIVO:</b> ':'🎵 <b>TOCANDO:</b> ')+escapeHTML(m.title)+' — <i>'+escapeHTML(m.artist)+'</i> • VAI DE BOA! MUSIC • '+CONFIG.LETREIRO;}else{dom.scrollText.innerHTML='🎵 '+CONFIG.LETREIRO;}}
+function atualizarLetreiro(m){const r=ehModoRadio();if(m){dom.scrollText.innerHTML=(r?'🔴 <b>AO VIVO:</b> ':'🎵 <b>TOCANDO:</b> ')+sanitize(m.title)+' — <i>'+sanitize(m.artist)+'</i> • VAI DE BOA! MUSIC • '+CONFIG.LETREIRO;}else{dom.scrollText.innerHTML='🎵 '+CONFIG.LETREIRO;}}
 function atualizarInfoMusica(m){if(!m)return;if(dom.musicaNome)dom.musicaNome.textContent=sanitize(m.title)||'Música';if(dom.musicaArtista)dom.musicaArtista.textContent=sanitize(m.artist)||'Artista';atualizarCoracaoTopo();}
 
 let hideControlsTimeout=null, cardJaEscondeu=false;
@@ -1411,9 +1385,6 @@ const AudioGuard = {
     setTimeout(() => { this.pausaManual = false; }, 800);
   }
 };
-
-/* ✅ controle de tentativas em next() */
-let tentativasFalhas = 0;
 
 async function tocar(){
   if(!appState.isBackgroundActive||appState.carregandoMusica||!appState.musicas.length)return;
@@ -1461,7 +1432,6 @@ async function tocar(){
         await dom.audio.play();
         await fadeInAudio(600,vu);
         appState.isPlaying=true;
-        tentativasFalhas = 0;
         dom.playBtn.classList.remove('loading');
         dom.playBtn.innerHTML='<i class="fas fa-pause"></i>';
         if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing';
@@ -1480,27 +1450,13 @@ async function tocar(){
 }
 
 function togglePlay(){vibrar(10);if(!appState.isBackgroundActive){notif('🔊 Aguarde...',1500,'warning');return;}AudioGuard.marcarPausaManual();if(dom.audio.paused)tocar();else{dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused';}showControls();}
-function next(){
-  vibrar(10);
-  if(appState.carregandoMusica||!appState.playlistAtual.length)return;
-  tentativasFalhas++;
-  if(tentativasFalhas > 6){
-    notif('❌ Muitas falhas seguidas', 3000, 'error');
-    dom.audio.pause();
-    appState.isPlaying = false;
-    return;
-  }
-  appState.indiceAtual=(appState.indiceAtual+1)%appState.playlistAtual.length;
-  if(appState.isBackgroundActive)setTimeout(tocar,100);
-  showControls();
-}
-function prev(){vibrar(10);if(appState.carregandoMusica||!appState.playlistAtual.length)return;tentativasFalhas=0;appState.indiceAtual=(appState.indiceAtual-1+appState.playlistAtual.length)%appState.playlistAtual.length;if(appState.isBackgroundActive)setTimeout(tocar,100);showControls();}
+function next(){vibrar(10);if(appState.carregandoMusica||!appState.playlistAtual.length)return;appState.indiceAtual=(appState.indiceAtual+1)%appState.playlistAtual.length;if(appState.isBackgroundActive)setTimeout(tocar,100);showControls();}
+function prev(){vibrar(10);if(appState.carregandoMusica||!appState.playlistAtual.length)return;appState.indiceAtual=(appState.indiceAtual-1+appState.playlistAtual.length)%appState.playlistAtual.length;if(appState.isBackgroundActive)setTimeout(tocar,100);showControls();}
 
 function criarSilentAudio(){const sr=44100,ns=sr*5;const b=new ArrayBuffer(44+ns*2);const v=new DataView(b);const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};w(0,'RIFF');v.setUint32(4,36+ns*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,ns*2,true);return new Blob([b],{type:'audio/wav'});}
 let sb=null,su=null;
 function getSilentAudioUrl(){if(!sb)sb=criarSilentAudio();if(!su)su=URL.createObjectURL(sb);return su;}
 let keepAliveInterval=null;
-let endedHandlerAdicionado = false;
 function manterAudioAtivo(){
   if(keepAliveInterval)clearInterval(keepAliveInterval);
   keepAliveInterval=setInterval(()=>{
@@ -1510,10 +1466,7 @@ function manterAudioAtivo(){
       if(appState.isPlaying&&dom.audio.paused&&!dom.audio.ended&&dom.audio.src&&!appState.carregandoMusica)dom.audio.play().catch(()=>{});
     }catch(e){}
   },3000);
-  if(!endedHandlerAdicionado){
-    dom.audio.addEventListener('ended',()=>{if(appState.isPlaying&&!appState.carregandoMusica)next();});
-    endedHandlerAdicionado = true;
-  }
+  dom.audio.addEventListener('ended',()=>{if(appState.isPlaying&&!appState.carregandoMusica)next();});
 }
 async function ativarPlayer(){
   if(appState.playerAtivado)return;appState.playerAtivado=true;updateProgress(30);
@@ -1556,12 +1509,9 @@ function atualizarCoracaoTopo(){
 }
 function toggleFav(m){vibrar(20);if(!m)return;const i=appState.favorites.findIndex(f=>f.id===m.id);if(i>-1){appState.removeFavorite(m.id);notif('💔 Removido',1500,'info');}else{appState.addFavorite(m);notif('❤️ Adicionado',1500,'success');}updateFavBadge();updateHeart();}
 function toggleFavAtual(){if(!appState.playlistAtual.length)return;const m=appState.playlistAtual[appState.indiceAtual%appState.playlistAtual.length]||appState.playlistAtual[0];if(m)toggleFav(m);}
-function renderizarFavoritosModal(){dom.favListModal.innerHTML='';const f=appState.getFavorites();if(!f.length){dom.favListModal.innerHTML='<div style="color:#aaa;padding:20px;text-align:center">💔 Nenhuma</div>';return;}f.forEach(m=>{const it=document.createElement('div');it.className='fav-item-modal';it.innerHTML='<div><span class="title">'+escapeHTML(m.title)+'</span><span class="artist">'+escapeHTML(m.artist)+'</span></div><button class="remove-fav"><i class="fas fa-times-circle"></i></button>';it.querySelector('.title').onclick=()=>{dom.favModal.classList.remove('open');tocarFavoritaEspecifica(m.id);};it.querySelector('.remove-fav').onclick=e=>{e.stopPropagation();toggleFav(m);renderizarFavoritosModal();};dom.favListModal.appendChild(it);});}
+function renderizarFavoritosModal(){dom.favListModal.innerHTML='';const f=appState.getFavorites();if(!f.length){dom.favListModal.innerHTML='<div style="color:#aaa;padding:20px;text-align:center">💔 Nenhuma</div>';return;}f.forEach(m=>{const it=document.createElement('div');it.className='fav-item-modal';it.innerHTML='<div><span class="title">'+sanitize(m.title)+'</span><span class="artist">'+sanitize(m.artist)+'</span></div><button class="remove-fav"><i class="fas fa-times-circle"></i></button>';it.querySelector('.title').onclick=()=>{dom.favModal.classList.remove('open');tocarFavoritaEspecifica(m.id);};it.querySelector('.remove-fav').onclick=e=>{e.stopPropagation();toggleFav(m);renderizarFavoritosModal();};dom.favListModal.appendChild(it);});}
 function tocarFavoritaEspecifica(id){let m=appState.musicas.find(x=>x.id===id);if(!m)m=appState.favorites.find(x=>x.id===id);if(!m)return;appState.playlistAtual=shuffle(appState.favorites.map(x=>({...x})));const i=appState.playlistAtual.findIndex(x=>x.id===id);if(i>-1){appState.indiceAtual=i;if(appState.isBackgroundActive)tocar();notif('🎵 Tocando!',1500,'success');}}
 
-/* ═══════════════════════════════════════════════════════════════
-   ✅ BUSCA — agora busca por TÍTULO, ARTISTA e GÊNERO (com acentos)
-   ═══════════════════════════════════════════════════════════════ */
 const SearchManager = {
   generoAtual: '', ordemAtual: 'relevancia', termoAtual: '',
   init(){
@@ -1585,7 +1535,7 @@ const SearchManager = {
     if(input && !input.dataset.pronto){
       input.dataset.pronto = '1';
       let timeout = null;
-      input.oninput = () => { clearTimeout(timeout); timeout = setTimeout(() => { this.termoAtual = input.value.trim(); this.buscar(); }, 200); };
+      input.oninput = () => { clearTimeout(timeout); timeout = setTimeout(() => { this.termoAtual = input.value.trim().toLowerCase(); this.buscar(); }, 200); };
       input.onkeydown = (e) => { if(e.key === 'Escape') this.fechar(); };
     }
     const btnClose = document.getElementById('searchCloseBtn');
@@ -1610,72 +1560,29 @@ const SearchManager = {
     const container = document.getElementById('searchResults');
     const countEl = document.getElementById('searchCount');
     if(!container) return;
-
-    const termo = this.termoAtual;
-    const genero = this.generoAtual;
-
-    if(!termo && !genero){
-      container.innerHTML = `<div class="search-empty"><i class="fas fa-search"></i>Digite o nome da música <b>ou do artista</b></div>`;
+    if(!this.termoAtual && !this.generoAtual){
+      container.innerHTML = `<div class="search-empty"><i class="fas fa-search"></i>Digite o nome da música ou escolha um gênero</div>`;
       if(countEl) countEl.textContent = '🎵 ' + appState.musicas.length + ' músicas disponíveis';
       return;
     }
-
     let resultados = appState.musicas;
-
-    if(termo){
-      const t = normalizar(termo);
-      resultados = resultados.filter(m => {
-        const titulo = normalizar(m.title);
-        const artista = normalizar(m.artist);
-        const generoStr = normalizar(m.genero);
-        return titulo.includes(t) || artista.includes(t) || generoStr.includes(t);
-      });
+    if(this.termoAtual){
+      resultados = resultados.filter(m => m.title.toLowerCase().includes(this.termoAtual) || (m.artist && m.artist.toLowerCase().includes(this.termoAtual)));
     }
-
-    if(genero){
-      resultados = resultados.filter(m => m.genero === genero);
-    }
-
-    // ordenação
+    if(this.generoAtual){ resultados = resultados.filter(m => m.genero === this.generoAtual); }
     if(this.ordemAtual === 'az') resultados = [...resultados].sort((a,b) => a.title.localeCompare(b.title));
     else if(this.ordemAtual === 'za') resultados = [...resultados].sort((a,b) => b.title.localeCompare(a.title));
     else if(this.ordemAtual === 'aleatorio') resultados = shuffle(resultados);
-    else {
-      // relevância: título/artista que COMEÇA com o termo vem primeiro
-      if(termo){
-        const t = normalizar(termo);
-        resultados = [...resultados].sort((a,b) => {
-          const aT = normalizar(a.title).startsWith(t) ? 0 : 1;
-          const bT = normalizar(b.title).startsWith(t) ? 0 : 1;
-          const aA = normalizar(a.artist).startsWith(t) ? 0 : 1;
-          const bA = normalizar(b.artist).startsWith(t) ? 0 : 1;
-          return (aT - bT) || (aA - bA);
-        });
-      }
-    }
-
-    if(countEl){
-      countEl.textContent = resultados.length === 0
-        ? '❌ Nenhuma encontrada'
-        : '✅ ' + resultados.length + ' encontrada(s)';
-    }
-
+    if(countEl){ countEl.textContent = resultados.length === 0 ? '❌ Nenhuma encontrada' : '✅ ' + resultados.length + ' encontrada(s)'; }
     if(!resultados.length){
-      container.innerHTML = `<div class="search-empty"><i class="fas fa-frown"></i>Nada pra "<b>${escapeHTML(termo)}</b>"</div>`;
+      container.innerHTML = `<div class="search-empty"><i class="fas fa-frown"></i>Nenhuma música encontrada</div>`;
       return;
     }
-
     container.innerHTML = '';
     resultados.slice(0, 100).forEach(m => {
       const item = document.createElement('div');
       item.className = 'search-result-item';
-      item.innerHTML = `
-        <div class="icon"><i class="fas fa-music"></i></div>
-        <div class="info">
-          <div class="title">${escapeHTML(m.title)}</div>
-          <span class="artist">${escapeHTML(m.artist)}</span>
-        </div>
-        <span class="genero">${escapeHTML(m.genero || '')}</span>`;
+      item.innerHTML = `<div class="icon"><i class="fas fa-music"></i></div><div class="info"><div class="title">${sanitize(m.title)}</div><span class="artist">${sanitize(m.artist)}</span></div><span class="genero">${m.genero || ''}</span>`;
       item.onclick = () => this.tocarResultado(m);
       container.appendChild(item);
     });
@@ -1754,7 +1661,6 @@ async function selecionarGenero(g){
   const m=await cacheManager.get(g,GENRE_URLS[g]);
   if(!m||!m.length){showLoad(false);notif('❌ Erro '+g,2000,'error');return;}
   dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';
-  tentativasFalhas = 0;
   appState.musicas=m;appState.modoAtual=g;appState.playlistAtual=shuffle(m);appState.indiceAtual=0;
   aplicarTemaCor(appState.temaCor);
   const mm=appState.playlistAtual[0];if(mm){atualizarLetreiro(mm);updateHeart();atualizarInfoMusica(mm);}
@@ -1775,7 +1681,6 @@ async function ativarModoRadio(){
     }
     if(!todas.length){showLoad(false);notif('❌ Sem músicas',2000,'error');return;}
     dom.audio.pause();appState.isPlaying=false;dom.playBtn.innerHTML='<i class="fas fa-play"></i>';
-    tentativasFalhas = 0;
     appState.musicas=todas;appState.modoAtual=config.nome;appState.playlistAtual=shuffle(todas);appState.indiceAtual=0;
     const p=appState.playlistAtual[0];if(p){atualizarLetreiro(p);updateHeart();atualizarInfoMusica(p);}
     atualizarBadgeGenero();showLoad(false);
@@ -1807,7 +1712,7 @@ async function desativarModoTV(){
   vibrar(20);modoTVAtivo = false;
   document.body.classList.remove('modo-tv');
   const btn = document.getElementById('btnSairModoTV');if(btn) btn.remove();
-  await carregarMidias(dom.mediaContainer, MIDIAS_PADRAO_URL, { fallback: MIDIAS_FALLBACK, forcarApenasFallback: true });
+  await carregarMidias(dom.mediaContainer, MIDIAS_PADRAO_URL, { fallback: MIDIAS_FALLBACK });
   if(dom.bottomControls) dom.bottomControls.classList.remove('escondido');
   if(dom.topBar) dom.topBar.classList.remove('escondido');
   if(dom.fabContainer) dom.fabContainer.classList.remove('escondido');
@@ -1847,12 +1752,9 @@ async function handleLiberar(){const s=dom.senhaInput.value.trim();if(!s){dom.er
 async function liberarAgora(){const s=await vdbDialog({title:'🔑 LIBERAR',msg:'Digite sua senha:',input:'text',okText:'Liberar'});if(!s)return;const r=await validarSenha(s);if(r.valida){appState.desbloqueado=true;dom.blockOverlay.classList.remove('active');dom.blockOverlay.style.display='none';await SecureTimer.desbloquearPermanente();notif('✅ Liberado!',3000,'success');appState._save();}else{notif('❌ Inválida!',2000,'error');}}
 function carregarHistorico(){const h=appState.getSenhasHistorico();dom.historicoSenhas.innerHTML='';h.forEach(it=>{const d=document.createElement('div');const ti=it.tipo==='universal'?'🌍':'📱';d.innerHTML='<span style="font-size:.62rem;color:#aaa">'+ti+' '+it.data+'</span>';dom.historicoSenhas.appendChild(d);});}
 
-/* ✅ Admin secreto: 8 cliques na marca do topo */
 let cliqueTimestamps=[];
 function setup8CliquesLogo(){
-  const alvo = document.getElementById('marcaTopo');
-  if(!alvo) return;
-  alvo.style.cursor = 'pointer';
+  const alvo=document.getElementById('tituloGrande');if(!alvo)return;
   alvo.addEventListener('click',async(e)=>{
     e.stopPropagation();
     const t=now();cliqueTimestamps=cliqueTimestamps.filter(x=>t-x<3000);cliqueTimestamps.push(t);
@@ -1910,7 +1812,7 @@ function renderizarFila(){
   for(let i=0;i<Math.min(10,t);i++){
     const idx=(i0+i)%t;const m=appState.playlistAtual[idx];if(!m)continue;
     const d=document.createElement('div');d.className='queue-item';
-    d.innerHTML='<div class="num">'+(i+1)+'</div><div><div class="t">'+escapeHTML(m.title)+'</div><div class="a">'+escapeHTML(m.artist)+'</div></div>';
+    d.innerHTML='<div class="num">'+(i+1)+'</div><div><div class="t">'+sanitize(m.title)+'</div><div class="a">'+sanitize(m.artist)+'</div></div>';
     d.onclick=()=>{appState.indiceAtual=idx;if(appState.isBackgroundActive)tocar();dom.queueSheet.classList.remove('open');};
     dom.queueList.appendChild(d);
   }
@@ -1920,7 +1822,7 @@ function renderizarRecentes(){
   if(!appState.historico.length){dom.recentList.innerHTML='<div style="color:#aaa;padding:20px;text-align:center">Nada ainda</div>';return;}
   appState.historico.slice(0,20).forEach((m,i)=>{
     const d=document.createElement('div');d.className='recent-item';
-    d.innerHTML='<div class="num">'+(i+1)+'</div><div><div class="t">'+escapeHTML(m.title)+'</div><div class="a">'+escapeHTML(m.artist)+'</div></div>';
+    d.innerHTML='<div class="num">'+(i+1)+'</div><div><div class="t">'+sanitize(m.title)+'</div><div class="a">'+sanitize(m.artist)+'</div></div>';
     d.onclick=()=>{const f=appState.musicas.find(x=>x.id===m.id);if(f){appState.playlistAtual=[f];appState.indiceAtual=0;if(appState.isBackgroundActive)tocar();}dom.recentSheet.classList.remove('open');};
     dom.recentList.appendChild(d);
   });
@@ -1937,20 +1839,18 @@ new TouchManager();
 
 let midiaToken=0, midiaTimerAtual=null;
 async function carregarMidias(container,url,options={}){
-  const{fallback=MIDIAS_FALLBACK, forcarApenasFallback=false}=options;
+  const{fallback=MIDIAS_FALLBACK}=options;
   const meuToken=++midiaToken;
   if(midiaTimerAtual){clearTimeout(midiaTimerAtual);midiaTimerAtual=null;}
   container.innerHTML='';
   try{
     let ms=[];
-    if(!forcarApenasFallback){
-      try{
-        const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),9000);
-        const r=await fetch(url+'?v='+CONFIG.APP_VERSION+'&t='+now(),{signal:ctrl.signal});
-        clearTimeout(tid);
-        if(r.ok){const d=await r.json();if(Array.isArray(d))ms=d;else if(d.medias)ms=d.medias;else if(d.midias)ms=d.midias;}
-      }catch(e){}
-    }
+    try{
+      const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),9000);
+      const r=await fetch(url+'?v='+CONFIG.APP_VERSION+'&t='+now(),{signal:ctrl.signal});
+      clearTimeout(tid);
+      if(r.ok){const d=await r.json();if(Array.isArray(d))ms=d;else if(d.medias)ms=d.medias;else if(d.midias)ms=d.midias;}
+    }catch(e){}
     if(meuToken!==midiaToken)return;
     if(!ms.length)ms=fallback;
     ms=ms.filter(m=>m&&(m.tipo==='video'||m.tipo==='imagem')&&m.src);
@@ -1981,8 +1881,8 @@ async function carregarMidias(container,url,options={}){
     agendar();
   }catch(e){console.error('Erro mídias:',e);}
 }
-async function carregarMidiasPadrao(){await carregarMidias(dom.mediaContainer,MIDIAS_PADRAO_URL,{fallback:MIDIAS_FALLBACK, forcarApenasFallback:true});}
-async function carregarMidiasAnuncio(){await carregarMidias(dom.mediaAnuncios,MIDIAS_ANUNCIO_URL,{fallback:MIDIAS_ANUNCIO_FALLBACK, forcarApenasFallback:true});}
+async function carregarMidiasPadrao(){await carregarMidias(dom.mediaContainer,MIDIAS_PADRAO_URL,{fallback:MIDIAS_FALLBACK});}
+async function carregarMidiasAnuncio(){await carregarMidias(dom.mediaAnuncios,MIDIAS_ANUNCIO_URL,{fallback:MIDIAS_ANUNCIO_FALLBACK});}
 
 async function trocarTela(destino){
   vibrar(15);
@@ -1990,8 +1890,7 @@ async function trocarTela(destino){
     appState.telaAtual='anuncios';
     dom.telaPrincipal.classList.add('oculta');
     dom.telaAnuncios.classList.add('ativa');
-    const c = document.getElementById('controlesAnuncio');
-    if (c) c.classList.remove('visivel');
+    if(dom.fabContainer)dom.fabContainer.classList.remove('escondido');
     await carregarMidiasAnuncio();
   }else{
     appState.telaAtual='principal';
@@ -2008,14 +1907,11 @@ function initControlesAnuncio(){
   const tela = document.getElementById('telaAnuncios');
   const controles = document.getElementById('controlesAnuncio');
   if(!tela || !controles) return;
-
-  controles.classList.remove('visivel');
-
   tela.addEventListener('click', (e) => {
     if(e.target.closest('#controlesAnuncio')) return;
     controles.classList.add('visivel');
     clearTimeout(controlesAnuncioTimer);
-    controlesAnuncioTimer = setTimeout(() => { controles.classList.remove('visivel'); }, CONFIG.CONTROLES_ANUNCIO_TIMEOUT);
+    controlesAnuncioTimer = setTimeout(() => { controles.classList.remove('visivel'); }, 5000);
   });
   const btnVoltar = document.getElementById('btnVoltarPrincipal');
   if(btnVoltar) btnVoltar.onclick = (e) => {
@@ -2030,7 +1926,7 @@ function initControlesAnuncio(){
     togglePlay();
     btnPlay.innerHTML = dom.audio.paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
     clearTimeout(controlesAnuncioTimer);
-    controlesAnuncioTimer = setTimeout(() => controles.classList.remove('visivel'), CONFIG.CONTROLES_ANUNCIO_TIMEOUT);
+    controlesAnuncioTimer = setTimeout(() => controles.classList.remove('visivel'), 5000);
   };
 }
 
@@ -2063,50 +1959,6 @@ function mostrarPropagandaFull(){if(propagandaJaFoiFechada)return;if(!appState.p
 function esconderPropagandaFull(){const b=$('bannerPropagandaFull');if(b)b.classList.remove('visivel');}
 function agendarPropaganda(){clearTimeout(propagandaTimer);propagandaTimer=setTimeout(()=>{mostrarPropagandaFull();agendarPropaganda();},CONFIG.PROPAGANDA_INTERVALO_MS);}
 function abrirWhatsAppPropaganda(){vibrar(20);const m=encodeURIComponent('🎵 Olá! Quero o VAI DE BOA! MUSIC VITALÍCIO por '+CONFIG.PRECO);window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+m,'_blank');esconderPropagandaFull();propagandaJaFoiFechada=true;clearTimeout(propagandaTimer);}
-
-let bannerCliques = 0;
-let bannerCliqueTimer = null;
-function initBannerPropaganda(){
-  if (dom.propFullCtaBtn) {
-    dom.propFullCtaBtn.onclick = (e) => {
-      e.stopPropagation();
-      vibrar(15);
-      bannerCliques++;
-      if (bannerCliques === 1) {
-        dom.propFullCtaBtn.innerHTML = '<i class="fas fa-hand-pointer"></i> CLIQUE NOVAMENTE';
-        dom.propFullCtaBtn.classList.add('aguardando');
-        notif('👆 Toque de novo pra abrir o WhatsApp', 2000, 'info');
-        clearTimeout(bannerCliqueTimer);
-        bannerCliqueTimer = setTimeout(() => {
-          dom.propFullCtaBtn.innerHTML = '<i class="fab fa-whatsapp"></i> QUERO AGORA';
-          dom.propFullCtaBtn.classList.remove('aguardando');
-          bannerCliques = 0;
-        }, 3000);
-      } else {
-        dom.propFullCtaBtn.classList.remove('aguardando');
-        abrirWhatsAppPropaganda();
-        bannerCliques = 0;
-        dom.propFullCtaBtn.innerHTML = '<i class="fab fa-whatsapp"></i> QUERO AGORA';
-      }
-    };
-  }
-  if (dom.propFullFecharBtn) {
-    dom.propFullFecharBtn.onclick = (e) => {
-      e.stopPropagation();
-      vibrar(10);
-      esconderPropagandaFull();
-      propagandaJaFoiFechada = true;
-      clearTimeout(propagandaTimer);
-    };
-  }
-  if (dom.bannerPropagandaFull) {
-    dom.bannerPropagandaFull.onclick = (e) => {
-      if (e.target.closest('#propFullCtaBtn')) return;
-      if (e.target.closest('.prop-full-fechar')) return;
-      notif('👇 Toque em "QUERO AGORA"', 1500, 'info');
-    };
-  }
-}
 
 async function abrirModalDownload(genero){
   const musicas=appState.musicas;
@@ -2257,15 +2109,14 @@ async function iniciar(){
     setTimeout(()=>{showControls();},2000);
 
     if(dom.letreiroClick){dom.letreiroClick.addEventListener('click',e=>{e.stopPropagation();vibrar(10);SearchManager.abrir();});}
-    if(dom.btnBuscarTopo){dom.btnBuscarTopo.onclick=(e)=>{e.stopPropagation();vibrar(10);SearchManager.abrir();};}
     SearchManager.init();
     FavRadio.init();
     AudioGuard.init();
     initControlesAnuncio();
-    initBannerPropaganda();
 
     document.addEventListener('click',e=>{
-      if(e.target.closest('.marca-topo'))return;
+      if(e.target.closest('#btnTrazerCard'))return;
+      if(e.target.closest('#tituloGrande'))return;
       if(e.target.closest('.letreiro-wrap'))return;
       if(e.target.closest('button')||e.target.closest('.genre-card')||e.target.closest('.fav-item-modal')||e.target.closest('.menu-popup')||e.target.closest('.painel-baixo')||e.target.closest('.bottom-sheet')||e.target.closest('.genres-modal')||e.target.closest('.fav-modal')||e.target.closest('.fab-container')||e.target.closest('.info-topo')||e.target.closest('.vdb-dialog-overlay')||e.target.closest('.tutorial-modal')||e.target.closest('.banner-propaganda-full')||e.target.closest('#pwaInstallModal')||e.target.closest('#downloadModal')||e.target.closest('#offlineManager')||e.target.closest('#themeModal')||e.target.closest('.theme-card')||e.target.closest('#telaAnuncios')||e.target.closest('.search-modal')||e.target.closest('.fav-radio-modal'))return;
       if(appState.telaAtual==='principal'&&dom.bottomControls.classList.contains('escondido'))trazerCardDeVolta();
@@ -2358,6 +2209,10 @@ async function iniciar(){
     document.addEventListener('click',e=>{if(!dom.menuPopup.contains(e.target)&&e.target!==dom.menuButton&&!dom.menuButton.contains(e.target))fecharMenu();});
 
     window.addEventListener('beforeunload',()=>{appState._save();if(keepAliveInterval){clearInterval(keepAliveInterval);keepAliveInterval=null;}});
+
+    if(dom.bannerPropagandaFull)dom.bannerPropagandaFull.onclick=e=>{if(e.target.closest('.prop-full-fechar'))return;abrirWhatsAppPropaganda();};
+    if(dom.propFullFecharBtn)dom.propFullFecharBtn.onclick=e=>{e.stopPropagation();vibrar(10);esconderPropagandaFull();propagandaJaFoiFechada=true;clearTimeout(propagandaTimer);};
+    if(dom.propFullCtaBtn)dom.propFullCtaBtn.onclick=e=>{e.stopPropagation();abrirWhatsAppPropaganda();};
 
     setTimeout(iniciarCiclo, 10000);
     setTimeout(()=>{mostrarPropagandaFull();agendarPropaganda();},30000);
