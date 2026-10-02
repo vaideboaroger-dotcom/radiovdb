@@ -5321,7 +5321,8 @@ function mostrarModalPWA(){
   const m = dom.pwaInstallModal;
   if(!m) return;
 
-  if(!deferredInstallPrompt && ehIOS()){
+  /* Se não tem prompt nativo, mostra instruções manuais direto */
+  if(!deferredInstallPrompt){
     if(dom.pwaBeneficios) dom.pwaBeneficios.style.display = 'none';
     if(dom.pwaInstrucoes) dom.pwaInstrucoes.style.display = 'block';
   } else {
@@ -5338,7 +5339,9 @@ function esconderModalPWA(){
   if(m) m.classList.remove('active');
 }
 
+/* ✅ SEMPRE tenta instalar. Se não puder, mostra instruções. */
 async function acionarInstalacaoPWA(){
+  /* Se o Chrome liberou o prompt nativo, usa ele */
   if(deferredInstallPrompt){
     try{
       deferredInstallPrompt.prompt();
@@ -5348,12 +5351,16 @@ async function acionarInstalacaoPWA(){
         esconderModalPWA();
       }
       deferredInstallPrompt = null;
+      return;
     }catch(e){
-      abrirInstrucoesManuais();
+      /* Se falhar, cai pra instruções */
+      deferredInstallPrompt = null;
     }
-  } else {
-    abrirInstrucoesManuais();
   }
+
+  /* Se chegou aqui, não tem prompt nativo — mostra instruções */
+  esconderModalPWA();
+  abrirInstrucoesManuais();
 }
 
 function abrirInstrucoesManuais(){
@@ -5379,11 +5386,50 @@ function abrirInstrucoesManuais(){
   m.classList.add('active');
 }
 
+/* Botão "Instalar Agora" DENTRO do modal PWA — sempre tenta */
+function setupBotoesInstalar(){
+  /* Botão grande dentro do modal de instalação */
+  if(dom.pwaBtnInstalar){
+    dom.pwaBtnInstalar.onclick = () => acionarInstalacaoPWA();
+  }
+
+  /* Botão "Agora não" */
+  if(dom.pwaBtnDepois){
+    dom.pwaBtnDepois.onclick = () => { vibrar(10); esconderModalPWA(); };
+  }
+
+  /* Botão fixo na tela */
+  if(dom.btnInstalarFixo){
+    dom.btnInstalarFixo.onclick = () => acionarInstalacaoPWA();
+  }
+
+  /* Botão do FAB */
+  if(dom.fabInstalar){
+    dom.fabInstalar.onclick = () => { vibrar(10); acionarInstalacaoPWA(); if(typeof fecharFab === 'function') fecharFab(); };
+  }
+
+  /* Botão do menu ⋮ */
+  if(dom.menuInstalarBtn){
+    dom.menuInstalarBtn.onclick = () => {
+      if(typeof fecharMenu === 'function') fecharMenu();
+      acionarInstalacaoPWA();
+    };
+  }
+
+  /* Botão "Entendi" das instruções */
+  const fecharInst = document.getElementById('fecharInstrucoesBtn');
+  if(fecharInst){
+    fecharInst.onclick = () => {
+      const box = document.getElementById('instrucoesInstalar');
+      if(box) box.classList.remove('active');
+    };
+  }
+}
+
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredInstallPrompt = e;
   setTimeout(mostrarBotaoInstalar, 500);
-  setTimeout(mostrarModalPWA, CONFIG.PWA_INSTALL_DELAY_MS);
 });
 
 window.addEventListener('appinstalled', () => {
@@ -5397,6 +5443,13 @@ if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js', {scope:'./'}).catch(e => console.warn('SW:', e));
   });
+}
+
+/* ✅ Chama setup dos botões DEPOIS que o DOM carregar */
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', setupBotoesInstalar);
+} else {
+  setTimeout(setupBotoesInstalar, 100);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
