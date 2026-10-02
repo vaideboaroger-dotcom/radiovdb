@@ -1,163 +1,153 @@
-/* ═══════════════════════════════════════════════════════════
-   VAI DE BOA! MUSIC — SERVICE WORKER v20
-   ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   VDB MUSIC — Service Worker
+   - Cacheia o SHELL do app (HTML/CSS/JS/ícones)
+   - NÃO cacheia músicas (isso é feito no código principal)
+   - Estratégia: Network-first para o HTML, Cache-first pro resto
+   ═══════════════════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'vdb-cache-v20';
-const CACHE_MUSICAS = 'vdb-musicas-offline';
+const VERSAO = 'vdb-shell-v61';
+const CACHE_SHELL = 'vdb-shell-' + VERSAO;
 
-// Arquivos essenciais do app (shell)
-const APP_SHELL = [
+/* Arquivos essenciais pra abrir offline */
+const SHELL = [
   './',
   './index.html',
   './manifest.json',
+  './favicon192.png',
   './favicon30.png',
-  './favicon192.png'
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+  'https://fonts.googleapis.com/css2?family=Audiowide&family=Rajdhani:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap'
 ];
 
-// ═══════════════════════════════════════════════════════════
-// INSTALL — faz cache do app shell e ativa imediatamente
-// ═══════════════════════════════════════════════════════════
-self.addEventListener('install', (event) => {
-  console.log('🔧 SW: instalando...');
+/* ─── INSTALL: pré-cacheia o shell ─── */
+self.addEventListener('install', event => {
+  console.log('[SW] Instalando', VERSAO);
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(APP_SHELL).catch(err => {
-        console.warn('⚠️ SW: falha ao cachear shell:', err);
-      });
-    }).then(() => self.skipWaiting()) // ⚡ ativa JÁ
+    (async () => {
+      try{
+        const cache = await caches.open(CACHE_SHELL);
+        /* addAll falha se 1 só falhar — fazemos 1 por 1 */
+        for(const url of SHELL){
+          try{
+            await cache.add(new Request(url, {cache:'reload'}));
+          }catch(e){
+            console.warn('[SW] Falhou cachear:', url, e.message);
+          }
+        }
+      }catch(e){
+        console.error('[SW] Erro install:', e);
+      }
+      self.skipWaiting();
+    })()
   );
 });
 
-// ═══════════════════════════════════════════════════════════
-// ACTIVATE — limpa caches antigos e assume controle
-// ═══════════════════════════════════════════════════════════
-self.addEventListener('activate', (event) => {
-  console.log('🚀 SW: ativando...');
+/* ─── ACTIVATE: limpa caches antigos do shell ─── */
+self.addEventListener('activate', event => {
+  console.log('[SW] Ativando', VERSAO);
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          // Remove cache antigo mas MANTÉM o cache de músicas offline
-          if (key !== CACHE_NAME && key !== CACHE_MUSICAS) {
-            console.log('🗑️ SW: removendo cache antigo:', key);
-            return caches.delete(key);
+    (async () => {
+      const nomes = await caches.keys();
+      await Promise.all(
+        nomes.map(n => {
+          /* Mantém só o shell atual. Não mexe no vdb-musicas-offline-v2! */
+          if(n.startsWith('vdb-shell-') && n !== CACHE_SHELL){
+            console.log('[SW] Deletando cache antigo:', n);
+            return caches.delete(n);
           }
         })
       );
-    }).then(() => self.clients.claim()) // ⚡ assume controle já
+      await self.clients.claim();
+    })()
   );
 });
 
-// ═══════════════════════════════════════════════════════════
-// FETCH — estratégia inteligente por tipo de arquivo
-// ═══════════════════════════════════════════════════════════
-self.addEventListener('fetch', (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
+/* ─── FETCH: estratégia por tipo de request ─── */
+self.addEventListener('fetch', event => {
+  const req = event.request;
+  const url = new URL(req.url);
 
-  // Ignora requisições que não são GET
-  if (request.method !== 'GET') return;
+  /* Ignora métodos que não são GET */
+  if(req.method !== 'GET') return;
 
-  // Ignora extensões de chrome, etc
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+  /* ─── 1) NUNCA mexer em áudio/música (deixa o app cuidar) ─── */
+  if(
+    req.destination === 'audio' ||
+    req.destination === 'video' ||
+    url.href.includes('vdb-musicas-offline') ||
+    /\.(mp3|m4a|aac|ogg|wav|mp4|webm)(\?|$)/i.test(url.pathname)
+  ){
+    return; /* deixa o browser + Cache API do app cuidarem */
+  }
 
-  // ═══════════════════════════════════════════════════════════
-  // 1️⃣ HTML — SEMPRE da rede (NUNCA do cache)
-  //    → garante que correções cheguem aos clientes
-  // ═══════════════════════════════════════════════════════════
-  if (request.destination === 'document' ||
-      url.pathname.endsWith('.html') ||
-      url.pathname === '/' ||
-      url.pathname.endsWith('/')) {
+  /* ─── 2) JSONs dos gêneros: network-first, cache fallback ─── */
+  if(url.hostname === 'raw.githubusercontent.com' && url.pathname.endsWith('.json')){
     event.respondWith(
-      fetch(request, { cache: 'no-store' })
-        .then((response) => {
-          // Atualiza o cache do HTML em background
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
-          return response;
-        })
-        .catch(() => {
-          // Se offline, tenta o cache
-          return caches.match(request).then(cached => {
-            return cached || caches.match('./index.html');
-          });
-        })
+      (async () => {
+        try{
+          const r = await fetch(req);
+          return r;
+        }catch(e){
+          const cache = await caches.open(CACHE_SHELL);
+          const c = await cache.match(req);
+          return c || new Response('[]', {headers:{'Content-Type':'application/json'}});
+        }
+      })()
     );
     return;
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // 2️⃣ JSON de playlists (GitHub) — network-first com fallback
-  // ═══════════════════════════════════════════════════════════
-  if (url.hostname.includes('githubusercontent.com') ||
-      url.pathname.endsWith('.json')) {
+  /* ─── 3) HTML: network-first (pega atualizações) ─── */
+  if(req.mode === 'navigate' || (req.headers.get('accept')||'').includes('text/html')){
     event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
-          return response;
-        })
-        .catch(() => caches.match(request))
+      (async () => {
+        try{
+          const r = await fetch(req);
+          const cache = await caches.open(CACHE_SHELL);
+          cache.put(req, r.clone());
+          return r;
+        }catch(e){
+          const cache = await caches.open(CACHE_SHELL);
+          const c = await cache.match(req);
+          return c || cache.match('./index.html');
+        }
+      })()
     );
     return;
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // 3️⃣ ÁUDIOS/MP4 (músicas) — cache-first com salvar em background
-  // ═══════════════════════════════════════════════════════════
-  if (request.destination === 'audio' ||
-      request.destination === 'video' ||
-      url.pathname.match(/\.(mp3|mp4|m4a|ogg|wav|webm)$/i)) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        if (cached) return cached;
-        return fetch(request).then((response) => {
-          // Salva em cache (mas não bloqueia a resposta)
-          const clone = response.clone();
-          caches.open(CACHE_MUSICAS).then(cache => {
-            cache.put(request, clone).catch(() => {});
-          });
-          return response;
-        });
-      })
-    );
-    return;
-  }
-
-  // ═══════════════════════════════════════════════════════════
-  // 4️⃣ Imagens/CSS/Fonts — cache-first com atualização em bg
-  // ═══════════════════════════════════════════════════════════
-  if (request.destination === 'image' ||
-      request.destination === 'style' ||
-      request.destination === 'font' ||
-      url.pathname.match(/\.(png|jpg|jpeg|webp|svg|ico|css|woff2?|ttf)$/i)) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        const fetchPromise = fetch(request).then((response) => {
-          caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
-          return response;
-        }).catch(() => cached);
-        return cached || fetchPromise;
-      })
-    );
-    return;
-  }
-
-  // ═══════════════════════════════════════════════════════════
-  // 5️⃣ Resto — tenta rede, cai pra cache
-  // ═══════════════════════════════════════════════════════════
+  /* ─── 4) Demais (CSS, JS, ícones, fontes): cache-first ─── */
   event.respondWith(
-    fetch(request).catch(() => caches.match(request))
+    (async () => {
+      const cache = await caches.open(CACHE_SHELL);
+      const cached = await cache.match(req);
+      if(cached) return cached;
+
+      try{
+        const r = await fetch(req);
+        /* Só cacheia se for OK (evita cachear erro 404) */
+        if(r.ok && r.type !== 'opaque'){
+          cache.put(req, r.clone()).catch(() => {});
+        } else if(r.type === 'opaque'){
+          /* CORS anônimo (fonts, CDN) — cacheia mesmo opaco */
+          cache.put(req, r.clone()).catch(() => {});
+        }
+        return r;
+      }catch(e){
+        return cached || new Response('', {status: 504});
+      }
+    })()
   );
 });
 
-// ═══════════════════════════════════════════════════════════
-// MESSAGE — permite forçar atualização via postMessage
-// ═══════════════════════════════════════════════════════════
-self.addEventListener('message', (event) => {
-  if (event.data === 'SKIP_WAITING') {
-    self.skipWaiting();
+/* ─── MESSAGE: força atualização quando o app pedir ─── */
+self.addEventListener('message', event => {
+  if(event.data === 'SKIP_WAITING') self.skipWaiting();
+  if(event.data === 'LIMPAR_TUDO'){
+    (async () => {
+      const nomes = await caches.keys();
+      await Promise.all(nomes.map(n => caches.delete(n)));
+      console.log('[SW] Todos os caches limpos');
+    })();
   }
 });
