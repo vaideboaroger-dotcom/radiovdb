@@ -38,7 +38,6 @@ html,body{height:100%;width:100%;background:#000;overflow:hidden;position:fixed;
 ::-webkit-scrollbar-thumb{background:var(--cor-1);border-radius:4px}
 :focus-visible{outline:2px solid var(--cor-3);outline-offset:2px}
 
-/* ✅ OFFLINE: fundo colorido | ONLINE: preto */
 body.offline #telaPrincipal{
   background:
     linear-gradient(180deg, var(--cor-1) 0%, var(--cor-2) 100%),
@@ -1019,7 +1018,7 @@ const CONFIG = {
   TEMPO_TESTE_SEGUNDOS: 86400,
   PRECO: 'R$ 39,90',
   LETREIRO: '🎵 VDB MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
-  APP_VERSION: 'v52',
+  APP_VERSION: 'v53',
   LOADING_DURACAO_MS: 3500,
   PROPAGANDA_INTERVALO_MS: 600000,
   PWA_INSTALL_DELAY_MS: 30000,
@@ -1123,17 +1122,13 @@ Object.keys(GENRE_URLS).forEach(g => {
   GENRE_REPOS[g] = m ? m[1] + '/' + m[2] : 'radiolojasjc-hub/play12';
 });
 
-/* ═══════════════════════════════════════════════════════
-   ✅ MÍDIAS — CONFIGURAÇÃO DEFINITIVA
-   ═══════════════════════════════════════════════════════ */
-
 /* 🎬 TELA PRINCIPAL → bv1 */
 const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
 const MIDIAS_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}
 ];
 
-/* 📢 TELA DE ANÚNCIOS → tes, lan */
+/* 📢 TELA DE ANÚNCIOS → tes, xb */
 const MIDIAS_ANUNCIO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/anuncios.json';
 const MIDIAS_ANUNCIO_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'},
@@ -1148,7 +1143,6 @@ const MIDIAS_TV_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/tvbob.mp4'}
 ];
 
-/* 🛡️ FILTRO ANTI-VAZAMENTO: bloqueia mídias de TV na tela principal */
 const MIDIAS_TV_PROIBIDAS = ['mac1','amytv','tvbob'];
 function filtrarMidias(tela, medias){
   if(tela !== 'principal') return medias;
@@ -1205,6 +1199,7 @@ function atualizarModoOffline(){
 window.addEventListener('online', () => { atualizarModoOffline(); notif('🌐 Online', 1500, 'success'); });
 window.addEventListener('offline', () => { atualizarModoOffline(); notif('📴 Offline — modo colorido', 2000, 'info'); });
 
+/* ═══════════════ SEGURANÇA (INALTERADA) ═══════════════ */
 const SecureTimer = {
   CHAVE_DESBLOQ:'vdb_desbloq', CHAVE_BLOQ_PERM:'vdb_bloq_perm',
   async verificar(){
@@ -1403,9 +1398,12 @@ const dom={
   tvPrevBtn:$('tvPrevBtn'),tvPlayBtn:$('tvPlayBtn'),tvNextBtn:$('tvNextBtn')
 };
 
+/* ═══════════════ FULLSCREEN (SUAVIZADO) ═══════════════ */
 let fullscreenInterval=null, fullscreenEmAndamento=false;
 function jaEstaFullscreen(){return!!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
 function forcarTelaCheia(){if(ehIOS())return false;if(jaEstaFullscreen())return true;if(fullscreenEmAndamento)return false;fullscreenEmAndamento=true;try{const el=document.documentElement;const opts={navigationUI:'hide'};if(el.requestFullscreen){el.requestFullscreen(opts).then(()=>{fullscreenEmAndamento=false;}).catch(()=>{fullscreenEmAndamento=false;});}else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);fullscreenEmAndamento=false;}else{fullscreenEmAndamento=false;}}catch(e){fullscreenEmAndamento=false;}}
+
+/* ✅ FULLSCREEN SUAVE: não pausa o áudio */
 function iniciarFullscreenGuard(){
   if(fullscreenInterval)clearInterval(fullscreenInterval);
   if(ehIOS())return;
@@ -1413,8 +1411,10 @@ function iniciarFullscreenGuard(){
     if(document.hidden)return;
     if(!appState.playerAtivado)return;
     if(jaEstaFullscreen())return;
+    /* ✅ Não força fullscreen se o áudio está tocando (evita pausar) */
+    if(!dom.audio.paused && dom.audio.src)return;
     forcarTelaCheia();
-  },2000);
+  },8000);
 }
 function ativarFullscreenPrimeiroToque(){const h=()=>{if(!jaEstaFullscreen())forcarTelaCheia();document.removeEventListener('touchstart',h);document.removeEventListener('click',h);};document.addEventListener('touchstart',h,{passive:true});document.addEventListener('click',h);}
 function ajustarIOSFullscreen(){if(!ehIOS())return;const s=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;if(s)document.body.classList.add('pwa-standalone');else document.body.classList.add('ios-browser');document.documentElement.style.height='100vh';document.body.style.height='100vh';document.body.style.position='fixed';document.body.style.overflow='hidden';}
@@ -1425,6 +1425,7 @@ document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault
 function updateProgress(p){dom.loadingProgressFill.style.width=Math.min(p,100)+'%';}
 function mostrarLoadingTela(s){if(dom.loadingTela)dom.loadingTela.classList.toggle('ativo',s);}
 
+/* ═══════════════ TIMER (INALTERADO) ═══════════════ */
 async function updateTimerDisplay(){
   if(!dom.timerLib) return;
   if(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ)==='true'){
@@ -1457,6 +1458,7 @@ async function iniciarTimerCorrido(){
   },5000);
 }
 
+/* ═══════════════ ÁUDIO (CORRIGIDO) ═══════════════ */
 function fadeOutAudio(d=CONFIG.FADE_OUT_MS){
   return new Promise(r=>{
     if(dom.audio.paused||!dom.audio.src){r();return;}
@@ -1534,10 +1536,16 @@ function trazerCardDeVolta(){
   clearTimeout(hideControlsTimeout);
   hideControlsTimeout=setTimeout(esconderCardAuto,CONFIG.CARD_DURACAO_MS);
 }
+
+/* ✅ Corrigido: limpa "recentes" quando satura */
 function atualizarPlaylist(){
   if(!appState.playlistAtual.length)return null;
   if(appState.indiceAtual>=appState.playlistAtual.length){
     if(appState.musicas.length){
+      if(appState.recentes.size >= appState.musicas.length * 0.8){
+        appState.recentes = new Set();
+        try{ localStorage.removeItem('vdb_recentes'); }catch(e){}
+      }
       appState.playlistAtual=shuffle(appState.musicas);
       appState.indiceAtual=0;
     } else {
@@ -1547,6 +1555,7 @@ function atualizarPlaylist(){
   return appState.playlistAtual[appState.indiceAtual]||null;
 }
 
+/* ✅ Corrigido: sem removeAttribute+load que causava erro fantasma */
 async function tocar(){
   if(!appState.isBackgroundActive||appState.carregandoMusica||!appState.musicas.length)return;
   appState.carregandoMusica=true;
@@ -1566,7 +1575,7 @@ async function tocar(){
         navigator.mediaSession.setActionHandler('nexttrack',next);
       }catch(e){}
     }
-    dom.audio.pause();dom.audio.removeAttribute('src');dom.audio.load();
+    try{ dom.audio.pause(); }catch(e){}
     const urls=getUrls(m).slice(0,8);let ok=false;
     if(!navigator.onLine){
       for(const u of urls){
@@ -1633,18 +1642,38 @@ function prev(){vibrar(10);if(appState.carregandoMusica||!appState.playlistAtual
 function criarSilentAudio(){const sr=44100,ns=sr*1;const b=new ArrayBuffer(44+ns*2);const v=new DataView(b);const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};w(0,'RIFF');v.setUint32(4,36+ns*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,ns*2,true);return new Blob([b],{type:'audio/wav'});}
 let sb=null,su=null;
 function getSilentAudioUrl(){if(!sb)sb=criarSilentAudio();if(!su)su=URL.createObjectURL(sb);return su;}
+
+/* ✅ CORRIGIDO: sem listener 'ended' duplicado + watchdog */
 let keepAliveInterval=null;
+let watchdogInterval=null;
+
 function manterAudioAtivo(){
-  if(keepAliveInterval)clearInterval(keepAliveInterval);
+  if(keepAliveInterval) clearInterval(keepAliveInterval);
+
+  /* Só mantém o silent audio vivo */
   keepAliveInterval=setInterval(()=>{
     if(!appState.isBackgroundActive)return;
     try{
       if(dom.backgroundAudio.paused)dom.backgroundAudio.play().catch(()=>{});
-      if(appState.isPlaying&&dom.audio.paused&&!dom.audio.ended&&dom.audio.src&&!appState.carregandoMusica)dom.audio.play().catch(()=>{});
     }catch(e){}
   },3000);
-  dom.audio.addEventListener('ended',()=>{if(appState.isPlaying&&!appState.carregandoMusica)next();});
+
+  /* ✅ Watchdog: recupera travamentos em background/lock/fullscreen */
+  if(watchdogInterval) clearInterval(watchdogInterval);
+  watchdogInterval=setInterval(()=>{
+    if(!appState.isBackgroundActive || appState.carregandoMusica) return;
+    /* Caso 1: áudio terminou mas 'ended' não foi processado */
+    if(dom.audio.ended && appState.isPlaying){
+      next();
+      return;
+    }
+    /* Caso 2: deveria tocar mas está pausado */
+    if(appState.isPlaying && dom.audio.paused && dom.audio.src && !dom.audio.ended){
+      dom.audio.play().catch(()=>{});
+    }
+  },4000);
 }
+
 async function ativarPlayer(){
   if(appState.playerAtivado)return;
   appState.playerAtivado=true;
@@ -1914,6 +1943,7 @@ function renderizarTemas(){
 function abrirModalTemas(){vibrar(10);renderizarTemas();dom.themeModal.classList.add('active');}
 function fecharModalTemas(){dom.themeModal.classList.remove('active');}
 
+/* ═══════════════ SENHAS (INALTERADO) ═══════════════ */
 function gerarSenhaAleatoria(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<12;i++)s+=c.charAt(Math.floor(Math.random()*c.length));return s;}
 function gerarSenhaDispositivo(fp){return btoa(fp+':'+gerarSenhaAleatoria());}
 function gerarSenhaUniversal(){const ts=now().toString(36);const base='UNIV_'+ts;const chave=CONFIG._SALT+base;let h=0;for(let i=0;i<chave.length;i++){h=((h<<5)-h)+chave.charCodeAt(i);h|=0;}const sig=Math.abs(h).toString(16).padStart(16,'0').slice(0,16);return'UNIV:'+ts+':'+sig;}
@@ -2024,21 +2054,26 @@ class TouchManager{
 }
 new TouchManager();
 
+/* ═══════════════════════════════════════════════════════
+   ✅ VÍDEOS CORRIGIDOS — com loop, auto-recovery, sem travamento
+   ═══════════════════════════════════════════════════════ */
 let midiaToken=0, midiaTimerAtual=null;
+let videosAtivos = new Set(); /* guarda referência para retomar quando voltar */
+
 async function carregarMidias(container,url,options={}){
   const{fallback=MIDIAS_FALLBACK, tela='principal'}=options;
   const meuToken=++midiaToken;
   if(midiaTimerAtual){clearTimeout(midiaTimerAtual);midiaTimerAtual=null;}
-  
-  /* ✅ MATA TODOS OS VÍDEOS ANTES DE LIMPAR */
+
+  /* ✅ Pausa e limpa vídeos antigos com segurança */
   container.querySelectorAll('video').forEach(v => {
-    try { v.pause(); v.src=''; v.load(); } catch(e){}
+    try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e){}
   });
   container.innerHTML='';
-  
+  videosAtivos.clear();
+
   try{
     let ms=[];
-    /* Tenta baixar o JSON */
     if(url){
       try{
         const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),9000);
@@ -2050,24 +2085,55 @@ async function carregarMidias(container,url,options={}){
     if(meuToken!==midiaToken)return;
     if(!ms.length)ms=fallback;
     ms=ms.filter(m=>m&&(m.tipo==='video'||m.tipo==='imagem')&&m.src);
-    /* ✅ FILTRO ANTI-VAZAMENTO */
     ms = filtrarMidias(tela, ms);
     if(!ms.length)ms=filtrarMidias(tela,fallback);
     if(!ms.length){console.warn('⚠️ Nenhuma mídia válida para',tela);return;}
-    
+
     const els=[];
     ms.forEach((m,i)=>{
       let e;const u=m.src+(m.src.includes('?')?'&':'?')+'v='+CONFIG.APP_VERSION;
       if(m.tipo==='video'){
         e=document.createElement('video');
-        e.src=u;e.muted=true;e.playsInline=true;
-        e.setAttribute('playsinline','');e.setAttribute('webkit-playsinline','');
-        e.preload='auto';e.load();
-        e.onerror=()=>{e.dataset.erro='1';e.style.display='none';};
+        e.src=u;
+        e.muted=true;
+        e.loop=true;                       /* ✅ LOOP: não fica no último frame */
+        e.playsInline=true;
+        e.autoplay=true;
+        e.setAttribute('playsinline','');
+        e.setAttribute('webkit-playsinline','');
+        e.setAttribute('muted','');
+        e.setAttribute('loop','');
+        e.preload='metadata';              /* ✅ menos peso */
+        e.disablePictureInPicture=true;
+        e.controls=false;
+
+        /* ✅ Se pausar sozinho, tenta voltar */
+        e.addEventListener('pause', () => {
+          if(meuToken!==midiaToken) return;
+          if(e.classList.contains('active') && document.visibilityState==='visible'){
+            setTimeout(()=>{ if(e.classList.contains('active') && e.paused) e.play().catch(()=>{}); },300);
+          }
+        });
+        /* ✅ Se travar (stalled/suspend), tenta de novo */
+        const retomar = () => {
+          if(meuToken!==midiaToken) return;
+          if(e.classList.contains('active') && document.visibilityState==='visible' && e.paused){
+            e.play().catch(()=>{});
+          }
+        };
+        e.addEventListener('stalled', () => setTimeout(retomar,500));
+        e.addEventListener('suspend', () => setTimeout(retomar,800));
+        e.addEventListener('waiting', () => setTimeout(retomar,800));
+        e.addEventListener('error', () => {
+          e.dataset.erro='1';
+          /* ✅ Não esconde o vídeo — mantém como fallback visual */
+        });
+
+        videosAtivos.add(e);
       }else{
         e=document.createElement('img');
         e.src=u;e.loading='eager';e.alt='VDB';
-        e.onerror=()=>{e.dataset.erro='1';e.style.display='none';};
+        e.onerror=()=>{e.dataset.erro='1';};
       }
       e.className=i===0?'active':'inactive';e.style.zIndex=i===0?'3':'2';
       container.appendChild(e);els.push(e);
@@ -2075,14 +2141,84 @@ async function carregarMidias(container,url,options={}){
     if(meuToken!==midiaToken){els.forEach(x=>x.remove());return;}
     if(!els.length)return;
     let idx=0;
-    function proximaMidia(){if(meuToken!==midiaToken)return;if(!els.length)return;const at=els[idx];const pi=(idx+1)%els.length;const px=els[pi];if(!px)return;if(px.dataset.erro==='1'){idx=pi;setTimeout(proximaMidia,100);return;}if(px.tagName==='VIDEO'){try{px.currentTime=0;}catch(e){}px.play().catch(()=>{});}if(at){at.classList.remove('active');at.classList.add('inactive');}px.classList.add('active');px.classList.remove('inactive');if(at&&at.tagName==='VIDEO'){setTimeout(()=>{try{at.pause();at.currentTime=0;}catch(e){}},800);}idx=pi;}
-    if(els[0]&&els[0].tagName==='VIDEO'&&els[0].dataset.erro!=='1'){els[0].play().catch(()=>{});}
-    function agendar(){if(meuToken!==midiaToken)return;const at=els[idx];if(!at){midiaTimerAtual=setTimeout(()=>{proximaMidia();agendar();},3000);return;}if(at.dataset.erro==='1'){proximaMidia();midiaTimerAtual=setTimeout(agendar,500);return;}if(at.tagName==='VIDEO'&&isFinite(at.duration)&&at.duration>0){const li=Math.min(at.duration*1000,CONFIG.MIDIA_MAX_SEGURANCA_MS);midiaTimerAtual=setTimeout(()=>{proximaMidia();agendar();},li+300);}else{midiaTimerAtual=setTimeout(()=>{proximaMidia();agendar();},CONFIG.MIDIA_DURACAO_MS);}}
-    agendar();
+
+    function proximaMidia(){
+      if(meuToken!==midiaToken)return;
+      if(!els.length)return;
+      const at=els[idx];
+      const pi=(idx+1)%els.length;
+      const px=els[pi];
+      if(!px)return;
+      if(px.dataset.erro==='1' && px.tagName==='IMG'){
+        idx=pi;setTimeout(proximaMidia,100);return;
+      }
+      if(px.tagName==='VIDEO'){
+        try{px.currentTime=0;}catch(e){}
+        px.play().catch(()=>{});
+      }
+      if(at){at.classList.remove('active');at.classList.add('inactive');}
+      px.classList.add('active');px.classList.remove('inactive');
+      /* ✅ Pausa o anterior sem resetar o src (evita erro fantasma) */
+      if(at && at.tagName==='VIDEO'){
+        setTimeout(()=>{try{at.pause();}catch(e){}},900);
+      }
+      idx=pi;
+    }
+
+    /* ✅ Começa a tocar o primeiro vídeo */
+    if(els[0] && els[0].tagName==='VIDEO' && els[0].dataset.erro!=='1'){
+      els[0].play().catch(()=>{});
+    }
+
+    /* ✅ Agenda troca por tempo quando não for vídeo com duração */
+    function agendar(){
+      if(meuToken!==midiaToken)return;
+      const at=els[idx];
+      if(!at){
+        midiaTimerAtual=setTimeout(()=>{proximaMidia();agendar();},3000);
+        return;
+      }
+      if(at.tagName==='VIDEO' && isFinite(at.duration) && at.duration > 0.5){
+        /* Troca quando o vídeo chegar perto do fim (com loop, reinicia) */
+        const li = Math.min(at.duration * 1000, CONFIG.MIDIA_MAX_SEGURANCA_MS);
+        midiaTimerAtual = setTimeout(()=>{proximaMidia();agendar();}, li + 400);
+      } else {
+        /* Fallback por tempo */
+        midiaTimerAtual = setTimeout(()=>{proximaMidia();agendar();}, CONFIG.MIDIA_DURACAO_MS);
+      }
+    }
+    /* ✅ Aguarda metadados para saber a duração real */
+    const primeiro = els[0];
+    if(primeiro && primeiro.tagName==='VIDEO'){
+      if(primeiro.readyState >= 1) agendar();
+      else primeiro.addEventListener('loadedmetadata', agendar, {once:true});
+      setTimeout(()=>{ if(meuToken===midiaToken && !midiaTimerAtual) agendar(); }, 2500);
+    } else {
+      agendar();
+    }
+
   }catch(e){console.error('Erro mídias:',e);}
 }
 async function carregarMidiasPadrao(){await carregarMidias(dom.mediaContainer,MIDIAS_PADRAO_URL,{fallback:MIDIAS_FALLBACK,tela:'principal'});}
 async function carregarMidiasAnuncio(){await carregarMidias(dom.mediaAnuncios,MIDIAS_ANUNCIO_URL,{fallback:MIDIAS_ANUNCIO_FALLBACK,tela:'anuncios'});}
+
+/* ✅ Retoma vídeos ao voltar do background */
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible'){
+    videosAtivos.forEach(v => {
+      if(v.classList.contains('active') && v.paused){
+        v.play().catch(()=>{});
+      }
+    });
+  }
+});
+window.addEventListener('focus', () => {
+  videosAtivos.forEach(v => {
+    if(v.classList.contains('active') && v.paused){
+      v.play().catch(()=>{});
+    }
+  });
+});
 
 async function trocarTela(destino){
   vibrar(15);
@@ -2421,13 +2557,48 @@ async function iniciar(){
         if('mediaSession' in navigator&&navigator.mediaSession.setPositionState){try{navigator.mediaSession.setPositionState({duration:dom.audio.duration,playbackRate:dom.audio.playbackRate,position:Math.min(dom.audio.currentTime,dom.audio.duration)});}catch(e){}}
       }
     };
-    dom.audio.onended=()=>{if(!appState.carregandoMusica)next();};
-    dom.audio.onerror=()=>{if(!appState.carregandoMusica)setTimeout(next,500);};
+
+    /* ✅ CORRIGIDO: sem listener 'ended' duplicado, sem loop infinito de next() */
+    dom.audio.onended = () => {
+      if(appState.carregandoMusica) return;
+      appState.isPlaying = false;
+      setTimeout(() => { if(!appState.carregandoMusica) next(); }, 200);
+    };
+    dom.audio.onerror = () => {
+      if(appState.carregandoMusica) return;
+      /* Só avança se realmente tem src (evita erro fantasma) */
+      if(dom.audio.src && dom.audio.src !== location.href){
+        setTimeout(() => { if(!appState.carregandoMusica) next(); }, 800);
+      }
+    };
 
     document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key===' '){e.preventDefault();togglePlay();}if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();});
     document.addEventListener('click',e=>{if(!dom.menuPopup.contains(e.target)&&e.target!==dom.menuButton&&!dom.menuButton.contains(e.target))fecharMenu();});
 
-    window.addEventListener('beforeunload',()=>{appState._save();if(keepAliveInterval){clearInterval(keepAliveInterval);keepAliveInterval=null;}});
+    /* ✅ RECUPERAÇÃO EM BACKGROUND / LOCK */
+    document.addEventListener('visibilitychange', () => {
+      if(document.visibilityState === 'visible'){
+        if(appState.isBackgroundActive && appState.isPlaying && dom.audio.paused && !appState.carregandoMusica){
+          dom.audio.play().catch(()=>{});
+        }
+        if(!jaEstaFullscreen() && appState.playerAtivado) forcarTelaCheia();
+      }
+    });
+    window.addEventListener('focus', () => {
+      if(appState.isBackgroundActive && appState.isPlaying && dom.audio.paused && !appState.carregandoMusica){
+        dom.audio.play().catch(()=>{});
+      }
+    });
+    /* ✅ MediaSession: seekto */
+    if('mediaSession' in navigator){
+      try{
+        navigator.mediaSession.setActionHandler('seekto', (d) => {
+          if(d.seekTime != null) dom.audio.currentTime = d.seekTime;
+        });
+      }catch(e){}
+    }
+
+    window.addEventListener('beforeunload',()=>{appState._save();if(keepAliveInterval){clearInterval(keepAliveInterval);keepAliveInterval=null;}if(watchdogInterval){clearInterval(watchdogInterval);watchdogInterval=null;}});
 
     if(dom.bannerPropagandaFull)dom.bannerPropagandaFull.onclick=e=>{if(e.target.closest('.prop-full-fechar'))return;abrirWhatsAppPropaganda();};
     if(dom.propFullFecharBtn)dom.propFullFecharBtn.onclick=e=>{e.stopPropagation();vibrar(10);esconderPropagandaFull();propagandaJaFoiFechada=true;clearTimeout(propagandaTimer);};
