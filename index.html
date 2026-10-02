@@ -606,6 +606,15 @@ body.modo-tv #btnSairModoTV{display:flex}
   100%{opacity:0;transform:translate(-50%,-50%) scale(1.15)}
 }
 
+#avisoFullscreen{
+  position:fixed;bottom:calc(100px + var(--safe-bottom));left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.92);color:#fff;padding:12px 18px;border-radius:20px;
+  font-size:.78rem;font-weight:700;z-index:100002;display:none;
+  border:1px solid rgba(255,255,255,.25);max-width:calc(100vw - 40px);text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.6);
+}
+#avisoFullscreen.visivel{display:block}
+
 @media(max-width:480px){
   .glass-musica-nome{font-size:1.3rem}
   .ctrl-btn{font-size:1.4rem}
@@ -1003,6 +1012,7 @@ body.modo-tv #btnSairModoTV{display:flex}
 <div class="bem-vindo" id="bemVindo">SEJA BEM-VINDO! 🎵</div>
 <div class="notification" id="notification"></div>
 <div id="loadingOverlay"><i class="fas fa-spinner fa-spin"></i></div>
+<div id="avisoFullscreen">💡 Toque na tela para entrar em tela cheia</div>
 <audio id="musicPlayer" preload="none"></audio>
 <audio id="backgroundAudio" preload="auto" style="display:none;"></audio>
 <div id="dicaCliques"></div>
@@ -1018,14 +1028,14 @@ const CONFIG = {
   TEMPO_TESTE_SEGUNDOS: 86400,
   PRECO: 'R$ 39,90',
   LETREIRO: '🎵 VDB MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
-  APP_VERSION: 'v53',
+  APP_VERSION: 'v55',
   LOADING_DURACAO_MS: 3500,
   PROPAGANDA_INTERVALO_MS: 600000,
   PWA_INSTALL_DELAY_MS: 30000,
   PWA_INSTALL_INTERVALO_HORAS: 6,
   CARD_DURACAO_MS: 30000,
   MIDIA_DURACAO_MS: 30000,
-  MIDIA_MAX_SEGURANCA_MS: 90000,
+  MIDIA_MAX_SEGURANCA_MS: 180000,
   CICLO_PRINCIPAL_MS: 30000,
   CICLO_ANUNCIO_MS: 20000,
   VOLUME_PADRAO: 1.0,
@@ -1122,20 +1132,15 @@ Object.keys(GENRE_URLS).forEach(g => {
   GENRE_REPOS[g] = m ? m[1] + '/' + m[2] : 'radiolojasjc-hub/play12';
 });
 
-/* 🎬 TELA PRINCIPAL → bv1 */
 const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
 const MIDIAS_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}
 ];
-
-/* 📢 TELA DE ANÚNCIOS → tes, xb */
 const MIDIAS_ANUNCIO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/anuncios.json';
 const MIDIAS_ANUNCIO_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'},
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/xb.mp4'}
 ];
-
-/* 📺 MODO TV → mac1, amytv, tvbob */
 const MIDIAS_TV_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/modotv.json';
 const MIDIAS_TV_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/radiolojasjc-hub/VDB/refs/heads/main/mac1.mp4'},
@@ -1199,7 +1204,9 @@ function atualizarModoOffline(){
 window.addEventListener('online', () => { atualizarModoOffline(); notif('🌐 Online', 1500, 'success'); });
 window.addEventListener('offline', () => { atualizarModoOffline(); notif('📴 Offline — modo colorido', 2000, 'info'); });
 
-/* ═══════════════ SEGURANÇA (INALTERADA) ═══════════════ */
+/* ══════════════════════════════════════════════════
+   SEGURANÇA — INTOCADA
+   ══════════════════════════════════════════════════ */
 const SecureTimer = {
   CHAVE_DESBLOQ:'vdb_desbloq', CHAVE_BLOQ_PERM:'vdb_bloq_perm',
   async verificar(){
@@ -1216,7 +1223,7 @@ const SecureTimer = {
 
 class AppState{
   constructor(){
-    this.key='vdb_state_v52';this.data=this._load();
+    this.key='vdb_state_v54';this.data=this._load();
     this.favorites=this.data.favorites||[];this.fingerprint=this._getFP();
     this.desbloqueado=this.data.desbloqueado||false;
     this.modoAtual=this.data.modoAtual||'BÔNUS';
@@ -1395,29 +1402,88 @@ const dom={
   menuBaixarOffline:$('menuBaixarOffline'),fabTemas:$('fabTemas'),temasMenuBtn:$('temasMenuBtn'),
   themeModal:$('themeModal'),themeGridModernas:$('themeGridModernas'),
   themeGridClassicas:$('themeGridClassicas'),themeCloseBtn:$('themeCloseBtn'),
-  tvPrevBtn:$('tvPrevBtn'),tvPlayBtn:$('tvPlayBtn'),tvNextBtn:$('tvNextBtn')
+  tvPrevBtn:$('tvPrevBtn'),tvPlayBtn:$('tvPlayBtn'),tvNextBtn:$('tvNextBtn'),
+  avisoFullscreen:$('avisoFullscreen')
 };
 
-/* ═══════════════ FULLSCREEN (SUAVIZADO) ═══════════════ */
-let fullscreenInterval=null, fullscreenEmAndamento=false;
-function jaEstaFullscreen(){return!!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
-function forcarTelaCheia(){if(ehIOS())return false;if(jaEstaFullscreen())return true;if(fullscreenEmAndamento)return false;fullscreenEmAndamento=true;try{const el=document.documentElement;const opts={navigationUI:'hide'};if(el.requestFullscreen){el.requestFullscreen(opts).then(()=>{fullscreenEmAndamento=false;}).catch(()=>{fullscreenEmAndamento=false;});}else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);fullscreenEmAndamento=false;}else{fullscreenEmAndamento=false;}}catch(e){fullscreenEmAndamento=false;}}
+/* ══════════════════════════════════════════════════════════
+   ✅ FULLSCREEN CORRIGIDO — FUNCIONA NO ANDROID
+   ══════════════════════════════════════════════════════════ */
 
-/* ✅ FULLSCREEN SUAVE: não pausa o áudio */
+let fullscreenInterval=null, fullscreenEmAndamento=false;
+let jaTentouFullscreen=false;
+
+function jaEstaFullscreen(){
+  return!!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);
+}
+
+/* ✅ Síncrono: retorna imediatamente após disparar */
+function forcarTelaCheia(){
+  if(jaEstaFullscreen())return true;
+  if(fullscreenEmAndamento)return false;
+  fullscreenEmAndamento=true;
+  try{
+    const el=document.documentElement;
+    const opts={navigationUI:'hide'};
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if(req){
+      const r = req.call(el, opts);
+      if(r && r.then){
+        r.then(()=>{fullscreenEmAndamento=false;}).catch(()=>{fullscreenEmAndamento=false;});
+      } else {
+        fullscreenEmAndamento=false;
+      }
+      return true;
+    }
+    fullscreenEmAndamento=false;
+    return false;
+  }catch(e){
+    fullscreenEmAndamento=false;
+    return false;
+  }
+}
+
+/* ✅ Guard AGRESSIVO — 2s */
 function iniciarFullscreenGuard(){
   if(fullscreenInterval)clearInterval(fullscreenInterval);
-  if(ehIOS())return;
   fullscreenInterval=setInterval(()=>{
     if(document.hidden)return;
     if(!appState.playerAtivado)return;
     if(jaEstaFullscreen())return;
-    /* ✅ Não força fullscreen se o áudio está tocando (evita pausar) */
-    if(!dom.audio.paused && dom.audio.src)return;
     forcarTelaCheia();
-  },8000);
+  },2000);
 }
-function ativarFullscreenPrimeiroToque(){const h=()=>{if(!jaEstaFullscreen())forcarTelaCheia();document.removeEventListener('touchstart',h);document.removeEventListener('click',h);};document.addEventListener('touchstart',h,{passive:true});document.addEventListener('click',h);}
-function ajustarIOSFullscreen(){if(!ehIOS())return;const s=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;if(s)document.body.classList.add('pwa-standalone');else document.body.classList.add('ios-browser');document.documentElement.style.height='100vh';document.body.style.height='100vh';document.body.style.position='fixed';document.body.style.overflow='hidden';}
+
+/* ✅ Primeiro toque SÍNCRONO (mobile exige) */
+function ativarFullscreenPrimeiroToque(){
+  const h=()=>{
+    if(!jaEstaFullscreen())forcarTelaCheia();
+    /* iOS: não funciona, mostra aviso */
+    if(ehIOS() && !window.navigator.standalone){
+      setTimeout(()=>{
+        if(!jaEstaFullscreen() && dom.avisoFullscreen){
+          dom.avisoFullscreen.textContent = '💡 No iPhone, instale o app (Compartilhar → Adicionar à Tela) pra ter tela cheia';
+          dom.avisoFullscreen.classList.add('visivel');
+          setTimeout(()=>dom.avisoFullscreen.classList.remove('visivel'), 6000);
+        }
+      }, 800);
+    }
+    document.removeEventListener('touchend',h);
+    document.removeEventListener('click',h);
+  };
+  document.addEventListener('touchend',h,{passive:true});
+  document.addEventListener('click',h);
+}
+
+function ajustarIOSFullscreen(){
+  if(!ehIOS())return;
+  const s=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
+  if(s)document.body.classList.add('pwa-standalone');else document.body.classList.add('ios-browser');
+  document.documentElement.style.height='100vh';
+  document.body.style.height='100vh';
+  document.body.style.position='fixed';
+  document.body.style.overflow='hidden';
+}
 
 document.addEventListener('gesturestart',e=>e.preventDefault());
 document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
@@ -1425,7 +1491,9 @@ document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault
 function updateProgress(p){dom.loadingProgressFill.style.width=Math.min(p,100)+'%';}
 function mostrarLoadingTela(s){if(dom.loadingTela)dom.loadingTela.classList.toggle('ativo',s);}
 
-/* ═══════════════ TIMER (INALTERADO) ═══════════════ */
+/* ══════════════════════════════════════════════════
+   TIMER — INTOCADO
+   ══════════════════════════════════════════════════ */
 async function updateTimerDisplay(){
   if(!dom.timerLib) return;
   if(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ)==='true'){
@@ -1458,7 +1526,9 @@ async function iniciarTimerCorrido(){
   },5000);
 }
 
-/* ═══════════════ ÁUDIO (CORRIGIDO) ═══════════════ */
+/* ══════════════════════════════════════════════════
+   ÁUDIO — CORRIGIDO
+   ══════════════════════════════════════════════════ */
 function fadeOutAudio(d=CONFIG.FADE_OUT_MS){
   return new Promise(r=>{
     if(dom.audio.paused||!dom.audio.src){r();return;}
@@ -1537,7 +1607,6 @@ function trazerCardDeVolta(){
   hideControlsTimeout=setTimeout(esconderCardAuto,CONFIG.CARD_DURACAO_MS);
 }
 
-/* ✅ Corrigido: limpa "recentes" quando satura */
 function atualizarPlaylist(){
   if(!appState.playlistAtual.length)return null;
   if(appState.indiceAtual>=appState.playlistAtual.length){
@@ -1555,7 +1624,6 @@ function atualizarPlaylist(){
   return appState.playlistAtual[appState.indiceAtual]||null;
 }
 
-/* ✅ Corrigido: sem removeAttribute+load que causava erro fantasma */
 async function tocar(){
   if(!appState.isBackgroundActive||appState.carregandoMusica||!appState.musicas.length)return;
   appState.carregandoMusica=true;
@@ -1643,14 +1711,11 @@ function criarSilentAudio(){const sr=44100,ns=sr*1;const b=new ArrayBuffer(44+ns
 let sb=null,su=null;
 function getSilentAudioUrl(){if(!sb)sb=criarSilentAudio();if(!su)su=URL.createObjectURL(sb);return su;}
 
-/* ✅ CORRIGIDO: sem listener 'ended' duplicado + watchdog */
 let keepAliveInterval=null;
 let watchdogInterval=null;
 
 function manterAudioAtivo(){
   if(keepAliveInterval) clearInterval(keepAliveInterval);
-
-  /* Só mantém o silent audio vivo */
   keepAliveInterval=setInterval(()=>{
     if(!appState.isBackgroundActive)return;
     try{
@@ -1658,16 +1723,13 @@ function manterAudioAtivo(){
     }catch(e){}
   },3000);
 
-  /* ✅ Watchdog: recupera travamentos em background/lock/fullscreen */
   if(watchdogInterval) clearInterval(watchdogInterval);
   watchdogInterval=setInterval(()=>{
     if(!appState.isBackgroundActive || appState.carregandoMusica) return;
-    /* Caso 1: áudio terminou mas 'ended' não foi processado */
     if(dom.audio.ended && appState.isPlaying){
       next();
       return;
     }
-    /* Caso 2: deveria tocar mas está pausado */
     if(appState.isPlaying && dom.audio.paused && dom.audio.src && !dom.audio.ended){
       dom.audio.play().catch(()=>{});
     }
@@ -1943,7 +2005,9 @@ function renderizarTemas(){
 function abrirModalTemas(){vibrar(10);renderizarTemas();dom.themeModal.classList.add('active');}
 function fecharModalTemas(){dom.themeModal.classList.remove('active');}
 
-/* ═══════════════ SENHAS (INALTERADO) ═══════════════ */
+/* ══════════════════════════════════════════════════
+   SENHAS — INTOCADO
+   ══════════════════════════════════════════════════ */
 function gerarSenhaAleatoria(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<12;i++)s+=c.charAt(Math.floor(Math.random()*c.length));return s;}
 function gerarSenhaDispositivo(fp){return btoa(fp+':'+gerarSenhaAleatoria());}
 function gerarSenhaUniversal(){const ts=now().toString(36);const base='UNIV_'+ts;const chave=CONFIG._SALT+base;let h=0;for(let i=0;i<chave.length;i++){h=((h<<5)-h)+chave.charCodeAt(i);h|=0;}const sig=Math.abs(h).toString(16).padStart(16,'0').slice(0,16);return'UNIV:'+ts+':'+sig;}
@@ -2054,18 +2118,17 @@ class TouchManager{
 }
 new TouchManager();
 
-/* ═══════════════════════════════════════════════════════
-   ✅ VÍDEOS CORRIGIDOS — com loop, auto-recovery, sem travamento
-   ═══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   MÍDIAS — CORRIGIDO
+   ══════════════════════════════════════════════════ */
 let midiaToken=0, midiaTimerAtual=null;
-let videosAtivos = new Set(); /* guarda referência para retomar quando voltar */
+let videosAtivos = new Set();
 
 async function carregarMidias(container,url,options={}){
   const{fallback=MIDIAS_FALLBACK, tela='principal'}=options;
   const meuToken=++midiaToken;
   if(midiaTimerAtual){clearTimeout(midiaTimerAtual);midiaTimerAtual=null;}
 
-  /* ✅ Pausa e limpa vídeos antigos com segurança */
   container.querySelectorAll('video').forEach(v => {
     try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e){}
   });
@@ -2096,129 +2159,110 @@ async function carregarMidias(container,url,options={}){
         e=document.createElement('video');
         e.src=u;
         e.muted=true;
-        e.loop=true;                       /* ✅ LOOP: não fica no último frame */
+        e.loop=false;
         e.playsInline=true;
-        e.autoplay=true;
+        e.autoplay=false;
         e.setAttribute('playsinline','');
         e.setAttribute('webkit-playsinline','');
         e.setAttribute('muted','');
-        e.setAttribute('loop','');
-        e.preload='metadata';              /* ✅ menos peso */
+        e.preload='auto';
         e.disablePictureInPicture=true;
         e.controls=false;
-
-        /* ✅ Se pausar sozinho, tenta voltar */
-        e.addEventListener('pause', () => {
-          if(meuToken!==midiaToken) return;
-          if(e.classList.contains('active') && document.visibilityState==='visible'){
-            setTimeout(()=>{ if(e.classList.contains('active') && e.paused) e.play().catch(()=>{}); },300);
-          }
-        });
-        /* ✅ Se travar (stalled/suspend), tenta de novo */
-        const retomar = () => {
-          if(meuToken!==midiaToken) return;
-          if(e.classList.contains('active') && document.visibilityState==='visible' && e.paused){
-            e.play().catch(()=>{});
-          }
-        };
-        e.addEventListener('stalled', () => setTimeout(retomar,500));
-        e.addEventListener('suspend', () => setTimeout(retomar,800));
-        e.addEventListener('waiting', () => setTimeout(retomar,800));
-        e.addEventListener('error', () => {
-          e.dataset.erro='1';
-          /* ✅ Não esconde o vídeo — mantém como fallback visual */
-        });
-
+        try{ e.load(); }catch(err){}
+        e.addEventListener('error', () => { e.dataset.erro='1'; });
         videosAtivos.add(e);
       }else{
         e=document.createElement('img');
         e.src=u;e.loading='eager';e.alt='VDB';
         e.onerror=()=>{e.dataset.erro='1';};
       }
-      e.className=i===0?'active':'inactive';e.style.zIndex=i===0?'3':'2';
+      e.className = i===0 ? 'active' : 'inactive';
+      e.style.zIndex = i===0 ? '3' : '2';
       container.appendChild(e);els.push(e);
     });
+
     if(meuToken!==midiaToken){els.forEach(x=>x.remove());return;}
     if(!els.length)return;
     let idx=0;
 
-    function proximaMidia(){
+    function tocarIndice(n){
       if(meuToken!==midiaToken)return;
-      if(!els.length)return;
-      const at=els[idx];
-      const pi=(idx+1)%els.length;
-      const px=els[pi];
-      if(!px)return;
-      if(px.dataset.erro==='1' && px.tagName==='IMG'){
-        idx=pi;setTimeout(proximaMidia,100);return;
-      }
-      if(px.tagName==='VIDEO'){
-        try{px.currentTime=0;}catch(e){}
-        px.play().catch(()=>{});
-      }
-      if(at){at.classList.remove('active');at.classList.add('inactive');}
-      px.classList.add('active');px.classList.remove('inactive');
-      /* ✅ Pausa o anterior sem resetar o src (evita erro fantasma) */
-      if(at && at.tagName==='VIDEO'){
-        setTimeout(()=>{try{at.pause();}catch(e){}},900);
-      }
-      idx=pi;
-    }
+      const el = els[n];
+      if(!el) return;
 
-    /* ✅ Começa a tocar o primeiro vídeo */
-    if(els[0] && els[0].tagName==='VIDEO' && els[0].dataset.erro!=='1'){
-      els[0].play().catch(()=>{});
-    }
+      els.forEach((x, j) => {
+        if(j === n){
+          x.classList.add('active'); x.classList.remove('inactive');
+          x.style.zIndex = '3';
+        } else {
+          x.classList.remove('active'); x.classList.add('inactive');
+          x.style.zIndex = '2';
+        }
+      });
 
-    /* ✅ Agenda troca por tempo quando não for vídeo com duração */
-    function agendar(){
-      if(meuToken!==midiaToken)return;
-      const at=els[idx];
-      if(!at){
-        midiaTimerAtual=setTimeout(()=>{proximaMidia();agendar();},3000);
-        return;
-      }
-      if(at.tagName==='VIDEO' && isFinite(at.duration) && at.duration > 0.5){
-        /* Troca quando o vídeo chegar perto do fim (com loop, reinicia) */
-        const li = Math.min(at.duration * 1000, CONFIG.MIDIA_MAX_SEGURANCA_MS);
-        midiaTimerAtual = setTimeout(()=>{proximaMidia();agendar();}, li + 400);
+      if(el.tagName === 'VIDEO'){
+        els.forEach((x, j) => {
+          if(x.tagName === 'VIDEO' && j !== n){
+            try{ x.pause(); x.currentTime = 0; }catch(err){}
+          }
+        });
+
+        try{ el.currentTime = 0; }catch(err){}
+        const playPromise = el.play();
+        if(playPromise && playPromise.catch){
+          playPromise.catch(()=>{
+            const retry = () => { el.play().catch(()=>{}); };
+            document.addEventListener('touchstart', retry, {once:true});
+            document.addEventListener('click', retry, {once:true});
+          });
+        }
+
+        el.onended = () => {
+          if(meuToken!==midiaToken) return;
+          setTimeout(() => {
+            idx = (idx + 1) % els.length;
+            tocarIndice(idx);
+          }, 700);
+        };
+
+        const meuIdx = n;
+        midiaTimerAtual = setTimeout(() => {
+          if(meuToken!==midiaToken) return;
+          if(idx === meuIdx){
+            idx = (idx + 1) % els.length;
+            tocarIndice(idx);
+          }
+        }, CONFIG.MIDIA_MAX_SEGURANCA_MS);
       } else {
-        /* Fallback por tempo */
-        midiaTimerAtual = setTimeout(()=>{proximaMidia();agendar();}, CONFIG.MIDIA_DURACAO_MS);
+        const meuIdx = n;
+        midiaTimerAtual = setTimeout(() => {
+          if(meuToken!==midiaToken) return;
+          if(idx === meuIdx){
+            idx = (idx + 1) % els.length;
+            tocarIndice(idx);
+          }
+        }, 5000);
       }
     }
-    /* ✅ Aguarda metadados para saber a duração real */
+
     const primeiro = els[0];
-    if(primeiro && primeiro.tagName==='VIDEO'){
-      if(primeiro.readyState >= 1) agendar();
-      else primeiro.addEventListener('loadedmetadata', agendar, {once:true});
-      setTimeout(()=>{ if(meuToken===midiaToken && !midiaTimerAtual) agendar(); }, 2500);
+    if(primeiro && primeiro.tagName === 'VIDEO'){
+      const tentar = () => { tocarIndice(0); };
+      if(primeiro.readyState >= 2){
+        tentar();
+      } else {
+        primeiro.addEventListener('loadeddata', tentar, {once:true});
+        primeiro.addEventListener('canplay', tentar, {once:true});
+        setTimeout(() => { if(meuToken===midiaToken) tocarIndice(0); }, 8000);
+      }
     } else {
-      agendar();
+      tocarIndice(0);
     }
 
   }catch(e){console.error('Erro mídias:',e);}
 }
 async function carregarMidiasPadrao(){await carregarMidias(dom.mediaContainer,MIDIAS_PADRAO_URL,{fallback:MIDIAS_FALLBACK,tela:'principal'});}
 async function carregarMidiasAnuncio(){await carregarMidias(dom.mediaAnuncios,MIDIAS_ANUNCIO_URL,{fallback:MIDIAS_ANUNCIO_FALLBACK,tela:'anuncios'});}
-
-/* ✅ Retoma vídeos ao voltar do background */
-document.addEventListener('visibilitychange', () => {
-  if(document.visibilityState === 'visible'){
-    videosAtivos.forEach(v => {
-      if(v.classList.contains('active') && v.paused){
-        v.play().catch(()=>{});
-      }
-    });
-  }
-});
-window.addEventListener('focus', () => {
-  videosAtivos.forEach(v => {
-    if(v.classList.contains('active') && v.paused){
-      v.play().catch(()=>{});
-    }
-  });
-});
 
 async function trocarTela(destino){
   vibrar(15);
@@ -2558,7 +2602,6 @@ async function iniciar(){
       }
     };
 
-    /* ✅ CORRIGIDO: sem listener 'ended' duplicado, sem loop infinito de next() */
     dom.audio.onended = () => {
       if(appState.carregandoMusica) return;
       appState.isPlaying = false;
@@ -2566,7 +2609,6 @@ async function iniciar(){
     };
     dom.audio.onerror = () => {
       if(appState.carregandoMusica) return;
-      /* Só avança se realmente tem src (evita erro fantasma) */
       if(dom.audio.src && dom.audio.src !== location.href){
         setTimeout(() => { if(!appState.carregandoMusica) next(); }, 800);
       }
@@ -2575,21 +2617,64 @@ async function iniciar(){
     document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key===' '){e.preventDefault();togglePlay();}if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();});
     document.addEventListener('click',e=>{if(!dom.menuPopup.contains(e.target)&&e.target!==dom.menuButton&&!dom.menuButton.contains(e.target))fecharMenu();});
 
-    /* ✅ RECUPERAÇÃO EM BACKGROUND / LOCK */
+    /* ✅ RECUPERAÇÃO EM SEGUNDO PLANO / LOCK */
     document.addEventListener('visibilitychange', () => {
       if(document.visibilityState === 'visible'){
         if(appState.isBackgroundActive && appState.isPlaying && dom.audio.paused && !appState.carregandoMusica){
           dom.audio.play().catch(()=>{});
         }
-        if(!jaEstaFullscreen() && appState.playerAtivado) forcarTelaCheia();
+        videosAtivos.forEach(v => {
+          if(v.classList.contains('active') && v.paused && v.dataset.erro !== '1'){
+            v.play().catch(()=>{});
+          }
+        });
+        if(!jaEstaFullscreen() && appState.playerAtivado){
+          forcarTelaCheia();
+        }
       }
     });
+
     window.addEventListener('focus', () => {
       if(appState.isBackgroundActive && appState.isPlaying && dom.audio.paused && !appState.carregandoMusica){
         dom.audio.play().catch(()=>{});
       }
+      videosAtivos.forEach(v => {
+        if(v.classList.contains('active') && v.paused && v.dataset.erro !== '1'){
+          v.play().catch(()=>{});
+        }
+      });
     });
-    /* ✅ MediaSession: seekto */
+
+    window.addEventListener('pageshow', (e) => {
+      if(e.persisted){
+        if(appState.isBackgroundActive && appState.isPlaying && dom.audio.paused){
+          dom.audio.play().catch(()=>{});
+        }
+        videosAtivos.forEach(v => {
+          if(v.classList.contains('active') && v.paused){
+            v.play().catch(()=>{});
+          }
+        });
+        if(!jaEstaFullscreen() && appState.playerAtivado) forcarTelaCheia();
+      }
+    });
+
+    /* ✅ Ao ENTRAR em fullscreen, garante áudio e vídeo tocando */
+    const onFsChange = () => {
+      if(jaEstaFullscreen()){
+        if(appState.isBackgroundActive && appState.isPlaying && dom.audio.paused && !appState.carregandoMusica){
+          setTimeout(()=>dom.audio.play().catch(()=>{}), 200);
+        }
+        videosAtivos.forEach(v => {
+          if(v.classList.contains('active') && v.paused){
+            setTimeout(()=>v.play().catch(()=>{}), 200);
+          }
+        });
+      }
+    };
+    document.addEventListener('fullscreenchange', onFsChange);
+    document.addEventListener('webkitfullscreenchange', onFsChange);
+
     if('mediaSession' in navigator){
       try{
         navigator.mediaSession.setActionHandler('seekto', (d) => {
@@ -2598,7 +2683,11 @@ async function iniciar(){
       }catch(e){}
     }
 
-    window.addEventListener('beforeunload',()=>{appState._save();if(keepAliveInterval){clearInterval(keepAliveInterval);keepAliveInterval=null;}if(watchdogInterval){clearInterval(watchdogInterval);watchdogInterval=null;}});
+    window.addEventListener('beforeunload',()=>{
+      appState._save();
+      if(keepAliveInterval){clearInterval(keepAliveInterval);keepAliveInterval=null;}
+      if(watchdogInterval){clearInterval(watchdogInterval);watchdogInterval=null;}
+    });
 
     if(dom.bannerPropagandaFull)dom.bannerPropagandaFull.onclick=e=>{if(e.target.closest('.prop-full-fechar'))return;abrirWhatsAppPropaganda();};
     if(dom.propFullFecharBtn)dom.propFullFecharBtn.onclick=e=>{e.stopPropagation();vibrar(10);esconderPropagandaFull();propagandaJaFoiFechada=true;clearTimeout(propagandaTimer);};
