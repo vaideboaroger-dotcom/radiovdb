@@ -69,12 +69,71 @@ input,textarea{outline:none;font-family:inherit}
 .sheet-header h2{font-family:'Audiowide';font-size:1.1rem;letter-spacing:3px}
 .sheet-close{background:rgba(255,255,255,.08);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1rem}
 
-.gen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding-bottom:16px}
-.gen{position:relative;min-height:80px;border-radius:18px;padding:16px 10px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;width:100%;transition:transform .15s}
-.gen::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:5px;height:60%;background:var(--gc,#a855f7);border-radius:0 5px 5px 0;box-shadow:0 0 12px var(--gc,#a855f7)}
-.gen:active{transform:scale(.96)}
-.gen-nome{font-family:'Rajdhani';font-size:1rem;font-weight:800;text-transform:uppercase;position:relative;z-index:2;line-height:1.15;word-break:break-word;text-align:center;width:100%;padding:0 4px}
-.gen.ok::after{content:'✓';position:absolute;top:8px;right:10px;background:#10b981;color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;z-index:3}
+/* ⭐ GÊNEROS — NOMES GRANDES E VISÍVEIS */
+.gen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;padding-bottom:16px}
+.gen{
+  position:relative;
+  min-height:72px;
+  border-radius:16px;
+  padding:14px 14px 14px 24px;
+  background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,255,255,.15);
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  overflow:visible;
+  text-align:left;
+  width:100%;
+  transition:transform .15s;
+}
+.gen::before{
+  content:'';
+  position:absolute;
+  left:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:6px;
+  height:60%;
+  background:var(--gc,#a855f7);
+  border-radius:0 6px 6px 0;
+  box-shadow:0 0 14px var(--gc,#a855f7);
+  z-index:1;
+}
+.gen:active{transform:scale(.97);background:rgba(255,255,255,.12)}
+.gen-nome{
+  font-family:'Rajdhani',sans-serif;
+  font-size:1.2rem;
+  font-weight:800;
+  text-transform:uppercase;
+  color:#fff;
+  position:relative;
+  z-index:2;
+  line-height:1.2;
+  overflow-wrap:break-word;
+  word-wrap:break-word;
+  text-align:left;
+  width:100%;
+  letter-spacing:.5px;
+  text-shadow:0 2px 6px rgba(0,0,0,.7);
+}
+.gen.ok::after{
+  content:'✓';
+  position:absolute;
+  top:6px;
+  right:8px;
+  background:#10b981;
+  color:#fff;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.72rem;
+  font-weight:900;
+  z-index:3;
+  box-shadow:0 2px 8px rgba(16,185,129,.5);
+}
 
 .busca-top{display:flex;gap:8px;margin-bottom:12px}
 .busca-top input{flex:1;padding:14px 18px;border-radius:30px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:.95rem}
@@ -397,12 +456,12 @@ input,textarea{outline:none;font-family:inherit}
 <script>
 (function(){
 'use strict';
-console.log('%c[VDB] Script carregado v64', 'color:#22d3ee;font-weight:bold');
+console.log('%c[VDB] Script carregado v65', 'color:#22d3ee;font-weight:bold');
 
 var CONFIG = {
   WHATSAPP: '5512988461978',
   PRECO: 'R$ 39,90',
-  VERSION: 'v64',
+  VERSION: 'v65',
   TEMPO_TESTE: 86400,
   LOADING_MS: 1000,
   OFFLINE_TIMEOUT: 30000,
@@ -412,16 +471,6 @@ var CONFIG = {
 
 var SENHA_ADMIN = String.fromCharCode(112,97,116,105,99,111,49,54,56,53);
 var SENHA_MESTRA = String.fromCharCode(80,97,116,105,99,111,49,54,56,53,64);
-
-var TEMAS = {
-  azul:{n:'Azul',c1:'#2563eb',c2:'#1e40af',c3:'#3b82f6'},
-  roxo:{n:'Roxo',c1:'#a855f7',c2:'#7c3aed',c3:'#c084fc'},
-  vermelho:{n:'Vermelho',c1:'#dc2626',c2:'#991b1b',c3:'#ef4444'},
-  verde:{n:'Verde',c1:'#059669',c2:'#065f46',c3:'#10b981'},
-  rosa:{n:'Rosa',c1:'#db2777',c2:'#9d174d',c3:'#ec4899'},
-  laranja:{n:'Laranja',c1:'#ea580c',c2:'#9a3412',c3:'#f97316'},
-  ciano:{n:'Ciano',c1:'#0891b2',c2:'#155e75',c3:'#06b6d4'}
-};
 
 var GENRE_URLS = {
   'BÔNUS':'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json',
@@ -506,7 +555,7 @@ function showLoad(s){ var l = $('loadOv'); if(l) l.classList.toggle('on', !!s); 
 
 var state = {
   musicas:[], playlist:[], indice:0, tocando:false, genero:'BÔNUS',
-  favs:[], recentes:new Set(), tema:'roxo',
+  favs:[], recentes:new Set(),
   playerAtivo:false, carregando:false, cacheGeneros: new Map()
 };
 
@@ -745,7 +794,10 @@ function renderGeneros(){
     var cor = CORES[g] || '#a855f7';
     var b = document.createElement('button'); b.type = 'button'; b.className = 'gen'; b.style.setProperty('--gc', cor);
     if(generoOff(g)) b.classList.add('ok');
-    b.innerHTML = '<div class="gen-nome">' + g + '</div>';
+    var nome = document.createElement('div');
+    nome.className = 'gen-nome';
+    nome.textContent = g;
+    b.appendChild(nome);
     b.onclick = function(){ escolherGenero(g); };
     grid.appendChild(b);
   });
@@ -918,7 +970,6 @@ function carregarMidias(){
   });
 }
 
-/* SISTEMA DE SENHAS */
 function gerarSenhaAleatoria(){ var c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; var s = ''; for(var i=0; i<12; i++) s += c.charAt(Math.floor(Math.random()*c.length)); return s; }
 function gerarSenhaDispositivo(fp){ return btoa(fp + ':' + gerarSenhaAleatoria()); }
 function gerarSenhaUniversal(){ var ts = now().toString(36); return 'UNIV:' + ts + ':' + btoa('UNIV:' + ts + ':' + gerarSenhaAleatoria()).slice(0, 16); }
@@ -1081,7 +1132,6 @@ function checarLiberado(){
   return Promise.resolve(true);
 }
 
-/* ⭐ INICIAR RÁPIDO */
 function iniciarAppRapido(){
   state.playerAtivo = true;
   try{
@@ -1100,8 +1150,6 @@ function iniciarAppRapido(){
   atualizarTimer();
   setInterval(atualizarTimer, 5000);
   renderGeneros();
-  
-  /* Carrega BÔNUS em background — não bloqueia */
   carregarGenero('BÔNUS').then(function(m){
     if(m && m.length){
       state.musicas = m;
@@ -1109,21 +1157,16 @@ function iniciarAppRapido(){
       state.playlist = shuffle(m);
       state.indice = 0;
       var p = state.playlist[0];
-      if(p){
-        $('nome').textContent = san(p.title);
-        $('artista').textContent = san(p.artist);
-        atualizarCoracao();
-      }
+      if(p){ $('nome').textContent = san(p.title); $('artista').textContent = san(p.artist); atualizarCoracao(); }
       tocar();
     }
   });
-  
   carregarMidias();
   setInterval(carregarMidias, 180000);
 }
 
 function bindEventos(){
-  function on(id, fn){ var el = $(id); if(el) el.onclick = fn; else console.warn('⚠️ não achou:', id); }
+  function on(id, fn){ var el = $(id); if(el) el.onclick = fn; }
   
   on('btnPlay', togglePlay);
   on('btnNext', prox);
@@ -1255,11 +1298,10 @@ function bindEventos(){
   }
 })();
 
-/* ⭐ BOOT RÁPIDO */
 function boot(){
   console.log('🔧 Boot iniciando...');
   try{
-    carregarFavs(); carregarRecentes(); aplicarTema();
+    carregarFavs(); carregarRecentes();
     bindEventos();
     setup8Cliques();
     setupAdminEventos();
@@ -1284,14 +1326,6 @@ function boot(){
     var ls = $('loading'); if(ls) ls.style.display = 'none';
     var app = $('app'); if(app) app.classList.add('on');
   }
-}
-
-function aplicarTema(){
-  var t = TEMAS.roxo;
-  var r = document.documentElement;
-  r.style.setProperty('--c1', t.c1);
-  r.style.setProperty('--c2', t.c2);
-  r.style.setProperty('--c3', t.c3);
 }
 
 window.VDB = { CONFIG:CONFIG, state:state };
