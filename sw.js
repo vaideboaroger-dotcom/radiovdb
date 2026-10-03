@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════
-   VAI DE BOA! MUSIC — SERVICE WORKER v20
+   VAI DE BOA! MUSIC — SERVICE WORKER v61 (CORRIGIDO)
    ═══════════════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'vdb-cache-v20';
-const CACHE_MUSICAS = 'vdb-musicas-offline';
+const CACHE_NAME = 'vdb-cache-v61';
+const CACHE_MUSICAS = 'vdb-musicas-offline-v2'; // ✅ IGUAL ao app
 
 // Arquivos essenciais do app (shell)
 const APP_SHELL = [
@@ -24,7 +24,7 @@ self.addEventListener('install', (event) => {
       return cache.addAll(APP_SHELL).catch(err => {
         console.warn('⚠️ SW: falha ao cachear shell:', err);
       });
-    }).then(() => self.skipWaiting()) // ⚡ ativa JÁ
+    }).then(() => self.skipWaiting())
   );
 });
 
@@ -44,7 +44,7 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    }).then(() => self.clients.claim()) // ⚡ assume controle já
+    }).then(() => self.clients.claim())
   );
 });
 
@@ -72,13 +72,11 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(request, { cache: 'no-store' })
         .then((response) => {
-          // Atualiza o cache do HTML em background
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
           return response;
         })
         .catch(() => {
-          // Se offline, tenta o cache
           return caches.match(request).then(cached => {
             return cached || caches.match('./index.html');
           });
@@ -105,7 +103,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // ═══════════════════════════════════════════════════════════
-  // 3️⃣ ÁUDIOS/MP4 (músicas) — cache-first com salvar em background
+  // 3️⃣ ÁUDIOS/VÍDEOS (músicas) — cache-first com LIMITE 8MB
   // ═══════════════════════════════════════════════════════════
   if (request.destination === 'audio' ||
       request.destination === 'video' ||
@@ -117,7 +115,14 @@ self.addEventListener('fetch', (event) => {
           // Salva em cache (mas não bloqueia a resposta)
           const clone = response.clone();
           caches.open(CACHE_MUSICAS).then(cache => {
-            cache.put(request, clone).catch(() => {});
+            // ✅ Checa tamanho antes de salvar (evita inflar o cache)
+            const tamanho = parseInt(response.headers.get('content-length') || '0');
+            const LIMITE = 8 * 1024 * 1024; // 8 MB
+            if (!tamanho || tamanho < LIMITE) {
+              cache.put(request, clone).catch(() => {});
+            } else {
+              console.warn('⚠️ SW: áudio muito grande, não cacheado:', (tamanho/1024/1024).toFixed(1) + 'MB');
+            }
           });
           return response;
         });
@@ -146,10 +151,17 @@ self.addEventListener('fetch', (event) => {
   }
 
   // ═══════════════════════════════════════════════════════════
-  // 5️⃣ Resto — tenta rede, cai pra cache
+  // 5️⃣ Resto — tenta rede, cai pra cache (COM FALLBACK SEGURO)
   // ═══════════════════════════════════════════════════════════
   event.respondWith(
-    fetch(request).catch(() => caches.match(request))
+    fetch(request)
+      .then((response) => response)
+      .catch(() => {
+        return caches.match(request).then(c => {
+          // ✅ Fallback seguro: nunca retorna undefined
+          return c || new Response('', { status: 504, statusText: 'Offline' });
+        });
+      })
   );
 });
 
