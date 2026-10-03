@@ -391,18 +391,20 @@ input,textarea{outline:none;font-family:inherit}
 
 <div id="notif"></div>
 <div id="loadOv"><i class="fas fa-spinner"></i></div>
-<audio id="audio" preload="auto" playsinline></audio>
-<audio id="bgAudio" preload="auto" style="display:none"></audio>
+
+<!-- ⭐ ÁUDIOS COM crossorigin="anonymous" (essencial p/ background) -->
+<audio id="audio" preload="auto" playsinline crossorigin="anonymous"></audio>
+<audio id="bgAudio" preload="auto" style="display:none" crossorigin="anonymous"></audio>
 
 <script>
 (function(){
 'use strict';
-console.log('%c[VDB] v69 - fullscreen + travas corrigidas', 'color:#22d3ee;font-weight:bold');
+console.log('%c[VDB] v70 - background playback Cazé-style', 'color:#22d3ee;font-weight:bold');
 
 var CONFIG = {
   WHATSAPP: '5512988461978',
   PRECO: 'R$ 39,90',
-  VERSION: 'v69',
+  VERSION: 'v70',
   TEMPO_TESTE: 86400,
   LOADING_MS: 800,
   OFFLINE_TIMEOUT: 30000,
@@ -496,7 +498,8 @@ function notif(msg, dur){
 var state = {
   musicas:[], playlist:[], indice:0, tocando:false, genero:'BÔNUS',
   favs:[], recentes:new Set(),
-  playerAtivo:false, cacheGeneros: new Map()
+  playerAtivo:false, cacheGeneros: new Map(),
+  bgAtivo:false
 };
 
 function salvarFavs(){ try{ localStorage.setItem('vdb_favs', JSON.stringify(state.favs)); }catch(e){} }
@@ -516,10 +519,8 @@ function gerarFingerprint(){
 }
 state.fingerprint = gerarFingerprint();
 
-/* ══════════════ FULLSCREEN ROBUSTO ══════════════ */
-function jaFull(){
-  return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-}
+/* ═══════════ FULLSCREEN ═══════════ */
+function jaFull(){ return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement); }
 function entrarFull(){
   if(jaFull()) return;
   try{
@@ -539,26 +540,105 @@ function sairFull(){
     if(r && r.catch) r.catch(function(){});
   }catch(e){}
 }
-function toggleFull(){
-  if(jaFull()) sairFull(); else entrarFull();
+function toggleFull(){ if(jaFull()) sairFull(); else entrarFull(); }
+
+/* ═══════════ ÁUDIO SILENCIOSO EM LOOP (SEGREDO DO CAZÉ) ═══════════ */
+function criarBlobSilencioso(){
+  try{
+    var sr = 44100, dur = 5, n = sr * dur;
+    var buffer = new ArrayBuffer(44 + n * 2);
+    var view = new DataView(buffer);
+    var w = function(o,s){ for(var i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); };
+    w(0,'RIFF'); view.setUint32(4, 36 + n*2, true); w(8,'WAVE');
+    w(12,'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true); view.setUint32(24, sr, true); view.setUint32(28, sr*2, true);
+    view.setUint16(32, 2, true); view.setUint16(34, 16, true); w(36,'data');
+    view.setUint32(40, n*2, true);
+    var off = 44;
+    for(var i=0;i<n;i++){ view.setInt16(off, 0, true); off += 2; }
+    return new Blob([buffer], {type:'audio/wav'});
+  }catch(e){ return null; }
 }
 
-/* ══════════════ CARREGAR GÊNERO ══════════════ */
+function ativarBgAudio(){
+  return new Promise(function(resolve){
+    try{
+      var blob = criarBlobSilencioso();
+      if(!blob){ resolve(false); return; }
+      var bg = $('bgAudio');
+      if(!bg){ resolve(false); return; }
+      bg.src = URL.createObjectURL(blob);
+      bg.loop = true;
+      bg.volume = 0.001;
+      bg.play().then(function(){
+        state.bgAtivo = true;
+        resolve(true);
+      }).catch(function(){
+        /* Autoplay bloqueado — tenta novamente depois */
+        resolve(false);
+      });
+    }catch(e){ resolve(false); }
+  });
+}
+
+function reativarBgSeNecessario(){
+  var bg = $('bgAudio');
+  if(!bg) return;
+  if(bg.paused && state.playerAtivo){
+    bg.play().catch(function(){});
+  }
+}
+
+/* ═══════════ MANUTENÇÃO A CADA 1s (SEGREDO DO CAZÉ) ═══════════ */
+var _manutencaoInterval = null;
+function iniciarManutencao(){
+  if(_manutencaoInterval) clearInterval(_manutencaoInterval);
+  _manutencaoInterval = setInterval(function(){
+    try{
+      if(!state.playerAtivo) return;
+      var bg = $('bgAudio');
+      var a = $('audio');
+      
+      /* Religa áudio silencioso se morreu */
+      if(bg && bg.paused) bg.play().catch(function(){});
+      
+      /* Religa música se pausou sem intenção */
+      if(a && state.tocando && a.paused && !a.ended && a.src && !_tocandoAgora){
+        a.play().catch(function(){});
+      }
+      
+      /* Se música acabou e não trocou, força troca */
+      if(a && a.ended && state.tocando && !_tocandoAgora){
+        prox();
+      }
+    }catch(e){}
+  }, 1000);
+}
+
+/* ═══════════ WAKE LOCK ═══════════ */
+var _wakeLock = null;
+function pedirWakeLock(){
+  if(_wakeLock) return;
+  if(!('wakeLock' in navigator)) return;
+  try{
+    navigator.wakeLock.request('screen').then(function(wl){
+      _wakeLock = wl;
+      try{ wl.addEventListener('release', function(){ _wakeLock = null; }); }catch(e){}
+    }).catch(function(){});
+  }catch(e){}
+}
+
+/* ═══════════ CARREGAR GÊNERO ═══════════ */
 function carregarGenero(g){
   if(state.cacheGeneros.has(g)) return Promise.resolve(state.cacheGeneros.get(g));
   var mem = 'vdb_pl_' + CONFIG.VERSION + '_' + g;
-  
   try{
     var c = localStorage.getItem(mem);
     if(c){
       var p = JSON.parse(c);
-      if(p && p.length){
-        state.cacheGeneros.set(g, p);
-        return Promise.resolve(p);
-      }
+      if(p && p.length){ state.cacheGeneros.set(g, p); return Promise.resolve(p); }
     }
   }catch(e){}
-  
   return new Promise(function(resolve){
     var ctrl = new AbortController();
     var jaResolveu = false;
@@ -568,11 +648,7 @@ function carregarGenero(g){
       try{ clearTimeout(timeout); }catch(e){}
       resolve(v);
     }
-    var timeout = setTimeout(function(){
-      try{ ctrl.abort(); }catch(e){}
-      finish(null);
-    }, 8000);
-    
+    var timeout = setTimeout(function(){ try{ ctrl.abort(); }catch(e){} finish(null); }, 8000);
     fetch(GENRE_URLS[g] + '?v=' + CONFIG.VERSION + '&t=' + now(), {signal: ctrl.signal})
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
       .then(function(j){
@@ -586,8 +662,7 @@ function carregarGenero(g){
         });
         if(ms.length){
           try{ localStorage.setItem(mem, JSON.stringify(ms)); }catch(e){}
-          state.cacheGeneros.set(g, ms);
-          finish(ms);
+          state.cacheGeneros.set(g, ms); finish(ms);
         } else finish(null);
       })
       .catch(function(){
@@ -624,7 +699,7 @@ function getUrlCache(m){
   return 'https://raw.githubusercontent.com/' + repo + '/refs/heads/main/' + n;
 }
 
-/* ══════════════ CACHE OFFLINE ══════════════ */
+/* ═══════════ CACHE OFFLINE ═══════════ */
 var CACHE_MUS = 'vdb-musicas-offline-v2';
 function abrirCache(){ if(!('caches' in window)) return Promise.resolve(null); return caches.open(CACHE_MUS).catch(function(){ return null; }); }
 function estaOffline(url){ return abrirCache().then(function(c){ if(!c) return false; var uc = url.split('?')[0]; return c.match(uc).then(function(a){ return !!a; }).then(function(a){ if(a) return true; return c.match(url).then(function(b){ return !!b; }); }); }).catch(function(){ return false; }); }
@@ -724,7 +799,7 @@ function baixarGenero(genero, musicas, onProgress){
 
 function generoOff(g){ try{ var m = JSON.parse(localStorage.getItem('vdb_off_meta')||'{}'); return m[g] && m[g].completo; }catch(e){ return false; } }
 
-/* ══════════════ PLAYER ══════════════ */
+/* ═══════════ PLAYER ═══════════ */
 var _tocandoAgora = false;
 
 function tocar(){
@@ -732,6 +807,9 @@ function tocar(){
   _tocandoAgora = true;
   var a = $('audio');
   $('btnPlay').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  
+  /* Garante que áudio silencioso está tocando */
+  reativarBgSeNecessario();
   
   if(state.indice >= state.playlist.length){ state.playlist = shuffle(state.playlist); state.indice = 0; }
   var m = state.playlist[state.indice];
@@ -842,8 +920,10 @@ function togglePlay(){
   vib(10);
   var a = $('audio');
   if(!state.playerAtivo) return;
-  if(a.paused) tocar();
-  else {
+  if(a.paused){
+    reativarBgSeNecessario();
+    tocar();
+  } else {
     a.pause(); state.tocando = false;
     $('btnPlay').innerHTML = '<i class="fas fa-play"></i>';
     if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
@@ -896,20 +976,14 @@ function escolherGenero(g){
   
   carregarGenero(g).then(function(m){
     if(!m || !m.length){ $('btnPlay').innerHTML = '<i class="fas fa-play"></i>'; notif('❌ Erro ' + g); return; }
-    
     state.musicas = m;
     state.genero = g;
     state.playlist = shuffle(m);
     state.indice = 0;
     state.recentes = new Set();
     salvarRecentes();
-    
     var p = state.playlist[0];
-    if(p){
-      $('nome').textContent = san(p.title);
-      $('artista').textContent = san(p.artist);
-      atualizarCoracao();
-    }
+    if(p){ $('nome').textContent = san(p.title); $('artista').textContent = san(p.artist); atualizarCoracao(); }
     $('lbl').textContent = '🎵 ' + g;
     fechar('mGen');
     notif('🎵 ' + g);
@@ -917,7 +991,7 @@ function escolherGenero(g){
   });
 }
 
-/* ══════════════ BUSCA / FAV / OFFLINE ══════════════ */
+/* ═══════════ BUSCA / FAV / OFFLINE ═══════════ */
 var todosCarregados = false;
 function abrirBusca(){
   abrir('mBusca');
@@ -1035,7 +1109,7 @@ function abrirOffline(){
   });
 }
 
-/* ══════════════ VÍDEOS DE FUNDO ══════════════ */
+/* ═══════════ VÍDEOS DE FUNDO ═══════════ */
 var _midiasCarregadas = false;
 var _videoLoopTimer = null;
 var _videoEls = [];
@@ -1044,10 +1118,8 @@ function carregarMidias(){
   if(_midiasCarregadas) return;
   _midiasCarregadas = true;
   var el = $('bg'); if(!el) return;
-  
   var ctrl = new AbortController();
   var tid = setTimeout(function(){ try{ ctrl.abort(); }catch(e){} }, 5000);
-  
   fetch(MIDIAS_URL, {signal: ctrl.signal})
     .then(function(r){ clearTimeout(tid); if(!r.ok) throw 0; return r.json(); })
     .catch(function(){ clearTimeout(tid); return MIDIAS_FB; })
@@ -1055,8 +1127,7 @@ function carregarMidias(){
       var lista = Array.isArray(j) ? j : (j && (j.medias || j.midias)) || MIDIAS_FB;
       lista = lista.filter(function(m){ return m && m.src; });
       if(!lista.length) lista = MIDIAS_FB;
-      lista = lista.slice(0, 2); /* ⭐ só 2 vídeos para não travar */
-      
+      lista = lista.slice(0, 2);
       el.innerHTML = '';
       _videoEls = lista.map(function(m, i){
         var e;
@@ -1078,7 +1149,6 @@ function carregarMidias(){
         el.appendChild(e);
         return e;
       });
-      
       _videoIdx = 0;
       _tocarVideo(0);
     });
@@ -1098,7 +1168,7 @@ function _tocarVideo(n){
   _videoLoopTimer = setTimeout(function(){ _tocarVideo(_videoIdx); }, 60000);
 }
 
-/* ══════════════ SEGURANÇA (intacta) ══════════════ */
+/* ═══════════ SEGURANÇA (intacta) ═══════════ */
 function gerarSenhaAleatoria(){ var c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; var s = ''; for(var i=0; i<12; i++) s += c.charAt(Math.floor(Math.random()*c.length)); return s; }
 function gerarSenhaDispositivo(fp){ return btoa(fp + ':' + gerarSenhaAleatoria()); }
 function gerarSenhaUniversal(){ var ts = now().toString(36); return 'UNIV:' + ts + ':' + btoa('UNIV:' + ts + ':' + gerarSenhaAleatoria()).slice(0, 16); }
@@ -1126,7 +1196,7 @@ function liberarAgora(){
     vib([30,30,30]);
     if(!state.playerAtivo) iniciarAppRapido();
     atualizarTimer();
-  }else{
+  } else {
     var err = $('err');
     if(err) err.innerHTML = '❌ Senha inválida!<br><small style="color:#888;font-size:.7rem">💡 Peça a senha ao suporte</small>';
     vib([100,50,100]);
@@ -1257,28 +1327,30 @@ function checarLiberado(){
   return Promise.resolve(true);
 }
 
-/* ══════════════ WAKE LOCK CONTROLADO ══════════════ */
-var wakeLock = null;
-var _wakeLockTentando = false;
-function pedirWakeLock(){
-  if(_wakeLockTentando || wakeLock) return;
-  if(!('wakeLock' in navigator)) return;
-  _wakeLockTentando = true;
-  try{
-    navigator.wakeLock.request('screen').then(function(wl){
-      wakeLock = wl;
-      _wakeLockTentando = false;
-      try{ wl.addEventListener('release', function(){ wakeLock = null; }); }catch(e){}
-    }).catch(function(){ _wakeLockTentando = false; });
-  }catch(e){ _wakeLockTentando = false; }
-}
-
-/* ══════════════ INICIAR ══════════════ */
+/* ═══════════ INICIAR (COM TÉCNICAS DO CAZÉ) ═══════════ */
 function iniciarAppRapido(){
   state.playerAtivo = true;
   pedirWakeLock();
   document.addEventListener('visibilitychange', function(){
-    if(document.visibilityState === 'visible') pedirWakeLock();
+    if(document.visibilityState === 'visible'){
+      pedirWakeLock();
+      /* Reativa áudio silencioso quando volta */
+      reativarBgSeNecessario();
+      /* Reativa música se estava tocando */
+      var a = $('audio');
+      if(state.tocando && a && a.paused && a.src && !_tocandoAgora){
+        a.play().catch(function(){});
+      }
+    }
+  });
+  
+  /* ⭐ ATIVA ÁUDIO SILENCIOSO EM LOOP (SEGREDO) */
+  ativarBgAudio().then(function(ok){
+    if(ok){
+      console.log('%c✅ Áudio background ativo — tocará em tela bloqueada', 'color:#10b981');
+      /* ⭐ MANUTENÇÃO A CADA 1s (SEGREDO) */
+      iniciarManutencao();
+    }
   });
   
   atualizarTimer();
@@ -1297,11 +1369,13 @@ function iniciarAppRapido(){
     }
   });
   
-  /* ⭐ Vídeos e fullscreen só depois do 1º toque (com delay para não competir com play) */
+  /* Vídeos e fullscreen no primeiro clique */
   var _arrancouMidia = false;
   function _arrancarMidia(){
     if(_arrancouMidia) return;
     _arrancouMidia = true;
+    /* ⭐ Tenta reativar áudio silencioso no primeiro clique (autoplay policy) */
+    reativarBgSeNecessario();
     setTimeout(function(){ carregarMidias(); }, 1500);
     setTimeout(function(){ entrarFull(); }, 100);
   }
@@ -1330,6 +1404,16 @@ function bindEventos(){
     a.onerror = function(){ if(!_tocandoAgora && a.src) setTimeout(prox, 400); };
     a.onstalled = function(){};
     a.onwaiting = function(){};
+    a.onpause = function(){
+      /* Se pausou sem intenção, religa (a menos que seja o usuário) */
+      if(state.tocando && !_tocandoAgora){
+        setTimeout(function(){
+          if(state.tocando && a.paused && !a.ended && a.src){
+            a.play().catch(function(){});
+          }
+        }, 500);
+      }
+    };
   }
   
   var barra = $('barra');
@@ -1351,12 +1435,7 @@ function bindEventos(){
   document.querySelectorAll('.sheet-close').forEach(function(b){ b.onclick = function(){ var t = b.dataset.close; if(t) fechar(t); }; });
   document.querySelectorAll('.modal').forEach(function(m){ m.onclick = function(e){ if(e.target === m) m.classList.remove('on'); }; });
   
-  /* ⭐ Botão Tela Cheia corrigido */
-  on('miFull', function(){
-    var mp = $('menuPop'); if(mp) mp.classList.remove('on');
-    toggleFull();
-  });
-  
+  on('miFull', function(){ var mp = $('menuPop'); if(mp) mp.classList.remove('on'); toggleFull(); });
   on('miBaixar', function(){ iniciarDownload(); });
   on('miGerenciar', function(){ abrirOffline(); });
   on('miReload', function(){ location.reload(); });
@@ -1449,7 +1528,7 @@ function bindEventos(){
 })();
 
 function boot(){
-  console.log('🔧 Boot v69 iniciando...');
+  console.log('🔧 Boot v70 iniciando...');
   try{
     carregarFavs(); carregarRecentes();
     bindEventos();
