@@ -288,13 +288,15 @@ input,textarea{outline:none;font-family:inherit}
 <audio id="bgAudio" preload="auto" playsinline crossorigin="anonymous" style="display:none"></audio>
 
 <script>
-(function(){
+/* ═══════════════════════════════════════════════════════════════
+   🎬 VDB MUSIC v80.1 — COM TELA CHEIA INTELIGENTE
+   ═══════════════════════════════════════════════════════════════ */(function(){
 'use strict';
-console.log('%c[VDB] v80 - unificado', 'color:#22d3ee;font-weight:bold');
+console.log('%c[VDB] v80.1 - tela cheia inteligente', 'color:#22d3ee;font-weight:bold');
 
 var CONFIG = {
   WHATSAPP: '5512988461978',
-  VERSION: 'v80',
+  VERSION: 'v80.1',
   TEMPO_TESTE: 86400,
   LOADING_MS: 1500,
   OFFLINE_MAX_MB: 15
@@ -399,7 +401,9 @@ function gerarFingerprint(){
 }
 state.fingerprint = gerarFingerprint();
 
-/* FULLSCREEN */
+/* ═══════════════════════════════════════════════════════════════
+   🖥️ FULLSCREEN INTELIGENTE
+   ═══════════════════════════════════════════════════════════════ */
 function jaFull(){ return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement); }
 function entrarFull(){
   if(jaFull()) return;
@@ -421,6 +425,67 @@ function sairFull(){
   }catch(e){}
 }
 function toggleFull(){ if(jaFull()) sairFull(); else entrarFull(); }
+
+/* 👇 NOVO — gerenciador inteligente de fullscreen */
+var _fullListenerAtivo = false;
+var _querFull = false;
+var _fullBtnTimer = null;
+
+function monitorarFullscreen(){
+  if(_fullListenerAtivo) return;
+  _fullListenerAtivo = true;
+  var eventos = ['fullscreenchange','webkitfullscreenchange','mozfullscreenchange','MSFullscreenChange'];
+  eventos.forEach(function(ev){
+    document.addEventListener(ev, function(){
+      if(jaFull()){
+        _querFull = true;
+        var btn = $('btnFullFloat');
+        if(btn) btn.style.display = 'none';
+      } else {
+        var btn = $('btnFullFloat');
+        if(btn && state.playerAtivo) btn.style.display = 'flex';
+      }
+    });
+  });
+}
+
+function criarBotaoFull(){
+  if($('btnFullFloat')) return;
+  var btn = document.createElement('button');
+  btn.id = 'btnFullFloat';
+  btn.innerHTML = '<i class="fas fa-expand"></i>';
+  btn.style.cssText = 'position:fixed;top:calc(70px + var(--st));right:16px;z-index:998;background:rgba(168,85,247,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,.3);border-radius:50%;width:46px;height:46px;color:#fff;font-size:1.15rem;display:none;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(168,85,247,.6);cursor:pointer;transition:transform .15s';
+  btn.onclick = function(e){
+    e.stopPropagation();
+    vib(15);
+    _querFull = true;
+    entrarFull();
+    btn.style.display = 'none';
+  };
+  document.body.appendChild(btn);
+}
+
+function tentarReentrarFull(){
+  if(jaFull() || !state.playerAtivo) return;
+  if(_querFull){
+    setTimeout(function(){
+      entrarFull();
+      var btn = $('btnFullFloat');
+      if(btn) btn.style.display = 'none';
+    }, 300);
+  }
+}
+
+function esconderBotaoFullTemporariamente(){
+  var btn = $('btnFullFloat');
+  if(!btn) return;
+  btn.style.display = 'none';
+  clearTimeout(_fullBtnTimer);
+  _fullBtnTimer = setTimeout(function(){
+    if(!jaFull() && state.playerAtivo) btn.style.display = 'flex';
+  }, 8000);
+}
+/* ═══════════════════════════════════════════════════════════════ */
 
 /* SILENT AUDIO */
 function criarBlobSilencioso(){
@@ -675,6 +740,9 @@ function tocar(){
   
   var bg = $('bgAudio');
   if(bg && bg.paused) bg.play().catch(function(){});
+  
+  /* 👇 NOVO — tenta reentrar em fullscreen ao trocar faixa */
+  if(_querFull && !jaFull()) setTimeout(entrarFull, 200);
   
   if(state.indice >= state.playlist.length){ state.playlist = shuffle(state.playlist); state.indice = 0; }
   var m = state.playlist[state.indice];
@@ -1154,9 +1222,13 @@ function checarLiberado(){
 function iniciarApp(){
   state.playerAtivo = true;
   pedirWakeLock();
+  monitorarFullscreen();
+  criarBotaoFull();
+  
   document.addEventListener('visibilitychange', function(){
     if(document.visibilityState === 'visible'){
       pedirWakeLock();
+      tentarReentrarFull();
       var bg = $('bgAudio');
       if(bg && bg.paused) bg.play().catch(function(){});
       var a = $('audio');
@@ -1190,10 +1262,12 @@ function iniciarApp(){
   function _arrancar(){
     if(_arrancou) return;
     _arrancou = true;
+    _querFull = true;
     var bg = $('bgAudio');
     if(bg && bg.paused) bg.play().catch(function(){});
     setTimeout(function(){ carregarMidias(); }, 1500);
     setTimeout(function(){ entrarFull(); }, 100);
+    setTimeout(esconderBotaoFullTemporariamente, 4000);
   }
   document.addEventListener('click', _arrancar, {once:true});
   document.addEventListener('touchend', _arrancar, {once:true, passive:true});
@@ -1239,7 +1313,7 @@ function bindEventos(){
   document.querySelectorAll('.sheet-close').forEach(function(b){ b.onclick = function(){ var t = b.dataset.close; if(t) fechar(t); }; });
   document.querySelectorAll('.modal').forEach(function(m){ m.onclick = function(e){ if(e.target === m) m.classList.remove('on'); }; });
   
-  on('miFull', function(){ var mp = $('menuPop'); if(mp) mp.classList.remove('on'); toggleFull(); });
+  on('miFull', function(){ var mp = $('menuPop'); if(mp) mp.classList.remove('on'); _querFull = true; toggleFull(); });
   on('miBaixar', function(){ iniciarDownload(); });
   on('miGerenciar', function(){ abrirOffline(); });
   on('miReload', function(){ location.reload(); });
@@ -1298,7 +1372,6 @@ function bindEventos(){
   if(s) s.onkeydown = function(e){ if(e.key === 'Enter') liberarAgora(); };
   on('btnZap', function(){ var m = encodeURIComponent('🔑 Olá! Quero liberar o VDB MUSIC.'); window.open('https://wa.me/' + CONFIG.WHATSAPP + '?text=' + m, '_blank'); });
   
-  /* ADMIN */
   on('adminFechar', fecharAdmin);
   on('admGerarDispositivo', gerarPraDispositivo);
   on('admGerarUniversal', gerarUniversal);
@@ -1346,7 +1419,7 @@ function bindEventos(){
 })();
 
 function boot(){
-  console.log('🔧 Boot v80');
+  console.log('🔧 Boot v80.1');
   try{
     carregarFavs(); carregarRecentes();
     bindEventos();
