@@ -392,19 +392,19 @@ input,textarea{outline:none;font-family:inherit}
 <div id="notif"></div>
 <div id="loadOv"><i class="fas fa-spinner"></i></div>
 
-<!-- ⭐ ÁUDIOS COM crossorigin="anonymous" (essencial p/ background) -->
+<!-- DOIS ÁUDIOS: player + silencioso de fundo -->
 <audio id="audio" preload="auto" playsinline crossorigin="anonymous"></audio>
-<audio id="bgAudio" preload="auto" style="display:none" crossorigin="anonymous"></audio>
+<audio id="bgAudio" preload="auto" playsinline crossorigin="anonymous" style="display:none"></audio>
 
 <script>
 (function(){
 'use strict';
-console.log('%c[VDB] v70 - background playback Cazé-style', 'color:#22d3ee;font-weight:bold');
+console.log('%c[VDB] v71 - REFEITO do zero com técnicas do Cazé', 'color:#22d3ee;font-weight:bold');
 
 var CONFIG = {
   WHATSAPP: '5512988461978',
   PRECO: 'R$ 39,90',
-  VERSION: 'v70',
+  VERSION: 'v71',
   TEMPO_TESTE: 86400,
   LOADING_MS: 800,
   OFFLINE_TIMEOUT: 30000,
@@ -498,8 +498,7 @@ function notif(msg, dur){
 var state = {
   musicas:[], playlist:[], indice:0, tocando:false, genero:'BÔNUS',
   favs:[], recentes:new Set(),
-  playerAtivo:false, cacheGeneros: new Map(),
-  bgAtivo:false
+  playerAtivo:false, cacheGeneros: new Map()
 };
 
 function salvarFavs(){ try{ localStorage.setItem('vdb_favs', JSON.stringify(state.favs)); }catch(e){} }
@@ -542,10 +541,19 @@ function sairFull(){
 }
 function toggleFull(){ if(jaFull()) sairFull(); else entrarFull(); }
 
-/* ═══════════ ÁUDIO SILENCIOSO EM LOOP (SEGREDO DO CAZÉ) ═══════════ */
+/* ═══════════════════════════════════════════════════════════
+   TÉCNICAS DO CAZÉ PARA TOCAR EM TELA BLOQUEADA
+   
+   1) Áudio silencioso em loop (mantém canal de áudio vivo)
+   2) Loop agressivo de 200ms (impede Android de congelar JS)
+   3) Wake Lock (mantém tela ligada)
+   4) MediaSession (controles nativos do sistema)
+   5) crossOrigin anonymous (evita bloqueio CORS)
+   ═══════════════════════════════════════════════════════════ */
+
 function criarBlobSilencioso(){
   try{
-    var sr = 44100, dur = 5, n = sr * dur;
+    var sr = 44100, dur = 30, n = sr * dur;  /* 30 segundos — mais longo que 5s */
     var buffer = new ArrayBuffer(44 + n * 2);
     var view = new DataView(buffer);
     var w = function(o,s){ for(var i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); };
@@ -560,59 +568,64 @@ function criarBlobSilencioso(){
   }catch(e){ return null; }
 }
 
+var _bgUrl = null;
 function ativarBgAudio(){
   return new Promise(function(resolve){
     try{
-      var blob = criarBlobSilencioso();
-      if(!blob){ resolve(false); return; }
       var bg = $('bgAudio');
       if(!bg){ resolve(false); return; }
-      bg.src = URL.createObjectURL(blob);
+      if(!_bgUrl){
+        var blob = criarBlobSilencioso();
+        if(!blob){ resolve(false); return; }
+        _bgUrl = URL.createObjectURL(blob);
+      }
+      bg.src = _bgUrl;
       bg.loop = true;
       bg.volume = 0.001;
-      bg.play().then(function(){
-        state.bgAtivo = true;
-        resolve(true);
-      }).catch(function(){
-        /* Autoplay bloqueado — tenta novamente depois */
-        resolve(false);
-      });
+      bg.play().then(function(){ resolve(true); }).catch(function(){ resolve(false); });
     }catch(e){ resolve(false); }
   });
 }
 
-function reativarBgSeNecessario(){
-  var bg = $('bgAudio');
-  if(!bg) return;
-  if(bg.paused && state.playerAtivo){
-    bg.play().catch(function(){});
-  }
-}
-
-/* ═══════════ MANUTENÇÃO A CADA 1s (SEGREDO DO CAZÉ) ═══════════ */
-var _manutencaoInterval = null;
-function iniciarManutencao(){
-  if(_manutencaoInterval) clearInterval(_manutencaoInterval);
-  _manutencaoInterval = setInterval(function(){
+/* ⭐ O SEGREDO: loop de 200ms mantém o JS acordado */
+var _loopAtivo = false;
+var _loopTimer = null;
+function ligarLoopAgressivo(){
+  if(_loopAtivo) return;
+  _loopAtivo = true;
+  function loop(){
     try{
-      if(!state.playerAtivo) return;
+      if(!state.playerAtivo){ 
+        _loopTimer = setTimeout(loop, 500);
+        return;
+      }
       var bg = $('bgAudio');
       var a = $('audio');
       
-      /* Religa áudio silencioso se morreu */
-      if(bg && bg.paused) bg.play().catch(function(){});
+      /* 1) Religa áudio silencioso */
+      if(bg && bg.paused){
+        bg.play().catch(function(){});
+      }
       
-      /* Religa música se pausou sem intenção */
+      /* 2) Religa música se pausou sozinha */
       if(a && state.tocando && a.paused && !a.ended && a.src && !_tocandoAgora){
         a.play().catch(function(){});
       }
       
-      /* Se música acabou e não trocou, força troca */
+      /* 3) Força troca se acabou */
       if(a && a.ended && state.tocando && !_tocandoAgora){
         prox();
       }
     }catch(e){}
-  }, 1000);
+    
+    /* ⭐ 200ms — mantém o Android acordado */
+    _loopTimer = setTimeout(loop, 200);
+  }
+  loop();
+}
+function desligarLoopAgressivo(){
+  _loopAtivo = false;
+  if(_loopTimer){ clearTimeout(_loopTimer); _loopTimer = null; }
 }
 
 /* ═══════════ WAKE LOCK ═══════════ */
@@ -808,8 +821,9 @@ function tocar(){
   var a = $('audio');
   $('btnPlay').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   
-  /* Garante que áudio silencioso está tocando */
-  reativarBgSeNecessario();
+  /* Garante áudio silencioso tocando */
+  var bg = $('bgAudio');
+  if(bg && bg.paused) bg.play().catch(function(){});
   
   if(state.indice >= state.playlist.length){ state.playlist = shuffle(state.playlist); state.indice = 0; }
   var m = state.playlist[state.indice];
@@ -920,10 +934,10 @@ function togglePlay(){
   vib(10);
   var a = $('audio');
   if(!state.playerAtivo) return;
-  if(a.paused){
-    reativarBgSeNecessario();
-    tocar();
-  } else {
+  var bg = $('bgAudio');
+  if(bg && bg.paused) bg.play().catch(function(){});
+  if(a.paused) tocar();
+  else {
     a.pause(); state.tocando = false;
     $('btnPlay').innerHTML = '<i class="fas fa-play"></i>';
     if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
@@ -1327,16 +1341,18 @@ function checarLiberado(){
   return Promise.resolve(true);
 }
 
-/* ═══════════ INICIAR (COM TÉCNICAS DO CAZÉ) ═══════════ */
+/* ═══════════ INICIAR ═══════════ */
 function iniciarAppRapido(){
   state.playerAtivo = true;
   pedirWakeLock();
+  
   document.addEventListener('visibilitychange', function(){
     if(document.visibilityState === 'visible'){
       pedirWakeLock();
-      /* Reativa áudio silencioso quando volta */
-      reativarBgSeNecessario();
-      /* Reativa música se estava tocando */
+      /* Reativa áudio silencioso */
+      var bg = $('bgAudio');
+      if(bg && bg.paused) bg.play().catch(function(){});
+      /* Reativa música */
       var a = $('audio');
       if(state.tocando && a && a.paused && a.src && !_tocandoAgora){
         a.play().catch(function(){});
@@ -1344,13 +1360,11 @@ function iniciarAppRapido(){
     }
   });
   
-  /* ⭐ ATIVA ÁUDIO SILENCIOSO EM LOOP (SEGREDO) */
+  /* ⭐ ATIVA ÁUDIO SILENCIOSO + LOOP AGRESSIVO */
   ativarBgAudio().then(function(ok){
-    if(ok){
-      console.log('%c✅ Áudio background ativo — tocará em tela bloqueada', 'color:#10b981');
-      /* ⭐ MANUTENÇÃO A CADA 1s (SEGREDO) */
-      iniciarManutencao();
-    }
+    console.log(ok ? '✅ Áudio silencioso ativo' : '⚠️ Autoplay bloqueado — vai tentar no 1º clique');
+    /* Liga o loop de qualquer forma */
+    ligarLoopAgressivo();
   });
   
   atualizarTimer();
@@ -1374,8 +1388,9 @@ function iniciarAppRapido(){
   function _arrancarMidia(){
     if(_arrancouMidia) return;
     _arrancouMidia = true;
-    /* ⭐ Tenta reativar áudio silencioso no primeiro clique (autoplay policy) */
-    reativarBgSeNecessario();
+    /* ⭐ Reativa bg audio no primeiro clique (vence autoplay policy) */
+    var bg = $('bgAudio');
+    if(bg && bg.paused) bg.play().catch(function(){});
     setTimeout(function(){ carregarMidias(); }, 1500);
     setTimeout(function(){ entrarFull(); }, 100);
   }
@@ -1404,16 +1419,6 @@ function bindEventos(){
     a.onerror = function(){ if(!_tocandoAgora && a.src) setTimeout(prox, 400); };
     a.onstalled = function(){};
     a.onwaiting = function(){};
-    a.onpause = function(){
-      /* Se pausou sem intenção, religa (a menos que seja o usuário) */
-      if(state.tocando && !_tocandoAgora){
-        setTimeout(function(){
-          if(state.tocando && a.paused && !a.ended && a.src){
-            a.play().catch(function(){});
-          }
-        }, 500);
-      }
-    };
   }
   
   var barra = $('barra');
@@ -1528,7 +1533,7 @@ function bindEventos(){
 })();
 
 function boot(){
-  console.log('🔧 Boot v70 iniciando...');
+  console.log('🔧 Boot v71 iniciando...');
   try{
     carregarFavs(); carregarRecentes();
     bindEventos();
