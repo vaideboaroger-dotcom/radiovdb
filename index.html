@@ -284,24 +284,24 @@ input,textarea{outline:none;font-family:inherit}
 <div id="notif"></div>
 <div id="loadOv"><i class="fas fa-spinner"></i></div>
 
-<audio id="audio" preload="auto" playsinline crossorigin="anonymous"></audio>
-<audio id="bgAudio" preload="auto" playsinline crossorigin="anonymous" style="display:none"></audio>
+<audio id="audio" preload="auto" playsinline webkit-playsinline crossorigin="anonymous" disableRemotePlayback></audio>
+<audio id="bgAudio" preload="auto" playsinline webkit-playsinline crossorigin="anonymous" disableRemotePlayback style="display:none"></audio>
 
 <script>/* ═══════════════════════════════════════════════════════════════
-   🎬 VDB MUSIC v80.3 FINAL — PLAYER CORRIGIDO
-   ✅ Para de travar em 1 música (4 correções aplicadas)
+   🎬 VDB MUSIC v81 — BACKGROUND BLINDADO
+   ✅ Toca em segundo plano sem parar
+   ✅ Troca de música automática em background
    ✅ SW desativado (evita cache velho)
    ✅ Autoplay ao abrir
-   ✅ Segundo plano garantido
    ✅ Tela cheia inteligente
    ═══════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
-console.log('%c[VDB] v80.3 FINAL', 'color:#22d3ee;font-weight:bold;font-size:14px');
+console.log('%c[VDB] v81 BACKGROUND BLINDADO', 'color:#22d3ee;font-weight:bold;font-size:14px');
 
 var CONFIG = {
   WHATSAPP: '5512988461978',
-  VERSION: 'v80.3',
+  VERSION: 'v81',
   TEMPO_TESTE: 86400,
   LOADING_MS: 1500,
   OFFLINE_MAX_MB: 15
@@ -387,7 +387,7 @@ var state = {
   favs:[], recentes:new Set(),
   playerAtivo:false, cacheGeneros: new Map(),
   bgPronto:false, carregando:false, tocandoAgora:false,
-  autoplayTentado:false
+  autoplayTentado:false, _agendouProx:false, _proximaAgendada:false
 };
 
 function salvarFavs(){ try{ localStorage.setItem('vdb_favs', JSON.stringify(state.favs)); }catch(e){} }
@@ -407,20 +407,14 @@ function gerarFingerprint(){
 }
 state.fingerprint = gerarFingerprint();
 
-/* ═══════════════════════════════════════════════════════════════
-   🗑️ REMOVE SERVICE WORKER ANTIGO (evita cache velho travando player)
-   ═══════════════════════════════════════════════════════════════ */
+/* 🗑️ REMOVE SW ANTIGO */
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(function(regs){
-    regs.forEach(function(r){ 
-      r.unregister().then(function(){ console.log('🗑️ SW removido'); });
-    });
+    regs.forEach(function(r){ r.unregister(); });
   }).catch(function(){});
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   🖥️ FULLSCREEN INTELIGENTE
-   ═══════════════════════════════════════════════════════════════ */
+/* 🖥️ FULLSCREEN */
 function jaFull(){ return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement); }
 function entrarFull(){
   if(jaFull()) return;
@@ -470,42 +464,22 @@ function criarBotaoFull(){
   var btn = document.createElement('button');
   btn.id = 'btnFullFloat';
   btn.innerHTML = '<i class="fas fa-expand"></i>';
-  btn.style.cssText = 'position:fixed;top:calc(70px + var(--st));right:16px;z-index:998;background:rgba(168,85,247,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,.3);border-radius:50%;width:46px;height:46px;color:#fff;font-size:1.15rem;display:none;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(168,85,247,.6);cursor:pointer;transition:transform .15s';
-  btn.onclick = function(e){
-    e.stopPropagation();
-    vib(15);
-    _querFull = true;
-    entrarFull();
-    btn.style.display = 'none';
-  };
+  btn.style.cssText = 'position:fixed;top:calc(70px + var(--st));right:16px;z-index:998;background:rgba(168,85,247,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,.3);border-radius:50%;width:46px;height:46px;color:#fff;font-size:1.15rem;display:none;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(168,85,247,.6);cursor:pointer';
+  btn.onclick = function(e){ e.stopPropagation(); vib(15); _querFull = true; entrarFull(); btn.style.display = 'none'; };
   document.body.appendChild(btn);
 }
 
 function tentarReentrarFull(){
   if(jaFull() || !state.playerAtivo) return;
   if(_querFull){
-    setTimeout(function(){
-      entrarFull();
-      var btn = $('btnFullFloat');
-      if(btn) btn.style.display = 'none';
-    }, 300);
+    setTimeout(function(){ entrarFull(); var b = $('btnFullFloat'); if(b) b.style.display = 'none'; }, 300);
   }
-}
-
-function esconderBotaoFullTemporariamente(){
-  var btn = $('btnFullFloat');
-  if(!btn) return;
-  btn.style.display = 'none';
-  clearTimeout(_fullBtnTimer);
-  _fullBtnTimer = setTimeout(function(){
-    if(!jaFull() && state.playerAtivo) btn.style.display = 'flex';
-  }, 8000);
 }
 
 /* SILENT AUDIO */
 function criarBlobSilencioso(){
   try{
-    var sr = 44100, dur = 30, n = sr * dur;
+    var sr = 44100, dur = 60, n = sr * dur;
     var buffer = new ArrayBuffer(44 + n * 2);
     var view = new DataView(buffer);
     var w = function(o,s){ for(var i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); };
@@ -538,9 +512,12 @@ function ativarBg(){
   });
 }
 
-/* WATCHDOG + KEEPALIVE */
+/* ═══════════════════════════════════════════════════════════════
+   🎵 WATCHDOG BLINDADO — FUNCIONA EM BACKGROUND
+   ═══════════════════════════════════════════════════════════════ */
 var _watchdog = null;
 var _keepalive = null;
+
 function iniciarWatchdog(){
   if(_watchdog) clearInterval(_watchdog);
   _watchdog = setInterval(function(){
@@ -548,41 +525,58 @@ function iniciarWatchdog(){
     var a = $('audio');
     var bg = $('bgAudio');
     
+    /* Mantém silent audio vivo */
     if(bg && bg.paused) bg.play().catch(function(){});
     
     if(state.carregando) return;
     
-    /* Se música terminou e não avançou, força próxima */
+    /* 1) Se música acabou (ended) */
     if(a && a.ended && state.playlist.length){
-      console.log('🔁 Watchdog: música terminou — forçando próxima');
+      console.log('🔁 Watchdog: ended → próxima');
       state.tocandoAgora = false;
       state.carregando = false;
+      state._agendouProx = false;
       prox();
       return;
     }
     
-    /* Se pausou no meio, religa */
+    /* 2) Se currentTime chegou no fim (dupla checagem) */
+    if(a && a.duration && a.currentTime >= a.duration - 0.3 && a.duration > 5 && state.playlist.length && !state._agendouProx){
+      console.log('🔁 Watchdog: currentTime no fim → próxima');
+      state._agendouProx = true;
+      state.tocandoAgora = false;
+      state.carregando = false;
+      setTimeout(function(){
+        state._agendouProx = false;
+        prox();
+      }, 800);
+      return;
+    }
+    
+    /* 3) Se pausou sozinho, religa */
     if(a && state.tocando && a.paused && a.src && !a.ended && !state.tocandoAgora){
-      a.play().catch(function(){ 
+      a.play().catch(function(){
         state.tocandoAgora = false;
-        prox(); 
+        state.carregando = false;
+        prox();
       });
     }
     
-    /* Se nunca tocou, arranca */
+    /* 4) Se nunca tocou, arranca */
     if(a && !a.src && state.playlist.length && !state.tocandoAgora && !state.carregando){
-      console.log('🔁 Watchdog: arrancando...');
+      console.log('🔁 Watchdog: arrancando');
       tocar();
     }
-  }, 4000);
+  }, 1500); /* 1.5s — bem agressivo */
 }
+
 function iniciarKeepAlive(){
   if(_keepalive) clearInterval(_keepalive);
   _keepalive = setInterval(function(){
     if(!state.playerAtivo) return;
     var bg = $('bgAudio');
     if(bg && bg.paused) bg.play().catch(function(){});
-  }, 3000);
+  }, 2000);
 }
 
 /* WAKE LOCK */
@@ -770,12 +764,13 @@ function baixarGenero(genero, musicas, onProgress){
 function generoOff(g){ try{ var m = JSON.parse(localStorage.getItem('vdb_off_meta')||'{}'); return m[g] && m[g].completo; }catch(e){ return false; } }
 
 /* ═══════════════════════════════════════════════════════════════
-   🎵 PLAYER — CORRIGIDO
+   🎵 PLAYER
    ═══════════════════════════════════════════════════════════════ */
 function tocar(){
   if(!state.playerAtivo || state.tocandoAgora || state.carregando || !state.playlist.length) return;
   state.tocandoAgora = true;
   state.carregando = true;
+  state._agendouProx = false;
   var a = $('audio');
   $('btnPlay').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   
@@ -808,7 +803,6 @@ function tocar(){
       navigator.mediaSession.setActionHandler('pause', togglePlay);
       navigator.mediaSession.setActionHandler('previoustrack', prev);
       navigator.mediaSession.setActionHandler('nexttrack', prox);
-      navigator.mediaSession.setActionHandler('stop', function(){ try{ a.pause(); }catch(e){} state.tocando = false; });
     }catch(e){}
   }
   
@@ -859,7 +853,7 @@ function tocar(){
       state.tocando = true;
       state.tocandoAgora = false;
       state.carregando = false;
-      state.autoplayTentado = true;
+      state._agendouProx = false;
       $('btnPlay').innerHTML = '<i class="fas fa-pause"></i>';
       if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       console.log('✅ Tocando: ' + m.title);
@@ -891,12 +885,12 @@ function togglePlay(){
   }
 }
 
-/* 👇 CORRIGIDO: destrava estados antes de avançar */
 function prox(){ 
   vib(10); 
   if(!state.playlist.length) return; 
   state.tocandoAgora = false;
   state.carregando = false;
+  state._agendouProx = false;
   state.indice = (state.indice + 1) % state.playlist.length; 
   tocar(); 
 }
@@ -905,6 +899,7 @@ function prev(){
   if(!state.playlist.length) return; 
   state.tocandoAgora = false;
   state.carregando = false;
+  state._agendouProx = false;
   state.indice = (state.indice - 1 + state.playlist.length) % state.playlist.length; 
   tocar(); 
 }
@@ -951,6 +946,7 @@ function escolherGenero(g){
   state.tocando = false;
   state.tocandoAgora = false;
   state.carregando = false;
+  state._agendouProx = false;
   $('btnPlay').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   
   carregarGenero(g).then(function(m){
@@ -1116,10 +1112,8 @@ function carregarMidias(){
           e.src = m.src; e.muted = true; e.playsInline = true;
           e.preload = i === 0 ? 'auto' : 'none';
           e.setAttribute('playsinline',''); e.setAttribute('muted','');
-          e.setAttribute('disablePictureInPicture','');
         } else {
           e = document.createElement('img'); e.src = m.src;
-          e.loading = i === 0 ? 'eager' : 'lazy';
         }
         e.className = i === 0 ? 'on' : '';
         el.appendChild(e);
@@ -1176,7 +1170,6 @@ function liberarAgora(){
         if(bg && bg.paused) bg.play().catch(function(){});
         setTimeout(function(){ carregarMidias(); }, 1000);
         setTimeout(function(){ entrarFull(); }, 200);
-        setTimeout(esconderBotaoFullTemporariamente, 4000);
         setTimeout(autoplayForcado, 1500);
       }, 500);
     }
@@ -1189,9 +1182,7 @@ function liberarAgora(){
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   🎵 AUTOPLAY FORÇADO
-   ═══════════════════════════════════════════════════════════════ */
+/* AUTOPLAY */
 function autoplayForcado(){
   if(!state.playerAtivo) return;
   if(state.tocando || state.tocandoAgora || state.carregando) return;
@@ -1201,20 +1192,6 @@ function autoplayForcado(){
   }
   console.log('🎵 Autoplay forçado...');
   tocar();
-}
-
-function iniciarWatchdogAutoplay(){
-  setInterval(function(){
-    if(!state.playerAtivo) return;
-    if(state.tocando || state.tocandoAgora || state.carregando) return;
-    if(!state.playlist.length) return;
-    var a = $('audio');
-    if(a && a.paused && !a.ended && a.src){
-      a.play().catch(function(){ tocar(); });
-    } else if(!a.src || a.ended) {
-      tocar();
-    }
-  }, 5000);
 }
 
 var _cliques8 = [];
@@ -1323,22 +1300,49 @@ function checarLiberado(){
 function iniciarApp(){
   if(state.playerAtivo) return;
   state.playerAtivo = true;
-  console.log('🎵 iniciarApp()');
+  console.log('🎵 iniciarApp v81');
   pedirWakeLock();
   monitorarFullscreen();
   criarBotaoFull();
   
   document.addEventListener('visibilitychange', function(){
     if(document.visibilityState === 'visible'){
+      console.log('👁️ Voltou pro app');
       pedirWakeLock();
       tentarReentrarFull();
       var bg = $('bgAudio');
       if(bg && bg.paused) bg.play().catch(function(){});
       var a = $('audio');
-      if(state.tocando && a && a.paused && a.src && !state.tocandoAgora) a.play().catch(function(){});
+      
+      /* Se acabou enquanto fora, avança */
+      if(a && a.ended && state.playlist.length){
+        console.log('🎵 Acabou enquanto fora — próxima');
+        state.tocandoAgora = false;
+        state.carregando = false;
+        prox();
+        return;
+      }
+      
+      /* Se currentTime no fim, avança */
+      if(a && a.duration && a.currentTime >= a.duration - 0.5 && state.playlist.length && a.duration > 5){
+        console.log('🎵 Perto do fim — próxima');
+        state.tocandoAgora = false;
+        state.carregando = false;
+        prox();
+        return;
+      }
+      
+      /* Se pausou, religa */
+      if(state.tocando && a && a.paused && a.src && !a.ended && !state.tocandoAgora){
+        a.play().catch(function(){ tocar(); });
+      }
+      
+      /* Se nunca tocou, arranca */
       if(a && !a.src && state.playlist.length && !state.tocandoAgora && !state.carregando){
         setTimeout(autoplayForcado, 500);
       }
+    } else {
+      console.log('👋 Saiu do app (background)');
     }
   });
   
@@ -1346,19 +1350,6 @@ function iniciarApp(){
     console.log(ok ? '✅ Bg ativo' : '⚠️ Bg bloqueado');
     iniciarWatchdog();
     iniciarKeepAlive();
-    iniciarWatchdogAutoplay();
-    
-    /* Watchdog EXTRA pro ended — a cada 1s */
-    setInterval(function(){
-      if(!state.playerAtivo) return;
-      if(state.carregando || state.tocandoAgora) return;
-      var a = $('audio');
-      if(a && a.ended && state.playlist.length){
-        console.log('⏭️ Watchdog ended: passando pra próxima');
-        state.tocando = false;
-        prox();
-      }
-    }, 1000);
   });
   
   atualizarTimer();
@@ -1387,7 +1378,6 @@ function iniciarApp(){
     if(bg && bg.paused) bg.play().catch(function(){});
     setTimeout(function(){ carregarMidias(); }, 1500);
     setTimeout(function(){ entrarFull(); }, 100);
-    setTimeout(esconderBotaoFullTemporariamente, 4000);
     setTimeout(autoplayForcado, 800);
   }
   document.addEventListener('click', _arrancar, {once:true});
@@ -1405,27 +1395,52 @@ function bindEventos(){
   
   var a = $('audio');
   if(a){
+    /* 👇 TIMEUPDATE — DUPLA GARANTIA */
     a.ontimeupdate = function(){
       if(a.duration && !isNaN(a.duration)){
         $('fill').style.width = (a.currentTime/a.duration*100) + '%';
         $('tAtual').textContent = fmt(a.currentTime);
         $('tTotal').textContent = fmt(a.duration);
+        
+        /* Se faltar 1.5s pro fim, agenda próxima (funciona em background) */
+        if(a.duration - a.currentTime < 1.5 && !state._agendouProx && a.duration > 5 && state.playlist.length){
+          state._agendouProx = true;
+          console.log('🎵 Faltando 1.5s — agendando próxima');
+          setTimeout(function(){
+            if(state.playerAtivo && !state.carregando){
+              state.tocandoAgora = false;
+              state.carregando = false;
+              state._agendouProx = false;
+              prox();
+            }
+          }, 2000);
+        }
       }
     };
-    /* 👇 CORRIGIDO: destrava estados antes de avançar */
+    
+    /* 👇 ENDED — dispara normalmente */
     a.onended = function(){ 
-      console.log('🎵 Música terminou — passando pra próxima...');
+      console.log('🎵 Música terminou — próxima');
       state.tocandoAgora = false;
       state.carregando = false;
       state.tocando = false;
-      setTimeout(function(){ prox(); }, 150);
+      state._agendouProx = false;
+      setTimeout(function(){ prox(); }, 100);
     };
+    
+    /* 👇 ERROR — só pula se não estiver carregando */
     a.onerror = function(){ 
       if(state.carregando) return;
-      console.warn('⚠️ Erro no áudio — pulando...');
+      console.warn('⚠️ Erro no áudio — pulando');
       state.tocandoAgora = false;
       state.carregando = false;
+      state._agendouProx = false;
       setTimeout(function(){ prox(); }, 400); 
+    };
+    
+    /* 👇 PLAY — reseta flag */
+    a.onplay = function(){
+      state._agendouProx = false;
     };
   }
   
@@ -1549,7 +1564,7 @@ function bindEventos(){
 })();
 
 function boot(){
-  console.log('🔧 Boot v80.3 FINAL');
+  console.log('🔧 Boot v81');
   try{
     carregarFavs(); carregarRecentes();
     bindEventos();
