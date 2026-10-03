@@ -391,20 +391,18 @@ input,textarea{outline:none;font-family:inherit}
 
 <div id="notif"></div>
 <div id="loadOv"><i class="fas fa-spinner"></i></div>
-
-<!-- ⭐ DOIS ELEMENTOS DE ÁUDIO: um para player principal (fica tocando em background) -->
 <audio id="audio" preload="auto" playsinline></audio>
 <audio id="bgAudio" preload="auto" style="display:none"></audio>
 
 <script>
 (function(){
 'use strict';
-console.log('%c[VDB] v68 - refeito com foco em background playback', 'color:#22d3ee;font-weight:bold');
+console.log('%c[VDB] v69 - fullscreen + travas corrigidas', 'color:#22d3ee;font-weight:bold');
 
 var CONFIG = {
   WHATSAPP: '5512988461978',
   PRECO: 'R$ 39,90',
-  VERSION: 'v68',
+  VERSION: 'v69',
   TEMPO_TESTE: 86400,
   LOADING_MS: 800,
   OFFLINE_TIMEOUT: 30000,
@@ -517,6 +515,33 @@ function gerarFingerprint(){
   }catch(e){ return 'fb_' + now(); }
 }
 state.fingerprint = gerarFingerprint();
+
+/* ══════════════ FULLSCREEN ROBUSTO ══════════════ */
+function jaFull(){
+  return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+}
+function entrarFull(){
+  if(jaFull()) return;
+  try{
+    var el = document.documentElement;
+    var req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if(!req) return;
+    var r = req.call(el, {navigationUI:'hide'});
+    if(r && r.catch) r.catch(function(){});
+  }catch(e){}
+}
+function sairFull(){
+  try{
+    if(!jaFull()) return;
+    var ex = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if(!ex) return;
+    var r = ex.call(document);
+    if(r && r.catch) r.catch(function(){});
+  }catch(e){}
+}
+function toggleFull(){
+  if(jaFull()) sairFull(); else entrarFull();
+}
 
 /* ══════════════ CARREGAR GÊNERO ══════════════ */
 function carregarGenero(g){
@@ -699,79 +724,29 @@ function baixarGenero(genero, musicas, onProgress){
 
 function generoOff(g){ try{ var m = JSON.parse(localStorage.getItem('vdb_off_meta')||'{}'); return m[g] && m[g].completo; }catch(e){ return false; } }
 
-/* ═══════════════════════════════════════════════════════════
-   PLAYER PRINCIPAL
-   - Fade-out suave (150ms) + fade-in rápido (250ms)
-   - SEM tela preta entre músicas
-   - Metadados atualizam IMEDIATAMENTE
-   - MediaSession configurada = toca em tela bloqueada
-   - Fila de "próxima música" pre-carregada
-   ═══════════════════════════════════════════════════════════ */
+/* ══════════════ PLAYER ══════════════ */
 var _tocandoAgora = false;
-var _primeiraMusica = true;
-var _proximaMusicaPronta = null;
-var _preCarregando = false;
-
-function preCarregarProxima(){
-  if(_preCarregando || !state.playlist.length) return;
-  var proxIdx = (state.indice + 1) % state.playlist.length;
-  var m = state.playlist[proxIdx];
-  if(!m) return;
-  var urls = getUrls(m);
-  if(!urls.length) return;
-  _preCarregando = true;
-  
-  /* Cache local: se já tem, marca como pronta */
-  buscarOff(urls[0].split('?')[0]).then(function(cached){
-    if(cached){
-      _proximaMusicaPronta = {indice: proxIdx, url: cached, cache: true};
-      _preCarregando = false;
-      return;
-    }
-    /* Sem cache: pré-carrega usando um <audio> invisível */
-    try{
-      var pre = new Audio();
-      pre.preload = 'auto';
-      pre.muted = true;
-      pre.src = urls[0];
-      pre.load();
-      pre.oncanplaythrough = function(){
-        _proximaMusicaPronta = {indice: proxIdx, url: urls[0], cache: false};
-        _preCarregando = false;
-        try{ pre.src = ''; }catch(e){}
-      };
-      pre.onerror = function(){ _preCarregando = false; };
-      setTimeout(function(){ _preCarregando = false; }, 8000);
-    }catch(e){ _preCarregando = false; }
-  });
-}
 
 function tocar(){
   if(!state.playerAtivo || _tocandoAgora || !state.playlist.length) return;
   _tocandoAgora = true;
   var a = $('audio');
-  
-  /* Spinner só no botão — NUNCA tela preta entre músicas */
   $('btnPlay').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   
   if(state.indice >= state.playlist.length){ state.playlist = shuffle(state.playlist); state.indice = 0; }
   var m = state.playlist[state.indice];
   if(!m){ _tocandoAgora = false; $('btnPlay').innerHTML = '<i class="fas fa-play"></i>'; return; }
   
-  /* ⭐ Metadados atualizam na hora — usuário vê o nome antes do áudio */
   $('nome').textContent = san(m.title);
   $('artista').textContent = san(m.artist);
   $('scroll').innerHTML = '🎵 <b>' + san(m.title) + '</b> — ' + san(m.artist) + ' • VDB MUSIC';
   atualizarCoracao();
   state.recentes.add(m.id); salvarRecentes();
   
-  /* ⭐ MediaSession (essencial para tocar em tela bloqueada) */
   if('mediaSession' in navigator){
     try{
       navigator.mediaSession.metadata = new MediaMetadata({
-        title: m.title,
-        artist: m.artist,
-        album: m.genero + ' • VDB MUSIC',
+        title: m.title, artist: m.artist, album: m.genero + ' • VDB MUSIC',
         artwork: [
           {src:'favicon30.png', sizes:'96x96', type:'image/png'},
           {src:'favicon30.png', sizes:'192x192', type:'image/png'},
@@ -786,40 +761,22 @@ function tocar(){
     }catch(e){}
   }
   
-  /* Fade-out do áudio anterior (150ms) — transição suave */
   var tinhaAudio = a.src && !a.paused && a.volume > 0.02;
   var v0 = a.volume;
   
   function trocarFonte(){
     var urls = getUrls(m);
-    if(!urls.length){ _tocandoAgora = false; $('btnPlay').innerHTML = '<i class="fas fa-play"></i>'; return; }
+    if(!urls.length){ falha(); return; }
     
-    /* Tenta usar a próxima pré-carregada se for a mesma música */
-    var usarCache = _proximaMusicaPronta && _proximaMusicaPronta.indice === state.indice ? _proximaMusicaPronta.url : null;
-    if(usarCache){
-      _proximaMusicaPronta = null;
-      a.src = usarCache;
-      a.load();
-      tentarPlay(0);
-      return;
-    }
-    
-    /* Senão busca no cache offline */
     buscarOff(urls[0].split('?')[0]).then(function(cached){
       if(cached){
-        a.src = cached;
-        a.load();
-        tentarPlay(0);
-        return;
+        a.src = cached; a.load(); tentarPlay(0); return;
       }
-      /* Fallback online com múltiplas URLs */
       var idx = 0;
       function tentarUrl(){
         if(idx >= urls.length){ falha(); return; }
         var u = urls[idx++];
-        a.src = u;
-        a.load();
-        tentarPlay(1);
+        a.src = u; a.load(); tentarPlay(1);
       }
       var tentando = false;
       function tentarPlay(modo){
@@ -827,18 +784,15 @@ function tocar(){
         var t = setTimeout(function(){ if(tentando){ tentando = false; tentarUrl(); } }, 6000);
         a.oncanplay = function(){
           if(!tentando) return;
-          tentando = false;
-          clearTimeout(t);
+          tentando = false; clearTimeout(t);
           a.oncanplay = null; a.onerror = null;
           play();
         };
         a.onerror = function(){
           if(!tentando) return;
-          tentando = false;
-          clearTimeout(t);
+          tentando = false; clearTimeout(t);
           a.oncanplay = null; a.onerror = null;
-          if(modo === 1) tentarUrl();
-          else falha();
+          if(modo === 1) tentarUrl(); else falha();
         };
       }
       tentarUrl();
@@ -849,7 +803,6 @@ function tocar(){
     var vf = parseFloat(localStorage.getItem('vdb_vol') || '1');
     try{ a.volume = 0; }catch(e){}
     a.play().then(function(){
-      /* Fade-in 250ms (rápido mas suave) */
       var st = performance.now();
       function fadeIn(t){
         var p = Math.min(1, (t-st)/250);
@@ -858,18 +811,11 @@ function tocar(){
         else { try{ a.volume = vf; }catch(e){} }
       }
       requestAnimationFrame(fadeIn);
-      
       state.tocando = true;
       _tocandoAgora = false;
-      _primeiraMusica = false;
       $('btnPlay').innerHTML = '<i class="fas fa-pause"></i>';
       if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
-      
-      /* Pre-carrega a próxima */
-      setTimeout(preCarregarProxima, 2000);
-    }).catch(function(){
-      falha();
-    });
+    }).catch(function(){ falha(); });
   }
   
   function falha(){
@@ -878,17 +824,13 @@ function tocar(){
     setTimeout(prox, 400);
   }
   
-  /* Executa o fade-out e depois troca */
   if(tinhaAudio){
     var st = performance.now();
     function fadeOut(t){
       var p = Math.min(1, (t-st)/150);
       try{ a.volume = v0 * (1-p); }catch(e){}
       if(p < 1) requestAnimationFrame(fadeOut);
-      else {
-        try{ a.pause(); a.volume = v0; }catch(e){}
-        trocarFonte();
-      }
+      else { try{ a.pause(); a.volume = v0; }catch(e){} trocarFonte(); }
     }
     requestAnimationFrame(fadeOut);
   } else {
@@ -902,8 +844,7 @@ function togglePlay(){
   if(!state.playerAtivo) return;
   if(a.paused) tocar();
   else {
-    a.pause();
-    state.tocando = false;
+    a.pause(); state.tocando = false;
     $('btnPlay').innerHTML = '<i class="fas fa-play"></i>';
     if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
   }
@@ -962,7 +903,6 @@ function escolherGenero(g){
     state.indice = 0;
     state.recentes = new Set();
     salvarRecentes();
-    _proximaMusicaPronta = null;
     
     var p = state.playlist[0];
     if(p){
@@ -977,7 +917,7 @@ function escolherGenero(g){
   });
 }
 
-/* ══════════════ BUSCA / FAV / OFFLINE (iguais) ══════════════ */
+/* ══════════════ BUSCA / FAV / OFFLINE ══════════════ */
 var todosCarregados = false;
 function abrirBusca(){
   abrir('mBusca');
@@ -1115,7 +1055,7 @@ function carregarMidias(){
       var lista = Array.isArray(j) ? j : (j && (j.medias || j.midias)) || MIDIAS_FB;
       lista = lista.filter(function(m){ return m && m.src; });
       if(!lista.length) lista = MIDIAS_FB;
-      lista = lista.slice(0, 3);
+      lista = lista.slice(0, 2); /* ⭐ só 2 vídeos para não travar */
       
       el.innerHTML = '';
       _videoEls = lista.map(function(m, i){
@@ -1317,31 +1257,34 @@ function checarLiberado(){
   return Promise.resolve(true);
 }
 
+/* ══════════════ WAKE LOCK CONTROLADO ══════════════ */
+var wakeLock = null;
+var _wakeLockTentando = false;
+function pedirWakeLock(){
+  if(_wakeLockTentando || wakeLock) return;
+  if(!('wakeLock' in navigator)) return;
+  _wakeLockTentando = true;
+  try{
+    navigator.wakeLock.request('screen').then(function(wl){
+      wakeLock = wl;
+      _wakeLockTentando = false;
+      try{ wl.addEventListener('release', function(){ wakeLock = null; }); }catch(e){}
+    }).catch(function(){ _wakeLockTentando = false; });
+  }catch(e){ _wakeLockTentando = false; }
+}
+
 /* ══════════════ INICIAR ══════════════ */
 function iniciarAppRapido(){
   state.playerAtivo = true;
-  
-  /* ⭐ Wake lock — mantém a tela ligada e o JS ativo */
-  var wakeLock = null;
-  function pedirWakeLock(){
-    try{
-      if('wakeLock' in navigator){
-        navigator.wakeLock.request('screen').then(function(wl){ wakeLock = wl; wl.addEventListener('release', function(){ wakeLock = null; }); }).catch(function(){});
-      }
-    }catch(e){}
-  }
   pedirWakeLock();
-  
-  /* Renova wake lock quando app volta a ficar visível */
   document.addEventListener('visibilitychange', function(){
     if(document.visibilityState === 'visible') pedirWakeLock();
   });
   
   atualizarTimer();
-  setInterval(atualizarTimer, 5000);
+  setInterval(atualizarTimer, 30000);
   renderGeneros();
   
-  /* Prepara BÔNUS sem tocar */
   carregarGenero('BÔNUS').then(function(m){
     if(m && m.length){
       state.musicas = m;
@@ -1354,16 +1297,16 @@ function iniciarAppRapido(){
     }
   });
   
-  /* Vídeos só depois do 1º toque (evita conflito com autoplay do áudio) */
+  /* ⭐ Vídeos e fullscreen só depois do 1º toque (com delay para não competir com play) */
   var _arrancouMidia = false;
   function _arrancarMidia(){
     if(_arrancouMidia) return;
     _arrancouMidia = true;
-    carregarMidias();
-    if(!jaFull()) full();
+    setTimeout(function(){ carregarMidias(); }, 1500);
+    setTimeout(function(){ entrarFull(); }, 100);
   }
   document.addEventListener('click', _arrancarMidia, {once:true});
-  document.addEventListener('touchstart', _arrancarMidia, {once:true});
+  document.addEventListener('touchend', _arrancarMidia, {once:true, passive:true});
 }
 
 function bindEventos(){
@@ -1383,11 +1326,8 @@ function bindEventos(){
         $('tTotal').textContent = fmt(a.duration);
       }
     };
-    /* ⭐ onended: chama prox DIRETO, sem delay — transição suave */
     a.onended = function(){ prox(); };
-    /* ⭐ onerror só dispara se não estiver tocando */
     a.onerror = function(){ if(!_tocandoAgora && a.src) setTimeout(prox, 400); };
-    /* ⭐ pause/stalled não fazem nada (evita loops) */
     a.onstalled = function(){};
     a.onwaiting = function(){};
   }
@@ -1411,7 +1351,12 @@ function bindEventos(){
   document.querySelectorAll('.sheet-close').forEach(function(b){ b.onclick = function(){ var t = b.dataset.close; if(t) fechar(t); }; });
   document.querySelectorAll('.modal').forEach(function(m){ m.onclick = function(e){ if(e.target === m) m.classList.remove('on'); }; });
   
-  on('miFull', function(){ var mp = $('menuPop'); if(mp) mp.classList.remove('on'); if(jaFull()){ if(document.exitFullscreen) document.exitFullscreen().catch(function(){}); } else full(); });
+  /* ⭐ Botão Tela Cheia corrigido */
+  on('miFull', function(){
+    var mp = $('menuPop'); if(mp) mp.classList.remove('on');
+    toggleFull();
+  });
+  
   on('miBaixar', function(){ iniciarDownload(); });
   on('miGerenciar', function(){ abrirOffline(); });
   on('miReload', function(){ location.reload(); });
@@ -1481,9 +1426,6 @@ function bindEventos(){
   });
 }
 
-function jaFull(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
-function full(){ if(jaFull()) return; try{ var el = document.documentElement; var req = el.requestFullscreen || el.webkitRequestFullscreen; if(req){ var r = req.call(el, {navigationUI:'hide'}); if(r && r.catch) r.catch(function(){}); } }catch(e){} }
-
 (function(){
   var deferred = null; var btn = $('btnInstalar');
   function jaInst(){ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
@@ -1507,7 +1449,7 @@ function full(){ if(jaFull()) return; try{ var el = document.documentElement; va
 })();
 
 function boot(){
-  console.log('🔧 Boot v68 iniciando...');
+  console.log('🔧 Boot v69 iniciando...');
   try{
     carregarFavs(); carregarRecentes();
     bindEventos();
