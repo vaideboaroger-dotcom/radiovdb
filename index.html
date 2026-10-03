@@ -288,19 +288,20 @@ input,textarea{outline:none;font-family:inherit}
 <audio id="bgAudio" preload="auto" playsinline crossorigin="anonymous" style="display:none"></audio>
 
 <script>/* ═══════════════════════════════════════════════════════════════
-   🎬 VDB MUSIC v80.2 DEFINITIVO
-   ✅ Autoplay — toca sozinho ao abrir
-   ✅ Segundo plano — silent audio + watchdog + keepalive
-   ✅ Tela cheia inteligente — botão flutuante + reentrar automático
-   ✅ Controles na tela de bloqueio — media session
+   🎬 VDB MUSIC v80.3 FINAL — PLAYER CORRIGIDO
+   ✅ Para de travar em 1 música (4 correções aplicadas)
+   ✅ SW desativado (evita cache velho)
+   ✅ Autoplay ao abrir
+   ✅ Segundo plano garantido
+   ✅ Tela cheia inteligente
    ═══════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
-console.log('%c[VDB] v80.2 DEFINITIVO', 'color:#22d3ee;font-weight:bold;font-size:14px');
+console.log('%c[VDB] v80.3 FINAL', 'color:#22d3ee;font-weight:bold;font-size:14px');
 
 var CONFIG = {
   WHATSAPP: '5512988461978',
-  VERSION: 'v80.2',
+  VERSION: 'v80.3',
   TEMPO_TESTE: 86400,
   LOADING_MS: 1500,
   OFFLINE_MAX_MB: 15
@@ -405,6 +406,17 @@ function gerarFingerprint(){
   }catch(e){ return 'fb_' + now(); }
 }
 state.fingerprint = gerarFingerprint();
+
+/* ═══════════════════════════════════════════════════════════════
+   🗑️ REMOVE SERVICE WORKER ANTIGO (evita cache velho travando player)
+   ═══════════════════════════════════════════════════════════════ */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){ 
+      r.unregister().then(function(){ console.log('🗑️ SW removido'); });
+    });
+  }).catch(function(){});
+}
 
 /* ═══════════════════════════════════════════════════════════════
    🖥️ FULLSCREEN INTELIGENTE
@@ -532,13 +544,32 @@ var _keepalive = null;
 function iniciarWatchdog(){
   if(_watchdog) clearInterval(_watchdog);
   _watchdog = setInterval(function(){
-    if(!state.playerAtivo || state.carregando) return;
+    if(!state.playerAtivo) return;
     var a = $('audio');
     var bg = $('bgAudio');
+    
     if(bg && bg.paused) bg.play().catch(function(){});
-    if(a && a.ended && state.tocando && !state.tocandoAgora) prox();
-    if(a && state.tocando && a.paused && a.src && !a.ended && !state.tocandoAgora) a.play().catch(function(){});
-    /* Se nunca tocou, tenta arrancar */
+    
+    if(state.carregando) return;
+    
+    /* Se música terminou e não avançou, força próxima */
+    if(a && a.ended && state.playlist.length){
+      console.log('🔁 Watchdog: música terminou — forçando próxima');
+      state.tocandoAgora = false;
+      state.carregando = false;
+      prox();
+      return;
+    }
+    
+    /* Se pausou no meio, religa */
+    if(a && state.tocando && a.paused && a.src && !a.ended && !state.tocandoAgora){
+      a.play().catch(function(){ 
+        state.tocandoAgora = false;
+        prox(); 
+      });
+    }
+    
+    /* Se nunca tocou, arranca */
     if(a && !a.src && state.playlist.length && !state.tocandoAgora && !state.carregando){
       console.log('🔁 Watchdog: arrancando...');
       tocar();
@@ -738,7 +769,9 @@ function baixarGenero(genero, musicas, onProgress){
 
 function generoOff(g){ try{ var m = JSON.parse(localStorage.getItem('vdb_off_meta')||'{}'); return m[g] && m[g].completo; }catch(e){ return false; } }
 
-/* PLAYER */
+/* ═══════════════════════════════════════════════════════════════
+   🎵 PLAYER — CORRIGIDO
+   ═══════════════════════════════════════════════════════════════ */
 function tocar(){
   if(!state.playerAtivo || state.tocandoAgora || state.carregando || !state.playlist.length) return;
   state.tocandoAgora = true;
@@ -857,8 +890,24 @@ function togglePlay(){
     if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
   }
 }
-function prox(){ vib(10); if(state.tocandoAgora || !state.playlist.length) return; state.indice = (state.indice + 1) % state.playlist.length; tocar(); }
-function prev(){ vib(10); if(state.tocandoAgora || !state.playlist.length) return; state.indice = (state.indice - 1 + state.playlist.length) % state.playlist.length; tocar(); }
+
+/* 👇 CORRIGIDO: destrava estados antes de avançar */
+function prox(){ 
+  vib(10); 
+  if(!state.playlist.length) return; 
+  state.tocandoAgora = false;
+  state.carregando = false;
+  state.indice = (state.indice + 1) % state.playlist.length; 
+  tocar(); 
+}
+function prev(){ 
+  vib(10); 
+  if(!state.playlist.length) return; 
+  state.tocandoAgora = false;
+  state.carregando = false;
+  state.indice = (state.indice - 1 + state.playlist.length) % state.playlist.length; 
+  tocar(); 
+}
 
 function atualizarCoracao(){
   var m = state.playlist[state.indice];
@@ -900,6 +949,8 @@ function escolherGenero(g){
   var a = $('audio');
   try{ a.pause(); }catch(e){}
   state.tocando = false;
+  state.tocandoAgora = false;
+  state.carregando = false;
   $('btnPlay').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
   
   carregarGenero(g).then(function(m){
@@ -1117,10 +1168,8 @@ function liberarAgora(){
     var senhaInp = $('senha'); if(senhaInp) senhaInp.value = '';
     notif('✅ APP LIBERADO!', 3000);
     vib([30,30,30]);
-    /* 👇 Arranca tocando automaticamente após liberar */
     if(!state.playerAtivo){
       iniciarApp();
-      /* Força arranque (simula interação do usuário) */
       setTimeout(function(){
         _querFull = true;
         var bg = $('bgAudio');
@@ -1141,13 +1190,12 @@ function liberarAgora(){
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   🎵 AUTOPLAY FORÇADO — TENTA TOCAR DE TODAS AS FORMAS
+   🎵 AUTOPLAY FORÇADO
    ═══════════════════════════════════════════════════════════════ */
 function autoplayForcado(){
   if(!state.playerAtivo) return;
-  if(state.tocando || state.tocandoAgora) return;
+  if(state.tocando || state.tocandoAgora || state.carregando) return;
   if(!state.playlist.length){
-    /* Ainda não carregou playlist — tenta de novo em 1s */
     setTimeout(autoplayForcado, 1000);
     return;
   }
@@ -1155,7 +1203,6 @@ function autoplayForcado(){
   tocar();
 }
 
-/* Watchdog de autoplay — se parar por qualquer motivo, tenta de novo */
 function iniciarWatchdogAutoplay(){
   setInterval(function(){
     if(!state.playerAtivo) return;
@@ -1163,10 +1210,8 @@ function iniciarWatchdogAutoplay(){
     if(!state.playlist.length) return;
     var a = $('audio');
     if(a && a.paused && !a.ended && a.src){
-      /* Já tem src mas pausou — só dá play */
       a.play().catch(function(){ tocar(); });
     } else if(!a.src || a.ended) {
-      /* Nunca tocou ou terminou — chama tocar */
       tocar();
     }
   }, 5000);
@@ -1291,7 +1336,6 @@ function iniciarApp(){
       if(bg && bg.paused) bg.play().catch(function(){});
       var a = $('audio');
       if(state.tocando && a && a.paused && a.src && !state.tocandoAgora) a.play().catch(function(){});
-      /* Se nunca tocou, tenta arrancar */
       if(a && !a.src && state.playlist.length && !state.tocandoAgora && !state.carregando){
         setTimeout(autoplayForcado, 500);
       }
@@ -1303,6 +1347,18 @@ function iniciarApp(){
     iniciarWatchdog();
     iniciarKeepAlive();
     iniciarWatchdogAutoplay();
+    
+    /* Watchdog EXTRA pro ended — a cada 1s */
+    setInterval(function(){
+      if(!state.playerAtivo) return;
+      if(state.carregando || state.tocandoAgora) return;
+      var a = $('audio');
+      if(a && a.ended && state.playlist.length){
+        console.log('⏭️ Watchdog ended: passando pra próxima');
+        state.tocando = false;
+        prox();
+      }
+    }, 1000);
   });
   
   atualizarTimer();
@@ -1318,12 +1374,10 @@ function iniciarApp(){
       var p = state.playlist[0];
       if(p){ $('nome').textContent = san(p.title); $('artista').textContent = san(p.artist); atualizarCoracao(); }
       $('lbl').textContent = '🎵 BÔNUS';
-      /* 👇 TOCA ASSIM QUE CARREGAR */
       setTimeout(autoplayForcado, 300);
     }
   });
   
-  /* Arranque por interação (fallback) */
   var _arrancou = false;
   function _arrancar(){
     if(_arrancou) return;
@@ -1358,8 +1412,21 @@ function bindEventos(){
         $('tTotal').textContent = fmt(a.duration);
       }
     };
-    a.onended = function(){ prox(); };
-    a.onerror = function(){ if(!state.tocandoAgora && a.src) setTimeout(prox, 400); };
+    /* 👇 CORRIGIDO: destrava estados antes de avançar */
+    a.onended = function(){ 
+      console.log('🎵 Música terminou — passando pra próxima...');
+      state.tocandoAgora = false;
+      state.carregando = false;
+      state.tocando = false;
+      setTimeout(function(){ prox(); }, 150);
+    };
+    a.onerror = function(){ 
+      if(state.carregando) return;
+      console.warn('⚠️ Erro no áudio — pulando...');
+      state.tocandoAgora = false;
+      state.carregando = false;
+      setTimeout(function(){ prox(); }, 400); 
+    };
   }
   
   var barra = $('barra');
@@ -1479,15 +1546,10 @@ function bindEventos(){
   }
   window.addEventListener('appinstalled', function(){ if(btn) btn.style.display = 'none'; });
   if(jaInst() && btn) btn.style.display = 'none';
-  if('serviceWorker' in navigator){
-    window.addEventListener('load', function(){
-      navigator.serviceWorker.register('./sw.js', {scope:'./'}).catch(function(e){});
-    });
-  }
 })();
 
 function boot(){
-  console.log('🔧 Boot v80.2 DEFINITIVO');
+  console.log('🔧 Boot v80.3 FINAL');
   try{
     carregarFavs(); carregarRecentes();
     bindEventos();
@@ -1504,7 +1566,6 @@ function boot(){
       checarLiberado().then(function(lib){
         if(lib){ 
           iniciarApp(); 
-          /* 👇 TENTA TOCAR AUTOMATICAMENTE (pode ser bloqueado) */
           setTimeout(autoplayForcado, 2000);
         }
         else { 
