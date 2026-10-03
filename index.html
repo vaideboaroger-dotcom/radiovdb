@@ -31,11 +31,11 @@ input,textarea{outline:none;font-family:inherit}
 #bg video,#bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
 #bg .on{opacity:1;z-index:2}
 
-#topo{position:relative;z-index:30;padding:calc(2px + var(--st)) 16px 10px;background:linear-gradient(180deg,rgba(0,0,0,.8),transparent);display:flex;flex-direction:column;gap:4px}
-.linha-topo{display:flex;align-items:center;justify-content:space-between;gap:10px;height:38px}
-.timer{font-size:.85rem;font-weight:800;color:#fff;min-width:80px;text-shadow:0 2px 6px rgba(0,0,0,.7)}
-.logo{font-family:'Audiowide';font-size:1.35rem;font-weight:900;letter-spacing:6px;text-align:center;flex:1;cursor:pointer;text-shadow:0 0 16px var(--c3)}
-.btn-mini{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);border-radius:50%;width:38px;height:38px;color:#fff;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px)}
+#topo{position:relative;z-index:30;padding:calc(4px + var(--st)) 16px 10px;background:linear-gradient(180deg,rgba(0,0,0,.8),transparent);display:flex;flex-direction:column;gap:4px}
+.linha-topo{display:flex;align-items:center;justify-content:space-between;gap:8px;height:44px;width:100%}
+.timer{font-size:.85rem;font-weight:800;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.7);display:flex;align-items:center;justify-content:flex-start;height:100%;flex-shrink:0;min-width:90px}
+.logo{font-family:'Audiowide';font-size:1.2rem;font-weight:900;letter-spacing:4px;cursor:pointer;text-shadow:0 0 16px var(--c3);display:flex;align-items:center;justify-content:flex-end;height:100%;line-height:1;flex:1;margin-right:4px}
+.btn-mini{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);border-radius:50%;width:38px;height:38px;color:#fff;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);flex-shrink:0}
 .letreiro{display:flex;align-items:center;height:34px;overflow:hidden}
 .letreiro p{font-size:1.05rem;font-weight:800;color:#fff;white-space:nowrap;animation:scroll 70s linear infinite;flex:1;overflow:hidden;text-shadow:0 1px 6px rgba(0,0,0,.7)}
 @keyframes scroll{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
@@ -69,11 +69,11 @@ input,textarea{outline:none;font-family:inherit}
 .sheet-header h2{font-family:'Audiowide';font-size:1.1rem;letter-spacing:3px}
 .sheet-close{background:rgba(255,255,255,.08);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1rem}
 
-.gen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding-bottom:16px}
-.gen{position:relative;min-height:80px;border-radius:18px;padding:16px 14px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);display:flex;align-items:center;overflow:hidden;text-align:left;width:100%;transition:transform .15s}
+.gen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding-bottom:16px}
+.gen{position:relative;min-height:80px;border-radius:18px;padding:16px 10px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;width:100%;transition:transform .15s}
 .gen::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:5px;height:60%;background:var(--gc,#a855f7);border-radius:0 5px 5px 0;box-shadow:0 0 12px var(--gc,#a855f7)}
 .gen:active{transform:scale(.96)}
-.gen-nome{font-family:'Rajdhani';font-size:1.2rem;font-weight:800;text-transform:uppercase;position:relative;z-index:2}
+.gen-nome{font-family:'Rajdhani';font-size:1rem;font-weight:800;text-transform:uppercase;position:relative;z-index:2;line-height:1.15;word-break:break-word;text-align:center;width:100%;padding:0 4px}
 .gen.ok::after{content:'✓';position:absolute;top:8px;right:10px;background:#10b981;color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;z-index:3}
 
 .busca-top{display:flex;gap:8px;margin-bottom:12px}
@@ -310,6 +310,7 @@ input,textarea{outline:none;font-family:inherit}
 
 <div class="menu-pop" id="menuPop">
   <h3>⚙️ OPÇÕES</h3>
+  <button class="menu-item" id="menuFechar" style="background:#ef4444;color:#fff;justify-content:center;margin-bottom:8px"><i class="fas fa-times"></i> FECHAR MENU</button>
   <div class="menu-cat">🎮 Player</div>
   <button class="menu-item" id="miFull"><i class="fas fa-expand"></i>Tela Cheia</button>
   <div class="menu-cat">📥 Offline</div>
@@ -396,23 +397,21 @@ input,textarea{outline:none;font-family:inherit}
 <script>
 (function(){
 'use strict';
-console.log('%c[VDB] Script carregado v63', 'color:#22d3ee;font-weight:bold');
+console.log('%c[VDB] Script carregado v64', 'color:#22d3ee;font-weight:bold');
 
-/* CONFIG */
 var CONFIG = {
   WHATSAPP: '5512988461978',
   PRECO: 'R$ 39,90',
-  VERSION: 'v63',
+  VERSION: 'v64',
   TEMPO_TESTE: 86400,
-  LOADING_MS: 2500,
+  LOADING_MS: 1000,
   OFFLINE_TIMEOUT: 30000,
   OFFLINE_MAX_MB: 15,
   YOUTUBE: 'https://sites.google.com/view/rogersjc/in%C3%ADcio'
 };
 
-/* SENHAS CODIFICADAS */
-var SENHA_ADMIN = String.fromCharCode(112,97,116,105,99,111,49,54,56,53);      // patico1685
-var SENHA_MESTRA = String.fromCharCode(80,97,116,105,99,111,49,54,56,53,64);   // Patico1685@
+var SENHA_ADMIN = String.fromCharCode(112,97,116,105,99,111,49,54,56,53);
+var SENHA_MESTRA = String.fromCharCode(80,97,116,105,99,111,49,54,56,53,64);
 
 var TEMAS = {
   azul:{n:'Azul',c1:'#2563eb',c2:'#1e40af',c3:'#3b82f6'},
@@ -475,7 +474,6 @@ Object.keys(GENRE_URLS).forEach(function(g){
 var MIDIAS_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
 var MIDIAS_FB = [{tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}];
 
-/* HELPERS */
 function $(id){ return document.getElementById(id); }
 function now(){ return Date.now(); }
 function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
@@ -494,13 +492,6 @@ function shuffle(arr){
   return base;
 }
 
-function sha256(t){
-  var b = new TextEncoder().encode(t);
-  return crypto.subtle.digest('SHA-256', b).then(function(h){
-    return Array.from(new Uint8Array(h)).map(function(x){ return x.toString(16).padStart(2,'0'); }).join('');
-  });
-}
-
 var notifTimer = null;
 function notif(msg, dur){
   dur = dur || 2000;
@@ -513,11 +504,10 @@ function notif(msg, dur){
 }
 function showLoad(s){ var l = $('loadOv'); if(l) l.classList.toggle('on', !!s); }
 
-/* ESTADO */
 var state = {
   musicas:[], playlist:[], indice:0, tocando:false, genero:'BÔNUS',
   favs:[], recentes:new Set(), tema:'roxo',
-  playerAtivo:false, carregando:false, cacheGeneros:new Map()
+  playerAtivo:false, carregando:false, cacheGeneros: new Map()
 };
 
 function salvarFavs(){ try{ localStorage.setItem('vdb_favs', JSON.stringify(state.favs)); }catch(e){} }
@@ -525,17 +515,6 @@ function carregarFavs(){ try{ var s = localStorage.getItem('vdb_favs'); if(s) st
 function salvarRecentes(){ try{ localStorage.setItem('vdb_rec', JSON.stringify(Array.from(state.recentes).slice(-30))); }catch(e){} }
 function carregarRecentes(){ try{ var s = localStorage.getItem('vdb_rec'); if(s) state.recentes = new Set(JSON.parse(s)); }catch(e){} }
 
-function aplicarTema(nome){
-  var t = TEMAS[nome] || TEMAS.roxo;
-  var r = document.documentElement;
-  r.style.setProperty('--c1', t.c1);
-  r.style.setProperty('--c2', t.c2);
-  r.style.setProperty('--c3', t.c3);
-  state.tema = nome;
-  try{ localStorage.setItem('vdb_tema', nome); }catch(e){}
-}
-
-/* FINGERPRINT */
 function gerarFingerprint(){
   try{
     var n = navigator.userAgent || '';
@@ -548,7 +527,6 @@ function gerarFingerprint(){
 }
 state.fingerprint = gerarFingerprint();
 
-/* CARREGAR GÊNERO */
 function carregarGenero(g){
   if(state.cacheGeneros.has(g)) return Promise.resolve(state.cacheGeneros.get(g));
   var mem = 'vdb_pl_' + CONFIG.VERSION + '_' + g;
@@ -600,7 +578,6 @@ function getUrlCache(m){
   return 'https://raw.githubusercontent.com/' + repo + '/refs/heads/main/' + n;
 }
 
-/* OFFLINE */
 var CACHE_MUS = 'vdb-musicas-offline-v2';
 function abrirCache(){ if(!('caches' in window)) return Promise.resolve(null); return caches.open(CACHE_MUS).catch(function(){ return null; }); }
 function estaOffline(url){ return abrirCache().then(function(c){ if(!c) return false; var uc = url.split('?')[0]; return c.match(uc).then(function(a){ return !!a; }).then(function(a){ if(a) return true; return c.match(url).then(function(b){ return !!b; }); }); }).catch(function(){ return false; }); }
@@ -659,7 +636,6 @@ function baixarGenero(genero, musicas, onProgress){
   if(!musicas || !musicas.length){ notif('⚠️ Sem músicas'); return Promise.resolve(null); }
   baixando = true; cancelarBaixa = false;
   var ok = 0, falhas = 0; var total = musicas.length;
-  console.log('[OFF] Baixando', genero, total);
   var idx = 0;
   function proxima(){
     if(cancelarBaixa || idx >= musicas.length){
@@ -672,7 +648,6 @@ function baixarGenero(genero, musicas, onProgress){
           var mapa = JSON.parse(localStorage.getItem('vdb_off_urls') || '{}'); mapa[genero] = urlsSalvas; localStorage.setItem('vdb_off_urls', JSON.stringify(mapa));
           var meta = JSON.parse(localStorage.getItem('vdb_off_meta') || '{}'); meta[genero] = {baixadas:ok, total:total, data:now(), completo:completo}; localStorage.setItem('vdb_off_meta', JSON.stringify(meta));
         }catch(e){}
-        console.log('[OFF] Fim:', ok, '/', total);
         return {ok:ok, falhas:falhas, total:total, completo:completo};
       });
     }
@@ -694,7 +669,6 @@ function baixarGenero(genero, musicas, onProgress){
 
 function generoOff(g){ try{ var m = JSON.parse(localStorage.getItem('vdb_off_meta')||'{}'); return m[g] && m[g].completo; }catch(e){ return false; } }
 
-/* ÁUDIO */
 function tocar(){
   if(!state.playerAtivo || state.carregando || !state.playlist.length) return;
   state.carregando = true;
@@ -762,7 +736,6 @@ function toggleFav(){
   salvarFavs(); atualizarCoracao();
 }
 
-/* UI */
 function abrir(id){ document.querySelectorAll('.modal').forEach(function(m){ m.classList.remove('on'); }); var el = $(id); if(el) el.classList.add('on'); vib(10); }
 function fechar(id){ var el = $(id); if(el) el.classList.remove('on'); }
 
@@ -912,11 +885,9 @@ function abrirOffline(){
   });
 }
 
-/* FULLSCREEN */
 function jaFull(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
 function full(){ if(jaFull()) return; try{ var el = document.documentElement; var req = el.requestFullscreen || el.webkitRequestFullscreen; if(req){ var r = req.call(el, {navigationUI:'hide'}); if(r && r.catch) r.catch(function(){}); } }catch(e){} }
 
-/* MÍDIAS */
 function carregarMidias(){
   var el = $('bg'); if(!el) return; el.innerHTML = '';
   fetch(MIDIAS_URL).then(function(r){ if(!r.ok) throw 0; return r.json(); }).catch(function(){ return MIDIAS_FB; }).then(function(j){
@@ -947,21 +918,13 @@ function carregarMidias(){
   });
 }
 
-/* ═══ SISTEMA DE SENHAS ═══ */
-function gerarSenhaAleatoria(){
-  var c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  var s = '';
-  for(var i=0; i<12; i++) s += c.charAt(Math.floor(Math.random()*c.length));
-  return s;
-}
+/* SISTEMA DE SENHAS */
+function gerarSenhaAleatoria(){ var c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; var s = ''; for(var i=0; i<12; i++) s += c.charAt(Math.floor(Math.random()*c.length)); return s; }
 function gerarSenhaDispositivo(fp){ return btoa(fp + ':' + gerarSenhaAleatoria()); }
 function gerarSenhaUniversal(){ var ts = now().toString(36); return 'UNIV:' + ts + ':' + btoa('UNIV:' + ts + ':' + gerarSenhaAleatoria()).slice(0, 16); }
 function validarSenhaSistema(senha){
   if(senha === SENHA_MESTRA) return {valida: true, tipo: 'mestra'};
-  try{
-    var decoded = atob(senha); var partes = decoded.split(':');
-    if(partes.length === 2 && partes[0] === state.fingerprint) return {valida: true, tipo: 'cliente'};
-  }catch(e){}
+  try{ var decoded = atob(senha); var partes = decoded.split(':'); if(partes.length === 2 && partes[0] === state.fingerprint) return {valida: true, tipo: 'cliente'}; }catch(e){}
   if(senha.indexOf('UNIV:') === 0){ var p = senha.split(':'); if(p.length === 3 && p[2].length === 16) return {valida: true, tipo: 'universal'}; }
   return {valida: false};
 }
@@ -981,7 +944,7 @@ function liberarAgora(){
     var senhaInp = $('senha'); if(senhaInp) senhaInp.value = '';
     notif('✅ APP LIBERADO!', 3000);
     vib([30,30,30]);
-    if(!state.playerAtivo) iniciarApp();
+    if(!state.playerAtivo) iniciarAppRapido();
     atualizarTimer();
   }else{
     var err = $('err');
@@ -1086,7 +1049,6 @@ function atualizarClienteId(){
   var box = $('clienteIdBox'); if(box) box.dataset.fp = state.fingerprint;
 }
 
-/* TIMER */
 function atualizarTimer(){
   var el = $('timer'); if(!el) return;
   if(localStorage.getItem('vdb_perm') === 'true' || localStorage.getItem('vdb_senha_permanente') === 'true'){
@@ -1119,10 +1081,9 @@ function checarLiberado(){
   return Promise.resolve(true);
 }
 
-/* INICIAR APP */
-function iniciarApp(){
+/* ⭐ INICIAR RÁPIDO */
+function iniciarAppRapido(){
   state.playerAtivo = true;
-  console.log('🚀 App iniciando...');
   try{
     var sr = 44100; var buf = new ArrayBuffer(44 + sr*2); var v = new DataView(buf);
     var w = function(o,s){ for(var i=0;i<s.length;i++) v.setUint8(o+i, s.charCodeAt(i)); };
@@ -1136,22 +1097,31 @@ function iniciarApp(){
   try{ if('wakeLock' in navigator) navigator.wakeLock.request('screen').catch(function(){}); }catch(e){}
   full();
   setInterval(function(){ if(state.playerAtivo && !jaFull()) full(); }, 3000);
-  carregarGenero('BÔNUS').then(function(m){
-    if(m && m.length){
-      state.musicas = m; state.genero = 'BÔNUS'; state.playlist = shuffle(m); state.indice = 0;
-      var p = state.playlist[0];
-      if(p){ $('nome').textContent = san(p.title); $('artista').textContent = san(p.artist); atualizarCoracao(); }
-    }
-    renderGeneros();
-    setTimeout(tocar, 300);
-  });
   atualizarTimer();
   setInterval(atualizarTimer, 5000);
+  renderGeneros();
+  
+  /* Carrega BÔNUS em background — não bloqueia */
+  carregarGenero('BÔNUS').then(function(m){
+    if(m && m.length){
+      state.musicas = m;
+      state.genero = 'BÔNUS';
+      state.playlist = shuffle(m);
+      state.indice = 0;
+      var p = state.playlist[0];
+      if(p){
+        $('nome').textContent = san(p.title);
+        $('artista').textContent = san(p.artist);
+        atualizarCoracao();
+      }
+      tocar();
+    }
+  });
+  
   carregarMidias();
   setInterval(carregarMidias, 180000);
 }
 
-/* EVENTOS */
 function bindEventos(){
   function on(id, fn){ var el = $(id); if(el) el.onclick = fn; else console.warn('⚠️ não achou:', id); }
   
@@ -1175,6 +1145,7 @@ function bindEventos(){
   on('bbFav', function(){ vib(10); renderFavs(); abrir('mFav'); });
   on('bbOpc', function(){ vib(10); var mp = $('menuPop'); if(mp) mp.classList.toggle('on'); });
   on('btnMenu', function(e){ e.stopPropagation(); vib(10); var mp = $('menuPop'); if(mp) mp.classList.toggle('on'); });
+  on('menuFechar', function(){ var mp = $('menuPop'); if(mp) mp.classList.remove('on'); });
   
   document.addEventListener('click', function(e){
     if(!e.target.closest('#menuPop') && !e.target.closest('#btnMenu') && !e.target.closest('#bbOpc')){
@@ -1262,7 +1233,6 @@ function bindEventos(){
   });
 }
 
-/* PWA INSTALL */
 (function(){
   var deferred = null; var btn = $('btnInstalar');
   function jaInst(){ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
@@ -1285,44 +1255,43 @@ function bindEventos(){
   }
 })();
 
-/* BOOT */
+/* ⭐ BOOT RÁPIDO */
 function boot(){
   console.log('🔧 Boot iniciando...');
   try{
-    carregarFavs(); carregarRecentes(); aplicarTema(localStorage.getItem('vdb_tema') || 'roxo');
+    carregarFavs(); carregarRecentes(); aplicarTema();
     bindEventos();
     setup8Cliques();
     setupAdminEventos();
     atualizarClienteId();
     
     var p = 0;
-    var pg = setInterval(function(){ p += 10; var f = $('loadFill'); if(f) f.style.width = Math.min(p,100) + '%'; if(p >= 100) clearInterval(pg); }, 200);
+    var pg = setInterval(function(){ p += 15; var f = $('loadFill'); if(f) f.style.width = Math.min(p,100) + '%'; if(p >= 100) clearInterval(pg); }, 100);
     
-    var failSafe = setTimeout(function(){
+    setTimeout(function(){
       var ls = $('loading'); if(ls) ls.style.display = 'none';
       var app = $('app'); if(app) app.classList.add('on');
-    }, 5000);
-    
-    checarLiberado().then(function(lib){
-      setTimeout(function(){
-        clearTimeout(failSafe);
-        var ls = $('loading'); if(ls) ls.style.display = 'none';
-        var app = $('app'); if(app) app.classList.add('on');
-        setTimeout(full, 100); setTimeout(full, 800); setTimeout(full, 2000);
-        if(lib){ try{ iniciarApp(); }catch(e){ console.error('iniciarApp:', e); } }
+      setTimeout(full, 100);
+      
+      checarLiberado().then(function(lib){
+        if(lib){ iniciarAppRapido(); }
         else { var b = $('block'); if(b) b.classList.add('on'); atualizarClienteId(); }
-      }, CONFIG.LOADING_MS);
-    }).catch(function(e){
-      clearTimeout(failSafe);
-      var ls = $('loading'); if(ls) ls.style.display = 'none';
-      var app = $('app'); if(app) app.classList.add('on');
-      iniciarApp();
-    });
+      }).catch(function(){ iniciarAppRapido(); });
+    }, CONFIG.LOADING_MS);
+    
   }catch(e){
     console.error('❌ Erro boot:', e);
     var ls = $('loading'); if(ls) ls.style.display = 'none';
     var app = $('app'); if(app) app.classList.add('on');
   }
+}
+
+function aplicarTema(){
+  var t = TEMAS.roxo;
+  var r = document.documentElement;
+  r.style.setProperty('--c1', t.c1);
+  r.style.setProperty('--c2', t.c2);
+  r.style.setProperty('--c3', t.c3);
 }
 
 window.VDB = { CONFIG:CONFIG, state:state };
