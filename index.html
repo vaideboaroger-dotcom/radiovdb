@@ -931,7 +931,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 
 <!-- ⚠️ HASH SHA-256 DA SENHA ADMIN — JÁ CONFIGURADO! -->
 <script>
-window.__VDB_HASH__ = '32895d1910125a5d8e3572b081c8045065ca48029df825028222d945f2c86846';
+window.__VDB_HASH__ = 'Patico1658@';
 </script><script>
 (function(){
 'use strict';
@@ -955,22 +955,11 @@ const CONFIG = {
 };
 
 // ═══════════════════════════════════════════════════════
-// 🔐 SENHA ADMIN — SHA-256
+// 🔐 SENHA ADMIN — SIMPLES
 // ═══════════════════════════════════════════════════════
-async function verificarSenhaAdmin(senhaDigitada){
+function verificarSenhaAdmin(senhaDigitada){
   if(!senhaDigitada) return false;
-  try{
-    const texto = CONFIG._SALT + senhaDigitada;
-    const encoder = new TextEncoder();
-    const data = encoder.encode(texto);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
-    return hashHex === window.__VDB_HASH__;
-  }catch(e){
-    console.error('Erro ao verificar senha:', e);
-    return false;
-  }
+  return senhaDigitada === window.__VDB_SENHA__;
 }
 
 const _SHIFT = 3;
