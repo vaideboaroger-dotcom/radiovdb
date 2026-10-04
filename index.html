@@ -5,10 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>VDB MUSIC</title>
 <meta name="theme-color" content="#2563eb">
-<link rel="manifest" href="./manifest.json">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -20,59 +17,65 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;font-family:'Rajdhani',sans-serif}
 input,textarea{user-select:text!important}
+button{touch-action:manipulation}
 html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed;top:0;left:0}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--cor-1);border-radius:4px}
 
-#loadingScreen{position:fixed;inset:0;background:linear-gradient(135deg,#1e40af,#2563eb);display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:20px;text-align:center}
-.loading-logo{width:100px;height:100px;border-radius:50%;border:3px solid rgba(255,255,255,.3);animation:pulse 2s infinite;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:3rem}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+#loadingScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--cor-2),var(--cor-1));display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:22px;text-align:center;transition:opacity .5s}
+#loadingScreen.hide{opacity:0;pointer-events:none}
+.loading-logo{width:104px;height:104px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:3rem;border:3px solid rgba(255,255,255,.25);animation:pulseLogo 2.5s ease-in-out infinite}
+@keyframes pulseLogo{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 .loading-text{font-family:'Audiowide',sans-serif;font-size:1.5rem;color:#fff;letter-spacing:5px;font-weight:900}
 .loading-sub{font-size:.75rem;color:rgba(255,255,255,.9);letter-spacing:7px;font-weight:800}
-.loading-progress{width:240px;height:5px;background:rgba(0,0,0,.3);border-radius:5px;overflow:hidden}
+.loading-progress-container{width:240px;height:5px;background:rgba(0,0,0,.3);border-radius:5px;overflow:hidden}
 .loading-progress-fill{height:100%;width:0%;background:#fff;transition:width .4s;border-radius:5px}
 
 #playerContainer{position:fixed;inset:0;z-index:10;display:none}
 #playerContainer.visible{display:block}
+#telaPrincipal{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column}
+#telaPrincipal.oculta{opacity:0;visibility:hidden;pointer-events:none}
 .media-container{position:absolute;inset:0;z-index:0;background:#000;overflow:hidden}
-.media-container video,.media-container img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s}
+.media-container video,.media-container img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
 .media-container .active{opacity:1;z-index:3}
-.media-fallback{position:absolute;inset:0;z-index:1;background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a);background-size:400% 400%;animation:gradientMove 15s infinite;display:flex;align-items:center;justify-content:center;font-family:'Audiowide',sans-serif;font-size:1.5rem;color:rgba(255,255,255,.1);letter-spacing:8px}
+.media-container .inactive{opacity:0;z-index:2}
+.media-fallback-visual{position:absolute;inset:0;z-index:1;background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a);background-size:400% 400%;animation:gradientMove 15s ease infinite;display:flex;align-items:center;justify-content:center;font-family:'Audiowide',sans-serif;font-size:1.5rem;color:rgba(255,255,255,.1);letter-spacing:8px}
 @keyframes gradientMove{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 
-.info-topo{position:fixed;top:0;left:0;right:0;z-index:35;padding-top:max(10px,var(--safe-top));padding-bottom:14px;background:linear-gradient(180deg,rgba(0,0,0,.6),transparent);display:flex;flex-direction:column;gap:6px;transition:opacity .5s;pointer-events:none}
+.info-topo{position:fixed;top:0;left:0;right:0;z-index:35;padding-top:max(10px,var(--safe-top));padding-bottom:14px;background:linear-gradient(180deg,rgba(0,0,0,.6),transparent);display:flex;flex-direction:column;gap:6px;transition:opacity .6s;pointer-events:none}
 .info-topo > *{pointer-events:auto}
 .info-topo.escondido{opacity:0;pointer-events:none}
 .topo-linha{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:32px;gap:8px}
-.timer-texto{font-size:.75rem;font-weight:800;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.6);white-space:nowrap;min-width:70px}
-.titulo-topo{font-family:'Audiowide',sans-serif;font-size:1.15rem;font-weight:900;letter-spacing:5px;color:#fff;text-shadow:0 0 12px rgba(255,255,255,.6);cursor:pointer;flex:1;text-align:center;transition:transform .2s}
+.timer-texto{font-size:.75rem;font-weight:800;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.6);white-space:nowrap;min-width:70px;flex-shrink:0}
+.titulo-topo{font-family:'Audiowide',sans-serif;font-size:1.15rem;font-weight:900;letter-spacing:5px;color:#fff;text-shadow:0 0 12px rgba(255,255,255,.6);cursor:pointer;flex:1;text-align:center;transition:transform .2s;padding:4px 0}
 .titulo-topo:active{transform:scale(.94)}
-.menu-btn{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2);border-radius:50%;color:#fff;font-size:1rem;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.menu-btn-limpo{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2);border-radius:50%;color:#fff;font-size:1rem;width:32px;height:32px;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);flex-shrink:0}
 .letreiro-wrap{width:100%;height:40px;padding:0 16px;overflow:hidden;display:flex;align-items:center;cursor:pointer}
-.letreiro{font-size:1.05rem;font-weight:800;color:#fff;white-space:nowrap;animation:scrollText 70s linear infinite;text-shadow:0 1px 6px rgba(0,0,0,.7);flex:1;overflow:hidden}
+.letreiro{font-size:1.05rem;font-weight:800;color:rgba(255,255,255,.98);white-space:nowrap;animation:scrollText 70s linear infinite;text-shadow:0 1px 6px rgba(0,0,0,.7);flex:1;overflow:hidden}
 @keyframes scrollText{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
-
 .corpo-tela{flex:1;position:relative;z-index:1;pointer-events:none}
 
-.painel-baixo{position:relative;z-index:20;padding:20px 22px calc(20px + var(--safe-bottom));background:linear-gradient(180deg,transparent,rgba(0,0,0,.45));text-align:center;display:flex;flex-direction:column;gap:12px;transition:opacity .8s,transform .8s;pointer-events:none}
+.painel-baixo{position:relative;z-index:20;padding:20px 22px calc(20px + var(--safe-bottom));background:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.45) 100%);text-align:center;display:flex;flex-direction:column;gap:12px;transition:opacity .8s,transform .8s;pointer-events:none}
 .painel-baixo > *{pointer-events:auto}
 .painel-baixo.escondido{opacity:0;transform:translateY(30px);pointer-events:none}
-.btn-coracao{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:50%;width:46px;height:46px;color:#fff;font-size:1.35rem;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto;backdrop-filter:blur(6px)}
-.btn-coracao.ativo{color:#f472b6;background:rgba(244,114,182,.25);border-color:#f472b6}
-.label-musica{font-size:.65rem;font-weight:800;letter-spacing:4px;color:rgba(255,255,255,.7);text-transform:uppercase}
-.label-musica.favorita{color:#ffb0d0}
-.nome-musica{font-size:1.1rem;font-weight:800;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 8px}
-.artista-musica{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 8px}
-.controles{display:flex;justify-content:center;align-items:center;gap:32px;margin-top:6px}
+.btn-coracao-topo{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:50%;width:46px;height:46px;color:#fff;font-size:1.35rem;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto;backdrop-filter:blur(6px)}
+.btn-coracao-topo.ativo{color:#f472b6;background:rgba(244,114,182,.25);border-color:#f472b6}
+.glass-musica-label{font-size:.65rem;font-weight:800;letter-spacing:4px;color:rgba(255,255,255,.7);text-transform:uppercase}
+.glass-musica-label.favorita{color:#ffb0d0}
+.glass-musica-nome{font-size:1.1rem;font-weight:800;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.5);padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.glass-musica-artista{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 8px}
+.glass-controles{display:flex;justify-content:center;align-items:center;gap:32px;margin-top:6px}
 .ctrl-btn{background:transparent;border:none;color:#fff;font-size:1.6rem;cursor:pointer;padding:8px;filter:drop-shadow(0 3px 10px rgba(0,0,0,.7))}
 .ctrl-btn:active{transform:scale(.85)}
 .play-big{font-size:2rem}
-.play-big.loading i{animation:spin 1s linear infinite}
-@keyframes spin{100%{transform:rotate(360deg)}}
-.progresso{padding:6px 4px 0}
-.tempo{display:flex;justify-content:space-between;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:6px}
+.play-big.loading i{animation:spinSlow 1s linear infinite}
+@keyframes spinSlow{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.glass-progresso{padding:6px 4px 0}
+.progress-time{display:flex;justify-content:space-between;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:6px}
 .progress-bar{height:4px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden;cursor:pointer}
-.progress-fill{height:100%;width:0%;background:#fff;border-radius:4px;transition:width .2s}
+.progress-fill{height:100%;width:0%;background:#fff;border-radius:4px;transition:width .2s linear}
 
-.barra-inferior{position:fixed;left:12px;right:12px;bottom:calc(12px + var(--safe-bottom));z-index:25;display:flex;align-items:center;justify-content:space-around;gap:6px;padding:8px 10px;background:rgba(15,20,35,.55);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.15);border-radius:22px;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:opacity .5s}
+.barra-inferior{position:fixed;left:12px;right:12px;bottom:calc(12px + var(--safe-bottom));z-index:25;display:flex;align-items:center;justify-content:space-around;gap:6px;padding:8px 10px;background:rgba(15,20,35,.55);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);border-radius:22px;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:opacity .5s,transform .5s}
 .barra-inferior.escondida{opacity:0;transform:translateY(20px);pointer-events:none}
 .barra-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;background:transparent;border:none;color:#fff;font-size:.6rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border-radius:14px;position:relative}
 .barra-btn:active{transform:scale(.92);background:rgba(255,255,255,.12)}
@@ -80,16 +83,15 @@ html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed
 .barra-btn.fav i{color:#f472b6}
 .badge{position:absolute;top:2px;right:8px;background:#f472b6;color:#fff;font-size:.55rem;font-weight:900;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
 
-.fab-container{position:fixed;bottom:calc(90px + var(--safe-bottom));right:16px;z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:8px;transition:opacity .5s}
-.fab-container.escondido{opacity:0;pointer-events:none}
+.fab-container{position:fixed;bottom:calc(90px + var(--safe-bottom));right:16px;z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .fab-main{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;border-radius:50%;color:#fff;font-size:1.3rem;width:48px;height:48px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.5)}
 .fab-main i{transition:transform .3s}
 .fab-main.open i{transform:rotate(45deg)}
-.fab-menu{background:rgba(15,20,35,.97);backdrop-filter:blur(30px);border-radius:20px;padding:10px;display:none;flex-direction:column;gap:6px;border:1px solid rgba(255,255,255,.15);min-width:240px;box-shadow:0 12px 40px rgba(0,0,0,.85)}
+.fab-menu{background:rgba(15,20,35,.97);backdrop-filter:blur(30px);border-radius:20px;padding:10px;display:none;flex-direction:column;gap:8px;border:1px solid rgba(255,255,255,.15);min-width:240px;box-shadow:0 12px 40px rgba(0,0,0,.85)}
 .fab-menu.open{display:flex}
-.fab-btn{background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;color:#fff;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left}
-.fab-btn:active{background:rgba(255,255,255,.15)}
-.fab-btn i{width:20px;text-align:center;font-size:1rem}
+.fab-sub-btn{background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left}
+.fab-sub-btn:active{background:rgba(255,255,255,.15)}
+.fab-sub-btn i{width:22px;text-align:center;font-size:1rem}
 
 .modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:16px}
 .modal.open{display:flex}
@@ -97,6 +99,7 @@ html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1)}
 .modal-header .titulo{font-family:'Audiowide',sans-serif;font-size:.95rem;color:#fff;letter-spacing:3px}
 .modal-header .fechar{background:transparent;border:none;color:#aaa;font-size:1.2rem;cursor:pointer}
+
 .search-input{width:100%;padding:14px 18px;border-radius:30px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:.95rem;outline:none}
 .search-filters{display:flex;gap:8px}
 .search-filters select{flex:1;padding:11px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:.8rem;font-weight:700;outline:none}
@@ -115,8 +118,7 @@ html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed
 .genre-card{position:relative;min-height:80px;border-radius:16px;cursor:pointer;padding:18px 14px 18px 20px;display:flex;flex-direction:column;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);text-align:left;overflow:hidden}
 .genre-card::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:55%;background:var(--c1,var(--cor-3));border-radius:0 4px 4px 0;box-shadow:0 0 10px var(--c1,var(--cor-3))}
 .genre-card:active{transform:scale(.96);background:rgba(255,255,255,.1)}
-.genre-name{font-size:1.2rem;font-weight:900;text-transform:uppercase;color:#fff;line-height:1.2}
-.genre-card.baixando::after{content:'⏳';position:absolute;top:6px;right:8px;font-size:1rem}
+.genre-card .genre-name{font-size:1.2rem;font-weight:900;text-transform:uppercase;color:#fff;line-height:1.2;letter-spacing:.5px}
 
 .fav-list{display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:60vh}
 .fav-item{padding:11px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -133,9 +135,9 @@ html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed
 .block-content{max-width:440px;width:100%;padding:20px 0}
 .block-logo{width:90px;height:90px;border-radius:50%;margin-bottom:14px;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));display:flex;align-items:center;justify-content:center;font-size:2.5rem}
 .block-title{font-family:'Audiowide',sans-serif;font-size:2.2rem;color:#fff;letter-spacing:5px;margin-bottom:6px}
-.block-sub{color:rgba(255,255,255,.75);font-size:.95rem;font-weight:700;margin-bottom:22px}
-.block-info{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:16px;padding:16px;margin-bottom:16px;color:#fbbf24;font-weight:700;font-size:.85rem;line-height:1.4}
-.block-info b{color:#fff}
+.block-sub{color:rgba(255,255,255,.75);font-size:.95rem;font-weight:700;margin-bottom:22px;letter-spacing:1px}
+.block-info-box{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:16px;padding:16px;margin-bottom:16px;color:#fbbf24;font-weight:700;font-size:.85rem;line-height:1.4}
+.block-info-box b{color:#fff}
 .id-box{background:rgba(59,130,246,.1);border:2px solid rgba(59,130,246,.4);border-radius:16px;padding:18px 16px;margin-bottom:14px}
 .id-label{font-size:.65rem;color:rgba(255,255,255,.6);letter-spacing:3px;font-weight:800;text-transform:uppercase;margin-bottom:8px}
 .id-value{font-family:'Audiowide',monospace;font-size:1.35rem;color:#fff;letter-spacing:3px;font-weight:900;background:rgba(0,0,0,.4);padding:12px;border-radius:10px;word-break:break-all;margin-bottom:12px;border:1px dashed rgba(255,255,255,.2)}
@@ -146,19 +148,18 @@ html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed
 .block-divider{display:flex;align-items:center;gap:10px;margin:20px 0 14px;color:rgba(255,255,255,.4);font-size:.7rem;font-weight:800;letter-spacing:2px}
 .block-divider::before,.block-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.15)}
 .block-content input{width:100%;padding:16px 18px;border-radius:30px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;text-align:center;margin-bottom:12px;outline:none;letter-spacing:2px;font-weight:700}
-.btn-liberar{width:100%;padding:16px;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;border-radius:30px;color:#fff;font-weight:900;font-size:1rem;cursor:pointer;letter-spacing:2px}
+.btn-liberar{width:100%;padding:16px;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;border-radius:30px;color:#fff;font-weight:900;font-size:1rem;cursor:pointer;letter-spacing:2px;margin-bottom:8px}
 .erro{color:#ec4899;font-size:.85rem;min-height:30px;padding:6px 0;font-weight:700}
 
 #adminPanel{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,10,.99);border-radius:20px;padding:20px;z-index:99999;width:94%;max-width:480px;border:2px solid #fbbf24;max-height:92vh;overflow-y:auto}
 #adminPanel.open{display:block}
-#adminPanel h2{text-align:center;font-size:1.15rem;color:#fbbf24;margin-bottom:12px;font-weight:900}
+#adminPanel h2{text-align:center;font-size:1.15rem;color:#fbbf24;margin-bottom:12px;font-weight:900;letter-spacing:2px}
 #adminPanel label{font-size:.7rem;color:#aaa;font-weight:700;display:block;margin-bottom:6px;text-transform:uppercase}
 #adminPanel input{width:100%;padding:13px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:.85rem;font-family:monospace;outline:none;font-weight:700}
 #adminPanel .row-btns{display:flex;gap:6px;margin:12px 0}
 #adminPanel .row-btns button{flex:1;padding:12px;border-radius:14px;border:none;font-weight:900;cursor:pointer;font-size:.78rem}
 .btn-gerar{background:#fbbf24;color:#000}
 .btn-limpar{background:rgba(255,255,255,.06);color:#aaa}
-.btn-danger{background:#ef4444;color:#fff}
 .senha-box{background:rgba(255,255,255,.05);border-radius:14px;padding:14px;margin:12px 0;border:1px solid rgba(255,255,255,.1)}
 .senha-box label{color:#fbbf24}
 #adminPanel .btn-copiar{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;padding:11px 14px;border-radius:14px;cursor:pointer;font-size:.72rem;font-weight:700}
@@ -166,12 +167,14 @@ html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed
 #adminPanel .info-box{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:12px;padding:12px;margin:10px 0;color:#93c5fd;font-size:.75rem;line-height:1.5;font-weight:600}
 
 @media(max-width:480px){
-  .nome-musica{font-size:1rem}
+  .glass-musica-nome{font-size:1rem}
   .ctrl-btn{font-size:1.4rem}
   .play-big{font-size:1.8rem}
   .titulo-topo{font-size:1rem;letter-spacing:4px}
   .letreiro{font-size:.95rem}
-  .genre-name{font-size:1.05rem}
+  .letreiro-wrap{height:36px}
+  .timer-texto{font-size:.68rem;min-width:60px}
+  .genre-card .genre-name{font-size:1.05rem}
   .genres-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
   .barra-btn{font-size:.55rem;padding:6px 2px;gap:2px}
   .barra-btn i{font-size:1rem}
@@ -185,41 +188,45 @@ html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed
   <div class="loading-logo">🎵</div>
   <span class="loading-text">VDB</span>
   <span class="loading-sub">🎵 CARREGANDO 🎵</span>
-  <div class="loading-progress"><div class="loading-progress-fill" id="loadingProgressFill"></div></div>
+  <div class="loading-progress-container"><div class="loading-progress-fill" id="loadingProgressFill"></div></div>
 </div>
 
 <div id="playerContainer">
   <div id="telaPrincipal">
-    <div class="media-container" id="mediaContainer"><div class="media-fallback">VDB MUSIC</div></div>
+    <div class="media-container" id="mediaContainer">
+      <div class="media-fallback-visual">VDB MUSIC</div>
+    </div>
     <div class="info-topo" id="infoTopo">
       <div class="topo-linha">
         <span class="timer-texto" id="timerLib">24:00:00</span>
         <div class="titulo-topo" id="tituloGrande">VDB</div>
-        <button class="menu-btn" id="menuButton"><i class="fas fa-ellipsis-v"></i></button>
+        <button class="menu-btn-limpo" id="menuButton"><i class="fas fa-ellipsis-v"></i></button>
       </div>
       <div class="letreiro-wrap" id="letreiroClick">
-        <p class="letreiro" id="scrollText">🎵 VDB MUSIC 🎵</p>
+        <p class="letreiro" id="scrollText">🎵 VDB MUSIC</p>
       </div>
     </div>
     <div class="corpo-tela"></div>
     <div class="painel-baixo" id="bottomControls">
-      <button class="btn-coracao" id="btnCoracaoInfo"><i class="far fa-heart"></i></button>
-      <div class="label-musica" id="labelTocandoAgora">TOCANDO AGORA</div>
-      <div class="nome-musica" id="musicaNome">Escolha um gênero</div>
-      <div class="artista-musica" id="musicaArtista">VDB MUSIC</div>
-      <div class="controles">
+      <button class="btn-coracao-topo" id="btnCoracaoInfo"><i class="far fa-heart"></i></button>
+      <div class="glass-musica-label" id="labelTocandoAgora">TOCANDO AGORA</div>
+      <div class="glass-musica-nome" id="musicaNome">Escolha um gênero</div>
+      <div class="glass-musica-artista" id="musicaArtista">VDB MUSIC</div>
+      <div class="glass-controles">
         <button class="ctrl-btn" id="prevBtn"><i class="fas fa-backward-step"></i></button>
         <button class="ctrl-btn play-big" id="playBtn"><i class="fas fa-play"></i></button>
         <button class="ctrl-btn" id="nextBtn"><i class="fas fa-forward-step"></i></button>
       </div>
-      <div class="progresso">
-        <div class="tempo"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
+      <div class="glass-progresso">
+        <div class="progress-time"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
         <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
       </div>
     </div>
   </div>
   <div id="telaAnuncios">
-    <div class="media-container" id="mediaAnuncios"></div>
+    <div class="media-anuncios" id="mediaAnuncios">
+      <div class="media-fallback-visual">PUBLICIDADE</div>
+    </div>
   </div>
 </div>
 
@@ -234,26 +241,25 @@ html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed
 
 <div class="fab-container" id="fabContainer">
   <div class="fab-menu" id="fabMenu">
-    <button class="fab-btn" id="fabRadio"><i class="fas fa-broadcast-tower" style="color:#f59e0b"></i>Rádio VDB</button>
-    <button class="fab-btn" id="fabBuscar"><i class="fas fa-search" style="color:#22d3ee"></i>Buscar Música</button>
-    <button class="fab-btn" id="fabGeneros"><i class="fas fa-guitar" style="color:#22d3ee"></i>Gêneros</button>
-    <button class="fab-btn" id="fabFavoritos"><i class="fas fa-heart" style="color:#f472b6"></i>Favoritas</button>
-    <button class="fab-btn" id="fabModoTV"><i class="fas fa-tv" style="color:#a855f7"></i>Modo TV</button>
-    <button class="fab-btn" id="fabTemas"><i class="fas fa-palette" style="color:#fbbf24"></i>Cores do App</button>
-    <button class="fab-btn" id="fabInstalar"><i class="fas fa-download" style="color:#3b82f6"></i>Instalar App</button>
-    <button class="fab-btn" id="fabLiberar"><i class="fas fa-unlock" style="color:#10b981"></i>Liberar Agora</button>
-    <button class="fab-btn" id="fabAtualizarApp"><i class="fas fa-magic" style="color:#fbbf24"></i>Atualizar App</button>
+    <button class="fab-sub-btn" id="fabRadio"><i class="fas fa-broadcast-tower" style="color:#f59e0b"></i>Rádio VDB</button>
+    <button class="fab-sub-btn" id="fabBuscar"><i class="fas fa-search" style="color:#22d3ee"></i>Buscar Música</button>
+    <button class="fab-sub-btn" id="fabGeneros"><i class="fas fa-guitar" style="color:#22d3ee"></i>Gêneros</button>
+    <button class="fab-sub-btn" id="fabFavoritos"><i class="fas fa-heart" style="color:#f472b6"></i>Favoritas</button>
+    <button class="fab-sub-btn" id="fabTemas"><i class="fas fa-palette" style="color:#fbbf24"></i>Cores do App</button>
+    <button class="fab-sub-btn" id="fabLiberar"><i class="fas fa-unlock" style="color:#10b981"></i>Liberar Agora</button>
+    <button class="fab-sub-btn" id="fabMeuId"><i class="fas fa-id-card" style="color:#3b82f6"></i>Ver Meu ID</button>
+    <button class="fab-sub-btn" id="fabAtualizarApp"><i class="fas fa-magic" style="color:#fbbf24"></i>🪄 Atualizar App</button>
   </div>
   <button class="fab-main" id="fabMain"><i class="fas fa-plus"></i></button>
 </div>
 
-<div class="menu-popup" id="menuPopup" style="position:fixed;top:54px;right:10px;background:rgba(15,15,25,.96);backdrop-filter:blur(30px);border-radius:24px;padding:14px;z-index:60;display:none;flex-direction:column;gap:6px;border:1px solid rgba(255,255,255,.15);min-width:200px">
-  <button class="fab-btn" id="menuFullscreen"><i class="fas fa-expand"></i>Tela Cheia</button>
-  <button class="fab-btn" id="menuSleep"><i class="fas fa-moon"></i>Sleep Timer</button>
-  <button class="fab-btn" id="menuRecarregar"><i class="fas fa-sync"></i>Recarregar</button>
-  <button class="fab-btn" id="menuAtualizarMidia"><i class="fas fa-sync-alt"></i>Atualizar Mídias</button>
-  <button class="fab-btn" id="menuAtualizarApp"><i class="fas fa-magic" style="color:#fbbf24"></i>Atualizar App</button>
-  <button class="fab-btn" id="menuFechar"><i class="fas fa-times"></i>Fechar</button>
+<div class="menu-popup" id="menuPopup" style="position:fixed;top:calc(20px + var(--safe-top));right:12px;background:rgba(15,20,35,.97);backdrop-filter:blur(30px);border-radius:24px;padding:14px;z-index:60;display:none;flex-direction:column;gap:8px;border:1px solid rgba(255,255,255,.15);min-width:240px;box-shadow:0 20px 60px rgba(0,0,0,.8)">
+  <button class="fab-sub-btn" id="menuFechar"><i class="fas fa-times"></i>Fechar</button>
+  <button class="fab-sub-btn" id="menuFullscreen"><i class="fas fa-expand"></i>Tela Cheia</button>
+  <button class="fab-sub-btn" id="menuSleep"><i class="fas fa-moon"></i>Sleep Timer</button>
+  <button class="fab-sub-btn" id="menuRecarregar"><i class="fas fa-sync"></i>Recarregar</button>
+  <button class="fab-sub-btn" id="menuAtualizarMidia"><i class="fas fa-sync-alt"></i>Atualizar Mídias</button>
+  <button class="fab-sub-btn" id="menuAtualizarApp"><i class="fas fa-magic" style="color:#fbbf24"></i>🪄 Atualizar App</button>
 </div>
 
 <div class="modal" id="modalBusca">
@@ -302,8 +308,8 @@ html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed
       <span class="titulo">🆔 MEU ID</span>
       <button class="fechar" id="fecharMeuId"><i class="fas fa-times"></i></button>
     </div>
-    <div class="block-info" style="margin-bottom:16px">
-      📱 <b>Envie este ID</b> pro vendedor pelo WhatsApp pra liberar o acesso.
+    <div class="block-info-box" style="margin-bottom:16px">
+      📱 <b>Envie este ID</b> pro vendedor pelo WhatsApp.
     </div>
     <div class="id-box">
       <div class="id-label">🆔 SEU ID</div>
@@ -321,7 +327,7 @@ html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed
     <div class="block-logo">🎵</div>
     <h1 class="block-title">VDB</h1>
     <div class="block-sub">⏰ SEU TEMPO DE TESTE ACABOU</div>
-    <div class="block-info">
+    <div class="block-info-box">
       <b>Você aproveitou 24 horas grátis!</b><br>
       Pra continuar ouvindo, envie seu ID abaixo pro vendedor.
     </div>
@@ -365,34 +371,29 @@ html,body{height:100vh;width:100%;background:#000;overflow:hidden;position:fixed
 
 <div class="notif" id="notification"></div>
 <audio id="musicPlayer" preload="none"></audio>
-<audio id="backgroundAudio" preload="auto" style="display:none;"></audio>
-
-<script>
+<audio id="backgroundAudio" preload="auto" style="display:none;"></audio><script>
 (function(){
 'use strict';
 
-// ═══════════════════════════════════════════════════════
-// 🔐 SENHA ADMIN — MESMA VARIÁVEL EM TODOS OS LUGARES
-// ═══════════════════════════════════════════════════════
+// SENHA ADMIN
 const SENHA_ADMIN = 'Patico1658@';
 
-// ═══════════════════════════════════════════════════════
 // CONFIG
-// ═══════════════════════════════════════════════════════
 const CONFIG = {
   WHATSAPP: '5512988461978',
   TEMPO_TESTE_SEGUNDOS: 86400,
-  APP_VERSION: 'v70',
-  LOADING_DURACAO_MS: 3000,
-  MIDIA_MAX_SEGURANCA_MS: 60000
+  APP_VERSION: 'v72',
+  LOADING_DURACAO_MS: 3500
 };
 
+// TEMAS
 const TEMAS = {
   azul: { nome:'Azul', c1:'#2563eb', c2:'#1e40af', c3:'#3b82f6' },
   roxo: { nome:'Roxo', c1:'#7c3aed', c2:'#5b21b6', c3:'#a855f7' },
   preto:{ nome:'Preto',c1:'#374151', c2:'#111827', c3:'#6b7280' }
 };
 
+// CORES DOS GÊNEROS
 const GENRE_COLORS = {
   'BÔNUS':{c1:'#22d3ee'},'POP/MIX':{c1:'#60a5fa'},'MPB':{c1:'#2dd4bf'},
   'SERTANEJO':{c1:'#fbbf24'},'ROMÂNTICA':{c1:'#f472b6'},'FLASHBACK':{c1:'#a855f7'},
@@ -405,6 +406,7 @@ const GENRE_COLORS = {
 };
 const COR_PADRAO = { c1:'#22d3ee' };
 
+// URLS DOS GÊNEROS
 const GENRE_URLS = {
   'BÔNUS':'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json',
   'FLASHBACK':'https://raw.githubusercontent.com/radiolojasjc-hub/flashbacktop/refs/heads/main/flashback.json',
@@ -430,22 +432,23 @@ const GENRE_URLS = {
   'BAILÃO':'https://raw.githubusercontent.com/radiolojasjc-hub/forrodez/refs/heads/main/bail%C3%A3o.json',
   'FORRÓ RAIZ':'https://raw.githubusercontent.com/radiolojasjc-hub/forroraiz/refs/heads/main/forroraiz.json'
 };
+
 const GENRE_ORDEM = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','MISTURA BRASIL'];
 
+// REPOS
 const GENRE_REPOS = {};
 Object.keys(GENRE_URLS).forEach(g => {
   const m = GENRE_URLS[g].match(/githubusercontent\.com\/([^\/]+)\/([^\/]+)/);
   GENRE_REPOS[g] = m ? m[1] + '/' + m[2] : 'radiolojasjc-hub/play12';
 });
 
+// MÍDIAS
 const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
 const MIDIAS_FALLBACK = [{tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}];
 const MIDIAS_ANUNCIO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/anuncios.json';
 const MIDIAS_ANUNCIO_FALLBACK = [{tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'}];
 
-// ═══════════════════════════════════════════════════════
 // HELPERS
-// ═══════════════════════════════════════════════════════
 const $ = id => document.getElementById(id);
 const now = () => Date.now();
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -478,9 +481,7 @@ function copiarTexto(t,msg){
     });
 }
 
-// ═══════════════════════════════════════════════════════
 // NOTIFICAÇÃO
-// ═══════════════════════════════════════════════════════
 const nQ = [];
 let nShowing = false;
 function notif(msg, dur=2000){
@@ -501,9 +502,7 @@ async function processNotif(){
   setTimeout(processNotif, 200);
 }
 
-// ═══════════════════════════════════════════════════════
-// 🆔 ID CURTO
-// ═══════════════════════════════════════════════════════
+// ID CURTO
 function gerarIdCurto(){
   const n = navigator.userAgent || '';
   const p = navigator.platform || '';
@@ -534,9 +533,7 @@ function obterMeuId(){
   return id;
 }
 
-// ═══════════════════════════════════════════════════════
 // TIMER
-// ═══════════════════════════════════════════════════════
 const CHAVE_DESBLOQ = 'vdb_desbloq';
 const CHAVE_BLOQ = 'vdb_bloq_perm';
 const CHAVE_EXPIRA = 'vdb_expiracao';
@@ -597,11 +594,10 @@ function bloquear(){
   a.pause();
   appState.isPlaying = false;
   $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+  notif('⏰ Tempo de teste acabou!', 3000);
 }
 
-// ═══════════════════════════════════════════════════════
 // VALIDAR SENHA
-// ═══════════════════════════════════════════════════════
 function validarSenha(s){
   if(!s) return {valida:false};
   const meuId = obterMeuId();
@@ -636,9 +632,7 @@ function liberarAcesso(senha){
   return false;
 }
 
-// ═══════════════════════════════════════════════════════
 // BUSCAR GÊNERO
-// ═══════════════════════════════════════════════════════
 const cacheGenero = new Map();
 async function buscarGenero(genero){
   if(cacheGenero.has(genero)) return cacheGenero.get(genero);
@@ -672,9 +666,7 @@ function getUrls(m){
   return ['https://raw.githubusercontent.com/' + repo + '/refs/heads/main/' + nome];
 }
 
-// ═══════════════════════════════════════════════════════
 // ESTADO
-// ═══════════════════════════════════════════════════════
 const appState = {
   favorites: [],
   musicas: [],
@@ -704,9 +696,7 @@ function aplicarTema(nome){
 }
 aplicarTema(appState.temaCor);
 
-// ═══════════════════════════════════════════════════════
 // PLAYER
-// ═══════════════════════════════════════════════════════
 const audio = $('musicPlayer');
 function atualizarPlaylist(){
   if(!appState.musicas.length) return null;
@@ -731,6 +721,19 @@ async function tocar(){
     atualizarLetreiro(m);
     atualizarInfoMusica(m);
     atualizarCoracao();
+    if('mediaSession' in navigator){
+      try{
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: m.title||'VDB', artist: m.artist||'Artista',
+          album: m.genero||'Música',
+          artwork: [{src:'favicon30.png', sizes:'512x512', type:'image/png'}]
+        });
+        navigator.mediaSession.setActionHandler('play', togglePlay);
+        navigator.mediaSession.setActionHandler('pause', togglePlay);
+        navigator.mediaSession.setActionHandler('previoustrack', prev);
+        navigator.mediaSession.setActionHandler('nexttrack', next);
+      }catch(e){}
+    }
     try{ audio.pause(); }catch(e){}
     const urls = getUrls(m);
     let ok = false;
@@ -752,6 +755,7 @@ async function tocar(){
         appState.isPlaying = true;
         $('playBtn').classList.remove('loading');
         $('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
+        if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       }catch(e){
         $('playBtn').classList.remove('loading');
         $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
@@ -774,6 +778,7 @@ function togglePlay(){
     audio.pause();
     appState.isPlaying = false;
     $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+    if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
   }
 }
 function next(){
@@ -791,12 +796,12 @@ function prev(){
   if(appState.isBackgroundActive) setTimeout(tocar, 100);
 }
 
-// ═══════════════════════════════════════════════════════
 // UI
-// ═══════════════════════════════════════════════════════
 function atualizarLetreiro(m){
   const el = $('scrollText');
-  el.innerHTML = m ? '🎵 ' + sanitize(m.title) + ' — ' + sanitize(m.artist) + ' 🎵' : '🎵 VDB MUSIC 🎵';
+  el.innerHTML = m
+    ? '🎵 <b>TOCANDO:</b> ' + sanitize(m.title) + ' — <i>' + sanitize(m.artist) + '</i> • VDB MUSIC'
+    : '🎵 VDB MUSIC 🎵';
 }
 function atualizarInfoMusica(m){
   if(!m) return;
@@ -834,9 +839,7 @@ function toggleFavAtual(){
   if(m) toggleFav(m);
 }
 
-// ═══════════════════════════════════════════════════════
 // GÊNEROS
-// ═══════════════════════════════════════════════════════
 function renderizarGeneros(){
   const grid = $('genresGrid');
   grid.innerHTML = '';
@@ -845,6 +848,7 @@ function renderizarGeneros(){
     const card = document.createElement('div');
     card.className = 'genre-card';
     card.style.setProperty('--c1', c.c1);
+    card.dataset.genero = g;
     const nome = document.createElement('div');
     nome.className = 'genre-name';
     nome.textContent = g;
@@ -866,6 +870,7 @@ async function selecionarGenero(g){
   appState.playlistAtual = shuffle(m);
   appState.indiceAtual = 0;
   appState.musicasComProblema.clear();
+  aplicarTema(appState.temaCor);
   const mm = appState.playlistAtual[0];
   if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
   notif('🎵 ' + g + ' (' + m.length + ')');
@@ -873,9 +878,8 @@ async function selecionarGenero(g){
   fecharModal('modalGeneros');
 }
 
-// ═══════════════════════════════════════════════════════
 // BUSCA
-// ═══════════════════════════════════════════════════════
+let _buscaToken = 0;
 function initBusca(){
   const sel = $('buscaGenero');
   sel.innerHTML = '<option value="">🎸 Todos os gêneros</option>';
@@ -890,6 +894,7 @@ function initBusca(){
 }
 function debounce(fn, ms){ let t; return (...a) => { clearTimeout(t); t = setTimeout(()=>fn(...a), ms); }; }
 async function buscar(){
+  const meuToken = ++_buscaToken;
   const termo = $('buscaInput').value.trim().toLowerCase();
   const genero = $('buscaGenero').value;
   const ordem = $('buscaOrdem').value;
@@ -897,13 +902,14 @@ async function buscar(){
   const count = $('buscaCount');
   if(!termo && !genero){
     count.textContent = '💡 Digite ou escolha um gênero';
-    cont.innerHTML = '<div style="text-align:center;padding:40px;color:#888">🔍 Digite o nome da música</div>';
+    cont.innerHTML = '<div style="text-align:center;padding:40px;color:#888;font-size:.85rem">🔍 Digite o nome da música</div>';
     return;
   }
   let base = Array.isArray(appState.musicas) ? appState.musicas : [];
   if(genero){
     try{
       const g = await buscarGenero(genero);
+      if(meuToken !== _buscaToken) return;
       if(Array.isArray(g)) base = g;
     }catch(e){}
   }
@@ -917,6 +923,7 @@ async function buscar(){
   if(ordem === 'az') res = [...res].sort((a,b)=>a.title.localeCompare(b.title));
   else if(ordem === 'za') res = [...res].sort((a,b)=>b.title.localeCompare(a.title));
   else if(ordem === 'aleatorio') res = shuffle(res);
+  if(meuToken !== _buscaToken) return;
   count.textContent = res.length === 0 ? '❌ Nada' : '✅ ' + res.length + ' resultado(s)';
   cont.innerHTML = '';
   if(!res.length){
@@ -945,9 +952,7 @@ async function buscar(){
   });
 }
 
-// ═══════════════════════════════════════════════════════
 // FAVORITAS
-// ═══════════════════════════════════════════════════════
 function renderFavoritas(){
   const cont = $('listaFavoritas');
   cont.innerHTML = '';
@@ -982,9 +987,7 @@ function renderFavoritas(){
 function abrirModal(id){ $(id).classList.add('open'); }
 function fecharModal(id){ $(id).classList.remove('open'); }
 
-// ═══════════════════════════════════════════════════════
 // FULLSCREEN
-// ═══════════════════════════════════════════════════════
 function jaFullscreen(){
   return !!(document.fullscreenElement || document.webkitFullscreenElement);
 }
@@ -997,9 +1000,7 @@ function forcarFullscreen(){
   }catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════
 // ÁUDIO SILENCIOSO
-// ═══════════════════════════════════════════════════════
 function criarSilentAudio(){
   const sr=44100, ns=sr;
   const b=new ArrayBuffer(44+ns*2);
@@ -1043,9 +1044,7 @@ async function ativarPlayer(){
   }
 }
 
-// ═══════════════════════════════════════════════════════
 // ADMIN (8 cliques)
-// ═══════════════════════════════════════════════════════
 let cliques = [];
 function setupCliques(){
   const el = $('tituloGrande');
@@ -1059,13 +1058,14 @@ function setupCliques(){
       cliques = [];
       vibrar([50,30,50]);
       const senha = prompt('🔐 Digite a senha admin:');
-      if(!senha) return;
+      if(senha === null) return;
       if(senha === SENHA_ADMIN){
         vibrar([30,30,30]);
         $('adminPanel').classList.add('open');
         notif('👑 Admin!');
       }else{
         notif('❌ Senha incorreta!', 2500);
+        vibrar([100,50,100]);
       }
     }
   });
@@ -1080,7 +1080,7 @@ function initAdmin(){
   $('adminGerarBtn').onclick = () => {
     const id = $('adminFingerprintInput').value.trim().toUpperCase();
     if(!id || !id.startsWith('VDB-') || id.length < 12){
-      notif('⚠️ ID inválido!');
+      notif('⚠️ ID inválido! Use VDB-XXXX-XXXX');
       return;
     }
     $('adminSenhaGerada').value = gerarSenhaDispositivo(id);
@@ -1095,16 +1095,14 @@ function initAdmin(){
     const s = $('adminSenhaGerada').value;
     const id = $('adminFingerprintInput').value.trim();
     if(!s){ notif('⚠️ Gere uma senha!'); return; }
-    const msg = '🔑 *VDB MUSIC*\n\n🆔 ID: ' + id + '\n\n🔐 Senha: ' + s;
+    const msg = '🔑 *VDB MUSIC*\n\n🆔 ID: ' + id + '\n\n🔐 Senha: ' + s + '\n\n✅ Copie e cole pra liberar!';
     window.open('https://wa.me/?text=' + encodeURIComponent(msg));
   };
   $('adminCloseBtn').onclick = () => $('adminPanel').classList.remove('open');
   $('adminCloseTopBtn').onclick = () => $('adminPanel').classList.remove('open');
 }
 
-// ═══════════════════════════════════════════════════════
 // MEU ID
-// ═══════════════════════════════════════════════════════
 function mostrarMeuId(){
   const id = obterMeuId();
   $('meuIdValue').textContent = id;
@@ -1112,13 +1110,11 @@ function mostrarMeuId(){
 }
 function enviarMeuIdWhats(){
   const id = obterMeuId();
-  const msg = '🔑 *VDB MUSIC*\n\nOlá! Quero liberar o acesso.\n\n🆔 Meu ID: *' + id + '*';
+  const msg = '🔑 *VDB MUSIC*\n\nOlá! Quero liberar o acesso.\n\n🆔 Meu ID: *' + id + '*\n\n📱 Aguardo a senha!';
   window.open('https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(msg));
 }
 
-// ═══════════════════════════════════════════════════════
 // MÍDIA
-// ═══════════════════════════════════════════════════════
 let midiaToken = 0, midiaTimer = null;
 let videosAtivos = new Set();
 async function carregarMidias(container, url, options={}){
@@ -1166,7 +1162,8 @@ async function carregarMidias(container, url, options={}){
         el.src = u;
         el.onerror = ()=>{ el.dataset.erro = '1'; };
       }
-      el.className = i===0 ? 'active' : '';
+      el.className = i===0 ? 'active' : 'inactive';
+      el.style.zIndex = i===0 ? '3' : '2';
       container.appendChild(el);
       els.push(el);
     });
@@ -1176,13 +1173,16 @@ async function carregarMidias(container, url, options={}){
       if(meuToken !== midiaToken) return;
       const el = els[n];
       if(!el) return;
-      els.forEach((x, j) => { x.classList.toggle('active', j === n); });
+      els.forEach((x, j) => {
+        if(j === n){ x.classList.add('active'); x.classList.remove('inactive'); x.style.zIndex='3'; }
+        else{ x.classList.remove('active'); x.classList.add('inactive'); x.style.zIndex='2'; }
+      });
       if(el.tagName === 'VIDEO'){
         els.forEach((x, j) => { if(x.tagName==='VIDEO' && j!==n){ try{ x.pause(); x.currentTime=0; }catch(e){} } });
         try{ el.currentTime = 0; }catch(e){}
-        el.play().catch(()=>{});
+        const p = el.play();
+        if(p && p.catch){ p.catch(()=>{}); }
         el.onended = () => { if(meuToken!==midiaToken) return; setTimeout(()=>{ idx=(idx+1)%els.length; tocarIdx(idx); }, 700); };
-        midiaTimer = setTimeout(()=>{ if(meuToken===midiaToken && idx === n){ idx=(idx+1)%els.length; tocarIdx(idx); } }, CONFIG.MIDIA_MAX_SEGURANCA_MS);
       }else{
         midiaTimer = setTimeout(()=>{ if(meuToken===midiaToken && idx === n){ idx=(idx+1)%els.length; tocarIdx(idx); } }, 5000);
       }
@@ -1193,13 +1193,8 @@ async function carregarMidias(container, url, options={}){
 async function carregarMidiasPadrao(){
   await carregarMidias($('mediaContainer'), MIDIAS_PADRAO_URL, { fallback: MIDIAS_FALLBACK });
 }
-async function carregarMidiasAnuncio(){
-  await carregarMidias($('mediaAnuncios'), MIDIAS_ANUNCIO_URL, { fallback: MIDIAS_ANUNCIO_FALLBACK });
-}
 
-// ═══════════════════════════════════════════════════════
 // FAB
-// ═══════════════════════════════════════════════════════
 function initFab(){
   const main = $('fabMain'), menu = $('fabMenu');
   main.onclick = () => {
@@ -1211,17 +1206,14 @@ function initFab(){
   $('fabFavoritos').onclick = () => { fecharFab(); renderFavoritas(); abrirModal('modalFavoritas'); };
   $('fabGeneros').onclick = () => { fecharFab(); renderizarGeneros(); abrirModal('modalGeneros'); };
   $('fabRadio').onclick = () => { fecharFab(); ativarRadio(); };
-  $('fabModoTV').onclick = () => { fecharFab(); notif('📺 Modo TV (em breve)'); };
   $('fabTemas').onclick = () => { fecharFab(); trocarTema(); };
-  $('fabInstalar').onclick = () => { fecharFab(); notif('📱 Use o menu do navegador'); };
   $('fabLiberar').onclick = () => { fecharFab(); liberarAgora(); };
+  $('fabMeuId').onclick = () => { fecharFab(); mostrarMeuId(); };
   $('fabAtualizarApp').onclick = () => { fecharFab(); atualizarAppMagico(); };
 }
 function fecharFab(){ $('fabMenu').classList.remove('open'); $('fabMain').classList.remove('open'); }
 
-// ═══════════════════════════════════════════════════════
 // RÁDIO / TEMA
-// ═══════════════════════════════════════════════════════
 async function ativarRadio(){
   notif('🔴 Sintonizando...');
   const generos = ['SERTANEJO','FORRÓ','PAGODE','ROMÂNTICA'];
@@ -1235,7 +1227,6 @@ async function ativarRadio(){
   appState.modoAtual = 'RÁDIO VDB';
   appState.playlistAtual = shuffle(todas);
   appState.indiceAtual = 0;
-  appState.musicasComProblema.clear();
   const mm = appState.playlistAtual[0];
   if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
   notif('🔴 AO VIVO!');
@@ -1255,6 +1246,7 @@ function liberarAgora(){
   if(resultado.valida){
     $('blockOverlay').classList.remove('active');
     localStorage.setItem(CHAVE_DESBLOQ,'true');
+    localStorage.removeItem(CHAVE_BLOQ);
     notif('✅ Liberado!',3000);
     if(!appState.playerAtivado) setTimeout(ativarPlayer,500);
     atualizarTimer();
@@ -1277,9 +1269,7 @@ async function atualizarAppMagico(){
   setTimeout(()=>{ window.location.href = window.location.pathname + '?update=' + Date.now(); }, 800);
 }
 
-// ═══════════════════════════════════════════════════════
-// MENU ⋮
-// ═══════════════════════════════════════════════════════
+// MENU
 function initMenu(){
   $('menuButton').onclick = (e) => {
     e.stopPropagation();
@@ -1305,11 +1295,14 @@ function initMenu(){
   $('menuRecarregar').onclick = () => location.reload();
   $('menuAtualizarMidia').onclick = async () => { $('menuPopup').classList.remove('open'); notif('🔄 Atualizando...'); await carregarMidiasPadrao(); notif('✅ Atualizado!'); };
   $('menuAtualizarApp').onclick = () => { $('menuPopup').classList.remove('open'); atualizarAppMagico(); };
+  document.addEventListener('click', e => {
+    if(!$('menuPopup').contains(e.target) && e.target !== $('menuButton') && !$('menuButton').contains(e.target)){
+      $('menuPopup').classList.remove('open');
+    }
+  });
 }
 
-// ═══════════════════════════════════════════════════════
 // INICIALIZAÇÃO
-// ═══════════════════════════════════════════════════════
 async function iniciar(){
   try{
     const start = now();
@@ -1321,6 +1314,7 @@ async function iniciar(){
       $('idUsuarioBloqueio').textContent = obterMeuId();
       $('blockOverlay').classList.add('active');
     }
+    await carregarMidiasPadrao();
     const m = await buscarGenero('BÔNUS');
     if(m && m.length){
       appState.musicas = m;
@@ -1334,10 +1328,10 @@ async function iniciar(){
     atualizarBadgeFav();
     const dec = now() - start;
     if(dec < CONFIG.LOADING_DURACAO_MS) await sleep(CONFIG.LOADING_DURACAO_MS - dec);
-    $('loadingScreen').style.display = 'none';
+    $('loadingScreen').classList.add('hide');
     $('playerContainer').classList.add('visible');
     await atualizarTimer();
-    forcarFullscreen();
+    setTimeout(()=>{ if(!jaFullscreen()) forcarFullscreen(); }, 300);
     initBusca();
     initFab();
     initAdmin();
@@ -1411,7 +1405,7 @@ async function iniciar(){
     });
   }catch(e){
     console.error('❌ Erro:', e);
-    $('loadingScreen').style.display = 'none';
+    $('loadingScreen').classList.add('hide');
     $('playerContainer').classList.add('visible');
   }
 }
