@@ -35,6 +35,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--cor-1);border-radius:4px}
 
+/* LOADING */
 #loadingScreen{position:fixed;inset:0;
   background:linear-gradient(135deg,var(--cor-2),var(--cor-1));
   display:flex;align-items:center;justify-content:center;z-index:99999;
@@ -53,6 +54,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .loading-progress-fill{height:100%;width:0%;background:#fff;
   transition:width .4s ease;border-radius:5px}
 
+/* PLAYER */
 #playerContainer{position:fixed;inset:0;z-index:10;display:none}
 #playerContainer.visible{display:block}
 #telaPrincipal{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column}
@@ -70,29 +72,30 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   color:rgba(255,255,255,.1);letter-spacing:8px}
 @keyframes gradientMove{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 
+/* ═══════════════════════════════════════════════════════
+   TOPO — VDB À ESQUERDA, TIMER À DIREITA
+   ═══════════════════════════════════════════════════════ */
 .info-topo{position:fixed;top:0;left:0;right:0;z-index:35;
-  padding-top:max(10px,var(--safe-top));padding-bottom:14px;
+  padding-top:max(6px,var(--safe-top));
+  padding-bottom:12px;
   background:linear-gradient(180deg,rgba(0,0,0,.6),transparent);
-  display:flex;flex-direction:column;align-items:stretch;gap:6px;
+  display:flex;flex-direction:column;align-items:stretch;gap:4px;
   transition:opacity .6s;pointer-events:none}
 .info-topo > *{pointer-events:auto}
 .info-topo.escondido{opacity:0;pointer-events:none}
 .topo-linha{display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;height:32px;width:100%;gap:8px}
-.timer-texto{font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:800;
-  color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 2px 6px rgba(0,0,0,.6);
-  white-space:nowrap;min-width:70px;flex-shrink:0}
-.titulo-topo{font-family:'Audiowide',sans-serif;font-size:1.15rem;font-weight:900;
+  padding:0 16px;height:38px;width:100%;gap:8px}
+.titulo-topo{font-family:'Audiowide',sans-serif;font-size:1.35rem;font-weight:900;
   letter-spacing:5px;color:#fff;
   text-shadow:0 0 12px rgba(255,255,255,.6),0 0 24px var(--cor-3);
-  cursor:pointer;flex:1;text-align:center;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;transition:transform .2s;padding:4px 0}
+  cursor:pointer;text-align:left;white-space:nowrap;
+  transition:transform .2s;padding:4px 0}
 .titulo-topo:active{transform:scale(.94)}
-.menu-btn-limpo{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2);
-  border-radius:50%;color:#fff;font-size:1rem;width:32px;height:32px;cursor:pointer;
-  padding:0;display:flex;align-items:center;justify-content:center;
-  transition:transform .2s,background .2s;backdrop-filter:blur(8px);flex-shrink:0}
-.menu-btn-limpo:active{transform:scale(.88);background:rgba(255,255,255,.2)}
+.timer-texto{font-family:'Rajdhani',sans-serif;font-size:.9rem;font-weight:800;
+  color:#fff;font-variant-numeric:tabular-nums;
+  text-shadow:0 2px 6px rgba(0,0,0,.6);
+  white-space:nowrap;text-align:right;flex-shrink:0}
+
 .letreiro-wrap{width:100%;height:40px;padding:0 16px;overflow:hidden;
   display:flex;align-items:center;cursor:pointer}
 .letreiro{font-size:1.05rem;font-weight:800;color:rgba(255,255,255,.98);
@@ -103,6 +106,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .letreiro i{font-style:normal;color:rgba(255,255,255,.95)}
 .corpo-tela{flex:1;position:relative;z-index:1;pointer-events:none}
 
+/* PAINEL BAIXO */
 .painel-baixo{position:relative;z-index:20;
   padding:20px 22px calc(20px + var(--safe-bottom));
   background:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.45) 100%);
@@ -147,6 +151,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   overflow:hidden;cursor:pointer;touch-action:none}
 .progress-fill{height:100%;width:0%;background:#fff;border-radius:4px;transition:width .2s linear}
 
+/* BARRA INFERIOR — APARECE SÓ NA PRINCIPAL */
 .barra-inferior{position:fixed;left:12px;right:12px;
   bottom:calc(12px + var(--safe-bottom));z-index:25;
   display:flex;align-items:center;justify-content:space-around;gap:6px;
@@ -155,8 +160,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   -webkit-backdrop-filter:blur(20px) saturate(180%);
   border:1px solid rgba(255,255,255,.15);border-radius:22px;
   box-shadow:0 8px 32px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);
-  transition:opacity .5s,transform .5s}
-.barra-inferior.escondida{opacity:0;transform:translateY(20px);pointer-events:none}
+  transition:opacity .4s,transform .4s}
+.barra-inferior.oculta{opacity:0;transform:translateY(30px);pointer-events:none}
 .barra-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
   padding:8px 4px;background:transparent;border:none;color:#fff;
   font-size:.6rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
@@ -168,6 +173,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   font-size:.55rem;font-weight:900;padding:1px 5px;border-radius:8px;
   min-width:16px;text-align:center}
 
+/* ANÚNCIOS */
 #telaAnuncios{position:fixed;inset:0;z-index:8;background:#000;
   opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s}
 #telaAnuncios.ativa{opacity:1;visibility:visible;pointer-events:auto}
@@ -176,6 +182,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
 .media-anuncios .active{opacity:1;z-index:3}
 
+/* FAB — MENU ORGANIZADO COM SEÇÕES */
 .fab-container{position:fixed;bottom:calc(90px + var(--safe-bottom));right:16px;
   z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:8px;
   transition:opacity .5s}
@@ -187,18 +194,28 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .fab-main:active{transform:scale(.9)}
 .fab-main i{transition:transform .3s}
 .fab-main.open i{transform:rotate(45deg)}
+
 .fab-menu{background:rgba(15,20,35,.97);backdrop-filter:blur(30px);
-  border-radius:20px;padding:10px;display:none;flex-direction:column;
-  gap:8px;border:1px solid rgba(255,255,255,.15);min-width:240px;
+  border-radius:22px;padding:8px;display:none;flex-direction:column;
+  gap:2px;border:1px solid rgba(255,255,255,.15);
+  min-width:260px;max-width:calc(100vw - 32px);
+  max-height:75vh;overflow-y:auto;
   box-shadow:0 12px 40px rgba(0,0,0,.85)}
 .fab-menu.open{display:flex}
-.fab-sub-btn{background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
-  border:1px solid rgba(255,255,255,.1);border-radius:14px;
-  padding:12px 16px;color:#fff;font-size:.85rem;font-weight:700;
-  cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left}
-.fab-sub-btn:active{background:rgba(255,255,255,.15)}
+.fab-secao{font-size:.6rem;font-weight:900;letter-spacing:3px;
+  color:rgba(255,255,255,.4);text-transform:uppercase;
+  padding:12px 14px 6px;border-bottom:1px solid rgba(255,255,255,.06);
+  margin-bottom:4px}
+.fab-secao:first-child{padding-top:6px}
+.fab-sub-btn{background:transparent;border:none;color:#e8e4f5;
+  padding:11px 14px;border-radius:12px;
+  font-size:.85rem;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left;
+  transition:background .15s}
+.fab-sub-btn:active{background:rgba(255,255,255,.12)}
 .fab-sub-btn i{width:22px;text-align:center;font-size:1rem}
 
+/* MODAIS */
 .modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.9);
   backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:16px}
 .modal.open{display:flex}
@@ -252,9 +269,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .genre-card:active{transform:scale(.96);background:rgba(255,255,255,.1)}
 .genre-card .genre-name{font-size:1.2rem;font-weight:900;text-transform:uppercase;
   color:#fff;line-height:1.2;letter-spacing:.5px;text-shadow:0 1px 4px rgba(0,0,0,.4)}
-.genre-card.offline::after{content:'✓';position:absolute;top:6px;right:8px;
-  background:#10b981;color:#fff;width:20px;height:20px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900}
 
 .fav-list{display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:60vh}
 .fav-item{padding:11px 14px;border-radius:14px;background:rgba(255,255,255,.04);
@@ -343,19 +357,34 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 #adminPanel .btn-whats{background:#25d366;color:#fff;border:none;padding:11px;border-radius:14px;font-weight:900;cursor:pointer;font-size:.78rem}
 #adminPanel .info-box{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:12px;padding:12px;margin:10px 0;color:#93c5fd;font-size:.75rem;line-height:1.5;font-weight:600}
 
+/* QR CODE */
+#qrCodeModal{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:99999;
+  display:none;align-items:center;justify-content:center;padding:20px}
+#qrCodeModal.active{display:flex}
+.qr-content{background:rgba(15,20,35,.98);border-radius:25px;padding:24px;
+  text-align:center;max-width:360px;width:100%;border:1px solid rgba(255,255,255,.15)}
+.qr-content h3{color:#fff;font-size:1.2rem;font-weight:900;margin-bottom:12px;
+  font-family:'Audiowide',sans-serif;letter-spacing:3px}
+.qr-wrapper{background:#fff;border-radius:16px;padding:12px;display:inline-block;margin:12px 0}
+.qr-wrapper img{width:220px;height:220px;display:block;border-radius:8px}
+.qr-btn{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
+  border:none;padding:14px;border-radius:25px;color:#fff;
+  font-weight:900;font-size:.9rem;cursor:pointer;width:100%;margin-top:12px}
+
 @media(max-width:480px){
   .glass-musica-nome{font-size:1rem}
   .ctrl-btn{font-size:1.4rem}
   .play-big{font-size:1.8rem}
-  .titulo-topo{font-size:1rem;letter-spacing:4px}
+  .titulo-topo{font-size:1.15rem;letter-spacing:4px}
   .letreiro{font-size:.95rem}
   .letreiro-wrap{height:36px}
-  .timer-texto{font-size:.68rem;min-width:60px}
+  .timer-texto{font-size:.8rem}
   .genre-card .genre-name{font-size:1.05rem}
   .genres-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
   .barra-btn{font-size:.55rem;padding:6px 2px;gap:2px}
   .barra-btn i{font-size:1rem}
   .id-value{font-size:1.15rem}
+  .qr-wrapper img{width:180px;height:180px}
 }
 </style>
 </head>
@@ -373,11 +402,11 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     <div class="media-container" id="mediaContainer">
       <div class="media-fallback-visual">VDB MUSIC</div>
     </div>
+    <!-- TOPO: VDB ESQUERDA, TIMER DIREITA -->
     <div class="info-topo" id="infoTopo">
       <div class="topo-linha">
-        <span class="timer-texto" id="timerLib">24:00:00</span>
         <div class="titulo-topo" id="tituloGrande">VDB</div>
-        <button class="menu-btn-limpo" id="menuButton"><i class="fas fa-ellipsis-v"></i></button>
+        <span class="timer-texto" id="timerLib">24:00:00</span>
       </div>
       <div class="letreiro-wrap" id="letreiroClick">
         <p class="letreiro" id="scrollText">🎵 VDB MUSIC</p>
@@ -407,6 +436,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   </div>
 </div>
 
+<!-- BARRA INFERIOR — SOME NO ANÚNCIO -->
 <div class="barra-inferior" id="barraInferior">
   <button class="barra-btn" id="barraBuscar"><i class="fas fa-magnifying-glass"></i><span>Buscar</span></button>
   <button class="barra-btn fav" id="barraFavoritos">
@@ -416,29 +446,34 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   <button class="barra-btn" id="barraGeneros"><i class="fas fa-guitar"></i><span>Gêneros</span></button>
 </div>
 
+<!-- FAB — MENU ORGANIZADO EM SEÇÕES -->
 <div class="fab-container" id="fabContainer">
   <div class="fab-menu" id="fabMenu">
+    <div class="fab-secao">🎵 Reprodução</div>
     <button class="fab-sub-btn" id="fabRadio"><i class="fas fa-broadcast-tower" style="color:#f59e0b"></i>Rádio VDB</button>
     <button class="fab-sub-btn" id="fabBuscar"><i class="fas fa-search" style="color:#22d3ee"></i>Buscar Música</button>
     <button class="fab-sub-btn" id="fabGeneros"><i class="fas fa-guitar" style="color:#22d3ee"></i>Gêneros</button>
     <button class="fab-sub-btn" id="fabFavoritos"><i class="fas fa-heart" style="color:#f472b6"></i>Favoritas</button>
+
+    <div class="fab-secao">📱 App</div>
     <button class="fab-sub-btn" id="fabTemas"><i class="fas fa-palette" style="color:#fbbf24"></i>Cores do App</button>
-    <button class="fab-sub-btn" id="fabLiberar"><i class="fas fa-unlock" style="color:#10b981"></i>Liberar Agora</button>
-    <button class="fab-sub-btn" id="fabMeuId"><i class="fas fa-id-card" style="color:#3b82f6"></i>Ver Meu ID</button>
+    <button class="fab-sub-btn" id="fabFullscreen"><i class="fas fa-expand" style="color:#10b981"></i>Tela Cheia</button>
+    <button class="fab-sub-btn" id="fabSleep"><i class="fas fa-moon" style="color:#a855f7"></i>Sleep Timer</button>
+    <button class="fab-sub-btn" id="fabRecarregar"><i class="fas fa-sync" style="color:#3b82f6"></i>Recarregar</button>
+    <button class="fab-sub-btn" id="fabAtualizarMidia"><i class="fas fa-sync-alt" style="color:#22d3ee"></i>Atualizar Mídias</button>
     <button class="fab-sub-btn" id="fabAtualizarApp"><i class="fas fa-magic" style="color:#fbbf24"></i>🪄 Atualizar App</button>
+
+    <div class="fab-secao">👤 Conta</div>
+    <button class="fab-sub-btn" id="fabMeuId"><i class="fas fa-id-card" style="color:#3b82f6"></i>Ver Meu ID</button>
+    <button class="fab-sub-btn" id="fabLiberar"><i class="fas fa-unlock" style="color:#10b981"></i>Liberar Agora</button>
+    <button class="fab-sub-btn" id="fabQrCode"><i class="fas fa-qrcode" style="color:#22d3ee"></i>QR Code</button>
+    <button class="fab-sub-btn" id="fabShare"><i class="fas fa-share-alt" style="color:#a855f7"></i>Compartilhar</button>
+    <button class="fab-sub-btn" id="fabFeedback"><i class="fas fa-star" style="color:#fbbf24"></i>Feedback</button>
   </div>
   <button class="fab-main" id="fabMain"><i class="fas fa-plus"></i></button>
 </div>
 
-<div class="menu-popup" id="menuPopup" style="position:fixed;top:calc(20px + var(--safe-top));right:12px;background:rgba(15,20,35,.97);backdrop-filter:blur(30px);border-radius:24px;padding:14px;z-index:60;display:none;flex-direction:column;gap:8px;border:1px solid rgba(255,255,255,.15);min-width:240px;box-shadow:0 20px 60px rgba(0,0,0,.8)">
-  <button class="fab-sub-btn" id="menuFechar"><i class="fas fa-times"></i>Fechar</button>
-  <button class="fab-sub-btn" id="menuFullscreen"><i class="fas fa-expand"></i>Tela Cheia</button>
-  <button class="fab-sub-btn" id="menuSleep"><i class="fas fa-moon"></i>Sleep Timer</button>
-  <button class="fab-sub-btn" id="menuRecarregar"><i class="fas fa-sync"></i>Recarregar</button>
-  <button class="fab-sub-btn" id="menuAtualizarMidia"><i class="fas fa-sync-alt"></i>Atualizar Mídias</button>
-  <button class="fab-sub-btn" id="menuAtualizarApp"><i class="fas fa-magic" style="color:#fbbf24"></i>🪄 Atualizar App</button>
-</div>
-
+<!-- MODAIS -->
 <div class="modal" id="modalBusca">
   <div class="modal-box">
     <div class="modal-header">
@@ -499,6 +534,16 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   </div>
 </div>
 
+<!-- QR CODE -->
+<div id="qrCodeModal">
+  <div class="qr-content">
+    <h3>📱 QR CODE</h3>
+    <p style="color:#aaa;font-size:.8rem;margin-bottom:10px">Compartilhe o app!</p>
+    <div class="qr-wrapper"><img id="qrCodeImage" src="" alt="QR"></div>
+    <button class="qr-btn" id="qrCloseBtn">✕ Fechar</button>
+  </div>
+</div>
+
 <div id="blockOverlay">
   <div class="block-content">
     <img src="favicon30.png" alt="VDB" class="block-logo" onerror="this.style.display='none'">
@@ -553,7 +598,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 'use strict';
 
 // ═══════════════════════════════════════════════════════
-// 🔐 SENHAS — FUNCIONANDO
+// 🔐 SENHAS
 // ═══════════════════════════════════════════════════════
 const SENHA_ADMIN = 'patico1658';
 const SENHA_MESTRA = 'Patico1658@';
@@ -565,12 +610,12 @@ const CONFIG = {
   WHATSAPP: '5512988461978',
   TEMPO_TESTE_SEGUNDOS: 86400,
   PRECO: 'R$ 39,90',
-  LETREIRO: '🎵 VDB MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
-  APP_VERSION: 'v72',
+  LETREIRO: '🎵 VDB MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • FUNK • REGGAE 🎶',
+  APP_VERSION: 'v73',
   LOADING_DURACAO_MS: 3500,
   MIDIA_MAX_SEGURANCA_MS: 60000,
-  CICLO_PRINCIPAL_MS: 45000,
-  CICLO_ANUNCIO_MS: 25000,
+  CICLO_PRINCIPAL_MS: 30000,     // ✅ 30 segundos
+  CICLO_ANUNCIO_MS: 12000,       // ✅ 12 segundos
   VOLUME_PADRAO: 1.0
 };
 
@@ -595,9 +640,6 @@ const GENRE_COLORS = {
 };
 const COR_PADRAO = { c1:'#22d3ee' };
 
-// ═══════════════════════════════════════════════════════
-// URLS
-// ═══════════════════════════════════════════════════════
 const GENRE_URLS = {
   'BÔNUS':'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json',
   'FLASHBACK':'https://raw.githubusercontent.com/radiolojasjc-hub/flashbacktop/refs/heads/main/flashback.json',
@@ -636,15 +678,6 @@ const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotco
 const MIDIAS_FALLBACK = [{tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}];
 const MIDIAS_ANUNCIO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/anuncios.json';
 const MIDIAS_ANUNCIO_FALLBACK = [{tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'}];
-const MIDIAS_TV_PROIBIDAS = ['mac1','amytv','tvbob'];
-function filtrarMidias(tela, medias){
-  if(tela !== 'principal') return medias;
-  return medias.filter(m => {
-    if(!m || !m.src) return false;
-    const n = m.src.toLowerCase();
-    return !MIDIAS_TV_PROIBIDAS.some(t => n.includes(t));
-  });
-}
 
 // ═══════════════════════════════════════════════════════
 // HELPERS
@@ -680,8 +713,6 @@ function copiarTexto(t,msg){
       i.select();document.execCommand('copy');i.remove();notif(msg||'📋 Copiado!');
     });
 }
-function ehIOS(){ return /iPhone|iPad|iPod/i.test(navigator.userAgent); }
-function ehMobile(){ return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent); }
 
 // ═══════════════════════════════════════════════════════
 // NOTIFICAÇÃO
@@ -1129,7 +1160,7 @@ async function buscar(){
   const count = $('buscaCount');
   if(!termo && !genero){
     count.textContent = '💡 Digite ou escolha um gênero';
-    cont.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#888;font-size:.85rem">🔍 Digite o nome da música<br>ou escolha um gênero acima</div>';
+    cont.innerHTML = '<div style="text-align:center;padding:40px;color:#888;font-size:.85rem">🔍 Digite o nome da música<br>ou escolha um gênero acima</div>';
     return;
   }
   let base = Array.isArray(appState.musicas) ? appState.musicas : [];
@@ -1222,9 +1253,10 @@ function abrirModal(id){ $(id).classList.add('open'); }
 function fecharModal(id){ $(id).classList.remove('open'); }
 
 // ═══════════════════════════════════════════════════════
-// FULLSCREEN
+// FULLSCREEN INFINITO
 // ═══════════════════════════════════════════════════════
 let fsEmAndamento = false;
+let fsGuardInterval = null;
 function jaFullscreen(){
   return !!(document.fullscreenElement || document.webkitFullscreenElement ||
             document.mozFullScreenElement || document.msFullscreenElement);
@@ -1246,10 +1278,22 @@ function forcarFullscreen(){
     return false;
   }catch(e){ fsEmAndamento = false; return false; }
 }
+function iniciarFullscreenGuard(){
+  if(fsGuardInterval) clearInterval(fsGuardInterval);
+  fsGuardInterval = setInterval(()=>{
+    if(document.hidden) return;
+    if(!appState.playerAtivado) return;
+    if(jaFullscreen()) return;
+    forcarFullscreen();
+  }, 1500);
+}
 document.addEventListener('fullscreenchange', () => {
   if(!jaFullscreen() && appState.playerAtivado){
-    setTimeout(()=>{ if(!jaFullscreen()) forcarFullscreen(); }, 500);
+    setTimeout(()=>{ if(!jaFullscreen()) forcarFullscreen(); }, 400);
   }
+});
+document.addEventListener('webkitfullscreenchange', () => {
+  if(!jaFullscreen() && appState.playerAtivado) setTimeout(()=>{ if(!jaFullscreen()) forcarFullscreen(); }, 400);
 });
 
 // ═══════════════════════════════════════════════════════
@@ -1288,11 +1332,13 @@ async function ativarPlayer(){
     appState.isBackgroundActive = true;
     manterAtivo();
     forcarFullscreen();
+    iniciarFullscreenGuard();
     await iniciarTimer();
     setTimeout(tocar, 500);
   }catch(e){
     appState.isBackgroundActive = true;
     forcarFullscreen();
+    iniciarFullscreenGuard();
     iniciarTimer();
     setTimeout(tocar, 500);
   }
@@ -1378,7 +1424,7 @@ function enviarMeuIdWhats(){
 let midiaToken = 0, midiaTimer = null;
 let videosAtivos = new Set();
 async function carregarMidias(container, url, options={}){
-  const { fallback=[], tela='principal' } = options;
+  const { fallback=[] } = options;
   const meuToken = ++midiaToken;
   if(midiaTimer){ clearTimeout(midiaTimer); midiaTimer = null; }
   container.querySelectorAll('video').forEach(v => {
@@ -1404,8 +1450,6 @@ async function carregarMidias(container, url, options={}){
     if(meuToken !== midiaToken) return;
     if(!ms.length) ms = fallback;
     ms = ms.filter(m => m && (m.tipo==='video'||m.tipo==='imagem') && m.src);
-    ms = filtrarMidias(tela, ms);
-    if(!ms.length) ms = filtrarMidias(tela, fallback);
     if(!ms.length) return;
     const els = [];
     ms.forEach((m, i) => {
@@ -1474,14 +1518,14 @@ async function carregarMidias(container, url, options={}){
   }catch(e){ console.error('Erro mídias:', e); }
 }
 async function carregarMidiasPadrao(){
-  await carregarMidias($('mediaContainer'), MIDIAS_PADRAO_URL, { fallback: MIDIAS_FALLBACK, tela:'principal' });
+  await carregarMidias($('mediaContainer'), MIDIAS_PADRAO_URL, { fallback: MIDIAS_FALLBACK });
 }
 async function carregarMidiasAnuncio(){
-  await carregarMidias($('mediaAnuncios'), MIDIAS_ANUNCIO_URL, { fallback: MIDIAS_ANUNCIO_FALLBACK, tela:'anuncios' });
+  await carregarMidias($('mediaAnuncios'), MIDIAS_ANUNCIO_URL, { fallback: MIDIAS_ANUNCIO_FALLBACK });
 }
 
 // ═══════════════════════════════════════════════════════
-// CICLO DE TELAS
+// CICLO DE TELAS (30s principal / 12s anúncio)
 // ═══════════════════════════════════════════════════════
 let cicloTimer = null;
 function agendarCiclo(){
@@ -1489,7 +1533,7 @@ function agendarCiclo(){
   const t = appState.telaAtual === 'principal' ? CONFIG.CICLO_PRINCIPAL_MS : CONFIG.CICLO_ANUNCIO_MS;
   cicloTimer = setTimeout(async ()=>{
     if(!appState.playerAtivado){ agendarCiclo(); return; }
-    if(document.querySelector('.modal.open, #adminPanel.open')){ agendarCiclo(); return; }
+    if(document.querySelector('.modal.open, #adminPanel.open, #qrCodeModal.active')){ agendarCiclo(); return; }
     if(appState.telaAtual === 'principal') await trocarTela('anuncios');
     else await trocarTela('principal');
     if(!jaFullscreen()) forcarFullscreen();
@@ -1501,11 +1545,15 @@ async function trocarTela(destino){
     appState.telaAtual = 'anuncios';
     $('telaPrincipal').classList.add('oculta');
     $('telaAnuncios').classList.add('ativa');
+    // ✅ ESCONDE A BARRA INFERIOR NO ANÚNCIO
+    if($('barraInferior')) $('barraInferior').classList.add('oculta');
     await carregarMidiasAnuncio();
   }else{
     appState.telaAtual = 'principal';
     $('telaAnuncios').classList.remove('ativa');
     $('telaPrincipal').classList.remove('oculta');
+    // ✅ MOSTRA A BARRA INFERIOR DE VOLTA
+    if($('barraInferior')) $('barraInferior').classList.remove('oculta');
     await carregarMidiasPadrao();
   }
 }
@@ -1525,14 +1573,42 @@ function initFab(){
   $('fabGeneros').onclick = () => { fecharFab(); renderizarGeneros(); abrirModal('modalGeneros'); };
   $('fabRadio').onclick = () => { fecharFab(); ativarRadio(); };
   $('fabTemas').onclick = () => { fecharFab(); trocarTema(); };
-  $('fabLiberar').onclick = () => { fecharFab(); liberarAgora(); };
-  $('fabMeuId').onclick = () => { fecharFab(); mostrarMeuId(); };
+  $('fabFullscreen').onclick = () => { fecharFab(); forcarFullscreen(); notif('🖥️ Tela cheia'); };
+  $('fabSleep').onclick = () => {
+    fecharFab();
+    const mins = parseInt(prompt('⏰ Desligar em minutos:','15'));
+    if(mins>0){
+      clearTimeout(appState.sleepTimerId);
+      appState.sleepTimerId = setTimeout(()=>{
+        audio.pause();
+        appState.isPlaying = false;
+        $('playBtn').innerHTML='<i class="fas fa-play"></i>';
+        notif('💤 Player desligado');
+      }, mins*60000);
+      notif('⏰ Sleep: '+mins+' min');
+    }
+  };
+  $('fabRecarregar').onclick = () => { fecharFab(); location.reload(); };
+  $('fabAtualizarMidia').onclick = async () => { fecharFab(); notif('🔄 Atualizando...'); await carregarMidiasPadrao(); notif('✅ Atualizado!'); };
   $('fabAtualizarApp').onclick = () => { fecharFab(); atualizarAppMagico(); };
+  $('fabMeuId').onclick = () => { fecharFab(); mostrarMeuId(); };
+  $('fabLiberar').onclick = () => { fecharFab(); liberarAgora(); };
+  $('fabQrCode').onclick = () => { fecharFab(); gerarQrCode(); };
+  $('fabShare').onclick = () => {
+    fecharFab();
+    if(navigator.share) navigator.share({ title:'VDB MUSIC', url: location.href }).catch(()=>{});
+    else { navigator.clipboard.writeText(location.href).then(()=>notif('📋 Link copiado!')); }
+  };
+  $('fabFeedback').onclick = () => {
+    fecharFab();
+    const msg = '⭐ *VDB MUSIC*\n\nGostaria de deixar meu feedback!';
+    window.open('https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(msg));
+  };
 }
 function fecharFab(){ $('fabMenu').classList.remove('open'); $('fabMain').classList.remove('open'); }
 
 // ═══════════════════════════════════════════════════════
-// RÁDIO / TEMA / LIBERAR / ATUALIZAR
+// RÁDIO / TEMA / LIBERAR / ATUALIZAR / QR
 // ═══════════════════════════════════════════════════════
 async function ativarRadio(){
   notif('🔴 Sintonizando...');
@@ -1589,40 +1665,10 @@ async function atualizarAppMagico(){
   }catch(e){}
   setTimeout(()=>{ window.location.href = window.location.pathname + '?update=' + Date.now(); }, 800);
 }
-
-// ═══════════════════════════════════════════════════════
-// MENU
-// ═══════════════════════════════════════════════════════
-function initMenu(){
-  $('menuButton').onclick = (e) => {
-    e.stopPropagation();
-    vibrar();
-    $('menuPopup').classList.toggle('open');
-  };
-  $('menuFechar').onclick = () => $('menuPopup').classList.remove('open');
-  $('menuFullscreen').onclick = () => { $('menuPopup').classList.remove('open'); forcarFullscreen(); };
-  $('menuSleep').onclick = () => {
-    $('menuPopup').classList.remove('open');
-    const mins = parseInt(prompt('⏰ Desligar em minutos:','15'));
-    if(mins>0){
-      clearTimeout(appState.sleepTimerId);
-      appState.sleepTimerId = setTimeout(()=>{
-        audio.pause();
-        appState.isPlaying = false;
-        $('playBtn').innerHTML='<i class="fas fa-play"></i>';
-        notif('💤 Player desligado');
-      }, mins*60000);
-      notif('⏰ Sleep: '+mins+' min');
-    }
-  };
-  $('menuRecarregar').onclick = () => location.reload();
-  $('menuAtualizarMidia').onclick = async () => { $('menuPopup').classList.remove('open'); notif('🔄 Atualizando...'); await carregarMidiasPadrao(); notif('✅ Atualizado!'); };
-  $('menuAtualizarApp').onclick = () => { $('menuPopup').classList.remove('open'); atualizarAppMagico(); };
-  document.addEventListener('click', e => {
-    if(!$('menuPopup').contains(e.target) && e.target !== $('menuButton') && !$('menuButton').contains(e.target)){
-      $('menuPopup').classList.remove('open');
-    }
-  });
+function gerarQrCode(){
+  const url = encodeURIComponent(window.location.href);
+  $('qrCodeImage').src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + url;
+  $('qrCodeModal').classList.add('active');
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1660,7 +1706,6 @@ async function iniciar(){
     initBusca();
     initFab();
     initAdmin();
-    initMenu();
     setupCliques();
     $('playBtn').onclick = togglePlay;
     $('prevBtn').onclick = prev;
@@ -1674,6 +1719,8 @@ async function iniciar(){
     $('fecharFavoritas').onclick = () => fecharModal('modalFavoritas');
     $('fecharGeneros').onclick = () => fecharModal('modalGeneros');
     $('fecharMeuId').onclick = () => fecharModal('modalMeuId');
+    $('qrCloseBtn').onclick = () => $('qrCodeModal').classList.remove('active');
+    $('qrCodeModal').onclick = (e) => { if(e.target === $('qrCodeModal')) $('qrCodeModal').classList.remove('active'); };
     document.querySelectorAll('.modal').forEach(m => {
       m.onclick = (e) => { if(e.target === m) m.classList.remove('open'); };
     });
@@ -1738,9 +1785,10 @@ async function iniciar(){
         if(!jaFullscreen() && appState.playerAtivado) forcarFullscreen();
       }
     });
-    setTimeout(agendarCiclo, 15000);
+    setTimeout(agendarCiclo, 5000);
     window.addEventListener('beforeunload', () => {
       if(keepAliveInterval) clearInterval(keepAliveInterval);
+      if(fsGuardInterval) clearInterval(fsGuardInterval);
     });
   }catch(e){
     console.error('❌ Erro:', e);
