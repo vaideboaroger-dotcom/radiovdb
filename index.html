@@ -2,9 +2,21 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>VDB MUSIC v61 — DEMO</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>VDB MUSIC</title>
+<link rel="icon" type="image/png" sizes="192x192" href="favicon192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="favicon30.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="favicon30.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VDB Music">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2563eb">
+<link rel="manifest" href="./manifest.json">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -14,125 +26,150 @@
   --cor-2:#1e40af;
   --cor-3:#3b82f6;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
+  user-select:none;-webkit-touch-callout:none;
   font-family:'Rajdhani',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
 input,textarea{user-select:text!important;-webkit-user-select:text!important}
-html,body{height:100dvh;width:100%;background:#000;overflow:hidden;position:fixed;top:0;left:0}
-::-webkit-scrollbar{width:4px}
+button{touch-action:manipulation}
+html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;position:fixed;top:0;left:0}
+:fullscreen,:-webkit-full-screen{background:#000}
+body:fullscreen{width:100vw;height:100vh}
+::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:var(--cor-1);border-radius:4px}
 
 /* ═══ LOADING ═══ */
-#loadingScreen{
-  position:fixed;inset:0;z-index:9999;
+#loadingScreen{position:fixed;inset:0;
   background:linear-gradient(135deg,var(--cor-2),var(--cor-1));
-  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;
-  transition:opacity .5s;
-}
+  display:flex;align-items:center;justify-content:center;z-index:99999;
+  flex-direction:column;gap:22px;text-align:center;transition:opacity .5s}
 #loadingScreen.hide{opacity:0;pointer-events:none}
-.loading-logo{
-  width:100px;height:100px;border-radius:50%;
-  background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
-  display:flex;align-items:center;justify-content:center;font-size:2.5rem;
-  animation:pulse 2s ease-in-out infinite;box-shadow:0 0 50px rgba(255,255,255,.4)
-}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-.loading-text{font-family:'Audiowide';font-size:1.5rem;color:#fff;letter-spacing:5px}
-.loading-sub{font-size:.7rem;color:rgba(255,255,255,.8);letter-spacing:6px}
-.loading-bar{width:220px;height:4px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden}
-.loading-fill{height:100%;width:0;background:#fff;transition:width .3s;border-radius:4px}
+.loading-logo-wrapper{width:150px;height:150px;display:flex;align-items:center;justify-content:center}
+.loading-logo{width:104px;height:104px;border-radius:50%;object-fit:cover;
+  border:3px solid rgba(255,255,255,.25);animation:pulseLogo 2.5s ease-in-out infinite;
+  box-shadow:0 0 50px rgba(255,255,255,.4)}
+@keyframes pulseLogo{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.loading-text{font-family:'Audiowide',sans-serif;font-size:1.5rem;color:#fff;
+  letter-spacing:5px;font-weight:900;text-shadow:0 3px 15px rgba(0,0,0,.5)}
+.loading-sub{font-size:.75rem;color:rgba(255,255,255,.9);letter-spacing:7px;font-weight:800}
+.loading-progress-container{width:240px;height:5px;background:rgba(0,0,0,.3);
+  border-radius:5px;overflow:hidden}
+.loading-progress-fill{height:100%;width:0%;background:#fff;
+  transition:width .4s ease;border-radius:5px}
 
-/* ═══ APP ═══ */
-#app{position:fixed;inset:0;display:none}
-#app.visible{display:block}
+/* ═══ PLAYER ═══ */
+#playerContainer{position:fixed;inset:0;z-index:10;display:none}
+#playerContainer.visible{display:block}
 
-.media-bg{position:absolute;inset:0;z-index:0;overflow:hidden;background:#000}
-.media-bg video,.media-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s}
-.media-bg .active{opacity:1;z-index:2}
-.media-bg .fallback{
-  position:absolute;inset:0;z-index:1;opacity:1;
+#telaPrincipal{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;
+  transition:background .6s ease}
+#telaPrincipal.oculta{opacity:0;visibility:hidden;pointer-events:none}
+
+.media-container{position:absolute;inset:0;z-index:0;background:#000;overflow:hidden}
+.media-container video,.media-container img{position:absolute;inset:0;
+  width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
+.media-container .active{opacity:1;z-index:3}
+.media-container .inactive{opacity:0;z-index:2}
+.media-fallback-visual{position:absolute;inset:0;z-index:1;
   background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a);
   background-size:400% 400%;animation:gradientMove 15s ease infinite;
-}
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Audiowide',sans-serif;font-size:1.5rem;
+  color:rgba(255,255,255,.1);letter-spacing:8px}
 @keyframes gradientMove{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 
 /* ═══ TOPO ═══ */
-.info-topo{
-  position:fixed;top:0;left:0;right:0;z-index:30;
-  padding-top:max(10px,var(--safe-top));padding-bottom:12px;
-  background:linear-gradient(180deg,rgba(0,0,0,.65),transparent);
-  display:flex;flex-direction:column;gap:4px;
-  transition:opacity .5s,transform .5s;pointer-events:none;
-}
+.info-topo{position:fixed;top:0;left:0;right:0;z-index:35;
+  padding-top:max(10px,var(--safe-top));padding-bottom:14px;
+  background:linear-gradient(180deg,rgba(0,0,0,.6),transparent);
+  display:flex;flex-direction:column;align-items:stretch;gap:6px;
+  transition:opacity .6s ease;pointer-events:none}
 .info-topo > *{pointer-events:auto}
-.info-topo.escondido{opacity:0;transform:translateY(-10px);pointer-events:none}
-.topo-linha{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:32px;gap:8px}
-.timer-topo{font-size:.72rem;font-weight:800;color:#fff;min-width:60px;text-shadow:0 2px 6px rgba(0,0,0,.6)}
-.titulo-topo{
-  font-family:'Audiowide';font-size:1.1rem;font-weight:900;letter-spacing:5px;color:#fff;
-  text-shadow:0 0 12px rgba(255,255,255,.5),0 0 24px var(--cor-3);
-  flex:1;text-align:center;cursor:pointer;
-}
-.menu-btn{
-  background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2);border-radius:50%;
-  color:#fff;width:32px;height:32px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);
-}
-.letreiro-wrap{height:36px;padding:0 16px;overflow:hidden;display:flex;align-items:center;cursor:pointer}
-.letreiro{
-  font-size:.95rem;font-weight:800;color:#fff;white-space:nowrap;
-  animation:scroll 60s linear infinite;text-shadow:0 1px 4px rgba(0,0,0,.7);
-}
-@keyframes scroll{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+.info-topo.escondido{opacity:0;pointer-events:none}
+
+.topo-linha{display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;height:32px;width:100%;gap:8px}
+.timer-texto{font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:800;
+  color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 2px 6px rgba(0,0,0,.6);
+  white-space:nowrap;min-width:70px;flex-shrink:0}
+.titulo-topo{font-family:'Audiowide',sans-serif;font-size:1.15rem;font-weight:900;
+  letter-spacing:5px;color:#fff;
+  text-shadow:0 0 12px rgba(255,255,255,.6),0 0 24px var(--cor-3);
+  cursor:pointer;flex:1;text-align:center;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;transition:transform .2s;padding:4px 0}
+.titulo-topo:active{transform:scale(.94)}
+.menu-btn-limpo{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2);
+  border-radius:50%;color:#fff;font-size:1rem;width:32px;height:32px;cursor:pointer;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .2s,background .2s;backdrop-filter:blur(8px);flex-shrink:0}
+.menu-btn-limpo:active{transform:scale(.88);background:rgba(255,255,255,.2)}
+
+.letreiro-wrap{width:100%;height:40px;padding:0 16px;overflow:hidden;
+  display:flex;align-items:center;cursor:pointer}
+.letreiro{font-size:1.05rem;font-weight:800;color:rgba(255,255,255,.98);
+  white-space:nowrap;animation:scrollText 70s linear infinite;
+  text-shadow:0 1px 6px rgba(0,0,0,.7);flex:1;overflow:hidden;letter-spacing:.02em}
+@keyframes scrollText{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+.letreiro b{color:#fff;font-weight:900}
+.letreiro i{font-style:normal;color:rgba(255,255,255,.95)}
+
+.corpo-tela{flex:1;position:relative;z-index:1;pointer-events:none}
 
 /* ═══ PAINEL BAIXO ═══ */
-.painel-baixo{
-  position:absolute;left:0;right:0;bottom:80px;z-index:20;
-  padding:16px 20px calc(12px + var(--safe-bottom));
-  background:linear-gradient(180deg,transparent,rgba(0,0,0,.55));
-  text-align:center;display:flex;flex-direction:column;gap:10px;
-  transition:opacity .5s,transform .5s;pointer-events:none;
-}
+.painel-baixo{position:relative;z-index:20;
+  padding:20px 22px calc(20px + var(--safe-bottom));
+  background:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.45) 100%);
+  text-align:center;display:flex;flex-direction:column;gap:12px;
+  transition:opacity .8s ease,transform .8s ease;pointer-events:none}
 .painel-baixo > *{pointer-events:auto}
-.painel-baixo.escondido{opacity:0;transform:translateY(20px);pointer-events:none}
+.painel-baixo.escondido{opacity:0;transform:translateY(30px);pointer-events:none}
 
-.btn-coracao{
-  background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
-  border-radius:50%;width:44px;height:44px;color:#fff;font-size:1.3rem;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  margin:0 auto;backdrop-filter:blur(6px);transition:transform .2s,background .2s;
-}
-.btn-coracao:active{transform:scale(.88)}
-.btn-coracao.ativo{color:#f472b6;background:rgba(244,114,182,.25);border-color:#f472b6}
+.btn-coracao-topo{background:rgba(255,255,255,.15);
+  border:1.5px solid rgba(255,255,255,.3);border-radius:50%;
+  width:46px;height:46px;color:#fff;font-size:1.35rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;margin:0 auto;
+  transition:transform .2s,background .2s,color .25s,border-color .25s;
+  backdrop-filter:blur(6px)}
+.btn-coracao-topo:active{transform:scale(.85);background:rgba(255,255,255,.25)}
+.btn-coracao-topo.ativo{color:#f472b6;background:rgba(244,114,182,.25);
+  border-color:#f472b6;animation:heartBeat 1.4s ease-in-out infinite}
+@keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 
-.label-musica{font-size:.62rem;font-weight:800;letter-spacing:4px;color:rgba(255,255,255,.7);text-transform:uppercase}
-.label-musica.fav{color:#ffb0d0}
-.nome-musica{
-  font-size:1.05rem;font-weight:800;color:#fff;
-  text-shadow:0 2px 10px rgba(0,0,0,.5);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 8px;
-}
-.artista-musica{
-  font-size:.7rem;font-weight:600;color:rgba(255,255,255,.85);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.controles{display:flex;justify-content:center;align-items:center;gap:28px;margin-top:4px}
-.ctrl-btn{
-  background:transparent;border:none;color:#fff;font-size:1.5rem;cursor:pointer;padding:8px;
-  filter:drop-shadow(0 3px 10px rgba(0,0,0,.7));transition:transform .15s;
-}
-.ctrl-btn:active{transform:scale(.85)}
-.play-big{font-size:1.9rem}
-.play-big.loading i{animation:spin 1s linear infinite}
-@keyframes spin{100%{transform:rotate(360deg)}}
+.glass-musica-label{font-size:.65rem;font-weight:800;letter-spacing:4px;
+  color:rgba(255,255,255,.7);text-transform:uppercase;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.glass-musica-label.favorita{color:#ffb0d0}
+.glass-musica-nome{font-family:'Rajdhani',sans-serif;font-size:1.1rem;
+  font-weight:800;color:#fff;line-height:1.2;text-shadow:0 2px 10px rgba(0,0,0,.5);
+  word-break:break-word;padding:0 8px;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:100%}
+.glass-musica-artista{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.85);
+  text-shadow:0 2px 6px rgba(0,0,0,.4);white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;padding:0 8px}
 
-.progresso{padding:4px 4px 0}
-.tempo{display:flex;justify-content:space-between;font-size:.66rem;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:6px}
-.progress-bar{height:4px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden;cursor:pointer;touch-action:none}
-.progress-fill{height:100%;width:0;background:#fff;border-radius:4px;transition:width .2s linear}
+.glass-controles{display:flex;justify-content:center;align-items:center;gap:32px;margin-top:6px}
+.ctrl-btn{background:transparent;border:none;color:#fff;font-size:1.6rem;
+  cursor:pointer;padding:8px;display:flex;align-items:center;justify-content:center;
+  transition:transform .15s,opacity .15s;
+  filter:drop-shadow(0 3px 10px rgba(0,0,0,.7))}
+.ctrl-btn:active{transform:scale(.85);opacity:.7}
+.play-big{background:transparent;color:#fff;font-size:2rem;width:auto;height:auto;padding:8px}
+.play-big:active{transform:scale(.85);opacity:.7}
+.play-big.loading i{animation:spinSlow 1s linear infinite}
+@keyframes spinSlow{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+.glass-progresso{padding:6px 4px 0}
+.progress-time{display:flex;justify-content:space-between;font-size:.68rem;
+  font-weight:700;color:rgba(255,255,255,.85);font-variant-numeric:tabular-nums;
+  margin-bottom:6px;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.progress-bar{height:4px;background:rgba(0,0,0,.3);border-radius:4px;
+  overflow:hidden;cursor:pointer;touch-action:none;transition:height .15s}
+.progress-bar:hover{height:6px}
+.progress-fill{height:100%;width:0%;background:#fff;border-radius:4px;
+  transition:width .2s linear;pointer-events:none}
 
 /* ═══ BARRA INFERIOR VIDRO ═══ */
 .barra-inferior{
-  position:fixed;left:12px;right:12px;bottom:calc(12px + var(--safe-bottom));z-index:25;
+  position:fixed;left:12px;right:12px;
+  bottom:calc(12px + var(--safe-bottom));z-index:25;
   display:flex;align-items:center;justify-content:space-around;gap:6px;
   padding:8px 10px;
   background:rgba(15,20,35,.55);
@@ -140,229 +177,410 @@ html,body{height:100dvh;width:100%;background:#000;overflow:hidden;position:fixe
   -webkit-backdrop-filter:blur(20px) saturate(180%);
   border:1px solid rgba(255,255,255,.15);
   border-radius:22px;
-  box-shadow:0 8px 32px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1);
+  box-shadow:0 8px 32px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);
   transition:opacity .5s,transform .5s;
 }
 .barra-inferior.escondida{opacity:0;transform:translateY(20px);pointer-events:none}
-.barra-btn{
-  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+.barra-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
   padding:8px 4px;background:transparent;border:none;color:#fff;
   font-size:.6rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
-  cursor:pointer;border-radius:14px;transition:background .2s,transform .15s;
-  position:relative;
-}
+  cursor:pointer;border-radius:14px;transition:background .2s,transform .15s;position:relative}
 .barra-btn:active{transform:scale(.92);background:rgba(255,255,255,.12)}
 .barra-btn i{font-size:1.15rem}
 .barra-btn.fav i{color:#f472b6}
-.badge{
-  position:absolute;top:2px;right:8px;
-  background:#f472b6;color:#fff;font-size:.55rem;font-weight:900;
-  padding:1px 5px;border-radius:8px;min-width:16px;text-align:center;
-}
+.badge{position:absolute;top:2px;right:8px;background:#f472b6;color:#fff;
+  font-size:.55rem;font-weight:900;padding:1px 5px;border-radius:8px;
+  min-width:16px;text-align:center}
 
-/* ═══ ANÚNCIOS (SEM BOTÕES) ═══ */
-#telaAnuncios{
-  position:fixed;inset:0;z-index:8;background:#000;
-  opacity:0;visibility:hidden;transition:opacity .6s;
-}
-#telaAnuncios.ativa{opacity:1;visibility:visible}
+/* ═══ ANÚNCIOS ═══ */
+#telaAnuncios{position:fixed;inset:0;z-index:8;background:#000;
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s ease}
+#telaAnuncios.ativa{opacity:1;visibility:visible;pointer-events:auto}
 .media-anuncios{position:absolute;inset:0;overflow:hidden}
-.media-anuncios video,.media-anuncios img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s}
-.media-anuncios .active{opacity:1}
+.media-anuncios video,.media-anuncios img{position:absolute;inset:0;
+  width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
+.media-anuncios .active{opacity:1;z-index:3}
 
-/* ═══ MENU "+" EM ABAS (E3) ═══ */
-.fab-container{
-  position:fixed;bottom:calc(90px + var(--safe-bottom));right:16px;z-index:50;
-  display:flex;flex-direction:column;align-items:flex-end;gap:8px;
-  transition:opacity .5s;
-}
+/* ═══ FAB MENU EM ABAS ═══ */
+.fab-container{position:fixed;bottom:calc(90px + var(--safe-bottom));right:16px;
+  z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:8px;
+  transition:opacity .5s}
 .fab-container.escondido{opacity:0;pointer-events:none}
-.fab-main{
-  background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
+.fab-main{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
   border:none;border-radius:50%;color:#fff;font-size:1.3rem;
-  width:48px;height:48px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 6px 20px rgba(0,0,0,.5);transition:transform .2s;
-}
+  width:48px;height:48px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(0,0,0,.5);transition:transform .2s}
 .fab-main:active{transform:scale(.9)}
 .fab-main i{transition:transform .3s}
 .fab-main.open i{transform:rotate(45deg)}
 
-.fab-menu{
-  background:rgba(15,20,35,.97);
-  backdrop-filter:blur(30px);
-  border-radius:20px;padding:10px;display:none;
-  flex-direction:column;gap:8px;
-  border:1px solid rgba(255,255,255,.15);
-  min-width:240px;
-  box-shadow:0 12px 40px rgba(0,0,0,.85);
-  animation:fadeInUp .3s;
-}
+.fab-menu{background:rgba(15,20,35,.97);
+  backdrop-filter:blur(30px);border-radius:20px;padding:10px;display:none;
+  flex-direction:column;gap:8px;border:1px solid rgba(255,255,255,.15);
+  min-width:240px;box-shadow:0 12px 40px rgba(0,0,0,.85);
+  animation:fadeInUp .3s}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .fab-menu.open{display:flex}
 
-.fab-aba{
-  background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:14px;padding:14px 16px;color:#fff;
-  font-size:.85rem;font-weight:800;letter-spacing:1px;
+.fab-aba{background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.1);border-radius:14px;
+  padding:14px 16px;color:#fff;font-size:.85rem;font-weight:800;letter-spacing:1px;
   cursor:pointer;display:flex;align-items:center;gap:12px;
-  transition:background .2s,transform .15s;text-align:left;
-}
+  transition:background .2s,transform .15s;text-align:left}
 .fab-aba:active{transform:scale(.97);background:rgba(255,255,255,.12)}
-.fab-aba i.aba-icon{
-  width:36px;height:36px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1rem;flex-shrink:0;
-}
+.fab-aba i.aba-icon{width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 .fab-aba .aba-arrow{margin-left:auto;opacity:.5;font-size:.8rem}
 .aba-repro i.aba-icon{background:linear-gradient(135deg,#f59e0b,#f97316)}
 .aba-off i.aba-icon{background:linear-gradient(135deg,#10b981,#059669)}
 .aba-app i.aba-icon{background:linear-gradient(135deg,#3b82f6,#2563eb)}
 .aba-conta i.aba-icon{background:linear-gradient(135deg,#8b5cf6,#7c3aed)}
 
-.fab-submenu{display:none;flex-direction:column;gap:4px;padding:4px 0;animation:fadeInUp .25s}
+.fab-submenu{display:none;flex-direction:column;gap:4px;padding:4px 0;
+  animation:fadeInUp .25s}
 .fab-submenu.open{display:flex}
-.fab-sub-btn{
-  background:transparent;border:none;color:#e8e4f5;
-  padding:11px 14px;border-radius:10px;
-  font-size:.82rem;font-weight:700;cursor:pointer;
-  display:flex;align-items:center;gap:12px;text-align:left;
-}
+.fab-sub-btn{background:transparent;border:none;color:#e8e4f5;
+  padding:11px 14px;border-radius:10px;font-size:.82rem;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left}
 .fab-sub-btn:active{background:rgba(255,255,255,.1)}
 .fab-sub-btn i{width:20px;text-align:center;font-size:.95rem}
-.fab-voltar{
-  background:rgba(255,255,255,.06);border:none;color:#aaa;
+.fab-voltar{background:rgba(255,255,255,.06);border:none;color:#aaa;
   padding:8px 14px;border-radius:10px;font-size:.75rem;font-weight:800;
-  cursor:pointer;display:flex;align-items:center;gap:8px;justify-content:center;
-  margin-top:4px;
-}
+  cursor:pointer;display:flex;align-items:center;gap:8px;justify-content:center;margin-top:4px}
 
 /* ═══ MODAIS ═══ */
-.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.9);backdrop-filter:blur(20px);
-  display:none;align-items:center;justify-content:center;padding:20px}
+.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.9);
+  backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:20px}
 .modal.open{display:flex}
-.modal-box{
-  background:linear-gradient(145deg,rgba(20,25,40,.98),rgba(10,15,30,.98));
-  border-radius:24px;padding:20px;width:100%;max-width:460px;
-  max-height:85vh;overflow:hidden;display:flex;flex-direction:column;gap:12px;
-  border:1px solid rgba(255,255,255,.15);
-}
-.modal-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1)}
-.modal-header .titulo{font-family:'Audiowide';font-size:.95rem;color:#fff;letter-spacing:3px}
-.modal-header .fechar{background:transparent;border:none;color:#aaa;font-size:1.2rem;cursor:pointer}
+.modal-box{background:linear-gradient(145deg,rgba(20,25,40,.98),rgba(10,15,30,.98));
+  border-radius:24px;padding:20px;width:100%;max-width:460px;max-height:85vh;
+  overflow:hidden;display:flex;flex-direction:column;gap:12px;
+  border:1px solid rgba(255,255,255,.15)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1)}
+.modal-header .titulo{font-family:'Audiowide',sans-serif;font-size:.95rem;
+  color:#fff;letter-spacing:3px}
+.modal-header .fechar{background:transparent;border:none;color:#aaa;
+  font-size:1.2rem;cursor:pointer}
 
-.search-input{
-  width:100%;padding:14px 18px;border-radius:30px;
+.search-input{width:100%;padding:14px 18px;border-radius:30px;
   border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);
-  color:#fff;font-size:.95rem;outline:none;
-}
+  color:#fff;font-size:.95rem;outline:none}
 .search-input:focus{border-color:var(--cor-3);box-shadow:0 0 20px rgba(59,130,246,.4)}
 .search-filters{display:flex;gap:8px}
-.search-filters select{
-  flex:1;padding:11px 14px;border-radius:14px;
+.search-filters select{flex:1;padding:11px 14px;border-radius:14px;
   border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);
-  color:#fff;font-size:.8rem;font-weight:700;outline:none;cursor:pointer;
-}
+  color:#fff;font-size:.8rem;font-weight:700;outline:none;cursor:pointer}
 .search-filters select option{background:#1a1a2e;color:#fff}
-.search-count{font-size:.72rem;color:rgba(255,255,255,.6);font-weight:700;text-align:center}
-.search-results{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;max-height:45vh}
-.result-item{
-  padding:11px 14px;border-radius:14px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  display:flex;align-items:center;gap:10px;cursor:pointer;
-}
+.search-count{font-size:.72rem;color:rgba(255,255,255,.6);
+  font-weight:700;text-align:center}
+.search-results{flex:1;overflow-y:auto;display:flex;flex-direction:column;
+  gap:6px;max-height:45vh}
+.result-item{padding:11px 14px;border-radius:14px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;
+  gap:10px;cursor:pointer}
 .result-item:active{background:rgba(255,255,255,.12)}
-.result-item .icon{
-  width:36px;height:36px;border-radius:50%;
+.result-item .icon{width:36px;height:36px;border-radius:50%;
   background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
-  display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#fff;
-  flex-shrink:0;
-}
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;color:#fff;flex-shrink:0}
 .result-item .info{flex:1;min-width:0;overflow:hidden}
 .result-item .title{color:#fff;font-weight:700;font-size:.88rem;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .result-item .artist{color:rgba(255,255,255,.6);font-size:.72rem;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
-.result-item .genero{
-  font-size:.62rem;color:var(--cor-3);font-weight:800;
-  padding:4px 9px;background:rgba(59,130,246,.15);border-radius:10px;flex-shrink:0;
-}
+.result-item .genero{font-size:.62rem;color:var(--cor-3);font-weight:800;
+  padding:4px 9px;background:rgba(59,130,246,.15);border-radius:10px;flex-shrink:0}
 
-/* ═══ GÊNEROS COM BAIXAR (D2) ═══ */
-.genres-grid{display:grid;grid-template-columns:1fr;gap:10px;flex:1;overflow-y:auto;padding-right:4px}
-.genre-card{
-  position:relative;border-radius:16px;overflow:hidden;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-  display:flex;flex-direction:column;
+/* ═══ GÊNEROS ═══ */
+.genres-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:10px;flex:1;overflow-y:auto;padding:4px;max-height:55vh;
 }
-.genre-top{
-  padding:14px 16px 12px 22px;display:flex;align-items:center;
-  cursor:pointer;position:relative;transition:background .15s;
-}
-.genre-top:active{background:rgba(255,255,255,.08)}
-.genre-top::before{
-  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
-  width:4px;height:55%;background:var(--c1,var(--cor-3));
-  border-radius:0 4px 4px 0;box-shadow:0 0 10px var(--c1,var(--cor-3));
-}
-.genre-name{font-size:1.05rem;font-weight:900;letter-spacing:.02em;text-transform:uppercase;color:#fff}
-.genre-status{position:absolute;top:8px;right:12px;font-size:.75rem}
-.genre-footer{
-  border-top:1px solid rgba(255,255,255,.08);
-  padding:9px 14px;display:flex;align-items:center;justify-content:center;gap:8px;
-  background:rgba(0,0,0,.2);cursor:pointer;
-  font-size:.75rem;font-weight:800;color:#fbbf24;
-  transition:background .15s;
-}
-.genre-footer:active{background:rgba(251,191,36,.1)}
-.genre-footer.offline{color:#10b981}
-.genre-footer.remover{color:#ef4444}
-.genre-footer.baixando{color:#3b82f6}
+.genre-card{position:relative;min-height:72px;border-radius:16px;
+  cursor:pointer;padding:16px 12px 16px 18px;display:flex;flex-direction:column;
+  justify-content:center;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);text-align:left;width:100%;
+  overflow:hidden;transition:transform .15s,background .15s}
+.genre-card::before{content:'';position:absolute;left:0;top:50%;
+  transform:translateY(-50%);width:4px;height:55%;
+  background:var(--c1,var(--cor-3));border-radius:0 4px 4px 0;
+  box-shadow:0 0 10px var(--c1,var(--cor-3))}
+.genre-card:active{transform:scale(.96);background:rgba(255,255,255,.1)}
+.genre-card .genre-name{font-size:1rem;font-weight:900;letter-spacing:.02em;
+  text-transform:uppercase;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.4);line-height:1.15}
+.genre-card.offline::after{content:'✓';position:absolute;top:6px;right:8px;
+  background:#10b981;color:#fff;width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:900}
+.genre-card.baixando::after{content:'⏳';position:absolute;top:6px;right:8px;
+  font-size:1rem;animation:pulseLogo 1s ease-in-out infinite}
+.genre-card .genre-baixar{position:absolute;bottom:6px;right:6px;
+  background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.4);
+  color:#fbbf24;font-size:.6rem;font-weight:800;padding:3px 7px;
+  border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:4px;
+  opacity:.7;transition:opacity .2s,background .2s}
+.genre-card .genre-baixar:active{background:rgba(251,191,36,.3);opacity:1}
+.genre-card .genre-baixar.remover{background:rgba(239,68,68,.15);
+  border-color:rgba(239,68,68,.4);color:#ef4444}
+.genre-card .genre-baixar i{font-size:.65rem}
 
 /* ═══ FAVORITAS ═══ */
 .fav-list{display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:50vh}
-.fav-item{
-  padding:11px 14px;border-radius:14px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-}
+.fav-item{padding:11px 14px;border-radius:14px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;
+  justify-content:space-between;gap:10px}
 .fav-item .info{flex:1;min-width:0}
 .fav-item .title{color:#fff;font-weight:700;font-size:.88rem;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .fav-item .artist{color:rgba(255,255,255,.55);font-size:.72rem;display:block}
-.fav-item .remove{background:transparent;border:none;color:#f472b6;font-size:1.1rem;cursor:pointer}
+.fav-item .remove{background:transparent;border:none;color:#f472b6;
+  font-size:1.1rem;cursor:pointer}
 
-/* ═══ DOWNLOAD MODAL ═══ */
-.dl-bar{height:10px;background:rgba(0,0,0,.55);border-radius:10px;overflow:hidden;margin:12px 0}
-.dl-fill{height:100%;width:0;background:linear-gradient(90deg,var(--cor-1),var(--cor-3));
+/* ═══ DOWNLOAD ═══ */
+.dl-bar{height:10px;background:rgba(0,0,0,.55);border-radius:10px;
+  overflow:hidden;margin:12px 0}
+.dl-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--cor-1),var(--cor-3));
   border-radius:10px;transition:width .3s}
-.dl-info{display:flex;justify-content:space-between;font-size:.78rem;color:rgba(255,255,255,.7);margin-bottom:12px}
+.dl-info{display:flex;justify-content:space-between;font-size:.78rem;
+  color:rgba(255,255,255,.7);margin-bottom:12px}
 
 /* ═══ NOTIFICAÇÃO ═══ */
-.notif{
-  position:fixed;top:calc(100px + var(--safe-top));left:50%;transform:translateX(-50%);
-  background:rgba(15,20,30,.95);backdrop-filter:blur(20px);color:#fff;
-  padding:10px 18px;border-radius:20px;font-size:.78rem;font-weight:700;
-  z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;
-  border:1px solid rgba(255,255,255,.15);max-width:calc(100vw - 40px);text-align:center;
-}
+.notif{position:fixed;top:calc(100px + var(--safe-top));left:50%;
+  transform:translateX(-50%);background:rgba(15,20,30,.95);
+  backdrop-filter:blur(20px);color:#fff;padding:10px 18px;border-radius:20px;
+  font-size:.78rem;font-weight:700;z-index:9999;opacity:0;transition:opacity .3s;
+  pointer-events:none;border:1px solid rgba(255,255,255,.15);
+  max-width:calc(100vw - 40px);text-align:center}
 .notif.show{opacity:1}
 
-/* ═══ FALLBACK MÍDIA ═══ */
-.media-fallback{
-  position:absolute;inset:0;z-index:1;
-  background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a);
-  background-size:400% 400%;animation:gradientMove 15s ease infinite;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Audiowide';font-size:1.8rem;color:rgba(255,255,255,.15);
-  letter-spacing:10px;
+/* ═══ BLOQUEIO ═══ */
+#blockOverlay{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:10000;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;text-align:center}
+#blockOverlay.active{display:flex}
+.block-content{max-width:420px;width:100%}
+.block-content h1{color:#fff;font-size:2rem;margin-bottom:8px;font-weight:900;
+  font-family:'Audiowide',sans-serif}
+.block-content .sub{color:rgba(255,255,255,.7);font-size:1rem;
+  font-weight:700;margin-bottom:16px}
+.block-content input{width:100%;padding:14px 18px;border-radius:30px;
+  border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);
+  color:#fff;font-size:1rem;text-align:center;margin-bottom:12px;outline:none}
+.btn-liberar{width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
+  border:none;border-radius:25px;color:#fff;font-weight:900;
+  font-size:1rem;cursor:pointer}
+.erro{color:#ec4899;font-size:.85rem;min-height:30px;padding:6px 0;font-weight:700}
+.btn-whats-block{background:#25d366;border:none;padding:14px;
+  border-radius:25px;color:#fff;font-weight:900;font-size:.9rem;
+  cursor:pointer;width:100%;margin-top:10px;display:flex;
+  align-items:center;justify-content:center;gap:8px}
+.fingerprint-area{display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.06);padding:10px;border-radius:12px;margin-top:12px}
+.fp-text{color:rgba(255,255,255,.6);font-size:.62rem;word-break:break-all;
+  font-family:monospace;flex:1}
+.btn-copiar-fp{background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.15);color:#fff;padding:8px 14px;
+  border-radius:12px;font-size:.65rem;cursor:pointer;font-weight:700}
+
+/* ═══ ADMIN ═══ */
+#adminPanel{display:none;position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);background:rgba(10,10,10,.98);
+  border-radius:20px;padding:20px;z-index:99999;width:92%;max-width:460px;
+  border:2px solid #fbbf24;max-height:90vh;overflow-y:auto}
+#adminPanel.open{display:block}
+#adminPanel h2{text-align:center;font-size:1.15rem;color:#fbbf24;
+  margin-bottom:12px;font-weight:900}
+#adminPanel input{width:100%;padding:12px;border-radius:25px;
+  border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);
+  color:#fff;font-size:.85rem;font-family:monospace;outline:none;margin-top:6px}
+#adminPanel .row-btns{display:flex;gap:6px;margin:12px 0}
+#adminPanel .row-btns button{flex:1;padding:12px;border-radius:20px;
+  border:none;font-weight:900;cursor:pointer;font-size:.82rem}
+.btn-gerar{background:#fbbf24;color:#000}
+.btn-universal{background:#00b894;color:#fff}
+.btn-limpar{background:rgba(255,255,255,.06);color:#aaa}
+#adminPanel .senha-box{background:rgba(255,255,255,.05);
+  border-radius:12px;padding:10px;margin:10px 0}
+#adminPanel .senha-box label{font-size:.7rem;color:#aaa;font-weight:700}
+#adminPanel .row{display:flex;gap:6px;margin-top:6px}
+#adminPanel .btn-copiar{background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px;
+  border-radius:20px;cursor:pointer;font-size:.72rem;font-weight:700}
+
+/* ═══ DIALOG ═══ */
+.vdb-dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);
+  backdrop-filter:blur(14px);z-index:100004;display:none;
+  align-items:center;justify-content:center;padding:20px}
+.vdb-dialog-overlay.active{display:flex}
+.vdb-dialog{background:rgba(15,15,25,.98);border-radius:24px;
+  padding:24px 20px;max-width:400px;width:100%;
+  border:1px solid rgba(255,255,255,.15)}
+.vdb-dialog h3{color:#fff;font-family:'Audiowide',sans-serif;
+  font-size:1.05rem;text-align:center;margin-bottom:12px;font-weight:900}
+.vdb-dialog p{color:rgba(255,255,255,.7);font-size:.85rem;
+  text-align:center;margin-bottom:14px;font-weight:600}
+.vdb-dialog input{width:100%;padding:14px;border-radius:30px;
+  border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);
+  color:#fff;font-size:.95rem;text-align:center;outline:none;margin-bottom:14px}
+.vdb-dialog .btns{display:flex;gap:8px}
+.vdb-dialog .btns button{flex:1;padding:13px;border-radius:25px;
+  border:none;font-weight:900;font-size:.88rem;cursor:pointer}
+.vdb-dialog .btn-ok{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));color:#fff}
+.vdb-dialog .btn-cancel{background:rgba(255,255,255,.08);color:#ccc}
+
+/* ═══ MENU POPUP ═══ */
+.menu-popup{position:fixed;top:calc(20px + var(--safe-top));right:12px;
+  background:rgba(15,15,25,.96);
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  border-radius:24px;padding:14px;z-index:60;display:none;
+  flex-direction:column;gap:10px;border:1px solid rgba(255,255,255,.15);
+  min-width:280px;max-width:calc(100vw - 24px);
+  box-shadow:0 20px 60px rgba(0,0,0,.8);max-height:80vh;overflow-y:auto}
+.menu-popup.open{display:flex}
+.menu-header{display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1)}
+.menu-header .titulo{font-family:'Audiowide',sans-serif;font-size:.85rem;
+  color:#fff;letter-spacing:2px;font-weight:900}
+.menu-header .fechar{background:transparent;border:none;
+  color:rgba(255,255,255,.5);font-size:1.05rem;cursor:pointer;padding:4px 8px}
+.menu-btn-grande{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
+  border:none;border-radius:16px;padding:14px 18px;color:#fff;
+  font-family:'Audiowide',sans-serif;font-size:.9rem;font-weight:900;
+  letter-spacing:3px;cursor:pointer;display:flex;align-items:center;
+  justify-content:space-between;box-shadow:0 4px 18px rgba(0,0,0,.4)}
+.menu-submenu{display:none;flex-direction:column;gap:6px;
+  max-height:60vh;overflow-y:auto;padding:4px 0}
+.menu-submenu.open{display:flex}
+.menu-categoria{font-size:.6rem;color:rgba(255,255,255,.4);
+  letter-spacing:.15em;text-transform:uppercase;padding:8px 10px 2px;font-weight:700}
+.menu-item{background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);border-radius:12px;
+  padding:12px 14px;color:#e8e4f5;font-size:.82rem;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left}
+.menu-item:active{background:rgba(255,255,255,.1)}
+.menu-item i{width:20px;text-align:center;font-size:.9rem;color:var(--cor-3)}
+
+/* ═══ INSTALAR ═══ */
+#btnInstalarFixo{position:fixed;bottom:calc(130px + var(--safe-bottom));
+  right:22px;z-index:999999;
+  background:linear-gradient(135deg,var(--cor-1),var(--cor-3));color:#fff;
+  border:none;border-radius:32px;padding:13px 22px;font-weight:900;
+  font-size:.78rem;letter-spacing:.05em;cursor:pointer;display:none;
+  align-items:center;gap:8px;text-transform:uppercase;
+  box-shadow:0 8px 24px rgba(0,0,0,.5)}
+#btnInstalarFixo:active{transform:scale(.95)}
+#instrucoesInstalar{position:fixed;inset:0;background:rgba(0,0,0,.97);
+  z-index:1000002;display:none;align-items:center;justify-content:center;padding:20px}
+#instrucoesInstalar.active{display:flex}
+.instrucoes-box{background:#111;border-radius:24px;padding:24px 20px;
+  max-width:400px;width:100%;text-align:center;border:1px solid rgba(255,255,255,.15)}
+.passo{background:rgba(255,255,255,.06);border-radius:14px;
+  padding:14px;margin-bottom:10px;text-align:left;display:flex;
+  align-items:center;gap:12px}
+.passo .num{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
+  color:#fff;width:30px;height:30px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-weight:900;
+  font-size:.85rem;flex-shrink:0}
+.passo div{color:#fff;font-weight:600;font-size:.82rem}
+.btn-fechar-inst{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
+  border:none;padding:14px;border-radius:25px;color:#fff;font-weight:900;
+  font-size:.9rem;cursor:pointer;width:100%;margin-top:12px;letter-spacing:2px}
+
+/* ═══ PROPAGANDA ═══ */
+.banner-propaganda-full{position:fixed;inset:0;z-index:100005;background:#000;
+  display:none;align-items:center;justify-content:center;padding:24px;
+  opacity:0;transition:opacity .5s;overflow-y:auto}
+.banner-propaganda-full.visivel{display:flex;opacity:1}
+.prop-full-content{position:relative;text-align:center;max-width:360px;width:100%}
+.prop-full-fechar{position:fixed;top:20px;right:20px;width:44px;height:44px;
+  border-radius:50%;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.2);color:#fff;font-size:1.15rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
+.prop-full-logo{width:90px;height:90px;margin:0 auto 18px;border-radius:50%;
+  padding:4px;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
+  display:flex;align-items:center;justify-content:center;font-size:2.2rem;
+  box-shadow:0 10px 40px rgba(0,0,0,.6)}
+.prop-full-titulo{font-family:'Audiowide',sans-serif;font-size:1.6rem;
+  letter-spacing:5px;color:#fff;font-weight:900;margin-bottom:6px}
+.prop-full-sub{color:rgba(255,255,255,.7);letter-spacing:5px;
+  margin-bottom:24px;font-weight:800;font-size:.85rem}
+.prop-full-preco{background:linear-gradient(135deg,#fbbf24,#f59e0b);
+  border-radius:20px;padding:18px 28px;margin-bottom:24px}
+.prop-full-preco-valor{font-family:'Audiowide',sans-serif;font-size:2.5rem;
+  color:#000;font-weight:900}
+.prop-full-preco-label{font-size:.72rem;color:#000;font-weight:800;
+  letter-spacing:2px;margin-top:4px}
+.prop-full-beneficio{display:flex;align-items:center;justify-content:center;
+  gap:8px;padding:10px 14px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#fff;
+  font-weight:700;margin-bottom:8px;font-size:.82rem}
+.prop-full-cta{background:#25d366;border:none;border-radius:40px;
+  padding:18px 32px;width:100%;font-family:'Audiowide',sans-serif;
+  font-size:1rem;color:#fff;font-weight:900;letter-spacing:2px;
+  margin-top:16px;cursor:pointer}
+
+/* ═══ BEM-VINDO ═══ */
+.bem-vindo{position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);font-family:'Audiowide',sans-serif;
+  font-size:1.3rem;letter-spacing:5px;color:#fff;
+  text-shadow:0 0 20px rgba(255,255,255,.8),0 0 40px var(--cor-3);
+  z-index:40;pointer-events:none;opacity:0;text-align:center;white-space:nowrap}
+.bem-vindo.show{animation:bemVindoAnim 4s ease-out forwards}
+@keyframes bemVindoAnim{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}
+  20%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}
+  40%,80%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.15)}
 }
 
-@media(max-width:400px){
-  .barra-btn span{font-size:.55rem}
-  .nome-musica{font-size:.95rem}
-  .fab-menu{min-width:200px}
+#avisoFullscreen{position:fixed;bottom:calc(100px + var(--safe-bottom));
+  left:50%;transform:translateX(-50%);background:rgba(0,0,0,.92);color:#fff;
+  padding:12px 18px;border-radius:20px;font-size:.78rem;font-weight:700;
+  z-index:100002;display:none;border:1px solid rgba(255,255,255,.25);
+  max-width:calc(100vw - 40px);text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.6)}
+#avisoFullscreen.visivel{display:block}
+
+#loadingOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
+  z-index:9998;align-items:center;justify-content:center;color:#fff;
+  font-size:2rem;backdrop-filter:blur(10px)}
+#loadingOverlay.active{display:flex}
+#loadingOverlay i{animation:spinSlow 1s linear infinite}
+
+#dicaCliques{position:fixed;top:70px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.85);color:#fbbf24;padding:8px 16px;
+  border-radius:20px;font-size:.72rem;font-weight:800;z-index:99999;
+  border:1px solid #fbbf24;pointer-events:none;letter-spacing:.05em;
+  opacity:0;transition:opacity .3s}
+
+/* ═══ MODO TV ═══ */
+body.modo-tv .info-topo,
+body.modo-tv .painel-baixo,
+body.modo-tv .barra-inferior,
+body.modo-tv .fab-container,
+body.modo-tv .menu-popup{display:none !important}
+#btnSairModoTV{position:fixed;top:calc(20px + var(--safe-top));right:20px;
+  z-index:99999;width:44px;height:44px;background:rgba(0,0,0,.7);
+  border:2px solid rgba(255,255,255,.35);border-radius:50%;color:#fff;
+  font-size:1.2rem;cursor:pointer;display:none;align-items:center;
+  justify-content:center;backdrop-filter:blur(10px)}
+body.modo-tv #btnSairModoTV{display:flex}
+#btnSairModoTV:active{transform:scale(.88);background:rgba(239,68,68,.9)}
+
+@media(max-width:480px){
+  .glass-musica-nome{font-size:1rem}
+  .ctrl-btn{font-size:1.4rem}
+  .play-big{font-size:1.8rem}
+  .titulo-topo{font-size:1rem;letter-spacing:4px}
+  .letreiro{font-size:.95rem}
+  .letreiro-wrap{height:36px}
+  .timer-texto{font-size:.68rem;min-width:60px}
+  .genre-card .genre-name{font-size:.9rem}
+  .genres-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  .barra-btn{font-size:.55rem;padding:6px 2px;gap:2px}
+  .barra-btn i{font-size:1rem}
 }
 </style>
 </head>
@@ -370,126 +588,142 @@ html,body{height:100dvh;width:100%;background:#000;overflow:hidden;position:fixe
 
 <!-- LOADING -->
 <div id="loadingScreen">
-  <div class="loading-logo">🎵</div>
-  <div class="loading-text">VDB</div>
-  <div class="loading-sub">CARREGANDO</div>
-  <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
+  <div class="loading-logo-wrapper"><img src="favicon30.png" alt="VDB" class="loading-logo" onerror="this.style.display='none';this.parentElement.innerHTML='🎵'"></div>
+  <span class="loading-text">VDB</span>
+  <span class="loading-sub">🎵 CARREGANDO 🎵</span>
+  <div class="loading-progress-container"><div class="loading-progress-fill" id="loadingProgressFill"></div></div>
 </div>
 
-<!-- APP -->
-<div id="app">
-  <!-- MÍDIA DE FUNDO -->
-  <div class="media-bg" id="mediaBg">
-    <div class="media-fallback">VDB MUSIC</div>
+<div id="playerContainer">
+  <div id="telaPrincipal">
+    <div class="media-container" id="mediaContainer">
+      <div class="media-fallback-visual">VDB MUSIC</div>
+    </div>
+
+    <div class="info-topo" id="infoTopo">
+      <div class="topo-linha">
+        <span class="timer-texto" id="timerLib">24:00:00</span>
+        <div class="titulo-topo" id="tituloGrande">VDB</div>
+        <button class="menu-btn-limpo" id="menuButton"><i class="fas fa-ellipsis-v"></i></button>
+      </div>
+      <div class="letreiro-wrap" id="letreiroClick">
+        <p class="letreiro" id="scrollText">🎵 VDB MUSIC</p>
+      </div>
+    </div>
+
+    <div class="corpo-tela"></div>
+
+    <div class="painel-baixo" id="bottomControls">
+      <button class="btn-coracao-topo" id="btnCoracaoInfo"><i class="far fa-heart"></i></button>
+      <div class="glass-musica-label" id="labelTocandoAgora">TOCANDO AGORA</div>
+      <div class="glass-musica-nome" id="musicaNome">Escolha um gênero</div>
+      <div class="glass-musica-artista" id="musicaArtista">VDB MUSIC</div>
+      <div class="glass-controles">
+        <button class="ctrl-btn" id="prevBtn"><i class="fas fa-backward-step"></i></button>
+        <button class="ctrl-btn play-big" id="playBtn"><i class="fas fa-play"></i></button>
+        <button class="ctrl-btn" id="nextBtn"><i class="fas fa-forward-step"></i></button>
+      </div>
+      <div class="glass-progresso">
+        <div class="progress-time"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
+        <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </div>
   </div>
 
-  <!-- TOPO -->
-  <div class="info-topo" id="infoTopo">
-    <div class="topo-linha">
-      <span class="timer-topo"><i class="fas fa-clock"></i> VITALÍCIO</span>
-      <div class="titulo-topo" id="tituloTopo">VDB</div>
-      <button class="menu-btn" id="menuBtn" aria-label="Menu"><i class="fas fa-ellipsis-v"></i></button>
+  <!-- ANÚNCIOS -->
+  <div id="telaAnuncios">
+    <div class="media-anuncios" id="mediaAnuncios">
+      <div class="media-fallback-visual">PUBLICIDADE</div>
     </div>
-    <div class="letreiro-wrap" id="letreiroClick">
-      <p class="letreiro" id="letreiro">🎵 VDB MUSIC • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE 🎶</p>
-    </div>
-  </div>
-
-  <!-- PAINEL BAIXO -->
-  <div class="painel-baixo" id="painelBaixo">
-    <button class="btn-coracao" id="btnCoracao" aria-label="Favoritar"><i class="far fa-heart"></i></button>
-    <div class="label-musica" id="labelMusica">TOCANDO AGORA</div>
-    <div class="nome-musica" id="nomeMusica">Escolha um gênero</div>
-    <div class="artista-musica" id="artistaMusica">VDB MUSIC</div>
-    <div class="controles">
-      <button class="ctrl-btn" id="prevBtn" aria-label="Anterior"><i class="fas fa-backward-step"></i></button>
-      <button class="ctrl-btn play-big" id="playBtn" aria-label="Play"><i class="fas fa-play"></i></button>
-      <button class="ctrl-btn" id="nextBtn" aria-label="Próxima"><i class="fas fa-forward-step"></i></button>
-    </div>
-    <div class="progresso">
-      <div class="tempo"><span id="tempoAtual">0:00</span><span id="tempoTotal">0:00</span></div>
-      <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
-    </div>
-  </div>
-
-  <!-- BARRA INFERIOR VIDRO -->
-  <div class="barra-inferior" id="barraInferior">
-    <button class="barra-btn" id="barraBuscar"><i class="fas fa-magnifying-glass"></i><span>Buscar</span></button>
-    <button class="barra-btn fav" id="barraFavoritas">
-      <i class="fas fa-heart"></i><span>Favoritas</span>
-      <span class="badge" id="badgeFav" style="display:none">0</span>
-    </button>
-    <button class="barra-btn" id="barraGeneros"><i class="fas fa-guitar"></i><span>Gêneros</span></button>
-  </div>
-
-  <!-- FAB MENU EM ABAS -->
-  <div class="fab-container" id="fabContainer">
-    <div class="fab-menu" id="fabMenu">
-      <div id="fabAbaPrincipal">
-        <button class="fab-aba aba-repro" data-aba="repro">
-          <i class="fas fa-music aba-icon"></i>
-          <span>Reprodução</span>
-          <i class="fas fa-chevron-right aba-arrow"></i>
-        </button>
-        <button class="fab-aba aba-off" data-aba="off">
-          <i class="fas fa-download aba-icon"></i>
-          <span>Offline</span>
-          <i class="fas fa-chevron-right aba-arrow"></i>
-        </button>
-        <button class="fab-aba aba-app" data-aba="app">
-          <i class="fas fa-mobile-screen aba-icon"></i>
-          <span>App</span>
-          <i class="fas fa-chevron-right aba-arrow"></i>
-        </button>
-        <button class="fab-aba aba-conta" data-aba="conta">
-          <i class="fas fa-user aba-icon"></i>
-          <span>Conta</span>
-          <i class="fas fa-chevron-right aba-arrow"></i>
-        </button>
-      </div>
-
-      <div class="fab-submenu" id="subRepro">
-        <button class="fab-sub-btn" data-action="radio"><i class="fas fa-broadcast-tower" style="color:#f59e0b"></i>Rádio VDB (AO VIVO)</button>
-        <button class="fab-sub-btn" data-action="radiofav"><i class="fas fa-infinity" style="color:#f472b6"></i>Rádio Favoritas</button>
-        <button class="fab-sub-btn" data-action="buscar"><i class="fas fa-search" style="color:#22d3ee"></i>Buscar Música</button>
-        <button class="fab-sub-btn" data-action="generos"><i class="fas fa-guitar" style="color:#22d3ee"></i>Gêneros</button>
-        <button class="fab-sub-btn" data-action="favoritos"><i class="fas fa-heart" style="color:#f472b6"></i>Favoritas</button>
-        <button class="fab-voltar" data-voltar><i class="fas fa-arrow-left"></i> Voltar</button>
-      </div>
-
-      <div class="fab-submenu" id="subOff">
-        <button class="fab-sub-btn" data-action="baixaratual"><i class="fas fa-download" style="color:#f59e0b"></i>Baixar gênero atual</button>
-        <button class="fab-sub-btn" data-action="gerenciaroff"><i class="fas fa-hdd" style="color:#10b981"></i>Gerenciar offline</button>
-        <button class="fab-voltar" data-voltar><i class="fas fa-arrow-left"></i> Voltar</button>
-      </div>
-
-      <div class="fab-submenu" id="subApp">
-        <button class="fab-sub-btn" data-action="temas"><i class="fas fa-palette" style="color:#a855f7"></i>Cores do App</button>
-        <button class="fab-sub-btn" data-action="modotv"><i class="fas fa-tv" style="color:#22d3ee"></i>Modo TV</button>
-        <button class="fab-sub-btn" data-action="instalar"><i class="fas fa-download" style="color:#3b82f6"></i>Instalar App</button>
-        <button class="fab-sub-btn" data-action="share"><i class="fas fa-share-alt" style="color:#22d3ee"></i>Compartilhar</button>
-        <button class="fab-voltar" data-voltar><i class="fas fa-arrow-left"></i> Voltar</button>
-      </div>
-
-      <div class="fab-submenu" id="subConta">
-        <button class="fab-sub-btn" data-action="tutorial"><i class="fas fa-question-circle" style="color:#22d3ee"></i>Como Usar</button>
-        <button class="fab-sub-btn" data-action="cadastro"><i class="fas fa-user" style="color:#8b5cf6"></i>Cadastro</button>
-        <button class="fab-sub-btn" data-action="feedback"><i class="fas fa-star" style="color:#fbbf24"></i>Feedback</button>
-        <button class="fab-voltar" data-voltar><i class="fas fa-arrow-left"></i> Voltar</button>
-      </div>
-    </div>
-    <button class="fab-main" id="fabMain" aria-label="Menu"><i class="fas fa-plus"></i></button>
   </div>
 </div>
 
-<!-- ANÚNCIOS SEM BOTÕES -->
-<div id="telaAnuncios">
-  <div class="media-anuncios" id="mediaAnuncios">
-    <div class="media-fallback">PUBLICIDADE</div>
+<!-- BARRA INFERIOR -->
+<div class="barra-inferior" id="barraInferior">
+  <button class="barra-btn" id="barraBuscar"><i class="fas fa-magnifying-glass"></i><span>Buscar</span></button>
+  <button class="barra-btn fav" id="barraFavoritos">
+    <i class="fas fa-heart"></i><span>Favoritas</span>
+    <span class="badge" id="barraBadgeFav" style="display:none">0</span>
+  </button>
+  <button class="barra-btn" id="barraGeneros"><i class="fas fa-guitar"></i><span>Gêneros</span></button>
+</div>
+
+<!-- FAB MENU -->
+<div class="fab-container" id="fabContainer">
+  <div class="fab-menu" id="fabMenu">
+    <div id="fabAbaPrincipal">
+      <button class="fab-aba aba-repro" data-aba="repro"><i class="fas fa-music aba-icon"></i><span>Reprodução</span><i class="fas fa-chevron-right aba-arrow"></i></button>
+      <button class="fab-aba aba-off" data-aba="off"><i class="fas fa-download aba-icon"></i><span>Offline</span><i class="fas fa-chevron-right aba-arrow"></i></button>
+      <button class="fab-aba aba-app" data-aba="app"><i class="fas fa-mobile-screen aba-icon"></i><span>App</span><i class="fas fa-chevron-right aba-arrow"></i></button>
+      <button class="fab-aba aba-conta" data-aba="conta"><i class="fas fa-user aba-icon"></i><span>Conta</span><i class="fas fa-chevron-right aba-arrow"></i></button>
+    </div>
+    <div class="fab-submenu" id="subRepro">
+      <button class="fab-sub-btn" data-action="radio"><i class="fas fa-broadcast-tower" style="color:#f59e0b"></i>Rádio VDB (AO VIVO)</button>
+      <button class="fab-sub-btn" data-action="radiofav"><i class="fas fa-infinity" style="color:#f472b6"></i>Rádio Favoritas</button>
+      <button class="fab-sub-btn" data-action="buscar"><i class="fas fa-search" style="color:#22d3ee"></i>Buscar Música</button>
+      <button class="fab-sub-btn" data-action="generos"><i class="fas fa-guitar" style="color:#22d3ee"></i>Gêneros</button>
+      <button class="fab-sub-btn" data-action="favoritos"><i class="fas fa-heart" style="color:#f472b6"></i>Favoritas</button>
+      <button class="fab-voltar" data-voltar><i class="fas fa-arrow-left"></i> Voltar</button>
+    </div>
+    <div class="fab-submenu" id="subOff">
+      <button class="fab-sub-btn" data-action="baixaratual"><i class="fas fa-download" style="color:#f59e0b"></i>Baixar gênero atual</button>
+      <button class="fab-sub-btn" data-action="gerenciaroff"><i class="fas fa-hdd" style="color:#10b981"></i>Gerenciar offline</button>
+      <button class="fab-voltar" data-voltar><i class="fas fa-arrow-left"></i> Voltar</button>
+    </div>
+    <div class="fab-submenu" id="subApp">
+      <button class="fab-sub-btn" data-action="temas"><i class="fas fa-palette" style="color:#a855f7"></i>Cores do App</button>
+      <button class="fab-sub-btn" data-action="modotv"><i class="fas fa-tv" style="color:#22d3ee"></i>Modo TV</button>
+      <button class="fab-sub-btn" data-action="fullscreen"><i class="fas fa-expand" style="color:#10b981"></i>Tela Cheia</button>
+      <button class="fab-sub-btn" data-action="instalar"><i class="fas fa-download" style="color:#3b82f6"></i>Instalar App</button>
+      <button class="fab-sub-btn" data-action="atualizarapp"><i class="fas fa-magic" style="color:#fbbf24"></i>🪄 Atualizar App</button>
+      <button class="fab-sub-btn" data-action="share"><i class="fas fa-share-alt" style="color:#22d3ee"></i>Compartilhar</button>
+      <button class="fab-voltar" data-voltar><i class="fas fa-arrow-left"></i> Voltar</button>
+    </div>
+    <div class="fab-submenu" id="subConta">
+      <button class="fab-sub-btn" data-action="liberar"><i class="fas fa-unlock" style="color:#10b981"></i>🔓 Liberar Agora</button>
+      <button class="fab-sub-btn" data-action="tutorial"><i class="fas fa-question-circle" style="color:#22d3ee"></i>Como Usar</button>
+      <button class="fab-sub-btn" data-action="cadastro"><i class="fas fa-user" style="color:#8b5cf6"></i>Cadastro</button>
+      <button class="fab-sub-btn" data-action="feedback"><i class="fas fa-star" style="color:#fbbf24"></i>Feedback</button>
+      <button class="fab-voltar" data-voltar><i class="fas fa-arrow-left"></i> Voltar</button>
+    </div>
+  </div>
+  <button class="fab-main" id="fabMain"><i class="fas fa-plus"></i></button>
+</div>
+
+<!-- MENU POPUP ⋮ -->
+<div class="menu-popup" id="menuPopup">
+  <div class="menu-header">
+    <span class="titulo">⚙️ OPÇÕES</span>
+    <button class="fechar" id="closeMenuBtn"><i class="fas fa-times"></i></button>
+  </div>
+  <button class="menu-btn-grande" id="btnAbrirOpcoes">
+    <span>VER OPÇÕES</span><i class="fas fa-chevron-down"></i>
+  </button>
+  <div class="menu-submenu" id="menuSubmenu">
+    <div class="menu-categoria">🎨 Aparência</div>
+    <button class="menu-item" id="temasMenuBtn"><i class="fas fa-palette"></i><span>Cores do App</span></button>
+    <div class="menu-categoria">🎮 Player</div>
+    <button class="menu-item" id="fullscreenMenuBtn"><i class="fas fa-expand"></i><span>Tela Cheia</span></button>
+    <button class="menu-item" id="speedMenuBtn"><i class="fas fa-tachometer-alt"></i><span>Velocidade</span></button>
+    <button class="menu-item" id="sleepMenuBtn"><i class="fas fa-moon"></i><span>Sleep Timer</span></button>
+    <div class="menu-categoria">📥 Offline</div>
+    <button class="menu-item" id="menuBaixarOffline"><i class="fas fa-download" style="color:#f59e0b"></i><span>Baixar Gênero Atual</span></button>
+    <button class="menu-item" id="menuGerenciarOffline"><i class="fas fa-hdd"></i><span>Gerenciar Offline</span></button>
+    <div class="menu-categoria">👤 Conta</div>
+    <button class="menu-item" id="tutorialMenuBtn"><i class="fas fa-question-circle"></i><span>Como Usar</span></button>
+    <button class="menu-item" id="cadastroMenuBtn"><i class="fas fa-user"></i><span>Cadastro</span></button>
+    <button class="menu-item" id="liberarAgoraBtn"><i class="fas fa-unlock" style="color:#10b981"></i><span>🔓 Liberar Agora</span></button>
+    <div class="menu-categoria">📱 App</div>
+    <button class="menu-item" id="menuInstalarBtn"><i class="fas fa-download"></i><span>Instalar App</span></button>
+    <div class="menu-categoria">🔄 Atualizações</div>
+    <button class="menu-item" id="reloadPlaylistBtn"><i class="fas fa-sync"></i><span>Recarregar</span></button>
+    <button class="menu-item" id="forceUpdateBtn"><i class="fas fa-sync-alt"></i><span>Atualizar Mídias</span></button>
+    <button class="menu-item" id="magicUpdateMenuBtn"><i class="fas fa-magic" style="color:#fbbf24"></i><span>🪄 Atualizar App</span></button>
+    <button class="menu-item" id="hardReloadBtn"><i class="fas fa-redo"></i><span>Forçar Recarregar</span></button>
   </div>
 </div>
 
-<!-- MODAL BUSCA -->
+<!-- MODAIS -->
 <div class="modal" id="modalBusca">
   <div class="modal-box">
     <div class="modal-header">
@@ -510,7 +744,6 @@ html,body{height:100dvh;width:100%;background:#000;overflow:hidden;position:fixe
   </div>
 </div>
 
-<!-- MODAL FAVORITAS -->
 <div class="modal" id="modalFavoritas">
   <div class="modal-box">
     <div class="modal-header">
@@ -521,7 +754,6 @@ html,body{height:100dvh;width:100%;background:#000;overflow:hidden;position:fixe
   </div>
 </div>
 
-<!-- MODAL GÊNEROS (D2) -->
 <div class="modal" id="modalGeneros">
   <div class="modal-box">
     <div class="modal-header">
@@ -532,7 +764,6 @@ html,body{height:100dvh;width:100%;background:#000;overflow:hidden;position:fixe
   </div>
 </div>
 
-<!-- MODAL DOWNLOAD -->
 <div class="modal" id="modalDownload">
   <div class="modal-box" style="max-width:400px">
     <div class="modal-header">
@@ -546,10 +777,109 @@ html,body{height:100dvh;width:100%;background:#000;overflow:hidden;position:fixe
   </div>
 </div>
 
-<!-- NOTIFICAÇÃO -->
-<div class="notif" id="notif"></div>
+<!-- BLOQUEIO -->
+<div id="blockOverlay">
+  <div class="block-content">
+    <img src="favicon30.png" alt="VDB" style="width:80px;border-radius:50%;margin-bottom:10px" onerror="this.style.display='none'">
+    <h1>VDB</h1>
+    <div class="sub">🔒 DIGITE SUA SENHA</div>
+    <input type="password" id="senhaInput" placeholder="Digite sua senha" autocomplete="off">
+    <button class="btn-liberar" id="btnLiberar">🔓 LIBERAR ACESSO</button>
+    <button class="btn-whats-block" id="btnWhatsBlock"><i class="fab fa-whatsapp"></i> FALAR NO WHATSAPP</button>
+    <div class="erro" id="erroSenha"></div>
+    <div class="fingerprint-area">
+      <span class="fp-text" id="infoDispositivo">🆔 ...</span>
+      <button class="btn-copiar-fp" id="btnCopiarFingerprint">📋 Copiar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="adminPanel">
+  <button id="adminCloseTopBtn" style="position:absolute;top:10px;right:14px;background:transparent;border:none;color:#888;font-size:1.3rem;cursor:pointer">✕</button>
+  <h2>👑 GERENCIADOR DE SENHAS</h2>
+  <div><label style="font-size:.72rem;color:#aaa;font-weight:700">🆔 Fingerprint:</label>
+    <input type="text" id="adminFingerprintInput" placeholder="Cole o fingerprint"></div>
+  <div class="row-btns">
+    <button class="btn-gerar" id="adminGerarBtn">🎲 GERAR</button>
+    <button class="btn-universal" id="adminGerarUniversalBtn">🌍 UNIVERSAL</button>
+    <button class="btn-limpar" id="adminLimparBtn">🗑️</button>
+  </div>
+  <div class="senha-box">
+    <label>🔑 SENHA GERADA:</label>
+    <div class="row">
+      <input type="text" id="adminSenhaGerada" readonly placeholder="Clique em gerar">
+      <button class="btn-copiar" id="btnCopiarSenha">📋</button>
+    </div>
+  </div>
+  <div class="row-btns">
+    <button class="btn-whats" id="adminEnviarWhatsBtn" style="background:#25d366;color:#fff">📱 WhatsApp</button>
+    <button class="btn-copiar" id="adminCopiarSenhaBtn">📋 Copiar</button>
+  </div>
+  <button id="adminCloseBtn" style="background:rgba(255,255,255,.06);border:none;padding:12px;border-radius:20px;color:#aaa;cursor:pointer;width:100%;margin-top:10px;font-weight:900">✕ Fechar</button>
+</div>
+
+<!-- DIALOG -->
+<div class="vdb-dialog-overlay" id="vdbDialogOverlay">
+  <div class="vdb-dialog">
+    <h3 id="vdbDialogTitle">Título</h3>
+    <p id="vdbDialogMsg">Mensagem</p>
+    <input type="text" id="vdbDialogInput" style="display:none;">
+    <div class="btns">
+      <button class="btn-cancel" id="vdbDialogCancel">Cancelar</button>
+      <button class="btn-ok" id="vdbDialogOk">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROPAGANDA -->
+<div class="banner-propaganda-full" id="bannerPropagandaFull">
+  <button class="prop-full-fechar" id="propFullFecharBtn">✕</button>
+  <div class="prop-full-content">
+    <div class="prop-full-logo">🎵</div>
+    <div class="prop-full-titulo">VDB MUSIC</div>
+    <div class="prop-full-sub">🎵 PREMIUM 🎵</div>
+    <div class="prop-full-preco">
+      <div class="prop-full-preco-valor">R$ 39,90</div>
+      <div class="prop-full-preco-label">VITALÍCIO • PAGA UMA VEZ</div>
+    </div>
+    <div class="prop-full-beneficio"><i class="fas fa-music"></i> +10 MIL MÚSICAS</div>
+    <div class="prop-full-beneficio"><i class="fas fa-guitar"></i> TODOS OS GÊNEROS</div>
+    <div class="prop-full-beneficio"><i class="fas fa-infinity"></i> ACESSO VITALÍCIO</div>
+    <button class="prop-full-cta" id="propFullCtaBtn"><i class="fab fa-whatsapp"></i> QUERO AGORA</button>
+  </div>
+</div>
+
+<!-- INSTALAR -->
+<button id="btnInstalarFixo"><i class="fas fa-download"></i> INSTALAR APP</button>
+<div id="instrucoesInstalar">
+  <div class="instrucoes-box">
+    <h3 style="color:#fff;margin-bottom:14px">📲 INSTALAR APP</h3>
+    <div class="passo"><div class="num">1</div><div>Toque no menu do navegador</div></div>
+    <div class="passo"><div class="num">2</div><div>Toque em <b>"Instalar app"</b></div></div>
+    <div class="passo"><div class="num">3</div><div>Confirme e pronto! 🎵</div></div>
+    <button class="btn-fechar-inst" id="fecharInstrucoesBtn">ENTENDI</button>
+  </div>
+</div>
+
+<!-- NOTIFICAÇÕES -->
+<div class="notif" id="notification"></div>
+<div id="loadingOverlay"><i class="fas fa-spinner fa-spin"></i></div>
+<div id="avisoFullscreen">💡 Toque na tela para entrar em tela cheia</div>
+<div id="dicaCliques"></div>
+<div class="bem-vindo" id="bemVindo">SEJA BEM-VINDO! 🎵</div>
+
+<!-- ÁUDIOS -->
+<audio id="musicPlayer" preload="none"></audio>
+<audio id="backgroundAudio" preload="auto" style="display:none;"></audio>
 
 <script>
+/* ═══════════════════════════════════════════════════════
+   PARTE 2 — JAVASCRIPT COMPLETO (próxima mensagem)
+   ═══════════════════════════════════════════════════════ */
+</script>
+</body>
+</html><script>
 (function(){
 'use strict';
 
@@ -557,23 +887,69 @@ html,body{height:100dvh;width:100%;background:#000;overflow:hidden;position:fixe
 // CONFIG
 // ═══════════════════════════════════════════════════════
 const CONFIG = {
-  APP_VERSION: 'v61-demo',
   WHATSAPP: '5512988461978',
-  MIDIA_MAX_SEGURANCA_MS: 60000,  // ✅ 60s (era 180s)
+  _SALT: 'vdb_music_2024_x9k7',
+  TEMPO_TESTE_SEGUNDOS: 86400,
+  PRECO: 'R$ 39,90',
+  LETREIRO: '🎵 VDB MUSIC 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • GOSPEL • FUNK • REGGAE 🎶',
+  APP_VERSION: 'v63',
+  LOADING_DURACAO_MS: 3500,
+  PROPAGANDA_INTERVALO_MS: 600000,
+  PWA_INSTALL_DELAY_MS: 30000,
+  MIDIA_MAX_SEGURANCA_MS: 60000,
   CICLO_PRINCIPAL_MS: 45000,
   CICLO_ANUNCIO_MS: 25000,
+  VOLUME_PADRAO: 1.0,
   FADE_IN_MS: 700,
   FADE_OUT_MS: 400
 };
 
+// ═══════════════════════════════════════════════════════
+// 🔐 SENHA ADMIN OFUSCADA (Patico1658@ em ASCII + XOR)
+// ═══════════════════════════════════════════════════════
+// ASCII de "Patico1658@" XOR com 0x2A (42)
+const _S0 = [122,73,90,71,75,69,31,60,61,58,104];
+const _S_KEY = 0x2A;
+function _getSenhaAdmin(){
+  return String.fromCharCode(..._S0.map(c => c ^ _S_KEY));
+}
+// Resultado em runtime: "Patico1658@"
+
+// ═══════════════════════════════════════════════════════
+// 🔐 8 CLIQUES OFUSCADO (1<<3 = 8, mas parece bit-shift)
+// ═══════════════════════════════════════════════════════
+const _SHIFT = 3;                    // 3 bits
+const _TOTAL_CLIQUES = 1 << _SHIFT;  // 8, disfarçado
+const _JANELA_CLIQUES = 3000;
+
+// ═══════════════════════════════════════════════════════
+// TEMAS
+// ═══════════════════════════════════════════════════════
 const TEMAS = {
-  azul: { c1:'#2563eb', c2:'#1e40af', c3:'#3b82f6' },
-  roxo: { c1:'#7c3aed', c2:'#5b21b6', c3:'#a855f7' },
-  preto:{ c1:'#374151', c2:'#111827', c3:'#6b7280' }
+  azul: { nome:'Azul', c1:'#2563eb', c2:'#1e40af', c3:'#3b82f6' },
+  roxo: { nome:'Roxo', c1:'#7c3aed', c2:'#5b21b6', c3:'#a855f7' },
+  preto:{ nome:'Preto',c1:'#374151', c2:'#111827', c3:'#6b7280' }
 };
 
-const GENEROS = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','DISCO MUSIC','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','MISTURA BRASIL'];
+// ═══════════════════════════════════════════════════════
+// CORES DOS GÊNEROS
+// ═══════════════════════════════════════════════════════
+const GENRE_COLORS = {
+  'BÔNUS':{c1:'#22d3ee'},'POP/MIX':{c1:'#60a5fa'},'MPB':{c1:'#2dd4bf'},
+  'SERTANEJO':{c1:'#fbbf24'},'ROMÂNTICA':{c1:'#f472b6'},'FLASHBACK':{c1:'#a855f7'},
+  'NOVIDADES':{c1:'#34d399'},'FUNK':{c1:'#f43f5e'},'ROCK':{c1:'#f472b6'},
+  'FORRÓ':{c1:'#fb923c'},'DISCO MUSIC':{c1:'#fbbf24'},'SAMBA':{c1:'#f59e0b'},
+  'PAGODE':{c1:'#ef4444'},'RELIGIOSA':{c1:'#8b5cf6'},'REGGAE':{c1:'#10b981'},
+  'BREGA':{c1:'#ec4899'},'HIP HOP':{c1:'#6366f1'},'BAILÃO':{c1:'#f97316'},
+  'MODA RAIZ':{c1:'#a16207'},'MODÃO SERTANEJO':{c1:'#ca8a04'},'SERESTA':{c1:'#eab308'},
+  'FORRÓ RAIZ':{c1:'#ea580c'},'MPB 2':{c1:'#14b8a6'},'MISTURA BRASIL':{c1:'#16a34a'},
+  'GLOBAL HITS':{c1:'#0ea5e9'}
+};
+const COR_PADRAO = { c1:'#22d3ee' };
 
+// ═══════════════════════════════════════════════════════
+// URLs DE GÊNEROS
+// ═══════════════════════════════════════════════════════
 const GENRE_URLS = {
   'BÔNUS':'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json',
   'FLASHBACK':'https://raw.githubusercontent.com/radiolojasjc-hub/flashbacktop/refs/heads/main/flashback.json',
@@ -600,6 +976,7 @@ const GENRE_URLS = {
   'BAILÃO':'https://raw.githubusercontent.com/radiolojasjc-hub/forrodez/refs/heads/main/bail%C3%A3o.json',
   'FORRÓ RAIZ':'https://raw.githubusercontent.com/radiolojasjc-hub/forroraiz/refs/heads/main/forroraiz.json'
 };
+const GENRE_ORDEM = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','DISCO MUSIC','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','MISTURA BRASIL'];
 
 const GENRE_REPOS = {};
 Object.keys(GENRE_URLS).forEach(g => {
@@ -607,14 +984,23 @@ Object.keys(GENRE_URLS).forEach(g => {
   GENRE_REPOS[g] = m ? m[1] + '/' + m[2] : 'radiolojasjc-hub/play12';
 });
 
-// Mídia de fundo (use URLs reais suas)
-const MIDIAS_FUNDO = [
-  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}
+// Mídias
+const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
+const MIDIAS_FALLBACK = [{tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}];
+const MIDIAS_ANUNCIO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/anuncios.json';
+const MIDIAS_ANUNCIO_FALLBACK = [
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'},
+  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/xb.mp4'}
 ];
-// Anúncios (use URLs reais)
-const MIDIAS_ANUNCIO = [
-  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'}
-];
+const MIDIAS_TV_PROIBIDAS = ['mac1','amytv','tvbob'];
+function filtrarMidias(tela, medias){
+  if(tela !== 'principal') return medias;
+  return medias.filter(m => {
+    if(!m || !m.src) return false;
+    const n = m.src.toLowerCase();
+    return !MIDIAS_TV_PROIBIDAS.some(t => n.includes(t));
+  });
+}
 
 // ═══════════════════════════════════════════════════════
 // HELPERS
@@ -625,6 +1011,14 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const fmt = s => { if(!s||isNaN(s))return '0:00'; const m=Math.floor(s/60),sg=Math.floor(s%60); return m+':'+(sg<10?'0':'')+sg; };
 const vibrar = p => { try{ navigator.vibrate && navigator.vibrate(p||15); }catch(e){} };
 const sanitize = t => { if(!t)return ''; const d=document.createElement('div'); d.textContent=t; return d.textContent; };
+function fmtTempo(s){
+  if(s<0)s=0;s=Math.floor(s);
+  const d=Math.floor(s/86400),h=Math.floor((s%86400)/3600);
+  const m=Math.floor((s%3600)/60),sg=Math.floor(s%60);
+  if(d>0)return d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
+  if(h>0)return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
+  return String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
+}
 function shuffle(a){
   if(!a||!a.length) return [];
   const x = [...a];
@@ -634,80 +1028,249 @@ function shuffle(a){
   }
   return x;
 }
+function copiarTexto(t,msg){
+  if(!t) return notif('⚠️ Nada!');
+  navigator.clipboard.writeText(t).then(()=>notif(msg||'📋 Copiado!'))
+    .catch(()=>{
+      const i=document.createElement('input');i.value=t;document.body.appendChild(i);
+      i.select();document.execCommand('copy');i.remove();notif(msg||'📋 Copiado!');
+    });
+}
+function ehIOS(){ return /iPhone|iPad|iPod/i.test(navigator.userAgent); }
+function ehMobile(){ return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent); }
 
 // ═══════════════════════════════════════════════════════
 // NOTIFICAÇÃO
 // ═══════════════════════════════════════════════════════
+const nQ = [];
+let nShowing = false;
 function notif(msg, dur=2000){
-  const el = $('notif');
-  el.textContent = msg;
+  if(nQ.length>=5) nQ.shift();
+  nQ.push({msg,dur});
+  processNotif();
+}
+async function processNotif(){
+  if(nShowing||!nQ.length) return;
+  nShowing = true;
+  const it = nQ.shift();
+  const el = $('notification');
+  el.textContent = it.msg;
   el.classList.add('show');
-  clearTimeout(el._t);
-  el._t = setTimeout(()=>el.classList.remove('show'), dur);
+  await sleep(it.dur);
+  el.classList.remove('show');
+  nShowing = false;
+  setTimeout(processNotif, 200);
 }
 
 // ═══════════════════════════════════════════════════════
 // ESTADO
 // ═══════════════════════════════════════════════════════
-const app = {
+const appState = {
+  favorites: [],
   musicas: [],
   playlistAtual: [],
   indiceAtual: 0,
   isPlaying: false,
-  favoritos: [],
-  historico: [],
   modoAtual: 'BÔNUS',
-  temaCor: 'azul',
+  temaCor: localStorage.getItem('vdb_tema_cor') || 'azul',
   carregando: false,
-  telaAtual: 'principal',
   playerAtivado: false,
+  isBackgroundActive: false,
+  telaAtual: 'principal',
+  fingerprint: '',
   musicasComProblema: new Set(),
   sleepTimerId: null
 };
+if(!TEMAS[appState.temaCor]) appState.temaCor = 'azul';
+try{ appState.favorites = JSON.parse(localStorage.getItem('vdb_fav')||'[]'); }catch(e){}
+function salvarFav(){ try{ localStorage.setItem('vdb_fav', JSON.stringify(appState.favorites)); }catch(e){} }
 
-// Favoritos (localStorage)
-try{ app.favoritos = JSON.parse(localStorage.getItem('vdb_demo_fav')||'[]'); }catch(e){}
-function salvarFav(){ try{ localStorage.setItem('vdb_demo_fav', JSON.stringify(app.favoritos)); }catch(e){} }
+function getOfflineMeta(){ try{ return JSON.parse(localStorage.getItem('vdb_offline')||'{}'); }catch(e){ return {}; } }
+function setOfflineMeta(m){ try{ localStorage.setItem('vdb_offline', JSON.stringify(m)); }catch(e){} }
+function generoOffline(g){ const m=getOfflineMeta(); return !!(m[g]&&m[g].completo); }
 
-// Offline meta
-function getOfflineMeta(){ try{ return JSON.parse(localStorage.getItem('vdb_demo_offline')||'{}'); }catch(e){ return {}; } }
-function setOfflineMeta(m){ try{ localStorage.setItem('vdb_demo_offline', JSON.stringify(m)); }catch(e){} }
-function generoOffline(g){ const m = getOfflineMeta(); return !!(m[g] && m[g].completo); }
+function getFingerprint(){
+  try{
+    const n=navigator.userAgent||'',p=navigator.platform||'',l=navigator.language||'';
+    const s=screen.width+'x'+screen.height+'x'+screen.colorDepth;
+    const t=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+    return btoa(n+'|'+p+'|'+l+'|'+s+'|'+t).slice(0,64);
+  }catch(e){ return 'fp_'+now(); }
+}
+appState.fingerprint = getFingerprint();
 
 // ═══════════════════════════════════════════════════════
-// OFFLINE — CACHE API COM URL LIMPA (CORREÇÃO PRINCIPAL)
+// TEMA
 // ═══════════════════════════════════════════════════════
-const CACHE_NAME = 'vdb-demo-offline-v1';
+function aplicarTema(nome){
+  const t = TEMAS[nome] || TEMAS.azul;
+  document.documentElement.style.setProperty('--cor-1', t.c1);
+  document.documentElement.style.setProperty('--cor-2', t.c2);
+  document.documentElement.style.setProperty('--cor-3', t.c3);
+  const m = document.querySelector('meta[name="theme-color"]');
+  if(m) m.setAttribute('content', t.c1);
+  localStorage.setItem('vdb_tema_cor', nome);
+}
+aplicarTema(appState.temaCor);
 
+// ═══════════════════════════════════════════════════════
+// TIMER 24H
+// ═══════════════════════════════════════════════════════
+const CHAVE_DESBLOQ='vdb_desbloq';
+const CHAVE_BLOQ='vdb_bloq_perm';
+const CHAVE_EXPIRA='vdb_expiracao';
+
+async function verificarTempo(){
+  if(localStorage.getItem(CHAVE_BLOQ)==='true') return {liberado:false, motivo:'bloqueado'};
+  if(localStorage.getItem(CHAVE_DESBLOQ)==='true') return {liberado:true, motivo:'senha', expiracao:Infinity};
+  const exp = parseInt(localStorage.getItem(CHAVE_EXPIRA)||'0');
+  if(!exp){
+    const e = Date.now() + CONFIG.TEMPO_TESTE_SEGUNDOS*1000;
+    localStorage.setItem(CHAVE_EXPIRA, String(e));
+    return {liberado:true, motivo:'novo', expiracao:e};
+  }
+  if(Date.now() > exp) return {liberado:false, motivo:'expirado', expiracao:exp};
+  return {liberado:true, motivo:'teste', expiracao:exp};
+}
+async function tempoRestante(){
+  const r = await verificarTempo();
+  if(!r.liberado) return 0;
+  if(r.expiracao === Infinity) return CONFIG.TEMPO_TESTE_SEGUNDOS;
+  return Math.max(0, Math.floor((r.expiracao - Date.now())/1000));
+}
+let timerInterval = null;
+async function atualizarTimer(){
+  if(!$('timerLib')) return;
+  if(localStorage.getItem(CHAVE_DESBLOQ)==='true'){
+    $('timerLib').innerHTML = '<i class="fas fa-lock-open"></i> Lib';
+    $('timerLib').style.color = '#10b981';
+    return;
+  }
+  const t = await tempoRestante();
+  if(t <= 0){
+    $('timerLib').innerHTML = '<i class="fas fa-lock"></i> Bloq';
+    $('timerLib').style.color = '#ff8888';
+    return;
+  }
+  $('timerLib').innerHTML = '<i class="fas fa-clock"></i> ' + fmtTempo(t);
+  $('timerLib').style.color = '#fff';
+}
+async function iniciarTimer(){
+  const r = await verificarTempo();
+  if(!r.liberado){ bloquear(); return; }
+  await atualizarTimer();
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(async ()=>{
+    if(localStorage.getItem(CHAVE_DESBLOQ)==='true'){ clearInterval(timerInterval); timerInterval=null; return; }
+    const t = await tempoRestante();
+    if(t <= 0){ clearInterval(timerInterval); timerInterval=null; bloquear(); return; }
+    await atualizarTimer();
+  }, 5000);
+}
+function bloquear(){
+  $('blockOverlay').classList.add('active');
+  const a = $('musicPlayer');
+  a.pause();
+  appState.isPlaying = false;
+  $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+  localStorage.setItem(CHAVE_BLOQ, 'true');
+  notif('⏰ Tempo expirou!', 3000);
+}
+
+// ═══════════════════════════════════════════════════════
+// VALIDAR SENHA
+// ═══════════════════════════════════════════════════════
+async function validarSenha(s){
+  if(!s) return {valida:false};
+  // Master
+  if(s === _getSenhaAdmin()) return {valida:true, msg:'✅ Admin!'};
+  // Dispositivo
+  try{
+    const d = atob(s);
+    const p = d.split(':');
+    if(p.length===2 && p[0]===appState.fingerprint) return {valida:true, msg:'✅ Liberado!'};
+  }catch(e){}
+  // Universal
+  if(s.startsWith('UNIV:')){
+    const p = s.split(':');
+    if(p.length===3){
+      const ts=p[1], sig=p[2];
+      const chave = CONFIG._SALT + 'UNIV_' + ts;
+      let h=0;
+      for(let i=0;i<chave.length;i++){ h=((h<<5)-h)+chave.charCodeAt(i); h|=0; }
+      const esp = Math.abs(h).toString(16).padStart(16,'0').slice(0,16);
+      if(sig === esp) return {valida:true, msg:'✅ Universal!'};
+    }
+  }
+  return {valida:false};
+}
+async function liberarAcesso(senha){
+  const r = await validarSenha(senha);
+  if(r.valida){
+    $('blockOverlay').classList.remove('active');
+    $('erroSenha').textContent = '';
+    $('senhaInput').value = '';
+    localStorage.setItem(CHAVE_DESBLOQ, 'true');
+    localStorage.removeItem(CHAVE_BLOQ);
+    notif(r.msg, 3000);
+    if(!appState.playerAtivado) setTimeout(ativarPlayer, 500);
+    await atualizarTimer();
+    return true;
+  }
+  $('erroSenha').innerHTML = '❌ Senha inválida!';
+  $('senhaInput').value = '';
+  vibrar([50,30,50]);
+  return false;
+}
+
+// ═══════════════════════════════════════════════════════
+// DIALOG
+// ═══════════════════════════════════════════════════════
+function vdbDialog({title, msg, input, placeholder, okText, cancelText}){
+  return new Promise(resolve => {
+    const ov=$('vdbDialogOverlay'), ti=$('vdbDialogTitle'), me=$('vdbDialogMsg');
+    const ie=$('vdbDialogInput'), ok=$('vdbDialogOk'), ca=$('vdbDialogCancel');
+    ti.textContent = title || 'Confirmação';
+    me.textContent = msg || '';
+    if(input){
+      ie.style.display='block'; ie.value=''; ie.type=input; ie.placeholder=placeholder||'';
+      setTimeout(()=>ie.focus(), 150);
+    } else ie.style.display='none';
+    ok.textContent = okText || 'OK';
+    ca.textContent = cancelText || 'Cancelar';
+    ov.classList.add('active');
+    function fechar(v){
+      ov.classList.remove('active');
+      ok.onclick=null; ca.onclick=null; ie.onkeydown=null; ov.onclick=null;
+      resolve(v);
+    }
+    ok.onclick = () => fechar(input ? (ie.value||null) : true);
+    ca.onclick = () => fechar(null);
+    ov.onclick = e => { if(e.target===ov) fechar(null); };
+    if(input) ie.onkeydown = e => { if(e.key==='Enter') fechar(ie.value||null); if(e.key==='Escape') fechar(null); };
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// OFFLINE
+// ═══════════════════════════════════════════════════════
+const CACHE_NAME = 'vdb-offline-' + CONFIG.APP_VERSION;
 async function abrirCache(){
   if(!('caches' in window)) return null;
   try{ return await caches.open(CACHE_NAME); }catch(e){ return null; }
 }
-
-// ✅ URL LIMPA (sem cache-bust) pra bater sempre
 function urlLimpa(url){
-  try{
-    const u = new URL(url);
-    u.searchParams.delete('v');
-    u.searchParams.delete('t');
-    return u.toString();
-  }catch(e){ return url.split('?')[0]; }
+  try{ const u=new URL(url); u.searchParams.delete('v'); u.searchParams.delete('t'); return u.toString(); }
+  catch(e){ return url.split('?')[0]; }
 }
-
 async function estaOffline(url){
   if(!url) return false;
-  const c = await abrirCache();
-  if(!c) return false;
-  try{
-    const r = await c.match(urlLimpa(url));
-    return !!r;
-  }catch(e){ return false; }
+  const c = await abrirCache(); if(!c) return false;
+  try{ return !!(await c.match(urlLimpa(url))); }catch(e){ return false; }
 }
-
 async function salvarOffline(url, timeoutMs=25000){
   if(!url || !url.startsWith('http')) return false;
-  const c = await abrirCache();
-  if(!c) return false;
+  const c = await abrirCache(); if(!c) return false;
   const limpa = urlLimpa(url);
   try{
     if(await c.match(limpa)) return true;
@@ -716,15 +1279,12 @@ async function salvarOffline(url, timeoutMs=25000){
     const r = await fetch(url, { mode:'cors', signal: ctrl.signal });
     clearTimeout(tid);
     if(!r.ok) return false;
-    // Salva com URL LIMPA (não com cache-bust!)
     await c.put(limpa, r.clone());
     return true;
   }catch(e){ return false; }
 }
-
 async function buscarAudioOffline(url){
-  const c = await abrirCache();
-  if(!c) return null;
+  const c = await abrirCache(); if(!c) return null;
   try{
     const r = await c.match(urlLimpa(url));
     if(!r) return null;
@@ -732,57 +1292,36 @@ async function buscarAudioOffline(url){
     return URL.createObjectURL(b);
   }catch(e){ return null; }
 }
-
-async function limparOfflineGenero(genero){
-  const c = await abrirCache();
-  if(!c) return;
-  const keys = await c.keys();
-  const meta = getOfflineMeta();
-  const info = meta[genero];
-  if(!info) return;
-  // Não temos como saber quais URLs exatas, então limpamos por prefixo do repo
+async function limparGeneroOffline(genero){
+  const c = await abrirCache(); if(!c) return;
   const repo = GENRE_REPOS[genero] || '';
-  for(const k of keys){
-    if(repo && k.url.includes(repo)) await c.delete(k);
-  }
+  const ks = await c.keys();
+  for(const k of ks){ if(repo && k.url.includes(repo)) await c.delete(k); }
+  const meta = getOfflineMeta();
   delete meta[genero];
   setOfflineMeta(meta);
 }
-
 async function limparTodoOffline(){
   try{
     const c = await abrirCache();
-    if(c){ const ks = await c.keys(); for(const k of ks) await c.delete(k); }
+    if(c){ const ks=await c.keys(); for(const k of ks) await c.delete(k); }
     setOfflineMeta({});
   }catch(e){}
 }
 
 // ═══════════════════════════════════════════════════════
-// URLs DE MÚSICA
+// BUSCAR GÊNERO
 // ═══════════════════════════════════════════════════════
-function getUrls(m){
-  const s = m.src || '';
-  if(!s) return [];
-  if(s.startsWith('http')){
-    // ✅ SEM cache-bust aqui também (a URL limpa é o que importa)
-    return [s];
-  }
-  const nome = s.replace(/^\.\//,'').replace(/[^a-zA-Z0-9\-_.]/g,'');
-  if(!nome) return [];
-  const repo = GENRE_REPOS[m.genero] || 'radiolojasjc-hub/play12';
-  return ['https://raw.githubusercontent.com/' + repo + '/refs/heads/main/' + nome];
-}
-
-// ═══════════════════════════════════════════════════════
-// CACHE DE GÊNERO (JSON)
-// ═══════════════════════════════════════════════════════
-const cacheGeneroMem = new Map();
+const cacheGenero = new Map();
 async function buscarGenero(genero){
-  if(cacheGeneroMem.has(genero)) return cacheGeneroMem.get(genero);
+  if(cacheGenero.has(genero)) return cacheGenero.get(genero);
   const url = GENRE_URLS[genero];
   if(!url) return null;
   try{
-    const r = await fetch(url + '?v=' + CONFIG.APP_VERSION);
+    const ctrl = new AbortController();
+    const tid = setTimeout(()=>ctrl.abort(), 9000);
+    const r = await fetch(url + '?v=' + CONFIG.APP_VERSION, { signal: ctrl.signal });
+    clearTimeout(tid);
     if(!r.ok) throw new Error('HTTP');
     let j = await r.json();
     if(!Array.isArray(j)) j = j.musicas || j.data || Object.values(j)[0];
@@ -792,89 +1331,93 @@ async function buscarGenero(genero){
       genero,
       artist: m.artist || 'Artista'
     }));
-    cacheGeneroMem.set(genero, ms);
+    cacheGenero.set(genero, ms);
     return ms;
-  }catch(e){
-    // tenta cache local
-    try{
-      const c = await abrirCache();
-      if(c){
-        const r2 = await c.match(url);
-        if(r2){ const d = await r2.json(); return d; }
-      }
-    }catch(e2){}
-    return null;
-  }
+  }catch(e){ return null; }
+}
+
+function getUrls(m){
+  const s = m.src || '';
+  if(!s) return [];
+  if(s.startsWith('http')) return [s];
+  const nome = s.replace(/^\.\//,'').replace(/[^a-zA-Z0-9\-_.]/g,'');
+  if(!nome) return [];
+  const repo = GENRE_REPOS[m.genero] || 'radiolojasjc-hub/play12';
+  return ['https://raw.githubusercontent.com/' + repo + '/refs/heads/main/' + nome];
 }
 
 // ═══════════════════════════════════════════════════════
 // PLAYER
 // ═══════════════════════════════════════════════════════
-const audio = new Audio();
-audio.preload = 'none';
+const audio = $('musicPlayer');
 
 function atualizarPlaylist(){
-  if(!app.musicas.length) return null;
-  if(!app.playlistAtual.length){
-    app.playlistAtual = shuffle(app.musicas);
-    app.indiceAtual = 0;
+  if(!appState.musicas.length) return null;
+  if(!appState.playlistAtual.length){
+    appState.playlistAtual = shuffle(appState.musicas);
+    appState.indiceAtual = 0;
   }
-  if(app.indiceAtual >= app.playlistAtual.length){
-    let lista = app.musicas;
-    if(app.musicasComProblema.size > 0 && app.musicasComProblema.size < app.musicas.length * 0.9){
-      lista = app.musicas.filter(m => !app.musicasComProblema.has(m.id));
-      if(lista.length < 10){ app.musicasComProblema.clear(); lista = app.musicas; }
-    } else if(app.musicasComProblema.size >= app.musicas.length * 0.9){
-      app.musicasComProblema.clear();
+  if(appState.indiceAtual >= appState.playlistAtual.length){
+    let lista = appState.musicas;
+    if(appState.musicasComProblema.size > 0 && appState.musicasComProblema.size < appState.musicas.length * 0.9){
+      lista = appState.musicas.filter(m => !appState.musicasComProblema.has(m.id));
+      if(lista.length < 10){ appState.musicasComProblema.clear(); lista = appState.musicas; }
+    } else if(appState.musicasComProblema.size >= appState.musicas.length * 0.9){
+      appState.musicasComProblema.clear();
     }
-    app.playlistAtual = shuffle(lista);
-    app.indiceAtual = 0;
+    appState.playlistAtual = shuffle(lista);
+    appState.indiceAtual = 0;
   }
-  return app.playlistAtual[app.indiceAtual] || null;
+  return appState.playlistAtual[appState.indiceAtual] || null;
 }
 
 async function tocar(){
-  if(app.carregando || !app.musicas.length) return;
-  app.carregando = true;
+  if(!appState.isBackgroundActive || appState.carregando || !appState.musicas.length) return;
+  appState.carregando = true;
   try{
     $('playBtn').innerHTML = '<i class="fas fa-spinner"></i>';
     $('playBtn').classList.add('loading');
 
+    // Fade out se estiver tocando
+    if(!audio.paused && audio.src){
+      const sv = audio.volume;
+      for(let i=20;i>=0;i--){ audio.volume = Math.max(0, sv*(i/20)); await sleep(20); }
+    }
+
     const m = atualizarPlaylist();
-    if(!m){ app.carregando = false; return; }
+    if(!m){ appState.carregando=false; return; }
 
     atualizarLetreiro(m);
     atualizarInfoMusica(m);
     atualizarCoracao();
 
-    // MediaSession
     if('mediaSession' in navigator){
       try{
         navigator.mediaSession.metadata = new MediaMetadata({
           title: m.title||'VDB', artist: m.artist||'Artista',
-          album: m.genero||'Música'
+          album: m.genero||'Música',
+          artwork: [{src:'favicon30.png', sizes:'512x512', type:'image/png'}]
         });
+        navigator.mediaSession.setActionHandler('play', togglePlay);
+        navigator.mediaSession.setActionHandler('pause', togglePlay);
+        navigator.mediaSession.setActionHandler('previoustrack', prev);
+        navigator.mediaSession.setActionHandler('nexttrack', next);
       }catch(e){}
     }
 
+    try{ audio.pause(); }catch(e){}
     const urls = getUrls(m);
     let ok = false;
 
-    // 1) Tenta offline primeiro
-    for(const u of urls){
-      const off = await buscarAudioOffline(u);
-      if(off){
-        try{
-          audio.src = off;
-          audio.load();
-          await sleep(200);
-          ok = true;
-          break;
-        }catch(e){}
+    if(!navigator.onLine){
+      for(const u of urls){
+        const off = await buscarAudioOffline(u);
+        if(off){
+          try{ audio.src = off; audio.load(); await sleep(300); ok = true; break; }catch(e){}
+        }
       }
     }
 
-    // 2) Tenta online
     if(!ok){
       for(const u of urls){
         try{
@@ -882,8 +1425,7 @@ async function tocar(){
             const t = setTimeout(()=>{ audio.oncanplay=null; audio.onerror=null; r(false); }, 8000);
             audio.oncanplay = ()=>{ clearTimeout(t); audio.oncanplay=null; audio.onerror=null; r(true); };
             audio.onerror = ()=>{ clearTimeout(t); audio.oncanplay=null; audio.onerror=null; r(false); };
-            audio.src = u;
-            audio.load();
+            audio.src = u; audio.load();
           });
           if(car){ ok = true; break; }
         }catch(e){}
@@ -892,169 +1434,166 @@ async function tocar(){
 
     if(ok){
       try{
+        const vu = parseFloat(localStorage.getItem('vdb_volume') || String(CONFIG.VOLUME_PADRAO));
         audio.volume = 0;
         await audio.play();
-        // fade in
-        let v = 0;
-        const fi = setInterval(()=>{
-          v += 0.1;
-          if(v >= 1){ audio.volume = 1; clearInterval(fi); }
-          else audio.volume = v;
-        }, 60);
-        app.isPlaying = true;
+        for(let i=0;i<=20;i++){ audio.volume = Math.min(vu, vu*(i/20)); await sleep(35); }
+        appState.isPlaying = true;
         $('playBtn').classList.remove('loading');
         $('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
+        if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       }catch(e){
         $('playBtn').classList.remove('loading');
         $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
         setTimeout(next, 200);
       }
     }else{
-      // Música ruim — marca e pula
-      app.musicasComProblema.add(m.id);
+      appState.musicasComProblema.add(m.id);
       $('playBtn').classList.remove('loading');
       $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
       setTimeout(next, 200);
     }
-  }catch(e){
-    console.error('Erro tocar:', e);
-  }finally{
-    app.carregando = false;
-    $('playBtn').classList.remove('loading');
-  }
+  }catch(e){ console.error('Erro tocar:', e); }
+  finally{ appState.carregando = false; $('playBtn').classList.remove('loading'); }
 }
 
 function togglePlay(){
   vibrar();
-  if(!app.playerAtivado){ notif('🔊 Toque pra ativar'); return; }
+  if(!appState.isBackgroundActive){ notif('🔊 Aguarde...'); return; }
   if(audio.paused) tocar();
   else{
     audio.pause();
-    app.isPlaying = false;
+    appState.isPlaying = false;
     $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+    if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
   }
 }
-
 function next(){
   vibrar();
-  if(app.carregando) return;
-  if(!app.playlistAtual.length && !app.musicas.length) return;
-  app.indiceAtual++;
+  if(appState.carregando) return;
+  if(!appState.playlistAtual.length && !appState.musicas.length) return;
+  appState.indiceAtual++;
   atualizarPlaylist();
-  if(app.playerAtivado) setTimeout(tocar, 80);
+  if(appState.isBackgroundActive) setTimeout(tocar, 100);
 }
-
 function prev(){
   vibrar();
-  if(app.carregando) return;
-  if(!app.playlistAtual.length) return;
-  app.indiceAtual = (app.indiceAtual - 1 + app.playlistAtual.length) % app.playlistAtual.length;
-  if(app.playerAtivado) setTimeout(tocar, 80);
+  if(appState.carregando) return;
+  if(!appState.playlistAtual.length) return;
+  appState.indiceAtual = (appState.indiceAtual - 1 + appState.playlistAtual.length) % appState.playlistAtual.length;
+  if(appState.isBackgroundActive) setTimeout(tocar, 100);
 }
 
-// Eventos
-audio.addEventListener('ended', ()=>{ if(!app.carregando) setTimeout(next, 150); });
-audio.addEventListener('error', ()=>{
-  if(app.carregando) return;
-  if(!audio.src || audio.src === location.href) return;
-  const m = app.playlistAtual[app.indiceAtual];
-  if(m) app.musicasComProblema.add(m.id);
-  setTimeout(next, 150);
-});
-audio.addEventListener('timeupdate', ()=>{
-  if(audio.duration){
-    $('progressFill').style.width = (audio.currentTime/audio.duration*100) + '%';
-    $('tempoAtual').textContent = fmt(audio.currentTime);
-    $('tempoTotal').textContent = fmt(audio.duration);
-  }
-});
-
 // ═══════════════════════════════════════════════════════
-// UI — LETREIRO / INFO / CORAÇÃO
+// UI
 // ═══════════════════════════════════════════════════════
 function atualizarLetreiro(m){
-  if(m){
-    $('letreiro').innerHTML = '🎵 <b>TOCANDO:</b> ' + sanitize(m.title) + ' — <i>' + sanitize(m.artist) + '</i> • VDB MUSIC 🎶';
-  }
+  const el = $('scrollText');
+  el.innerHTML = m
+    ? '🎵 <b>TOCANDO:</b> ' + sanitize(m.title) + ' — <i>' + sanitize(m.artist) + '</i> • VDB MUSIC • ' + CONFIG.LETREIRO
+    : '🎵 ' + CONFIG.LETREIRO;
 }
 function atualizarInfoMusica(m){
   if(!m) return;
-  $('nomeMusica').textContent = sanitize(m.title) || 'Música';
-  $('artistaMusica').textContent = sanitize(m.artist) || 'Artista';
+  $('musicaNome').textContent = sanitize(m.title) || 'Música';
+  $('musicaArtista').textContent = sanitize(m.artist) || 'Artista';
 }
 function atualizarCoracao(){
-  const m = app.playlistAtual[app.indiceAtual];
-  const btn = $('btnCoracao');
-  const label = $('labelMusica');
-  if(!m){ btn.classList.remove('ativo'); btn.innerHTML = '<i class="far fa-heart"></i>'; return; }
-  const ehFav = app.favoritos.some(f => f.id === m.id);
+  const m = appState.playlistAtual[appState.indiceAtual];
+  const btn = $('btnCoracaoInfo'), lab = $('labelTocandoAgora');
+  if(!m){ btn.classList.remove('ativo'); btn.innerHTML='<i class="far fa-heart"></i>'; return; }
+  const ehFav = appState.favorites.some(f => f.id === m.id);
   if(ehFav){
-    btn.classList.add('ativo');
-    btn.innerHTML = '<i class="fas fa-heart"></i>';
-    label.classList.add('fav');
-    label.textContent = '❤️ TOCANDO AGORA';
+    btn.classList.add('ativo'); btn.innerHTML = '<i class="fas fa-heart"></i>';
+    lab.classList.add('favorita'); lab.textContent = '❤️ TOCANDO AGORA';
   }else{
-    btn.classList.remove('ativo');
-    btn.innerHTML = '<i class="far fa-heart"></i>';
-    label.classList.remove('fav');
-    label.textContent = 'TOCANDO AGORA';
+    btn.classList.remove('ativo'); btn.innerHTML = '<i class="far fa-heart"></i>';
+    lab.classList.remove('favorita'); lab.textContent = 'TOCANDO AGORA';
   }
 }
 function atualizarBadgeFav(){
-  const n = app.favoritos.length;
-  const b = $('badgeFav');
-  if(b){ b.textContent = n; b.style.display = n > 0 ? 'inline-block' : 'none'; }
+  const n = appState.favorites.length;
+  const b = $('barraBadgeFav');
+  if(b){ b.textContent = n; b.style.display = n > 0 ? 'block' : 'none'; }
 }
 function toggleFav(m){
   if(!m) return;
   vibrar(20);
-  const i = app.favoritos.findIndex(f => f.id === m.id);
-  if(i > -1){
-    app.favoritos.splice(i, 1);
-    notif('💔 Removido');
-  }else{
-    app.favoritos.push({ id:m.id, title:m.title, artist:m.artist, src:m.src, genero:m.genero });
-    notif('❤️ Adicionado');
-  }
-  salvarFav();
-  atualizarBadgeFav();
-  atualizarCoracao();
+  const i = appState.favorites.findIndex(f => f.id === m.id);
+  if(i > -1){ appState.favorites.splice(i, 1); notif('💔 Removido'); }
+  else{ appState.favorites.push({ id:m.id, title:m.title, artist:m.artist, src:m.src, genero:m.genero }); notif('❤️ Adicionado'); }
+  salvarFav(); atualizarBadgeFav(); atualizarCoracao();
 }
 function toggleFavAtual(){
-  const m = app.playlistAtual[app.indiceAtual];
+  const m = appState.playlistAtual[appState.indiceAtual];
   if(m) toggleFav(m);
 }
 
 // ═══════════════════════════════════════════════════════
-// SELECIONAR GÊNERO
+// GÊNEROS
 // ═══════════════════════════════════════════════════════
+function renderizarGeneros(){
+  const grid = $('genresGrid');
+  grid.innerHTML = '';
+  GENRE_ORDEM.forEach(g => {
+    const c = GENRE_COLORS[g] || COR_PADRAO;
+    const offline = generoOffline(g);
+    const card = document.createElement('div');
+    card.className = 'genre-card';
+    card.style.setProperty('--c1', c.c1);
+    if(offline) card.classList.add('offline');
+    card.dataset.genero = g;
+
+    const nome = document.createElement('div');
+    nome.className = 'genre-name';
+    nome.textContent = g;
+    card.appendChild(nome);
+
+    const btnBaixar = document.createElement('button');
+    btnBaixar.className = 'genre-baixar' + (offline ? ' remover' : '');
+    btnBaixar.innerHTML = offline ? '<i class="fas fa-trash"></i>' : '<i class="fas fa-download"></i>';
+    btnBaixar.onclick = (e) => {
+      e.stopPropagation();
+      if(offline){
+        vdbDialog({title:'🗑️ REMOVER', msg:'Remover "'+g+'" do offline?', okText:'Remover'}).then(ok=>{
+          if(ok){ limparGeneroOffline(g).then(()=>{ notif('🗑️ '+g+' removido'); renderizarGeneros(); }); }
+        });
+      } else baixarGenero(g);
+    };
+    card.appendChild(btnBaixar);
+
+    card.onclick = () => selecionarGenero(g);
+    grid.appendChild(card);
+  });
+}
+
 async function selecionarGenero(g){
   vibrar();
   notif('⏳ Carregando ' + g);
   const m = await buscarGenero(g);
-  if(!m || !m.length){ notif('❌ Erro ao carregar ' + g); return; }
+  if(!m || !m.length){ notif('❌ Erro ' + g); return; }
 
   audio.pause();
-  app.isPlaying = false;
+  appState.isPlaying = false;
   $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
 
-  app.musicas = m;
-  app.modoAtual = g;
-  app.playlistAtual = shuffle(m);
-  app.indiceAtual = 0;
-  app.musicasComProblema.clear();
+  appState.musicas = m;
+  appState.modoAtual = g;
+  appState.playlistAtual = shuffle(m);
+  appState.indiceAtual = 0;
+  appState.musicasComProblema.clear();
 
-  const mm = app.playlistAtual[0];
+  aplicarTema(appState.temaCor);
+  const mm = appState.playlistAtual[0];
   if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
 
   notif('🎵 ' + g + ' (' + m.length + ')');
-
-  if(app.playerAtivado) setTimeout(tocar, 250);
+  if(appState.isBackgroundActive) setTimeout(tocar, 250);
   fecharModal('modalGeneros');
 }
 
 // ═══════════════════════════════════════════════════════
-// BAIXAR GÊNERO (D2) — CORRIGIDO
+// BAIXAR GÊNERO
 // ═══════════════════════════════════════════════════════
 let baixando = false;
 let baixarCancelado = false;
@@ -1064,7 +1603,7 @@ async function baixarGenero(genero){
   if(generoOffline(genero)){ notif('✅ Já está offline'); return; }
 
   const musicas = await buscarGenero(genero);
-  if(!musicas || !musicas.length){ notif('❌ Erro ao buscar músicas'); return; }
+  if(!musicas || !musicas.length){ notif('❌ Erro'); return; }
 
   baixando = true;
   baixarCancelado = false;
@@ -1088,11 +1627,13 @@ async function baixarGenero(genero){
       if(await salvarOffline(u)){ ok = true; break; }
     }
     if(ok) baixadas++; else falhas++;
+
     const pct = ((i+1)/musicas.length)*100;
     $('dlFill').style.width = pct + '%';
     $('dlContador').textContent = (i+1) + ' / ' + musicas.length + '  (✅ ' + baixadas + '  ❌ ' + falhas + ')';
     $('dlAtual').textContent = (m.title||'').slice(0, 30);
     $('dlStatus').textContent = 'Baixando... ' + Math.round(pct) + '%';
+
     if((i+1) % 5 === 0){
       const meta = getOfflineMeta();
       meta[genero] = { baixadas, total: musicas.length, data: now(), parcial: true };
@@ -1110,10 +1651,10 @@ async function baixarGenero(genero){
 
   if(baixadas > 0){
     $('dlStatus').textContent = '✅ ' + baixadas + ' de ' + musicas.length + ' salvas!';
-    notif('✅ ' + baixadas + ' músicas offline!');
+    notif('✅ ' + baixadas + ' offline!');
   }else{
     $('dlStatus').textContent = '❌ Nenhuma salva';
-    notif('❌ Falha no download');
+    notif('❌ Falha');
   }
   $('dlCancelar').style.display = 'none';
   $('fecharDownload').style.display = 'flex';
@@ -1121,68 +1662,21 @@ async function baixarGenero(genero){
 }
 
 // ═══════════════════════════════════════════════════════
-// RENDER GÊNEROS (D2 — com botão de baixar embaixo)
-// ═══════════════════════════════════════════════════════
-function renderizarGeneros(){
-  const grid = $('genresGrid');
-  grid.innerHTML = '';
-  GENEROS.forEach(g => {
-    const offline = generoOffline(g);
-    const card = document.createElement('div');
-    card.className = 'genre-card';
-    card.dataset.genero = g;
-
-    const top = document.createElement('div');
-    top.className = 'genre-top';
-    top.innerHTML = '<span class="genre-name">' + g + '</span>' +
-      (offline ? '<span class="genre-status">✅</span>' : '');
-    top.onclick = () => selecionarGenero(g);
-    card.appendChild(top);
-
-    const footer = document.createElement('div');
-    footer.className = 'genre-footer' + (offline ? ' offline remover' : '');
-    if(offline){
-      footer.innerHTML = '<i class="fas fa-trash"></i> Remover offline';
-      footer.onclick = (e) => {
-        e.stopPropagation();
-        if(confirm('Remover "' + g + '" do offline?')){
-          limparOfflineGenero(g).then(()=>{
-            notif('🗑️ ' + g + ' removido');
-            renderizarGeneros();
-          });
-        }
-      };
-    }else{
-      footer.innerHTML = '<i class="fas fa-download"></i> Baixar este gênero';
-      footer.onclick = (e) => {
-        e.stopPropagation();
-        baixarGenero(g);
-      };
-    }
-    card.appendChild(footer);
-    grid.appendChild(card);
-  });
-}
-
-// ═══════════════════════════════════════════════════════
-// BUSCA (sem Relevância)
+// BUSCA
 // ═══════════════════════════════════════════════════════
 function initBusca(){
   const sel = $('buscaGenero');
-  GENEROS.forEach(g => {
+  GENRE_ORDEM.forEach(g => {
     const o = document.createElement('option');
     o.value = g; o.textContent = '🎸 ' + g;
     sel.appendChild(o);
   });
-
   $('buscaInput').addEventListener('input', debounce(buscar, 300));
   $('buscaGenero').addEventListener('change', buscar);
   $('buscaOrdem').addEventListener('change', buscar);
 }
-function debounce(fn, ms){
-  let t;
-  return (...a) => { clearTimeout(t); t = setTimeout(()=>fn(...a), ms); };
-}
+function debounce(fn, ms){ let t; return (...a) => { clearTimeout(t); t = setTimeout(()=>fn(...a), ms); }; }
+
 async function buscar(){
   const termo = $('buscaInput').value.trim().toLowerCase();
   const genero = $('buscaGenero').value;
@@ -1190,13 +1684,11 @@ async function buscar(){
   const cont = $('buscaResultados');
   const count = $('buscaCount');
 
-  let base = app.musicas;
-  // Se buscou em outro gênero, carrega
-  if(genero && genero !== app.modoAtual){
+  let base = appState.musicas;
+  if(genero && genero !== appState.modoAtual){
     const g = await buscarGenero(genero);
     if(g) base = g;
   }
-
   let res = base;
   if(termo){
     res = res.filter(m =>
@@ -1208,14 +1700,9 @@ async function buscar(){
   else if(ordem === 'za') res = [...res].sort((a,b)=>b.title.localeCompare(a.title));
   else if(ordem === 'aleatorio') res = shuffle(res);
 
-  count.textContent = res.length === 0 ? '❌ Nada encontrado' : '✅ ' + res.length + ' resultado(s)';
-
+  count.textContent = res.length === 0 ? '❌ Nada' : '✅ ' + res.length + ' resultado(s)';
   cont.innerHTML = '';
-  if(!res.length){
-    cont.innerHTML = '<div style="text-align:center;padding:30px;color:#666">😕 Nada encontrado</div>';
-    return;
-  }
-
+  if(!res.length){ cont.innerHTML = '<div style="text-align:center;padding:30px;color:#666">😕 Nada encontrado</div>'; return; }
   res.slice(0, 80).forEach(m => {
     const item = document.createElement('div');
     item.className = 'result-item';
@@ -1225,13 +1712,12 @@ async function buscar(){
       '<span class="artist">' + sanitize(m.artist) + '</span></div>' +
       '<span class="genero">' + (m.genero||'') + '</span>';
     item.onclick = () => {
-      // ✅ Fecha ANTES de tocar
       fecharModal('modalBusca');
       setTimeout(()=>{
-        const idx = app.playlistAtual.findIndex(x=>x.id===m.id);
-        if(idx > -1) app.indiceAtual = idx;
-        else { app.playlistAtual = [m, ...shuffle(app.musicas.filter(x=>x.id!==m.id))]; app.indiceAtual = 0; }
-        if(app.playerAtivado) tocar();
+        const idx = appState.playlistAtual.findIndex(x=>x.id===m.id);
+        if(idx > -1) appState.indiceAtual = idx;
+        else { appState.playlistAtual = [m, ...shuffle(appState.musicas.filter(x=>x.id!==m.id))]; appState.indiceAtual = 0; }
+        if(appState.isBackgroundActive) tocar();
         notif('🎵 ' + m.title);
       }, 100);
     };
@@ -1245,11 +1731,11 @@ async function buscar(){
 function renderFavoritas(){
   const cont = $('listaFavoritas');
   cont.innerHTML = '';
-  if(!app.favoritos.length){
-    cont.innerHTML = '<div style="text-align:center;padding:30px;color:#666">💔 Nenhuma favorita ainda</div>';
+  if(!appState.favorites.length){
+    cont.innerHTML = '<div style="text-align:center;padding:30px;color:#666">💔 Nenhuma ainda</div>';
     return;
   }
-  app.favoritos.forEach(m => {
+  appState.favorites.forEach(m => {
     const item = document.createElement('div');
     item.className = 'fav-item';
     item.innerHTML =
@@ -1259,10 +1745,10 @@ function renderFavoritas(){
     item.querySelector('.info').onclick = () => {
       fecharModal('modalFavoritas');
       setTimeout(()=>{
-        app.playlistAtual = shuffle(app.favoritos.map(x=>({...x})));
-        const idx = app.playlistAtual.findIndex(x=>x.id===m.id);
-        app.indiceAtual = idx > -1 ? idx : 0;
-        if(app.playerAtivado) tocar();
+        appState.playlistAtual = shuffle(appState.favorites.map(x=>({...x})));
+        const idx = appState.playlistAtual.findIndex(x=>x.id===m.id);
+        appState.indiceAtual = idx > -1 ? idx : 0;
+        if(appState.isBackgroundActive) tocar();
       }, 100);
     };
     item.querySelector('.remove').onclick = (e) => {
@@ -1274,149 +1760,531 @@ function renderFavoritas(){
   });
 }
 
-// ═══════════════════════════════════════════════════════
-// MODAIS
-// ═══════════════════════════════════════════════════════
 function abrirModal(id){ $(id).classList.add('open'); }
 function fecharModal(id){ $(id).classList.remove('open'); }
 
 // ═══════════════════════════════════════════════════════
-// MÍDIA DE FUNDO — com fallback visual
+// ⭐ FULLSCREEN INFINITO
 // ═══════════════════════════════════════════════════════
-let midiaTimer = null;
-async function carregarMidias(container, lista, opcoes={}){
-  const { tela='principal' } = opcoes;
-  if(midiaTimer){ clearTimeout(midiaTimer); midiaTimer = null; }
-  container.querySelectorAll('video').forEach(v=>{ try{ v.pause(); v.removeAttribute('src'); v.load(); }catch(e){} });
-  container.querySelectorAll('video,img').forEach(el=>{ if(!el.classList.contains('media-fallback')) el.remove(); });
+let fullscreenInterval = null;
+let fsEmAndamento = false;
+let fullscreenAtivo = false;
 
-  let ms = lista && lista.length ? lista : [];
-  if(!ms.length){ return; }
-
-  const els = [];
-  ms.forEach((m, i) => {
-    let el;
-    if(m.tipo === 'video'){
-      el = document.createElement('video');
-      el.src = m.src;
-      el.muted = true; el.loop = false; el.playsInline = true;
-      el.setAttribute('playsinline','');
-      el.setAttribute('muted','');
-      el.preload = 'auto';
-      el.addEventListener('error', ()=>{ el.dataset.erro = '1'; });
-    }else{
-      el = document.createElement('img');
-      el.src = m.src;
-      el.onerror = ()=>{ el.dataset.erro = '1'; };
+function jaFullscreen(){
+  return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+}
+function forcarFullscreen(){
+  if(jaFullscreen()) return true;
+  if(fsEmAndamento) return false;
+  fsEmAndamento = true;
+  try{
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if(req){
+      const r = req.call(el);
+      if(r && r.then){ r.then(()=>{ fsEmAndamento=false; fullscreenAtivo=true; }).catch(()=>{ fsEmAndamento=false; }); }
+      else{ fsEmAndamento = false; fullscreenAtivo = true; }
+      return true;
     }
-    el.className = i === 0 ? 'active' : '';
-    container.appendChild(el);
-    els.push(el);
-  });
-
-  if(!els.length) return;
-  let idx = 0;
-
-  function tocarIdx(n){
-    const el = els[n];
-    if(!el) return;
-    els.forEach((x, j) => { x.classList.toggle('active', j === n); });
-
-    if(el.tagName === 'VIDEO'){
-      els.forEach((x, j) => { if(x.tagName==='VIDEO' && j!==n){ try{ x.pause(); x.currentTime=0; }catch(e){} } });
-      try{ el.currentTime = 0; }catch(e){}
-      const p = el.play();
-      if(p && p.catch){ p.catch(()=>{}); }
-      el.onended = ()=>{ idx = (idx+1) % els.length; tocarIdx(idx); };
-      midiaTimer = setTimeout(()=>{
-        if(idx === n){ idx = (idx+1) % els.length; tocarIdx(idx); }
-      }, CONFIG.MIDIA_MAX_SEGURANCA_MS);
-    }else{
-      midiaTimer = setTimeout(()=>{
-        if(idx === n){ idx = (idx+1) % els.length; tocarIdx(idx); }
-      }, 5000);
+    fsEmAndamento = false;
+    return false;
+  }catch(e){ fsEmAndamento = false; return false; }
+}
+function iniciarFullscreenGuard(){
+  if(fullscreenInterval) clearInterval(fullscreenInterval);
+  fullscreenInterval = setInterval(()=>{
+    if(document.hidden) return;
+    if(!appState.playerAtivado) return;
+    if(jaFullscreen()) return;
+    if(appState.telaAtual !== 'principal' && appState.telaAtual !== 'anuncios') return;
+    forcarFullscreen();
+  }, 1500);
+}
+document.addEventListener('fullscreenchange', () => {
+  fullscreenAtivo = jaFullscreen();
+  if(!fullscreenAtivo && appState.playerAtivado){
+    setTimeout(()=>{ if(!jaFullscreen()) forcarFullscreen(); }, 500);
+  } else if(fullscreenAtivo){
+    // Retoma áudio/vídeo ao entrar em fullscreen
+    if(appState.isBackgroundActive && appState.isPlaying && audio.paused && !appState.carregando){
+      setTimeout(()=>audio.play().catch(()=>{}), 200);
     }
+    videosAtivos.forEach(v => {
+      if(v.classList.contains('active') && v.paused) setTimeout(()=>v.play().catch(()=>{}), 200);
+    });
   }
+});
+document.addEventListener('webkitfullscreenchange', () => {
+  fullscreenAtivo = jaFullscreen();
+  if(!fullscreenAtivo && appState.playerAtivado) setTimeout(()=>{ if(!jaFullscreen()) forcarFullscreen(); }, 500);
+});
+function ativarFullscreenPrimeiroToque(){
+  const h = () => {
+    if(!jaFullscreen()) forcarFullscreen();
+    if(ehIOS() && !window.navigator.standalone){
+      setTimeout(()=>{
+        if(!jaFullscreen() && $('avisoFullscreen')){
+          $('avisoFullscreen').textContent = '💡 No iPhone, instale o app pra tela cheia';
+          $('avisoFullscreen').classList.add('visivel');
+          setTimeout(()=>$('avisoFullscreen').classList.remove('visivel'), 6000);
+        }
+      }, 800);
+    }
+    document.removeEventListener('touchend', h);
+    document.removeEventListener('click', h);
+  };
+  document.addEventListener('touchend', h, {passive:true});
+  document.addEventListener('click', h);
+}
+function ajustarIOS(){
+  if(!ehIOS()) return;
+  const s = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+  document.body.classList.add(s ? 'pwa-standalone' : 'ios-browser');
+}
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('touchmove', e => { if(e.touches.length > 1) e.preventDefault(); }, {passive:false});
 
-  // Verifica se TODAS as mídias falharam → deixa fallback
-  setTimeout(()=>{
-    const todasFalharam = els.every(e => e.dataset.erro === '1');
-    if(todasFalharam){ notif('⚠️ Mídia indisponível'); }
-  }, 5000);
+// ═══════════════════════════════════════════════════════
+// ÁUDIO SILENCIOSO + WATCHDOG
+// ═══════════════════════════════════════════════════════
+function criarSilentAudio(){
+  const sr=44100, ns=sr*1;
+  const b=new ArrayBuffer(44+ns*2);
+  const v=new DataView(b);
+  const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  w(0,'RIFF'); v.setUint32(4,36+ns*2,true); w(8,'WAVE'); w(12,'fmt ');
+  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true);
+  v.setUint16(34,16,true); w(36,'data'); v.setUint32(40,ns*2,true);
+  return new Blob([b],{type:'audio/wav'});
+}
+let silentUrl = null;
+function getSilentUrl(){ if(!silentUrl) silentUrl = URL.createObjectURL(criarSilentAudio()); return silentUrl; }
+let keepAliveInterval = null, watchdogInterval = null;
+function manterAtivo(){
+  if(keepAliveInterval) clearInterval(keepAliveInterval);
+  keepAliveInterval = setInterval(()=>{
+    if(!appState.isBackgroundActive) return;
+    try{ if($('backgroundAudio').paused) $('backgroundAudio').play().catch(()=>{}); }catch(e){}
+  }, 3000);
 
-  tocarIdx(0);
+  if(watchdogInterval) clearInterval(watchdogInterval);
+  watchdogInterval = setInterval(()=>{
+    if(!appState.isBackgroundActive || appState.carregando) return;
+    if(audio.ended && appState.isPlaying){ next(); return; }
+    if(appState.isPlaying && audio.paused && audio.src && !audio.ended){
+      audio.play().catch(()=>{});
+    }
+    if(appState.isPlaying && audio.src && !audio.paused && !audio.ended){
+      const a = Date.now();
+      const pos = audio.currentTime;
+      if(!audio._wdPos){ audio._wdPos = pos; audio._wdTime = a; }
+      else if(pos === audio._wdPos){
+        if(a - audio._wdTime > 12000){
+          const m = appState.playlistAtual[appState.indiceAtual];
+          if(m) appState.musicasComProblema.add(m.id);
+          audio._wdPos = null;
+          next();
+        }
+      }else{ audio._wdPos = pos; audio._wdTime = a; }
+    }
+  }, 3000);
+}
+async function ativarPlayer(){
+  if(appState.playerAtivado) return;
+  appState.playerAtivado = true;
+  try{
+    const bg = $('backgroundAudio');
+    bg.src = getSilentUrl();
+    bg.loop = true;
+    bg.volume = 0.001;
+    await bg.play();
+    appState.isBackgroundActive = true;
+    manterAtivo();
+    if('wakeLock' in navigator){ try{ await navigator.wakeLock.request('screen'); }catch(e){} }
+    forcarFullscreen();
+    iniciarFullscreenGuard();
+    await iniciarTimer();
+    setTimeout(tocar, 500);
+    setTimeout(mostrarBemVindo, 1000);
+  }catch(e){
+    appState.isBackgroundActive = true;
+    forcarFullscreen();
+    iniciarFullscreenGuard();
+    iniciarTimer();
+    setTimeout(tocar, 500);
+    setTimeout(mostrarBemVindo, 1000);
+  }
+}
+function mostrarBemVindo(){
+  const el = $('bemVindo');
+  if(!el) return;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  const onEnd = () => { el.classList.remove('show'); el.removeEventListener('animationend', onEnd); };
+  el.addEventListener('animationend', onEnd);
 }
 
 // ═══════════════════════════════════════════════════════
-// CICLO DE TELAS (principal ↔ anúncios) — SEM BOTÕES
+// 🔐 ADMIN (8 cliques ofuscado)
 // ═══════════════════════════════════════════════════════
+let cliques = [];
+function setupCliques(){
+  const el = $('tituloGrande');
+  if(!el) return;
+  el.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const t = now();
+    cliques = cliques.filter(x => t - x < _JANELA_CLIQUES);
+    cliques.push(t);
+    if(cliques.length >= 3 && cliques.length < _TOTAL_CLIQUES){
+      vibrar(8);
+      mostrarDica(_TOTAL_CLIQUES - cliques.length);
+    }
+    if(cliques.length >= _TOTAL_CLIQUES){
+      cliques = [];
+      vibrar([50,30,50]);
+      esconderDica();
+      const senha = await vdbDialog({title:'🔒 ADMIN', msg:'Digite a senha:', input:'password', okText:'Entrar'});
+      if(!senha){ notif('❌ Cancelado'); return; }
+      if(senha === _getSenhaAdmin()){
+        vibrar([30,30,30]);
+        $('adminPanel').classList.add('open');
+        notif('👑 Admin!');
+      }else{
+        notif('❌ Senha incorreta!', 2500);
+        vibrar([100,50,100]);
+      }
+    }
+  });
+}
+function mostrarDica(f){
+  const d = $('dicaCliques');
+  if(!d) return;
+  d.textContent = '🔑 Faltam ' + f + ' cliques';
+  d.style.opacity = '1';
+  clearTimeout(d._t);
+  d._t = setTimeout(()=>{ d.style.opacity='0'; }, 1500);
+}
+function esconderDica(){ const d=$('dicaCliques'); if(d) d.style.opacity='0'; }
+
+function gerarSenhaDispositivo(fp){
+  const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s = '';
+  for(let i=0;i<12;i++) s += c.charAt(Math.floor(Math.random()*c.length));
+  return btoa(fp + ':' + s);
+}
+function gerarSenhaUniversal(){
+  const ts = now().toString(36);
+  const chave = CONFIG._SALT + 'UNIV_' + ts;
+  let h = 0;
+  for(let i=0;i<chave.length;i++){ h=((h<<5)-h)+chave.charCodeAt(i); h|=0; }
+  const sig = Math.abs(h).toString(16).padStart(16,'0').slice(0,16);
+  return 'UNIV:' + ts + ':' + sig;
+}
+function initAdmin(){
+  $('adminGerarBtn').onclick = () => {
+    const fp = $('adminFingerprintInput').value.trim();
+    if(!fp || fp.length < 10){ notif('⚠️ Cole o fingerprint!'); return; }
+    $('adminSenhaGerada').value = gerarSenhaDispositivo(fp);
+    notif('✅ Gerada!');
+  };
+  $('adminGerarUniversalBtn').onclick = () => {
+    $('adminSenhaGerada').value = gerarSenhaUniversal();
+    notif('✅ Universal!');
+  };
+  $('adminLimparBtn').onclick = () => { $('adminSenhaGerada').value=''; };
+  $('btnCopiarSenha').onclick = () => copiarTexto($('adminSenhaGerada').value);
+  $('adminCopiarSenhaBtn').onclick = () => copiarTexto($('adminSenhaGerada').value);
+  $('adminEnviarWhatsBtn').onclick = () => {
+    const s = $('adminSenhaGerada').value;
+    if(!s){ notif('⚠️ Gere uma senha!'); return; }
+    window.open('https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent('🔑 VDB: ' + s));
+  };
+  $('adminCloseBtn').onclick = () => $('adminPanel').classList.remove('open');
+  $('adminCloseTopBtn').onclick = () => $('adminPanel').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════
+// INSTALAR APP
+// ═══════════════════════════════════════════════════════
+let deferredPrompt = null;
+function jaInstalado(){ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
+function mostrarBotaoInstalar(){
+  const b = $('btnInstalarFixo');
+  if(!b) return;
+  if(!ehMobile() || jaInstalado()){ b.style.display='none'; return; }
+  b.style.display = 'flex';
+}
+function abrirInstrucoes(){
+  const m = $('instrucoesInstalar');
+  if(!m) return;
+  const t = m.querySelector('h3');
+  const p = m.querySelectorAll('.passo');
+  if(ehIOS()){
+    if(t) t.innerHTML = '📲 INSTALAR NO IPHONE';
+    if(p[0]) p[0].innerHTML = '<div class="num">1</div><div>Toque em <b>Compartilhar</b></div>';
+    if(p[1]) p[1].innerHTML = '<div class="num">2</div><div>Role e <b>"Adicionar à Tela"</b></div>';
+    if(p[2]) p[2].innerHTML = '<div class="num">3</div><div>Toque em <b>"Adicionar"</b> ✅</div>';
+  }else{
+    if(t) t.innerHTML = '📲 INSTALAR NO ANDROID';
+    if(p[0]) p[0].innerHTML = '<div class="num">1</div><div>Toque nos <b>3 pontinhos</b> ⋮</div>';
+    if(p[1]) p[1].innerHTML = '<div class="num">2</div><div>Toque em <b>"Instalar app"</b></div>';
+    if(p[2]) p[2].innerHTML = '<div class="num">3</div><div>Confirme e pronto! 🎵</div>';
+  }
+  m.classList.add('active');
+}
+function acionarInstalacao(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(r => {
+      if(r.outcome === 'accepted'){ notif('🎉 Instalando!'); $('instrucoesInstalar').classList.remove('active'); }
+      deferredPrompt = null;
+    });
+  }else abrirInstrucoes();
+}
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; setTimeout(mostrarBotaoInstalar, 500); });
+window.addEventListener('appinstalled', () => { const b = $('btnInstalarFixo'); if(b) b.style.display='none'; notif('🎉 Instalado!'); });
+function initInstalar(){
+  const b = $('btnInstalarFixo');
+  if(b) b.onclick = () => { if(deferredPrompt) acionarInstalacao(); else abrirInstrucoes(); };
+  const f = $('fecharInstrucoesBtn');
+  if(f) f.onclick = () => $('instrucoesInstalar').classList.remove('active');
+}
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', {scope:'./'}).catch(e => console.warn('SW:', e));
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// 🪄 ATUALIZAR APP
+// ═══════════════════════════════════════════════════════
+async function forcarRecarregarTudo(){
+  notif('🔄 Limpando tudo...', 2000);
+  try{
+    if(navigator.serviceWorker){
+      const r = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(r.map(x=>x.unregister()));
+    }
+    if('caches' in window){
+      const n = await caches.keys();
+      await Promise.all(n.map(x=>caches.delete(x)));
+    }
+    localStorage.removeItem('vdb_versao_limpeza');
+  }catch(e){}
+  setTimeout(()=>{ window.location.href = window.location.pathname + '?hard=' + Date.now(); }, 1000);
+}
+async function atualizarAppMagico(){
+  const ok = await vdbDialog({title:'🪄 ATUALIZAR APP', msg:'Limpar cache e recarregar?', okText:'Atualizar'});
+  if(!ok) return;
+  notif('⏳ Atualizando...', 1500);
+  try{
+    if('caches' in window){
+      const k = await caches.keys();
+      await Promise.all(k.map(x=>caches.delete(x)));
+    }
+    if(navigator.serviceWorker){
+      const r = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(r.map(x=>x.unregister()));
+    }
+  }catch(e){}
+  setTimeout(()=>{ window.location.href = window.location.pathname + '?update=' + Date.now(); }, 800);
+}
+
+// ═══════════════════════════════════════════════════════
+// 🔓 LIBERAR AGORA
+// ═══════════════════════════════════════════════════════
+async function liberarAgora(){
+  const s = await vdbDialog({title:'🔓 LIBERAR AGORA', msg:'Digite a senha de liberação:', input:'text', okText:'Liberar'});
+  if(!s) return;
+  const ok = await liberarAcesso(s);
+  if(ok) notif('✅ Liberado!', 3000);
+}
+function abrirWhats(){
+  const m = encodeURIComponent('🔑 Olá! Meu teste acabou.\n\n🆔 ID: ' + appState.fingerprint + '\n\nQuero liberar!');
+  window.open('https://wa.me/' + CONFIG.WHATSAPP + '?text=' + m, '_blank');
+}
+
+// ═══════════════════════════════════════════════════════
+// MÍDIA
+// ═══════════════════════════════════════════════════════
+let midiaToken = 0, midiaTimer = null;
+let videosAtivos = new Set();
+
+async function carregarMidias(container, url, options={}){
+  const { fallback=[], tela='principal' } = options;
+  const meuToken = ++midiaToken;
+  if(midiaTimer){ clearTimeout(midiaTimer); midiaTimer = null; }
+
+  container.querySelectorAll('video').forEach(v => {
+    try{ v.pause(); v.removeAttribute('src'); v.load(); videosAtivos.delete(v); }catch(e){}
+  });
+  container.querySelectorAll('video,img').forEach(el => el.remove());
+
+  try{
+    let ms = [];
+    if(url){
+      try{
+        const ctrl = new AbortController();
+        const tid = setTimeout(()=>ctrl.abort(), 9000);
+        const r = await fetch(url + '?v=' + CONFIG.APP_VERSION, { signal: ctrl.signal });
+        clearTimeout(tid);
+        if(r.ok){
+          const d = await r.json();
+          if(Array.isArray(d)) ms = d;
+          else if(d.medias) ms = d.medias;
+          else if(d.midias) ms = d.midias;
+        }
+      }catch(e){}
+    }
+    if(meuToken !== midiaToken) return;
+    if(!ms.length) ms = fallback;
+    ms = ms.filter(m => m && (m.tipo==='video'||m.tipo==='imagem') && m.src);
+    ms = filtrarMidias(tela, ms);
+    if(!ms.length) ms = filtrarMidias(tela, fallback);
+    if(!ms.length) return;
+
+    const els = [];
+    ms.forEach((m, i) => {
+      let el;
+      const u = m.src + (m.src.includes('?') ? '&' : '?') + 'v=' + CONFIG.APP_VERSION;
+      if(m.tipo === 'video'){
+        el = document.createElement('video');
+        el.src = u; el.muted = true; el.loop = false; el.playsInline = true;
+        el.setAttribute('playsinline','');
+        el.setAttribute('webkit-playsinline','');
+        el.setAttribute('muted','');
+        el.preload = 'auto';
+        el.controls = false;
+        try{ el.load(); }catch(e){}
+        el.addEventListener('error', ()=>{ el.dataset.erro = '1'; });
+        videosAtivos.add(el);
+      }else{
+        el = document.createElement('img');
+        el.src = u; el.loading = 'eager'; el.alt = 'VDB';
+        el.onerror = ()=>{ el.dataset.erro = '1'; };
+      }
+      el.className = i===0 ? 'active' : 'inactive';
+      el.style.zIndex = i===0 ? '3' : '2';
+      container.appendChild(el);
+      els.push(el);
+    });
+
+    if(meuToken !== midiaToken){ els.forEach(x=>x.remove()); return; }
+    if(!els.length) return;
+    let idx = 0;
+
+    function tocarIdx(n){
+      if(meuToken !== midiaToken) return;
+      const el = els[n];
+      if(!el) return;
+      els.forEach((x, j) => {
+        if(j === n){ x.classList.add('active'); x.classList.remove('inactive'); x.style.zIndex='3'; }
+        else{ x.classList.remove('active'); x.classList.add('inactive'); x.style.zIndex='2'; }
+      });
+      if(el.tagName === 'VIDEO'){
+        els.forEach((x, j) => { if(x.tagName==='VIDEO' && j!==n){ try{ x.pause(); x.currentTime=0; }catch(e){} } });
+        try{ el.currentTime = 0; }catch(e){}
+        const p = el.play();
+        if(p && p.catch){ p.catch(()=>{}); }
+        el.onended = () => { if(meuToken!==midiaToken) return; setTimeout(()=>{ idx=(idx+1)%els.length; tocarIdx(idx); }, 700); };
+        const meuIdx = n;
+        midiaTimer = setTimeout(()=>{
+          if(meuToken!==midiaToken) return;
+          if(idx === meuIdx){ idx=(idx+1)%els.length; tocarIdx(idx); }
+        }, CONFIG.MIDIA_MAX_SEGURANCA_MS);
+      }else{
+        const meuIdx = n;
+        midiaTimer = setTimeout(()=>{
+          if(meuToken!==midiaToken) return;
+          if(idx === meuIdx){ idx=(idx+1)%els.length; tocarIdx(idx); }
+        }, 5000);
+      }
+    }
+
+    const primeiro = els[0];
+    if(primeiro && primeiro.tagName === 'VIDEO'){
+      const tentar = () => tocarIdx(0);
+      if(primeiro.readyState >= 2) tentar();
+      else{
+        primeiro.addEventListener('loadeddata', tentar, { once:true });
+        primeiro.addEventListener('canplay', tentar, { once:true });
+        setTimeout(()=>{ if(meuToken===midiaToken) tocarIdx(0); }, 8000);
+      }
+    }else tocarIdx(0);
+  }catch(e){ console.error('Erro mídias:', e); }
+}
+async function carregarMidiasPadrao(){
+  await carregarMidias($('mediaContainer'), MIDIAS_PADRAO_URL, { fallback: MIDIAS_FALLBACK, tela:'principal' });
+}
+async function carregarMidiasAnuncio(){
+  await carregarMidias($('mediaAnuncios'), MIDIAS_ANUNCIO_URL, { fallback: MIDIAS_ANUNCIO_FALLBACK, tela:'anuncios' });
+}
+
+// ═══════════════════════════════════════════════════════
+// CICLO DE TELAS (mantém fullscreen)
+// ═══════════════════════════════════════════════════════
+let cicloTimer = null;
 function agendarCiclo(){
-  const t = app.telaAtual === 'principal' ? CONFIG.CICLO_PRINCIPAL_MS : CONFIG.CICLO_ANUNCIO_MS;
-  setTimeout(async ()=>{
-    if(!app.playerAtivado){ agendarCiclo(); return; }
-    // Se tiver modal aberto, pula
-    if(document.querySelector('.modal.open')){ agendarCiclo(); return; }
-    if(app.telaAtual === 'principal') await trocarTela('anuncios');
+  clearTimeout(cicloTimer);
+  const t = appState.telaAtual === 'principal' ? CONFIG.CICLO_PRINCIPAL_MS : CONFIG.CICLO_ANUNCIO_MS;
+  cicloTimer = setTimeout(async ()=>{
+    if(!appState.playerAtivado){ agendarCiclo(); return; }
+    if(document.querySelector('.modal.open, .vdb-dialog-overlay.active, #adminPanel.open')){ agendarCiclo(); return; }
+    if(appState.telaAtual === 'principal') await trocarTela('anuncios');
     else await trocarTela('principal');
+    // Re-entra fullscreen após troca
+    if(!jaFullscreen()) forcarFullscreen();
     agendarCiclo();
   }, t);
 }
 async function trocarTela(destino){
   if(destino === 'anuncios'){
-    app.telaAtual = 'anuncios';
-    $('app').style.opacity = '0';
-    $('app').style.pointerEvents = 'none';
+    appState.telaAtual = 'anuncios';
+    $('telaPrincipal').classList.add('oculta');
     $('telaAnuncios').classList.add('ativa');
-    await carregarMidias($('mediaAnuncios'), MIDIAS_ANUNCIO, { tela:'anuncios' });
+    await carregarMidiasAnuncio();
   }else{
-    app.telaAtual = 'principal';
+    appState.telaAtual = 'principal';
     $('telaAnuncios').classList.remove('ativa');
-    $('app').style.opacity = '1';
-    $('app').style.pointerEvents = 'auto';
-    await carregarMidias($('mediaBg'), MIDIAS_FUNDO, { tela:'principal' });
+    $('telaPrincipal').classList.remove('oculta');
+    await carregarMidiasPadrao();
   }
 }
 
 // ═══════════════════════════════════════════════════════
-// FAB MENU EM ABAS (E3)
+// FAB MENU
 // ═══════════════════════════════════════════════════════
 function initFab(){
-  const main = $('fabMain');
-  const menu = $('fabMenu');
-
+  const main = $('fabMain'), menu = $('fabMenu');
   main.onclick = () => {
     vibrar();
     const open = menu.classList.toggle('open');
     main.classList.toggle('open', open);
     if(open){
-      // Volta pra tela principal de abas
       $('fabAbaPrincipal').style.display = 'block';
-      document.querySelectorAll('.fab-submenu').forEach(s => s.classList.remove('open'));
+      document.querySelectorAll('.fab-submenu').forEach(s=>s.classList.remove('open'));
     }
   };
-
-  // Abre submenu
   document.querySelectorAll('.fab-aba').forEach(btn => {
     btn.onclick = () => {
       vibrar();
       const aba = btn.dataset.aba;
       $('fabAbaPrincipal').style.display = 'none';
-      document.querySelectorAll('.fab-submenu').forEach(s => s.classList.remove('open'));
+      document.querySelectorAll('.fab-submenu').forEach(s=>s.classList.remove('open'));
       const sub = { repro:'subRepro', off:'subOff', app:'subApp', conta:'subConta' }[aba];
       if(sub) $(sub).classList.add('open');
     };
   });
-
-  // Voltar
   document.querySelectorAll('[data-voltar]').forEach(b => {
     b.onclick = () => {
       vibrar();
-      document.querySelectorAll('.fab-submenu').forEach(s => s.classList.remove('open'));
+      document.querySelectorAll('.fab-submenu').forEach(s=>s.classList.remove('open'));
       $('fabAbaPrincipal').style.display = 'block';
     };
   });
-
-  // Ações
   document.querySelectorAll('.fab-sub-btn').forEach(btn => {
     btn.onclick = () => {
       const a = btn.dataset.action;
@@ -1424,27 +2292,27 @@ function initFab(){
       if(a === 'buscar') abrirModal('modalBusca');
       else if(a === 'favoritos'){ renderFavoritas(); abrirModal('modalFavoritas'); }
       else if(a === 'generos'){ renderizarGeneros(); abrirModal('modalGeneros'); }
-      else if(a === 'radio'){ ativarRadio(); }
-      else if(a === 'radiofav'){ ativarRadioFav(); }
-      else if(a === 'baixaratual'){ baixarGenero(app.modoAtual); }
-      else if(a === 'gerenciaroff'){ abrirGerenciadorOffline(); }
-      else if(a === 'temas'){ trocarTema(); }
-      else if(a === 'modotv'){ ativarModoTV(); }
-      else if(a === 'instalar'){ notif('📱 Use o menu do navegador'); }
-      else if(a === 'share'){ compartilhar(); }
-      else if(a === 'tutorial'){ notif('📖 Toque no ▶️ pra tocar, ❤️ pra favoritar'); }
-      else if(a === 'cadastro'){ abrirCadastro(); }
-      else if(a === 'feedback'){ notif('⭐ Obrigado!'); }
+      else if(a === 'radio') ativarRadio();
+      else if(a === 'radiofav') ativarRadioFav();
+      else if(a === 'baixaratual') baixarGenero(appState.modoAtual);
+      else if(a === 'gerenciaroff') abrirGerenciadorOffline();
+      else if(a === 'temas') trocarTema();
+      else if(a === 'modotv') ativarModoTV();
+      else if(a === 'fullscreen'){ if(jaFullscreen()){ (document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document); } else forcarFullscreen(); }
+      else if(a === 'instalar') abrirInstrucoes();
+      else if(a === 'atualizarapp') atualizarAppMagico();
+      else if(a === 'share') compartilhar();
+      else if(a === 'tutorial') notif('📖 Toque ▶️ pra tocar, ❤️ pra favoritar');
+      else if(a === 'liberar') liberarAgora();
+      else if(a === 'cadastro') abrirCadastro();
+      else if(a === 'feedback') notif('⭐ Obrigado!');
     };
   });
 }
-function fecharFab(){
-  $('fabMenu').classList.remove('open');
-  $('fabMain').classList.remove('open');
-}
+function fecharFab(){ $('fabMenu').classList.remove('open'); $('fabMain').classList.remove('open'); }
 
 // ═══════════════════════════════════════════════════════
-// RÁDIO
+// RÁDIO / TEMA / MODO TV
 // ═══════════════════════════════════════════════════════
 async function ativarRadio(){
   notif('🔴 Sintonizando...');
@@ -1455,187 +2323,375 @@ async function ativarRadio(){
     if(m) todas.push(...m.slice(0, 50));
   }
   if(!todas.length){ notif('❌ Erro'); return; }
-  app.musicas = todas;
-  app.modoAtual = 'RÁDIO VDB';
-  app.playlistAtual = shuffle(todas);
-  app.indiceAtual = 0;
-  app.musicasComProblema.clear();
-  const mm = app.playlistAtual[0];
+  appState.musicas = todas;
+  appState.modoAtual = 'RÁDIO VDB';
+  appState.playlistAtual = shuffle(todas);
+  appState.indiceAtual = 0;
+  appState.musicasComProblema.clear();
+  const mm = appState.playlistAtual[0];
   if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
   notif('🔴 AO VIVO!');
-  if(app.playerAtivado) setTimeout(tocar, 200);
+  if(appState.isBackgroundActive) setTimeout(tocar, 200);
 }
 async function ativarRadioFav(){
-  if(!app.favoritos.length){ notif('⚠️ Sem favoritas'); return; }
-  app.modoAtual = 'FAVORITAS';
-  app.musicas = app.favoritos.map(x => ({...x}));
-  app.playlistAtual = shuffle(app.favoritos);
-  app.indiceAtual = 0;
-  const mm = app.playlistAtual[0];
+  if(!appState.favorites.length){ notif('⚠️ Sem favoritas'); return; }
+  appState.modoAtual = 'FAVORITAS';
+  appState.musicas = appState.favorites.map(x=>({...x}));
+  appState.playlistAtual = shuffle(appState.favorites);
+  appState.indiceAtual = 0;
+  const mm = appState.playlistAtual[0];
   if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
-  if(app.playerAtivado) setTimeout(tocar, 200);
+  if(appState.isBackgroundActive) setTimeout(tocar, 200);
   notif('❤️ Rádio Favoritas');
 }
-
-// ═══════════════════════════════════════════════════════
-// TEMA / MODO TV / CADASTRO
-// ═══════════════════════════════════════════════════════
 function trocarTema(){
   const keys = Object.keys(TEMAS);
-  const atual = keys.indexOf(app.temaCor);
-  app.temaCor = keys[(atual+1) % keys.length];
-  const t = TEMAS[app.temaCor];
-  document.documentElement.style.setProperty('--cor-1', t.c1);
-  document.documentElement.style.setProperty('--cor-2', t.c2);
-  document.documentElement.style.setProperty('--cor-3', t.c3);
-  notif('🎨 Tema ' + app.temaCor);
+  const i = keys.indexOf(appState.temaCor);
+  appState.temaCor = keys[(i+1) % keys.length];
+  aplicarTema(appState.temaCor);
+  notif('🎨 Tema ' + TEMAS[appState.temaCor].nome);
 }
 function ativarModoTV(){
   document.body.classList.toggle('modo-tv');
-  notif('📺 Modo TV');
+  if(document.body.classList.contains('modo-tv')){
+    if(!document.getElementById('btnSairModoTV')){
+      const b = document.createElement('button');
+      b.id = 'btnSairModoTV';
+      b.innerHTML = '✕';
+      b.onclick = (e) => { e.stopPropagation(); ativarModoTV(); };
+      document.body.appendChild(b);
+    }
+    notif('📺 Modo TV');
+  }else{
+    const b = document.getElementById('btnSairModoTV');
+    if(b) b.remove();
+    notif('📱 Modo Normal');
+  }
 }
 function compartilhar(){
   if(navigator.share) navigator.share({ title:'VDB MUSIC', url: location.href }).catch(()=>{});
   else { navigator.clipboard.writeText(location.href); notif('📋 Link copiado!'); }
 }
 function abrirCadastro(){
-  const m = encodeURIComponent('🎵 Quero o VDB MUSIC VITALÍCIO por R$ 39,90');
+  const m = encodeURIComponent('🎵 Quero o VDB MUSIC VITALÍCIO por ' + CONFIG.PRECO);
   window.open('https://wa.me/' + CONFIG.WHATSAPP + '?text=' + m);
 }
 function abrirGerenciadorOffline(){
   const meta = getOfflineMeta();
   const gs = Object.keys(meta);
-  if(!gs.length){ notif('📥 Nada offline ainda'); return; }
+  if(!gs.length){ notif('📥 Nada offline'); return; }
   let txt = '📥 Offline:\n\n';
   gs.forEach(g => { txt += '• ' + g + ': ' + meta[g].baixadas + '/' + meta[g].total + '\n'; });
   alert(txt);
 }
 
 // ═══════════════════════════════════════════════════════
-// SLEEP TIMER (com cancelamento)
+// SLEEP
 // ═══════════════════════════════════════════════════════
 function setSleep(min){
-  if(app.sleepTimerId){ clearTimeout(app.sleepTimerId); app.sleepTimerId = null; }
-  if(min <= 0){ notif('🚫 Sleep cancelado'); return; }
-  app.sleepTimerId = setTimeout(()=>{
+  if(appState.sleepTimerId){ clearTimeout(appState.sleepTimerId); appState.sleepTimerId=null; }
+  if(min <= 0){ notif('🚫 Cancelado'); return; }
+  appState.sleepTimerId = setTimeout(()=>{
     audio.pause();
-    app.isPlaying = false;
+    appState.isPlaying = false;
     $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
     notif('💤 Player desligado');
-  }, min * 60000);
-  notif('⏰ Sleep em ' + min + 'min');
+  }, min*60000);
+  notif('⏰ Sleep ' + min + 'min');
 }
 
 // ═══════════════════════════════════════════════════════
-// ATIVAR PLAYER
+// PROPAGANDA
 // ═══════════════════════════════════════════════════════
-async function ativarPlayer(){
-  if(app.playerAtivado) return;
-  app.playerAtivado = true;
-  try{ await audio.play().catch(()=>{}); audio.pause(); }catch(e){}
-  setTimeout(tocar, 300);
+let propTimer = null, propFechada = false;
+function mostrarProp(){
+  if(propFechada || !appState.playerAtivado) return;
+  if(appState.telaAtual !== 'principal') return;
+  if(document.querySelector('.modal.open, .vdb-dialog-overlay.active, #adminPanel.open')) return;
+  $('bannerPropagandaFull').classList.add('visivel');
+}
+function esconderProp(){ $('bannerPropagandaFull').classList.remove('visivel'); }
+function agendarProp(){
+  clearTimeout(propTimer);
+  propTimer = setTimeout(()=>{ mostrarProp(); agendarProp(); }, CONFIG.PROPAGANDA_INTERVALO_MS);
+}
+function abrirWhatsProp(){
+  vibrar(20);
+  const m = encodeURIComponent('🎵 Quero o VDB MUSIC VITALÍCIO por ' + CONFIG.PRECO);
+  window.open('https://wa.me/' + CONFIG.WHATSAPP + '?text=' + m, '_blank');
+  esconderProp();
+  propFechada = true;
+  clearTimeout(propTimer);
+}
+
+// ═══════════════════════════════════════════════════════
+// EVENTOS PLAYER
+// ═══════════════════════════════════════════════════════
+let _errosConsec = 0;
+function initPlayerEventos(){
+  audio.ontimeupdate = () => {
+    if(audio.duration){
+      $('progressFill').style.width = (audio.currentTime/audio.duration*100) + '%';
+      $('currentTime').textContent = fmt(audio.currentTime);
+      $('totalTime').textContent = fmt(audio.duration);
+      if('mediaSession' in navigator && navigator.mediaSession.setPositionState){
+        try{
+          navigator.mediaSession.setPositionState({
+            duration: audio.duration,
+            playbackRate: audio.playbackRate,
+            position: Math.min(audio.currentTime, audio.duration)
+          });
+        }catch(e){}
+      }
+    }
+  };
+  audio.onended = () => {
+    if(appState.carregando) return;
+    appState.isPlaying = false;
+    _errosConsec = 0;
+    setTimeout(()=>{ if(!appState.carregando) next(); }, 200);
+  };
+  audio.onerror = () => {
+    if(appState.carregando) return;
+    if(!audio.src || audio.src === location.href) return;
+    const m = appState.playlistAtual[appState.indiceAtual];
+    if(m) appState.musicasComProblema.add(m.id);
+    _errosConsec++;
+    if(_errosConsec >= 5){
+      _errosConsec = 0;
+      notif('⚠️ Reconectando...', 3000);
+      setTimeout(()=>{
+        if(appState.isBackgroundActive){
+          if(appState.musicasComProblema.size > 0){
+            appState.playlistAtual = appState.playlistAtual.filter(x => !appState.musicasComProblema.has(x.id));
+            appState.musicas = appState.musicas.filter(x => !appState.musicasComProblema.has(x.id));
+            appState.indiceAtual = 0;
+          }
+          if(appState.playlistAtual.length > 0 || appState.musicas.length > 0){
+            if(!appState.playlistAtual.length) appState.playlistAtual = shuffle(appState.musicas);
+            tocar();
+          }
+        }
+      }, 5000);
+      return;
+    }
+    setTimeout(()=>{ if(!appState.carregando) next(); }, 100);
+  };
+  audio.onplaying = () => { _errosConsec = 0; };
+}
+
+// ═══════════════════════════════════════════════════════
+// VISIBILITY
+// ═══════════════════════════════════════════════════════
+function initVisibility(){
+  document.addEventListener('visibilitychange', () => {
+    if(document.visibilityState === 'visible'){
+      if(appState.isBackgroundActive && appState.isPlaying && audio.paused && !appState.carregando) audio.play().catch(()=>{});
+      videosAtivos.forEach(v => { if(v.classList.contains('active') && v.paused && v.dataset.erro !== '1') v.play().catch(()=>{}); });
+      if(!jaFullscreen() && appState.playerAtivado) forcarFullscreen();
+    }
+  });
+  window.addEventListener('focus', () => {
+    if(appState.isBackgroundActive && appState.isPlaying && audio.paused && !appState.carregando) audio.play().catch(()=>{});
+    videosAtivos.forEach(v => { if(v.classList.contains('active') && v.paused && v.dataset.erro !== '1') v.play().catch(()=>{}); });
+    if(!jaFullscreen() && appState.playerAtivado) forcarFullscreen();
+  });
+  window.addEventListener('pageshow', e => {
+    if(e.persisted){
+      if(appState.isBackgroundActive && appState.isPlaying && audio.paused) audio.play().catch(()=>{});
+      videosAtivos.forEach(v => { if(v.classList.contains('active') && v.paused) v.play().catch(()=>{}); });
+      if(!jaFullscreen() && appState.playerAtivado) forcarFullscreen();
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// MENU ⋮
+// ═══════════════════════════════════════════════════════
+function fecharMenu(){ $('menuPopup').classList.remove('open'); const s=$('menuSubmenu'); if(s) s.classList.remove('open'); }
+function initMenu(){
+  $('menuButton').onclick = (e) => {
+    e.stopPropagation();
+    vibrar();
+    if($('menuPopup').classList.contains('open')) fecharMenu();
+    else{ $('menuPopup').classList.add('open'); const s=$('menuSubmenu'); if(s) s.classList.remove('open'); }
+  };
+  const btnAbrir = $('btnAbrirOpcoes');
+  if(btnAbrir) btnAbrir.onclick = (e) => {
+    e.stopPropagation();
+    vibrar();
+    const s = $('menuSubmenu');
+    if(s) s.classList.toggle('open');
+  };
+  $('closeMenuBtn').onclick = () => fecharMenu();
+
+  // Ações do menu
+  const map = {
+    temasMenuBtn: trocarTema,
+    fullscreenMenuBtn: () => { if(jaFullscreen()) (document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document); else forcarFullscreen(); },
+    speedMenuBtn: () => { const s = prompt('Velocidade (0.5 a 2):','1'); if(s){ const v = parseFloat(s); if(v >= 0.5 && v <= 2){ audio.playbackRate = v; notif('⚡ ' + v + 'x'); } } },
+    sleepMenuBtn: () => { const s = prompt('Sleep em minutos (0=cancelar):','30'); if(s){ setSleep(parseInt(s)||0); } },
+    menuBaixarOffline: () => baixarGenero(appState.modoAtual),
+    menuGerenciarOffline: abrirGerenciadorOffline,
+    tutorialMenuBtn: () => notif('📖 Toque ▶️ pra tocar, ❤️ pra favoritar'),
+    cadastroMenuBtn: abrirCadastro,
+    liberarAgoraBtn: liberarAgora,
+    menuInstalarBtn: () => { if(deferredPrompt) acionarInstalacao(); else abrirInstrucoes(); },
+    reloadPlaylistBtn: () => location.reload(),
+    forceUpdateBtn: async () => { notif('🔄 Atualizando mídias...'); await carregarMidiasPadrao(); notif('✅ Atualizado!'); },
+    magicUpdateMenuBtn: atualizarAppMagico,
+    hardReloadBtn: forcarRecarregarTudo
+  };
+  Object.keys(map).forEach(id => {
+    const el = $(id);
+    if(el) el.onclick = () => { fecharMenu(); map[id](); };
+  });
+
+  // Fecha menu ao clicar fora
+  document.addEventListener('click', e => {
+    if(!$('menuPopup').contains(e.target) && e.target !== $('menuButton') && !$('menuButton').contains(e.target)){
+      fecharMenu();
+    }
+  });
 }
 
 // ═══════════════════════════════════════════════════════
 // INICIALIZAÇÃO
 // ═══════════════════════════════════════════════════════
 async function iniciar(){
-  // Loading fake
-  let p = 0;
-  const lf = $('loadingFill');
-  const li = setInterval(()=>{
-    p += 10;
-    lf.style.width = Math.min(p, 100) + '%';
-    if(p >= 100) clearInterval(li);
-  }, 150);
+  try{
+    if($('infoDispositivo')) $('infoDispositivo').textContent = '🆔 ' + appState.fingerprint;
+    $('scrollText').innerHTML = '🎵 VDB MUSIC';
+    const start = now();
 
-  // Carrega primeiro gênero
-  const m = await buscarGenero('BÔNUS');
-  if(m && m.length){
-    app.musicas = m;
-    app.modoAtual = 'BÔNUS';
-    app.playlistAtual = shuffle(m);
-    app.indiceAtual = 0;
-    const mm = app.playlistAtual[0];
-    if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); }
+    // Verifica tempo
+    const r = await verificarTempo();
+    if(r.liberado){
+      $('blockOverlay').classList.remove('active');
+      setTimeout(ativarPlayer, 800);
+    }else{
+      $('blockOverlay').classList.add('active');
+    }
+
+    await carregarMidiasPadrao();
+
+    const m = await buscarGenero('BÔNUS');
+    if(m && m.length){
+      appState.musicas = m;
+      appState.modoAtual = 'BÔNUS';
+      appState.playlistAtual = shuffle(m);
+      appState.indiceAtual = 0;
+      const mm = appState.playlistAtual[0];
+      if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
+    }
+    renderizarGeneros();
+    atualizarBadgeFav();
+
+    const dec = now() - start;
+    if(dec < CONFIG.LOADING_DURACAO_MS) await sleep(CONFIG.LOADING_DURACAO_MS - dec);
+
+    $('loadingScreen').classList.add('hide');
+    $('playerContainer').classList.add('visible');
+
+    mostrarBotaoInstalar();
+    await atualizarTimer();
+    setTimeout(()=>{ if(!jaFullscreen()) forcarFullscreen(); }, 300);
+    ativarFullscreenPrimeiroToque();
+    ajustarIOS();
+
+    initBusca();
+    initFab();
+    initAdmin();
+    initInstalar();
+    initPlayerEventos();
+    initVisibility();
+    initMenu();
+    setupCliques();
+
+    // Botões player
+    $('playBtn').onclick = togglePlay;
+    $('prevBtn').onclick = prev;
+    $('nextBtn').onclick = next;
+    $('btnCoracaoInfo').onclick = (e) => { e.stopPropagation(); vibrar(20); toggleFavAtual(); };
+    $('letreiroClick').onclick = (e) => { e.stopPropagation(); vibrar(); abrirModal('modalBusca'); };
+
+    // Barra inferior
+    $('barraBuscar').onclick = () => { vibrar(); abrirModal('modalBusca'); };
+    $('barraFavoritos').onclick = () => { vibrar(); renderFavoritas(); abrirModal('modalFavoritas'); };
+    $('barraGeneros').onclick = () => { vibrar(); renderizarGeneros(); abrirModal('modalGeneros'); };
+
+    // Fechar modais
+    $('fecharBusca').onclick = () => fecharModal('modalBusca');
+    $('fecharFavoritas').onclick = () => fecharModal('modalFavoritas');
+    $('fecharGeneros').onclick = () => fecharModal('modalGeneros');
+    $('fecharDownload').onclick = () => fecharModal('modalDownload');
+    $('dlCancelar').onclick = () => { baixarCancelado = true; notif('🛑 Cancelando...'); };
+    document.querySelectorAll('.modal').forEach(m => {
+      m.onclick = (e) => { if(e.target === m) m.classList.remove('open'); };
+    });
+
+    // Progress bar
+    const pb = $('progressBar');
+    pb.onclick = (e) => {
+      if(!audio.duration) return;
+      const r = pb.getBoundingClientRect();
+      audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+    };
+
+    // Bloqueio
+    $('btnLiberar').onclick = async () => {
+      const s = $('senhaInput').value.trim();
+      if(!s){ $('erroSenha').textContent = '⚠️ Digite a senha'; return; }
+      await liberarAcesso(s);
+    };
+    $('senhaInput').onkeydown = e => { if(e.key==='Enter') $('btnLiberar').click(); };
+    $('btnWhatsBlock').onclick = abrirWhats;
+    $('btnCopiarFingerprint').onclick = () => copiarTexto(appState.fingerprint, '📋 ID copiado!');
+
+    // Propaganda
+    $('propFullFecharBtn').onclick = (e) => { e.stopPropagation(); vibrar(); esconderProp(); propFechada=true; clearTimeout(propTimer); };
+    $('propFullCtaBtn').onclick = (e) => { e.stopPropagation(); abrirWhatsProp(); };
+    $('bannerPropagandaFull').onclick = (e) => { if(!e.target.closest('.prop-full-fechar')) abrirWhatsProp(); };
+
+    // Teclado
+    document.addEventListener('keydown', e => {
+      if(e.target.tagName === 'INPUT') return;
+      if(e.key === ' '){ e.preventDefault(); togglePlay(); }
+      if(e.key === 'ArrowRight') next();
+      if(e.key === 'ArrowLeft') prev();
+    });
+
+    // Ativar player
+    document.addEventListener('touchstart', ativarPlayer, { once:true });
+    document.addEventListener('click', ativarPlayer, { once:true });
+
+    // Esconder controles
+    setTimeout(()=>{
+      $('bottomControls').classList.add('escondido');
+      $('infoTopo').classList.add('escondido');
+    }, 30000);
+    document.addEventListener('click', () => {
+      $('bottomControls').classList.remove('escondido');
+      $('infoTopo').classList.remove('escondido');
+    });
+
+    // Ciclo
+    setTimeout(agendarCiclo, 15000);
+    setTimeout(()=>{ mostrarProp(); agendarProp(); }, 60000);
+
+    window.addEventListener('beforeunload', () => {
+      if(keepAliveInterval) clearInterval(keepAliveInterval);
+      if(watchdogInterval) clearInterval(watchdogInterval);
+    });
+
+  }catch(e){
+    console.error('❌ Erro:', e);
+    $('loadingScreen').classList.add('hide');
+    $('playerContainer').classList.add('visible');
   }
-
-  // Carrega mídias de fundo
-  await carregarMidias($('mediaBg'), MIDIAS_FUNDO, { tela:'principal' });
-
-  // Mostra app
-  await sleep(1500);
-  $('loadingScreen').classList.add('hide');
-  $('app').classList.add('visible');
-
-  atualizarBadgeFav();
-  initBusca();
-  initFab();
-
-  // Eventos
-  $('playBtn').onclick = togglePlay;
-  $('prevBtn').onclick = prev;
-  $('nextBtn').onclick = next;
-  $('btnCoracao').onclick = toggleFavAtual;
-  $('menuBtn').onclick = () => { vibrar(); notif('⚙️ Use o botão +'); };
-
-  // Barra inferior
-  $('barraBuscar').onclick = () => { vibrar(); abrirModal('modalBusca'); };
-  $('barraFavoritas').onclick = () => { vibrar(); renderFavoritas(); abrirModal('modalFavoritas'); };
-  $('barraGeneros').onclick = () => { vibrar(); renderizarGeneros(); abrirModal('modalGeneros'); };
-
-  // Fechar modais
-  $('fecharBusca').onclick = () => fecharModal('modalBusca');
-  $('fecharFavoritas').onclick = () => fecharModal('modalFavoritas');
-  $('fecharGeneros').onclick = () => fecharModal('modalGeneros');
-  $('fecharDownload').onclick = () => fecharModal('modalDownload');
-  $('dlCancelar').onclick = () => { baixarCancelado = true; notif('🛑 Cancelando...'); };
-  document.querySelectorAll('.modal').forEach(m => {
-    m.onclick = (e) => { if(e.target === m) m.classList.remove('open'); };
-  });
-
-  // Letreiro → abre busca
-  $('letreiroClick').onclick = () => abrirModal('modalBusca');
-
-  // Progress bar
-  const pb = $('progressBar');
-  pb.onclick = (e) => {
-    if(!audio.duration) return;
-    const r = pb.getBoundingClientRect();
-    audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
-  };
-
-  // Primeiro toque ativa player
-  document.addEventListener('touchstart', ativarPlayer, { once:true });
-  document.addEventListener('click', ativarPlayer, { once:true });
-
-  // Teclado
-  document.addEventListener('keydown', e => {
-    if(e.target.tagName === 'INPUT') return;
-    if(e.key === ' '){ e.preventDefault(); togglePlay(); }
-    if(e.key === 'ArrowRight') next();
-    if(e.key === 'ArrowLeft') prev();
-  });
-
-  // Ciclo de telas
-  setTimeout(agendarCiclo, 15000);
-
-  // Esconder controles após 30s (opcional)
-  setTimeout(()=>{
-    $('painelBaixo').classList.add('escondido');
-    $('infoTopo').classList.add('escondido');
-  }, 30000);
-  document.addEventListener('click', ()=>{
-    $('painelBaixo').classList.remove('escondido');
-    $('infoTopo').classList.remove('escondido');
-  });
-
-  notif('✅ VDB DEMO pronta!');
 }
 
 iniciar();
 
 })();
 </script>
-</body>
-</html>
