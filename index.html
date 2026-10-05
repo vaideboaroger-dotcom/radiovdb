@@ -311,8 +311,9 @@ body.modo-tv .tv-controle{display:flex}
 }
 .tv-controle button:active{transform:scale(.9);background:rgba(255,255,255,.2)}
 
+/* ===== FAB (botão +) SUBIU PARA 220px ===== */
 .fab-container{
-  position:fixed;bottom:calc(30px + var(--safe-bottom));right:22px;
+  position:fixed;bottom:calc(220px + var(--safe-bottom));right:22px;
   z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:8px;
   transition:opacity .6s ease;
 }
@@ -332,7 +333,7 @@ body.modo-tv .tv-controle{display:flex}
 .fab-main i{font-size:inherit;transition:transform .3s}
 
 .fab-bemvindo{
-  position:fixed;bottom:calc(100px + var(--safe-bottom));right:22px;z-index:51;
+  position:fixed;bottom:calc(290px + var(--safe-bottom));right:22px;z-index:51;
   font-size:.7rem;font-weight:700;letter-spacing:.1em;color:#fff;opacity:0;
   transition:opacity .5s;pointer-events:none;white-space:nowrap;
   background:rgba(0,0,0,.85);padding:8px 14px;border-radius:20px;
@@ -679,6 +680,7 @@ body.modo-tv #btnSairModoTV{display:flex}
   .genre-card .genre-name{font-size:1.05rem}
   .barra-btn{font-size:.55rem;padding:6px 2px;gap:2px}
   .barra-btn i{font-size:1rem}
+  .fab-container{bottom:calc(210px + var(--safe-bottom))}
 }
 </style>
 </head>
@@ -767,7 +769,7 @@ body.modo-tv #btnSairModoTV{display:flex}
       <div class="fab-secao-titulo">🎵 REPRODUÇÃO</div>
       <button class="fab-sub-btn" id="fabRadio"><i class="fas fa-broadcast-tower" style="color:#f59e0b"></i>Rádio VDB (AO VIVO)</button>
       <button class="fab-sub-btn" id="fabRadioFav"><i class="fas fa-infinity" style="color:#f472b6"></i>Rádio Favoritas</button>
-      <button class="fab-sub-btn" id="fabBuscar"><i class="fas fa-search" style="color:#22d3ee"></i>Buscar Música</button>
+      <button class="fab-sub-btn" id="fabBuscar"><i class="fas fa-search" style="color:#22d3ee"></i>Buscar por Artista</button>
       <button class="fab-sub-btn" id="fabGeneros"><i class="fas fa-guitar" style="color:#22d3ee"></i>Todos os Gêneros</button>
       <button class="fab-sub-btn" id="fabFavoritos"><i class="fas fa-heart" style="color:#f472b6"></i>Favoritas <span class="badge-fav" id="fabBadgeFav">0</span></button>
 
@@ -879,19 +881,20 @@ body.modo-tv #btnSairModoTV{display:flex}
 <div id="searchModal" class="search-modal">
   <div class="search-box">
     <div class="search-header">
-      <input type="text" id="searchInput" placeholder="🔍 Buscar música ou artista..." autocomplete="off">
+      <!-- ===== PLACEHOLDER ALTERADO ===== -->
+      <input type="text" id="searchInput" placeholder="🎤 Nome do Artista..." autocomplete="off">
       <button id="searchCloseBtn" aria-label="Fechar"><i class="fas fa-times"></i></button>
     </div>
     <div class="search-filters">
       <select id="searchGenero"><option value="">🎸 Todos os gêneros</option></select>
+      <!-- ===== OPÇÃO "RELEVÂNCIA" REMOVIDA ===== -->
       <select id="searchOrdem">
-        <option value="relevancia">✨ Relevância</option>
         <option value="az">🔤 A-Z</option>
         <option value="za">🔤 Z-A</option>
         <option value="aleatorio">🎲 Aleatório</option>
       </select>
     </div>
-    <div class="search-count" id="searchCount">Digite algo pra buscar</div>
+    <div class="search-count" id="searchCount">Digite o nome do artista</div>
     <div class="search-results" id="searchResults"></div>
   </div>
 </div>
@@ -998,7 +1001,7 @@ body.modo-tv #btnSairModoTV{display:flex}
     </div>
     <div class="tutorial-item"><div class="icon-tut">🎵</div><div><div class="tt">Tocar música</div><div class="td">Toque no ▶️ grande pra tocar.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">❤️</div><div><div class="tt">Favoritar</div><div class="td">Toque no coração.</div></div></div>
-    <div class="tutorial-item"><div class="icon-tut">🔍</div><div><div class="tt">Buscar</div><div class="td">Toque no letreiro ou na barra inferior.</div></div></div>
+    <div class="tutorial-item"><div class="icon-tut">🎤</div><div><div class="tt">Buscar por Artista</div><div class="td">Toque no letreiro ou na barra inferior.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">🎨</div><div><div class="tt">Mudar cor</div><div class="td">Toque em ➕ → 🎨 Cores do App.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">📺</div><div><div class="tt">Modo TV</div><div class="td">Toque em ➕ → 📺 Modo TV. Use em TVs e PCs.</div></div></div>
     <div class="tutorial-item"><div class="icon-tut">🔑</div><div><div class="tt">Admin</div><div class="td">Toque 8x no "VDB" no topo.</div></div></div>
@@ -1089,7 +1092,8 @@ body.modo-tv #btnSairModoTV{display:flex}
 <div id="avisoFullscreen">💡 Toque na tela para entrar em tela cheia</div>
 <audio id="musicPlayer" preload="none"></audio>
 <audio id="backgroundAudio" preload="auto" style="display:none;"></audio>
-<div id="dicaCliques"></div><script>
+<div id="dicaCliques"></div>
+<script>
 (function(){
 'use strict';
 
@@ -1946,7 +1950,7 @@ function renderizarFavoritosModal(){
 function tocarFavoritaEspecifica(id){let m=appState.musicas.find(x=>x.id===id);if(!m)m=appState.favorites.find(x=>x.id===id);if(!m)return;appState.playlistAtual=shuffle(appState.favorites.map(x=>({...x})));const i=appState.playlistAtual.findIndex(x=>x.id===id);if(i>-1){appState.indiceAtual=i;if(appState.isBackgroundActive)tocar();notif('🎵 Tocando!',1500,'success');}}
 
 const SearchManager = {
-  generoAtual: '', ordemAtual: 'relevancia', termoAtual: '',
+  generoAtual: '', ordemAtual: 'az', termoAtual: '',
   init(){
     const selGenero = document.getElementById('searchGenero');
     if(selGenero && !selGenero.dataset.pronto){
@@ -2000,7 +2004,10 @@ const SearchManager = {
     }
     let resultados = appState.musicas;
     if(this.termoAtual){
-      resultados = resultados.filter(m => m.title.toLowerCase().includes(this.termoAtual) || (m.artist && m.artist.toLowerCase().includes(this.termoAtual)));
+      resultados = resultados.filter(m =>
+        (m.artist && m.artist.toLowerCase().includes(this.termoAtual)) ||
+        m.title.toLowerCase().includes(this.termoAtual)
+      );
     }
     if(this.generoAtual){ resultados = resultados.filter(m => m.genero === this.generoAtual); }
     if(this.ordemAtual === 'az') resultados = [...resultados].sort((a,b) => a.title.localeCompare(b.title));
