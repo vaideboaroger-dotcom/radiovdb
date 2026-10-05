@@ -128,9 +128,6 @@ body:not(.offline) #telaPrincipal{background:#000}
 
 .corpo-tela{flex:1;position:relative;z-index:1;pointer-events:none}
 
-/* ══════════════════════════════════════════════════
-   PAINEL INFERIOR — PLAYER
-   ══════════════════════════════════════════════════ */
 .painel-baixo{
   position:relative;z-index:20;
   padding:20px 22px calc(20px + var(--safe-bottom));
@@ -184,9 +181,6 @@ body:not(.offline) #telaPrincipal{background:#000}
 .progress-bar:hover{height:6px}
 .progress-fill{height:100%;width:0%;background:#fff;border-radius:4px;transition:width .2s linear;pointer-events:none}
 
-/* ══════════════════════════════════════════════════
-   BARRA INFERIOR — BUSCAR | FAVORITOS | GÊNEROS
-   ══════════════════════════════════════════════════ */
 .barra-inferior {
   position:relative;
   z-index:21;
@@ -446,9 +440,6 @@ body.modo-tv .tv-controle{display:flex}
 .speed-btn{padding:8px 16px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;font-size:.78rem;font-weight:700;cursor:pointer}
 .speed-btn.active{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border-color:transparent}
 
-/* ══════════════════════════════════════════════════
-   MODAL DE TEMAS — 3 TEMAS
-   ══════════════════════════════════════════════════ */
 #themeModal{position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);z-index:80;display:none;align-items:center;justify-content:center;padding:20px}
 #themeModal.active{display:flex}
 .theme-box{background:rgba(15,15,25,.97);backdrop-filter:blur(40px);border-radius:28px;padding:28px 22px;max-width:420px;width:100%;border:1px solid rgba(255,255,255,.15);max-height:88vh;overflow-y:auto}
@@ -720,7 +711,6 @@ body.modo-tv #btnSairModoTV{display:flex}
     </div>
     <div class="corpo-tela"></div>
 
-    <!-- PAINEL DO PLAYER -->
     <div class="painel-baixo" id="bottomControls">
       <button class="btn-coracao-topo" id="btnCoracaoInfo" aria-label="Favoritar">
         <i class="far fa-heart"></i>
@@ -739,7 +729,6 @@ body.modo-tv #btnSairModoTV{display:flex}
       </div>
     </div>
 
-    <!-- BARRA INFERIOR — BUSCAR | FAVORITOS | GÊNEROS -->
     <div class="barra-inferior" id="barraInferior">
       <button class="barra-btn" id="barraBuscar" aria-label="Buscar">
         <i class="fas fa-magnifying-glass"></i>
@@ -773,7 +762,6 @@ body.modo-tv #btnSairModoTV{display:flex}
     <button id="tvNextBtn" aria-label="Próxima"><i class="fas fa-forward-step"></i></button>
   </div>
 
-  <!-- FAB REORGANIZADO -->
   <div class="fab-container" id="fabContainer">
     <div class="fab-sub" id="fabSub">
       <div class="fab-secao-titulo">🎵 REPRODUÇÃO</div>
@@ -879,7 +867,6 @@ body.modo-tv #btnSairModoTV{display:flex}
   <button class="btn-fechar" id="adminCloseBtn" style="background:rgba(255,255,255,.06);border:none;padding:12px;border-radius:20px;color:#aaa;cursor:pointer;width:100%;margin-top:10px;font-weight:900">✕ Fechar Painel</button>
 </div>
 
-<!-- MODAL DE TEMAS — 3 TEMAS -->
 <div id="themeModal">
   <div class="theme-box">
     <h3>🎨 Cores do App</h3>
@@ -1102,9 +1089,7 @@ body.modo-tv #btnSairModoTV{display:flex}
 <div id="avisoFullscreen">💡 Toque na tela para entrar em tela cheia</div>
 <audio id="musicPlayer" preload="none"></audio>
 <audio id="backgroundAudio" preload="auto" style="display:none;"></audio>
-<div id="dicaCliques"></div>
-
-<script>
+<div id="dicaCliques"></div><script>
 (function(){
 'use strict';
 
@@ -1118,8 +1103,8 @@ const CONFIG = {
   APP_VERSION: 'v56',
   LOADING_DURACAO_MS: 3500,
   PROPAGANDA_INTERVALO_MS: 600000,
-  PWA_INSTALL_DELAY_MS: 30000,
-  PWA_INSTALL_INTERVALO_HORAS: 6,
+  PWA_INSTALL_DELAY_MS: 3000,
+  PWA_INSTALL_INTERVALO_HORAS: 0,
   CARD_DURACAO_MS: 30000,
   MIDIA_DURACAO_MS: 30000,
   MIDIA_MAX_SEGURANCA_MS: 180000,
@@ -1132,31 +1117,10 @@ const CONFIG = {
 
 const CACHE_OFFLINE_CONFIG = { ativado: true, maxMusicas: 500, maxBytesPorMusica: 8 * 1024 * 1024 };
 
-/* ══════════════════════════════════════════════════
-   TEMAS — APENAS 3: PRETO, ROXO, AZUL
-   ══════════════════════════════════════════════════ */
 const TEMAS = {
-  azul: {
-    nome: 'Azul',
-    c1: '#2563eb',
-    c2: '#1e40af',
-    c3: '#3b82f6',
-    preview: 'linear-gradient(135deg,#2563eb,#3b82f6)'
-  },
-  roxo: {
-    nome: 'Roxo',
-    c1: '#7c3aed',
-    c2: '#5b21b6',
-    c3: '#a855f7',
-    preview: 'linear-gradient(135deg,#7c3aed,#a855f7)'
-  },
-  preto: {
-    nome: 'Preto',
-    c1: '#374151',
-    c2: '#111827',
-    c3: '#6b7280',
-    preview: 'linear-gradient(135deg,#374151,#6b7280)'
-  }
+  azul: { nome: 'Azul', c1: '#2563eb', c2: '#1e40af', c3: '#3b82f6', preview: 'linear-gradient(135deg,#2563eb,#3b82f6)' },
+  roxo: { nome: 'Roxo', c1: '#7c3aed', c2: '#5b21b6', c3: '#a855f7', preview: 'linear-gradient(135deg,#7c3aed,#a855f7)' },
+  preto: { nome: 'Preto', c1: '#374151', c2: '#111827', c3: '#6b7280', preview: 'linear-gradient(135deg,#374151,#6b7280)' }
 };
 
 const GENRE_COLORS = {
@@ -1220,9 +1184,7 @@ Object.keys(GENRE_URLS).forEach(g => {
 });
 
 const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
-const MIDIAS_FALLBACK = [
-  {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}
-];
+const MIDIAS_FALLBACK = [{tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}];
 const MIDIAS_ANUNCIO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/anuncios.json';
 const MIDIAS_ANUNCIO_FALLBACK = [
   {tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'},
@@ -1290,9 +1252,6 @@ function atualizarModoOffline(){
 window.addEventListener('online', () => { atualizarModoOffline(); notif('🌐 Online', 1500, 'success'); });
 window.addEventListener('offline', () => { atualizarModoOffline(); notif('📴 Offline — modo colorido', 2000, 'info'); });
 
-/* ══════════════════════════════════════════════════
-   SEGURANÇA — INTOCADA
-   ══════════════════════════════════════════════════ */
 const SecureTimer = {
   CHAVE_DESBLOQ:'vdb_desbloq', CHAVE_BLOQ_PERM:'vdb_bloq_perm',
   async verificar(){
@@ -1380,9 +1339,6 @@ class CacheManager{
 }
 const cacheManager=new CacheManager();
 
-/* ══════════════════════════════════════════════════
-   OFFLINE — CORRIGIDO
-   ══════════════════════════════════════════════════ */
 const CACHE_MUSICAS='vdb-musicas-offline';
 async function abrirCacheMusicas(){if(!('caches' in window))return null;try{return await caches.open(CACHE_MUSICAS);}catch(e){return null;}}
 async function estaOffline(url){try{const c=await abrirCacheMusicas();if(!c)return false;return!!(await c.match(url));}catch(e){return false;}}
@@ -1576,19 +1532,14 @@ const dom={
   themeModal:$('themeModal'),themeGrid:$('themeGrid'),themeCloseBtn:$('themeCloseBtn'),
   tvPrevBtn:$('tvPrevBtn'),tvPlayBtn:$('tvPlayBtn'),tvNextBtn:$('tvNextBtn'),
   avisoFullscreen:$('avisoFullscreen'),
-  /* BARRA INFERIOR */
   barraInferior:$('barraInferior'),
   barraBuscar:$('barraBuscar'),
   barraFavoritos:$('barraFavoritos'),
   barraGeneros:$('barraGeneros'),
   barraBadgeFav:$('barraBadgeFav'),
-  /* FAB NOVO */
   fabBaixarAtual:$('fabBaixarAtual')
 };
 
-/* ══════════════════════════════════════════════════
-   FULLSCREEN — INTOCADO
-   ══════════════════════════════════════════════════ */
 let fullscreenInterval=null, fullscreenEmAndamento=false;
 
 function jaEstaFullscreen(){
@@ -1665,9 +1616,6 @@ document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault
 function updateProgress(p){dom.loadingProgressFill.style.width=Math.min(p,100)+'%';}
 function mostrarLoadingTela(s){if(dom.loadingTela)dom.loadingTela.classList.toggle('ativo',s);}
 
-/* ══════════════════════════════════════════════════
-   TIMER
-   ══════════════════════════════════════════════════ */
 async function updateTimerDisplay(){
   if(!dom.timerLib) return;
   if(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ)==='true'){
@@ -1700,9 +1648,6 @@ async function iniciarTimerCorrido(){
   },5000);
 }
 
-/* ══════════════════════════════════════════════════
-   ÁUDIO
-   ══════════════════════════════════════════════════ */
 function fadeOutAudio(d=CONFIG.FADE_OUT_MS){
   return new Promise(r=>{
     if(dom.audio.paused||!dom.audio.src){r();return;}
@@ -1726,21 +1671,16 @@ function fadeInAudio(d=CONFIG.FADE_IN_MS,vol=CONFIG.VOLUME_PADRAO){
   });
 }
 
-/* ✅ getUrls — CORRIGIDO com fallback */
 function getUrls(m) {
   const s = m.src || '';
   if (!s) return [];
-
   if (s.startsWith('http')) {
     return [s + (s.includes('?') ? '&' : '?') + 'v=' + CONFIG.APP_VERSION];
   }
-
   const nome = s.replace(/^\.\//, '').replace(/[^a-zA-Z0-9\-_.]/g, '');
   if (!nome) return [];
-
   const repo = GENRE_REPOS[m.genero] || 'radiolojasjc-hub/play12';
   const urls = ['https://raw.githubusercontent.com/' + repo + '/refs/heads/main/' + nome + '?v=' + CONFIG.APP_VERSION];
-
   if (repo !== 'radiolojasjc-hub/play12') {
     urls.push('https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/' + nome + '?v=' + CONFIG.APP_VERSION);
   }
@@ -1964,9 +1904,6 @@ async function ativarPlayer(){
   }
 }
 
-/* ══════════════════════════════════════════════════
-   FAVORITOS — com sincronização da barra
-   ══════════════════════════════════════════════════ */
 function updateFavBadge(){
   if(dom.fabBadgeFav)dom.fabBadgeFav.textContent=appState.favorites.length;
   atualizarBadgeBarra();
@@ -2008,9 +1945,6 @@ function renderizarFavoritosModal(){
 }
 function tocarFavoritaEspecifica(id){let m=appState.musicas.find(x=>x.id===id);if(!m)m=appState.favorites.find(x=>x.id===id);if(!m)return;appState.playlistAtual=shuffle(appState.favorites.map(x=>({...x})));const i=appState.playlistAtual.findIndex(x=>x.id===id);if(i>-1){appState.indiceAtual=i;if(appState.isBackgroundActive)tocar();notif('🎵 Tocando!',1500,'success');}}
 
-/* ══════════════════════════════════════════════════
-   SEARCH
-   ══════════════════════════════════════════════════ */
 const SearchManager = {
   generoAtual: '', ordemAtual: 'relevancia', termoAtual: '',
   init(){
@@ -2221,9 +2155,6 @@ async function desativarModoTV(){
   notif('🎵 Modo Normal', 2000, 'info');
 }
 
-/* ══════════════════════════════════════════════════
-   TEMAS — 3 TEMAS
-   ══════════════════════════════════════════════════ */
 function renderizarTemas(){
   if(!dom.themeGrid) return;
   dom.themeGrid.innerHTML = '';
@@ -2245,9 +2176,6 @@ function renderizarTemas(){
 function abrirModalTemas(){vibrar(10);renderizarTemas();dom.themeModal.classList.add('active');}
 function fecharModalTemas(){dom.themeModal.classList.remove('active');}
 
-/* ══════════════════════════════════════════════════
-   SENHAS
-   ══════════════════════════════════════════════════ */
 function gerarSenhaAleatoria(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<12;i++)s+=c.charAt(Math.floor(Math.random()*c.length));return s;}
 function gerarSenhaDispositivo(fp){return btoa(fp+':'+gerarSenhaAleatoria());}
 function gerarSenhaUniversal(){const ts=now().toString(36);const base='UNIV_'+ts;const chave=CONFIG._SALT+base;let h=0;for(let i=0;i<chave.length;i++){h=((h<<5)-h)+chave.charCodeAt(i);h|=0;}const sig=Math.abs(h).toString(16).padStart(16,'0').slice(0,16);return'UNIV:'+ts+':'+sig;}
@@ -2358,9 +2286,6 @@ class TouchManager{
 }
 new TouchManager();
 
-/* ══════════════════════════════════════════════════
-   MÍDIAS
-   ══════════════════════════════════════════════════ */
 let midiaToken=0, midiaTimerAtual=null;
 let videosAtivos = new Set();
 
@@ -2625,7 +2550,7 @@ const btnInstalarFixo=$('btnInstalarFixo'),instrucoesInstalar=$('instrucoesInsta
 let deferredInstallPrompt=null, pwaJaFoiMostradoNestaSessao=false;
 function jaEstaInstalado(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}
 function mostrarBotaoInstalar(){if(!btnInstalarFixo)return;if(!ehMobile()||jaEstaInstalado()){btnInstalarFixo.style.display='none';return;}btnInstalarFixo.style.display='flex';}
-function deveMostrarModalPWA(){if(jaEstaInstalado()||!ehMobile()||pwaJaFoiMostradoNestaSessao)return false;const u=parseInt(localStorage.getItem('vdb_pwa_ultimo_mostrado')||'0');if((now()-u)/(1000*60*60)<CONFIG.PWA_INSTALL_INTERVALO_HORAS)return false;return true;}
+function deveMostrarModalPWA(){if(pwaJaFoiMostradoNestaSessao)return false;return true;}
 function mostrarModalPWA(){
   if(!deveMostrarModalPWA())return;
   pwaJaFoiMostradoNestaSessao=true;
@@ -2654,7 +2579,7 @@ function abrirInstrucoesManuais(){
   m.classList.add('active');
 }
 function esconderModalPWA(){const m=dom.pwaInstallModal;if(m)m.classList.remove('active');}
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;setTimeout(mostrarBotaoInstalar,500);setTimeout(mostrarModalPWA,CONFIG.PWA_INSTALL_DELAY_MS);});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;setTimeout(mostrarBotaoInstalar,500);});
 window.addEventListener('appinstalled',()=>{btnInstalarFixo.style.display='none';esconderModalPWA();notif('🎉 Instalado!',3000,'success');});
 if(btnInstalarFixo)btnInstalarFixo.onclick=()=>{if(deferredInstallPrompt)acionarInstalacaoPWA();else abrirInstrucoesManuais();};
 if(dom.pwaBtnInstalar)dom.pwaBtnInstalar.onclick=()=>acionarInstalacaoPWA();
@@ -2733,7 +2658,6 @@ async function iniciar(){
     FavRadio.init();
     initControlesAnuncio();
 
-    /* BARRA INFERIOR */
     if(dom.barraBuscar)dom.barraBuscar.onclick=(e)=>{e.stopPropagation();vibrar(10);SearchManager.abrir();};
     if(dom.barraFavoritos)dom.barraFavoritos.onclick=(e)=>{e.stopPropagation();vibrar(10);renderizarFavoritosModal();dom.favModal.classList.add('open');};
     if(dom.barraGeneros)dom.barraGeneros.onclick=(e)=>{e.stopPropagation();vibrar(10);renderizarGeneros();dom.genresModal.classList.add('open');};
@@ -2783,7 +2707,6 @@ async function iniciar(){
     dom.fabShare.onclick=()=>{navigator.clipboard.writeText(location.href).then(()=>notif('📋 Link copiado!',1500,'success'));fecharFab();};
     dom.fabQrCode.onclick=()=>{gerarQrCode();fecharFab();};
 
-    /* FAB — BAIXAR GÊNERO ATUAL */
     if(dom.fabBaixarAtual)dom.fabBaixarAtual.onclick=()=>{
       fecharFab();vibrar(15);
       if(ehModoRadio()||!appState.modoAtual){notif('⚠️ Escolha um gênero primeiro',2000,'warning');return;}
