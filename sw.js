@@ -2,10 +2,9 @@
    VAI DE BOA! MUSIC — SERVICE WORKER v61 (CORRIGIDO)
    ═══════════════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'vdb-cache-v61';
-const CACHE_MUSICAS = 'vdb-musicas-offline-v2'; // ✅ IGUAL ao app
+const CACHE_NAME    = 'vdb-cache-v61';
+const CACHE_MUSICAS = 'vdb-musicas-offline';
 
-// Arquivos essenciais do app (shell)
 const APP_SHELL = [
   './',
   './index.html',
@@ -14,30 +13,25 @@ const APP_SHELL = [
   './favicon192.png'
 ];
 
-// ═══════════════════════════════════════════════════════════
-// INSTALL — faz cache do app shell e ativa imediatamente
-// ═══════════════════════════════════════════════════════════
 self.addEventListener('install', (event) => {
   console.log('🔧 SW: instalando...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(APP_SHELL).catch(err => {
-        console.warn('⚠️ SW: falha ao cachear shell:', err);
-      });
+      return Promise.all(
+        APP_SHELL.map(url =>
+          cache.add(url).catch(err => console.warn(`⚠️ SW: falha ao cachear ${url}`, err))
+        )
+      );
     }).then(() => self.skipWaiting())
   );
 });
 
-// ═══════════════════════════════════════════════════════════
-// ACTIVATE — limpa caches antigos e assume controle
-// ═══════════════════════════════════════════════════════════
 self.addEventListener('activate', (event) => {
   console.log('🚀 SW: ativando...');
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
-          // Remove cache antigo mas MANTÉM o cache de músicas offline
           if (key !== CACHE_NAME && key !== CACHE_MUSICAS) {
             console.log('🗑️ SW: removendo cache antigo:', key);
             return caches.delete(key);
@@ -48,23 +42,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// ═══════════════════════════════════════════════════════════
-// FETCH — estratégia inteligente por tipo de arquivo
-// ═══════════════════════════════════════════════════════════
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Ignora requisições que não são GET
   if (request.method !== 'GET') return;
-
-  // Ignora extensões de chrome, etc
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
-  // ═══════════════════════════════════════════════════════════
-  // 1️⃣ HTML — SEMPRE da rede (NUNCA do cache)
-  //    → garante que correções cheguem aos clientes
-  // ═══════════════════════════════════════════════════════════
+  // 1️⃣ HTML — network-first
   if (request.destination === 'document' ||
       url.pathname.endsWith('.html') ||
       url.pathname === '/' ||
@@ -73,57 +58,48 @@ self.addEventListener('fetch', (event) => {
       fetch(request, { cache: 'no-store' })
         .then((response) => {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+          caches.open(CACHE_NAME).then(c => c.put(request, clone)).catch(()=>{});
           return response;
         })
-        .catch(() => {
-          return caches.match(request).then(cached => {
-            return cached || caches.match('./index.html');
-          });
+        .catch(async () => {
+          return (await caches.match(request))
+              || (await caches.match('./index.html'))
+              || new Response('Offline', { status: 503 });
         })
     );
     return;
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // 2️⃣ JSON de playlists (GitHub) — network-first com fallback
-  // ═══════════════════════════════════════════════════════════
+  // 2️⃣ JSON playlists — network-first
   if (url.hostname.includes('githubusercontent.com') ||
       url.pathname.endsWith('.json')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+          caches.open(CACHE_NAME).then(c => c.put(request, clone)).catch(()=>{});
           return response;
         })
-        .catch(() => caches.match(request))
+        .catch(async () => {
+          return (await caches.match(request))
+              || new Response('[]', { status: 200, headers: {'Content-Type': 'application/json'} });
+        })
     );
     return;
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // 3️⃣ ÁUDIOS/VÍDEOS (músicas) — cache-first com LIMITE 8MB
-  // ═══════════════════════════════════════════════════════════
+  // 3️⃣ Áudio/Vídeo — cache-first
   if (request.destination === 'audio' ||
       request.destination === 'video' ||
-      url.pathname.match(/\.(mp3|mp4|m4a|ogg|wav|webm)$/i)) {
+      url.pathname.match(/\.(mp3|mp4|m4a|ogg|wav|webm|opus)$/i)) {
     event.respondWith(
       caches.match(request).then((cached) => {
         if (cached) return cached;
         return fetch(request).then((response) => {
-          // Salva em cache (mas não bloqueia a resposta)
           const clone = response.clone();
-          caches.open(CACHE_MUSICAS).then(cache => {
-            // ✅ Checa tamanho antes de salvar (evita inflar o cache)
-            const tamanho = parseInt(response.headers.get('content-length') || '0');
-            const LIMITE = 8 * 1024 * 1024; // 8 MB
-            if (!tamanho || tamanho < LIMITE) {
-              cache.put(request, clone).catch(() => {});
-            } else {
-              console.warn('⚠️ SW: áudio muito grande, não cacheado:', (tamanho/1024/1024).toFixed(1) + 'MB');
-            }
-          });
+          caches.open(CACHE_MUSICAS)
+            .then(c => c.put(request, clone))
+            .catch(()=>{});
           return response;
         });
       })
@@ -131,9 +107,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // 4️⃣ Imagens/CSS/Fonts — cache-first com atualização em bg
-  // ═══════════════════════════════════════════════════════════
+  // 4️⃣ Imagens/CSS/Fonts — cache-first + update bg
   if (request.destination === 'image' ||
       request.destination === 'style' ||
       request.destination === 'font' ||
@@ -141,7 +115,7 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       caches.match(request).then((cached) => {
         const fetchPromise = fetch(request).then((response) => {
-          caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
+          caches.open(CACHE_NAME).then(c => c.put(request, response.clone())).catch(()=>{});
           return response;
         }).catch(() => cached);
         return cached || fetchPromise;
@@ -150,26 +124,17 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // 5️⃣ Resto — tenta rede, cai pra cache (COM FALLBACK SEGURO)
-  // ═══════════════════════════════════════════════════════════
+  // 5️⃣ Resto
   event.respondWith(
     fetch(request)
       .then((response) => response)
-      .catch(() => {
-        return caches.match(request).then(c => {
-          // ✅ Fallback seguro: nunca retorna undefined
-          return c || new Response('', { status: 504, statusText: 'Offline' });
-        });
+      .catch(async () => {
+        return (await caches.match(request))
+            || new Response('', { status: 504, statusText: 'Offline' });
       })
   );
 });
 
-// ═══════════════════════════════════════════════════════════
-// MESSAGE — permite forçar atualização via postMessage
-// ═══════════════════════════════════════════════════════════
 self.addEventListener('message', (event) => {
-  if (event.data === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
