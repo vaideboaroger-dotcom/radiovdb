@@ -522,14 +522,13 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     padding: 10px 14px; font-size: .66rem}
 }
 </style>
-</head>
-<body>
+</head><body>
 
 <div id="loadingScreen">
   <div class="loading-logo-wrapper"><img src="favicon30.png" alt="VDB" class="loading-logo" onerror="this.style.display='none';this.parentElement.innerHTML='🎵'"></div>
   <span class="loading-text">VDB</span>
   <span class="loading-sub">🎵 CARREGANDO 🎵</span>
-  <span class="loading-version" id="loadingVersion">v003</span>
+  <span class="loading-version" id="loadingVersion">v004</span>
   <div class="loading-progress-container"><div class="loading-progress-fill" id="loadingProgressFill"></div></div>
 </div>
 
@@ -606,7 +605,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     <button class="fab-sub-btn" id="fabQrCode"><i class="fas fa-qrcode" style="color:#22d3ee"></i>QR Code</button>
     <button class="fab-sub-btn" id="fabShare"><i class="fas fa-share-alt" style="color:#a855f7"></i>Compartilhar</button>
     <button class="fab-sub-btn" id="fabFeedback"><i class="fas fa-star" style="color:#fbbf24"></i>Feedback</button>
-    <div class="fab-versao" id="fabVersao">v003</div>
+    <div class="fab-versao" id="fabVersao">v004</div>
   </div>
   <button class="fab-main" id="fabMain"><i class="fas fa-plus"></i></button>
 </div>
@@ -777,16 +776,14 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 
 <div class="notif" id="notification"></div>
 <audio id="musicPlayer" preload="none"></audio>
-<audio id="backgroundAudio" preload="auto" style="display:none;"></audio>
-
-<script>
+<audio id="backgroundAudio" preload="auto" style="display:none;"></audio><script>
 (function(){
 'use strict';
 
 /* ═══════════════════════════════════════════════════════════
-   🔢 VERSÃO DO APP — MUDE AQUI QUANDO ATUALIZAR
+   🔢 VERSÃO DO APP
    ═══════════════════════════════════════════════════════════ */
-const VERSAO = 'v003';
+const VERSAO = 'v004';
 
 /* ═══════════════════════════════════════════════════════════
    SISTEMA DE SENHAS — SHA-256 + HMAC
@@ -840,10 +837,16 @@ function _dec(str){
   }catch(e){ return null; }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   ✅ CORRIGIDO v004 — FINGERPRINT UNIFICADO (Safari = PWA)
+   ═══════════════════════════════════════════════════════════ */
 async function gerarFingerprintReal(){
   const partes = [];
   try{
-    partes.push(navigator.userAgent || '');
+    let ua = navigator.userAgent || '';
+    ua = ua.replace(/(iPhone|iPad|iPod).*?OS [\d_]+/, '$1');
+    ua = ua.replace(/Version\/[\d.]+.*?Safari/, 'Safari');
+    partes.push(ua);
     partes.push(navigator.language || '');
     partes.push((screen.width || 0) + 'x' + (screen.height || 0) + 'x' + (screen.colorDepth || 0));
     partes.push(new Date().getTimezoneOffset());
@@ -919,34 +922,61 @@ async function assinarHMAC(mensagem){
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   ✅ CORRIGIDO v004 — TIMER AMARRADO AO FINGERPRINT
+   ═══════════════════════════════════════════════════════════ */
 const SecureTimer = {
-  CHAVE_DESBLOQ: 'vdb_desbloq_v2',
-  CHAVE_BLOQ_PERM: 'vdb_bloq_perm_v2',
+  CHAVE_DESBLOQ: 'vdb_desbloq_v3',
+  CHAVE_BLOQ_PERM: 'vdb_bloq_perm_v3',
+  CHAVE_TESTE: 'vdb_teste_exp_v3',
+  CHAVE_FP_BACKUP: 'vdb_fp_backup_v3',
+
   async verificar(){
     const bloqPerm = _dec(localStorage.getItem(this.CHAVE_BLOQ_PERM));
     if(bloqPerm === 'true') return {liberado: false, motivo: 'bloqueado'};
+
     const desbloq = _dec(localStorage.getItem(this.CHAVE_DESBLOQ));
-    if(desbloq === 'true') return {liberado: true, motivo: 'senha', expiracao: Infinity};
-    const expStr = _dec(localStorage.getItem('vdb_teste_expiracao_v2'));
+    if(desbloq === 'true'){
+      const fpSalvo = _dec(localStorage.getItem(this.CHAVE_FP_BACKUP));
+      if(fpSalvo && appState.fingerprint && fpSalvo !== appState.fingerprint){
+        return {liberado: false, motivo: 'fp_diferente'};
+      }
+      return {liberado: true, motivo: 'senha', expiracao: Infinity};
+    }
+
+    const expStr = _dec(localStorage.getItem(this.CHAVE_TESTE));
     const exp = parseInt(expStr || '0');
+
     if(!exp){
       const e = Date.now() + CONFIG.TEMPO_TESTE_SEGUNDOS * 1000;
-      localStorage.setItem('vdb_teste_expiracao_v2', _enc(String(e)));
+      localStorage.setItem(this.CHAVE_TESTE, _enc(String(e)));
+      localStorage.setItem(this.CHAVE_FP_BACKUP, _enc(appState.fingerprint || ''));
       return {liberado: true, motivo: 'novo', expiracao: e};
     }
+
+    const fpSalvo = _dec(localStorage.getItem(this.CHAVE_FP_BACKUP));
+    if(fpSalvo && appState.fingerprint && fpSalvo !== appState.fingerprint){
+      if(Date.now() > exp) return {liberado: false, motivo: 'expirado', expiracao: exp};
+      return {liberado: true, motivo: 'teste', expiracao: exp};
+    }
+
     if(Date.now() > exp) return {liberado: false, motivo: 'expirado', expiracao: exp};
     return {liberado: true, motivo: 'teste', expiracao: exp};
   },
+
   async tempoRestante(){
     const r = await this.verificar();
     if(!r.liberado) return 0;
     if(r.expiracao === Infinity) return CONFIG.TEMPO_TESTE_SEGUNDOS;
     return Math.max(0, Math.floor((r.expiracao - Date.now()) / 1000));
   },
+
   async desbloquearPermanente(){
     localStorage.setItem(this.CHAVE_DESBLOQ, _enc('true'));
+    localStorage.setItem(this.CHAVE_FP_BACKUP, _enc(appState.fingerprint || ''));
     localStorage.removeItem(this.CHAVE_BLOQ_PERM);
   },
+
   async bloquearPermanente(){
     localStorage.setItem(this.CHAVE_BLOQ_PERM, _enc('true'));
   }
@@ -1155,7 +1185,7 @@ async function iniciarTimer(){
     const t = await SecureTimer.tempoRestante();
     if(t <= 0){ clearInterval(timerInterval); timerInterval = null; bloquear(); return; }
     await atualizarTimer();
-  }, 5000);
+  }, 1000);
 }
 async function bloquear(){
   $('idUsuarioBloqueio').textContent = appState.fingerprint || 'Carregando...';
@@ -1249,7 +1279,9 @@ const appState = {
   telaAtual: 'principal',
   musicasComProblema: new Set(),
   sleepTimerId: null,
-  fingerprint: ''
+  fingerprint: '',
+  falhasSeguidas: 0,
+  ultimaBlobUrl: null
 };
 if(!TEMAS[appState.temaCor]) appState.temaCor = 'azul';
 try{ appState.favorites = JSON.parse(localStorage.getItem('vdb_fav')||'[]'); }catch(e){}
@@ -1279,9 +1311,6 @@ function atualizarPlaylist(){
   return appState.playlistAtual[appState.indiceAtual] || null;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   🎵 TOCAR — TOCA DO CACHE OFFLINE PRIMEIRO (CORRIGIDO!)
-   ═══════════════════════════════════════════════════════════ */
 async function tocar(){
   if(!appState.isBackgroundActive || appState.carregando || !appState.musicas.length) return;
   appState.carregando = true;
@@ -1308,7 +1337,6 @@ async function tocar(){
     const urls = getUrls(m).slice(0, 8);
     let ok = false;
 
-    // 1️⃣ TENTA O CACHE OFFLINE PRIMEIRO (mesmo com internet!)
     for(const u of urls){
       const cacheUrl = await buscarAudioOffline(u);
       if(cacheUrl){
@@ -1324,7 +1352,6 @@ async function tocar(){
       }
     }
 
-    // 2️⃣ SE NÃO ACHOU NO CACHE, TENTA A NET (e salva no cache pra próxima)
     if(!ok){
       for(const u of urls){
         try{
@@ -1348,6 +1375,7 @@ async function tocar(){
         audio.volume = CONFIG.VOLUME_PADRAO;
         await audio.play();
         appState.isPlaying = true;
+        appState.falhasSeguidas = 0;
         $('playBtn').classList.remove('loading');
         $('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
       }catch(e){
@@ -1514,6 +1542,7 @@ async function selecionarGenero(g){
   appState.playlistAtual = shuffle(m);
   appState.indiceAtual = 0;
   appState.musicasComProblema.clear();
+  appState.falhasSeguidas = 0;
   aplicarTema(appState.temaCor);
   const mm = appState.playlistAtual[0];
   if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
@@ -1556,7 +1585,6 @@ async function salvarOffline(url, timeoutMs=30000){
   }catch(e){ return false; }
 }
 
-/* ⭐⭐⭐ FUNÇÃO QUE FALTAVA — BUSCAR ÁUDIO DO CACHE ⭐⭐⭐ */
 async function buscarAudioOffline(url){
   try{
     const c = await abrirCache();
@@ -1564,7 +1592,13 @@ async function buscarAudioOffline(url){
     const r = await c.match(urlLimpa(url));
     if(!r) return null;
     const b = await r.blob();
-    return URL.createObjectURL(b);
+    if(appState.ultimaBlobUrl){
+      try{ URL.revokeObjectURL(appState.ultimaBlobUrl); }catch(e){}
+      appState.ultimaBlobUrl = null;
+    }
+    const novaUrl = URL.createObjectURL(b);
+    appState.ultimaBlobUrl = novaUrl;
+    return novaUrl;
   }catch(e){ return null; }
 }
 
@@ -1645,6 +1679,7 @@ async function baixarGeneroCompleto(genero, musicas, onProgress){
   downloadGeneroAtual = '';
   return { baixadas, falhas, total, cancelado: foiCancelado };
 }
+
 async function iniciarDownloadGenero(genero){
   if(downloadEmAndamento){ notif('⚠️ Já tem download em andamento'); return; }
   if(generoOffline(genero)){ notif('✅ Já está offline'); return; }
@@ -1671,7 +1706,7 @@ async function iniciarDownloadGenero(genero){
   if(progBar) progBar.classList.add('ativo');
   if(percEl) percEl.classList.add('ativo');
   const res = await baixarGeneroCompleto(genero, musicas, (prog) => {
-    const pct = Math.round((prog.atual / prog.total) * 100);
+    const pct = prog.total > 0 ? Math.round((prog.baixadas / prog.total) * 100) : 0;
     $('dlFill').style.width = pct + '%';
     $('dlContador').textContent = prog.atual + ' / ' + prog.total + '  (✅ ' + prog.baixadas + '  ❌ ' + prog.falhas + ')';
     $('dlPercent').textContent = pct + '%';
@@ -2203,6 +2238,7 @@ async function ativarRadio(){
   appState.playlistAtual = shuffle(todas);
   appState.indiceAtual = 0;
   appState.musicasComProblema.clear();
+  appState.falhasSeguidas = 0;
   const mm = appState.playlistAtual[0];
   if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
   notif('🔴 AO VIVO!');
@@ -2400,6 +2436,15 @@ async function iniciar(){
       if(!audio.src || audio.src === location.href) return;
       const m = appState.playlistAtual[appState.indiceAtual];
       if(m) appState.musicasComProblema.add(m.id);
+      appState.falhasSeguidas++;
+      if(appState.falhasSeguidas >= 8){
+        appState.falhasSeguidas = 0;
+        appState.carregando = false;
+        $('playBtn').classList.remove('loading');
+        $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+        notif('⚠️ Muitas falhas seguidas. Verifique a conexão.', 3500);
+        return;
+      }
       setTimeout(()=>{ if(!appState.carregando) next(); }, 100);
     };
     document.addEventListener('visibilitychange', () => {
@@ -2417,6 +2462,7 @@ async function iniciar(){
     window.addEventListener('beforeunload', () => {
       if(keepAliveInterval) clearInterval(keepAliveInterval);
       if(fsGuardInterval) clearInterval(fsGuardInterval);
+      if(appState.ultimaBlobUrl){ try{ URL.revokeObjectURL(appState.ultimaBlobUrl); }catch(e){} }
     });
   }catch(e){
     console.error('❌ Erro:', e);
