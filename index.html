@@ -522,8 +522,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     padding: 10px 14px; font-size: .66rem}
 }
 </style>
-</head>
-<body>
+</head><body>
 
 <div id="loadingScreen">
   <div class="loading-logo-wrapper"><img src="favicon30.png" alt="VDB" class="loading-logo" onerror="this.style.display='none';this.parentElement.innerHTML='🎵'"></div>
@@ -777,9 +776,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 
 <div class="notif" id="notification"></div>
 <audio id="musicPlayer" preload="none"></audio>
-<audio id="backgroundAudio" preload="auto" style="display:none;"></audio>
-
-<script>
+<audio id="backgroundAudio" preload="auto" style="display:none;"></audio><script>
 (function(){
 'use strict';
 
@@ -1202,9 +1199,49 @@ async function liberarAgora(){
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   🎵 CACHE DE GÊNERO — RAM + localStorage (sobrevive ao reload)
+   ═══════════════════════════════════════════════════════════ */
+const CACHE_GEN_KEY = 'vdb_genero_cache_v1';
+function _lerCacheGenero(){
+  try{ return JSON.parse(localStorage.getItem(CACHE_GEN_KEY) || '{}'); }catch(e){ return {}; }
+}
+function _salvarCacheGenero(obj){
+  try{ localStorage.setItem(CACHE_GEN_KEY, JSON.stringify(obj)); }
+  catch(e){
+    try{
+      const keys = Object.keys(obj);
+      if(keys.length > 5){
+        keys.sort((a,b)=>(obj[b].data||0)-(obj[a].data||0));
+        const reduzido = {};
+        keys.slice(0,10).forEach(k=>reduzido[k]=obj[k]);
+        localStorage.setItem(CACHE_GEN_KEY, JSON.stringify(reduzido));
+      }
+    }catch(e2){}
+  }
+}
+function _mapMusicas(j, genero){
+  if(!Array.isArray(j)) j = j.musicas || j.data || Object.values(j)[0];
+  return (j||[]).filter(m=>m&&m.src&&m.title).map(m=>({
+    ...m,
+    id: 'fav_' + (m.title+'_'+(m.artist||'Artista')).toLowerCase().replace(/[^a-z0-9]+/g,'_'),
+    genero,
+    artist: m.artist || 'Artista'
+  }));
+}
+
 const cacheGenero = new Map();
 async function buscarGenero(genero){
   if(cacheGenero.has(genero)) return cacheGenero.get(genero);
+
+  const persistido = _lerCacheGenero();
+  if(persistido[genero] && Array.isArray(persistido[genero].musicas)){
+    const ms = persistido[genero].musicas;
+    cacheGenero.set(genero, ms);
+    _revalidarGenero(genero).catch(()=>{});
+    return ms;
+  }
+
   const url = GENRE_URLS[genero];
   if(!url) return null;
   try{
@@ -1213,18 +1250,40 @@ async function buscarGenero(genero){
     const r = await fetch(url, { signal: ctrl.signal });
     clearTimeout(tid);
     if(!r.ok) throw new Error('HTTP');
-    let j = await r.json();
-    if(!Array.isArray(j)) j = j.musicas || j.data || Object.values(j)[0];
-    const ms = (j||[]).filter(m=>m&&m.src&&m.title).map(m=>({
-      ...m,
-      id: 'fav_' + (m.title+'_'+(m.artist||'Artista')).toLowerCase().replace(/[^a-z0-9]+/g,'_'),
-      genero,
-      artist: m.artist || 'Artista'
-    }));
+    const j = await r.json();
+    const ms = _mapMusicas(j, genero);
     cacheGenero.set(genero, ms);
+    const p = _lerCacheGenero();
+    p[genero] = { musicas: ms, data: Date.now() };
+    _salvarCacheGenero(p);
     return ms;
-  }catch(e){ return null; }
+  }catch(e){
+    const p = _lerCacheGenero();
+    if(p[genero] && Array.isArray(p[genero].musicas)){
+      cacheGenero.set(genero, p[genero].musicas);
+      return p[genero].musicas;
+    }
+    return null;
+  }
 }
+
+async function _revalidarGenero(genero){
+  const url = GENRE_URLS[genero];
+  if(!url) return;
+  try{
+    const r = await fetch(url, { cache: 'no-store' });
+    if(!r.ok) return;
+    const j = await r.json();
+    const ms = _mapMusicas(j, genero);
+    if(ms.length){
+      cacheGenero.set(genero, ms);
+      const p = _lerCacheGenero();
+      p[genero] = { musicas: ms, data: Date.now() };
+      _salvarCacheGenero(p);
+    }
+  }catch(e){}
+}
+
 function getUrls(m){
   const s = m.src || '';
   if(!s) return [];
@@ -1249,7 +1308,8 @@ const appState = {
   telaAtual: 'principal',
   musicasComProblema: new Set(),
   sleepTimerId: null,
-  fingerprint: ''
+  fingerprint: '',
+  _lastBlobUrl: null
 };
 if(!TEMAS[appState.temaCor]) appState.temaCor = 'azul';
 try{ appState.favorites = JSON.parse(localStorage.getItem('vdb_fav')||'[]'); }catch(e){}
@@ -1279,12 +1339,17 @@ function atualizarPlaylist(){
   return appState.playlistAtual[appState.indiceAtual] || null;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   🎵 TOCAR — TOCA DO CACHE OFFLINE PRIMEIRO (CORRIGIDO!)
-   ═══════════════════════════════════════════════════════════ */
+function revogarBlobUrlAnterior(){
+  if(appState._lastBlobUrl){
+    try{ URL.revokeObjectURL(appState._lastBlobUrl); }catch(e){}
+    appState._lastBlobUrl = null;
+  }
+}
+
 async function tocar(){
   if(!appState.isBackgroundActive || appState.carregando || !appState.musicas.length) return;
   appState.carregando = true;
+  revogarBlobUrlAnterior();
   try{
     $('playBtn').innerHTML = '<i class="fas fa-spinner"></i>';
     $('playBtn').classList.add('loading');
@@ -1308,7 +1373,6 @@ async function tocar(){
     const urls = getUrls(m).slice(0, 8);
     let ok = false;
 
-    // 1️⃣ TENTA O CACHE OFFLINE PRIMEIRO (mesmo com internet!)
     for(const u of urls){
       const cacheUrl = await buscarAudioOffline(u);
       if(cacheUrl){
@@ -1324,7 +1388,6 @@ async function tocar(){
       }
     }
 
-    // 2️⃣ SE NÃO ACHOU NO CACHE, TENTA A NET (e salva no cache pra próxima)
     if(!ok){
       for(const u of urls){
         try{
@@ -1434,6 +1497,7 @@ function toggleFavAtual(){
 let downloadEmAndamento = false;
 let downloadCancelado = false;
 let downloadGeneroAtual = '';
+let _downloadAbortController = null;
 
 function renderizarGeneros(){
   const grid = $('genresGrid');
@@ -1540,14 +1604,20 @@ async function estaOffline(url){
   const c = await abrirCache(); if(!c) return false;
   try{ return !!(await c.match(urlLimpa(url))); }catch(e){ return false; }
 }
-async function salvarOffline(url, timeoutMs=30000){
+
+async function salvarOffline(url, timeoutMs=30000, sinalExterno=null){
   if(!url || !url.startsWith('http')) return false;
   const c = await abrirCache(); if(!c) return false;
   const limpa = urlLimpa(url);
   try{
     if(await c.match(limpa)) return true;
     const ctrl = new AbortController();
-    const tid = setTimeout(()=>ctrl.abort(), timeoutMs);
+    const cancelar = () => { try{ ctrl.abort(); }catch(e){} };
+    if(sinalExterno){
+      if(sinalExterno.aborted) cancelar();
+      else sinalExterno.addEventListener('abort', cancelar, { once:true });
+    }
+    const tid = setTimeout(cancelar, timeoutMs);
     const r = await fetch(url, { mode:'cors', signal: ctrl.signal });
     clearTimeout(tid);
     if(!r.ok) return false;
@@ -1556,7 +1626,6 @@ async function salvarOffline(url, timeoutMs=30000){
   }catch(e){ return false; }
 }
 
-/* ⭐⭐⭐ FUNÇÃO QUE FALTAVA — BUSCAR ÁUDIO DO CACHE ⭐⭐⭐ */
 async function buscarAudioOffline(url){
   try{
     const c = await abrirCache();
@@ -1564,7 +1633,9 @@ async function buscarAudioOffline(url){
     const r = await c.match(urlLimpa(url));
     if(!r) return null;
     const b = await r.blob();
-    return URL.createObjectURL(b);
+    const novoUrl = URL.createObjectURL(b);
+    appState._lastBlobUrl = novoUrl;
+    return novoUrl;
   }catch(e){ return null; }
 }
 
@@ -1595,12 +1666,14 @@ async function baixarGeneroCompleto(genero, musicas, onProgress){
   downloadEmAndamento = true;
   downloadCancelado = false;
   downloadGeneroAtual = genero;
+  _downloadAbortController = new AbortController();
+  const sinal = _downloadAbortController.signal;
   let baixadas = 0;
   let falhas = 0;
   const total = musicas.length;
   if(onProgress) onProgress({ atual:0, total, baixadas:0, falhas:0, musicaAtual:'Preparando...', genero });
   for(let i = 0; i < musicas.length; i++){
-    if(downloadCancelado) break;
+    if(downloadCancelado || sinal.aborted) break;
     const m = musicas[i];
     const urls = getUrls(m);
     if(!urls.length){
@@ -1610,11 +1683,11 @@ async function baixarGeneroCompleto(genero, musicas, onProgress){
     }
     let ok = false;
     for(const u of urls){
-      if(downloadCancelado) break;
+      if(downloadCancelado || sinal.aborted) break;
       if(await estaOffline(u)){ ok = true; break; }
       for(let tentativa = 1; tentativa <= CONFIG.DOWNLOAD_RETRY; tentativa++){
-        if(downloadCancelado) break;
-        const salvou = await salvarOffline(u, CONFIG.DOWNLOAD_TIMEOUT_MS);
+        if(downloadCancelado || sinal.aborted) break;
+        const salvou = await salvarOffline(u, CONFIG.DOWNLOAD_TIMEOUT_MS, sinal);
         if(salvou){ ok = true; break; }
         if(tentativa < CONFIG.DOWNLOAD_RETRY) await sleep(500);
       }
@@ -1643,6 +1716,7 @@ async function baixarGeneroCompleto(genero, musicas, onProgress){
   downloadEmAndamento = false;
   downloadCancelado = false;
   downloadGeneroAtual = '';
+  _downloadAbortController = null;
   return { baixadas, falhas, total, cancelado: foiCancelado };
 }
 async function iniciarDownloadGenero(genero){
@@ -1714,22 +1788,30 @@ async function abrirGerenciadorOffline(){
     notif('🗑️ Offline limpo!');
     renderizarGeneros();
   }
-}
-
-const UniversalPool = {
+}const UniversalPool = {
   musicas: [], carregando: false, carregado: false,
   async carregar(onProgress){
     if(this.carregado) return this.musicas;
     if(this.carregando){ while(this.carregando) await sleep(200); return this.musicas; }
     this.carregando = true;
     const todas = [];
-    for(let i = 0; i < GENRE_ORDEM.length; i++){
-      const g = GENRE_ORDEM[i];
-      try{ const m = await buscarGenero(g); if(m && m.length) todas.push(...m); }catch(e){}
-      if(onProgress) onProgress(i + 1, GENRE_ORDEM.length);
+    const LOTE = 4;
+    let feitos = 0;
+    for(let i = 0; i < GENRE_ORDEM.length; i += LOTE){
+      const lote = GENRE_ORDEM.slice(i, i + LOTE);
+      const resultados = await Promise.allSettled(lote.map(g => buscarGenero(g)));
+      resultados.forEach(r => {
+        if(r.status === 'fulfilled' && r.value && r.value.length) todas.push(...r.value);
+      });
+      feitos += lote.length;
+      if(onProgress) onProgress(feitos, GENRE_ORDEM.length);
     }
     const vistos = new Set();
-    this.musicas = todas.filter(m => { if(vistos.has(m.id)) return false; vistos.add(m.id); return true; });
+    this.musicas = todas.filter(m => {
+      if(vistos.has(m.id)) return false;
+      vistos.add(m.id);
+      return true;
+    });
     this.carregado = true;
     this.carregando = false;
     return this.musicas;
@@ -1861,6 +1943,8 @@ function fecharModal(id){ $(id).classList.remove('open'); }
 
 let fsEmAndamento = false;
 let fsGuardInterval = null;
+let fsGestureHandler = null;
+
 function jaFullscreen(){
   return !!(document.fullscreenElement || document.webkitFullscreenElement);
 }
@@ -1882,14 +1966,17 @@ function forcarFullscreen(){
   }catch(e){ fsEmAndamento = false; return false; }
 }
 function iniciarFullscreenGuard(){
-  if(fsGuardInterval) clearInterval(fsGuardInterval);
-  fsGuardInterval = setInterval(()=>{
+  if(fsGestureHandler) return;
+  fsGestureHandler = () => {
     if(document.hidden) return;
     if(!appState.playerAtivado) return;
     if(jaFullscreen()) return;
     forcarFullscreen();
-  }, 1500);
+  };
+  document.addEventListener('touchstart', fsGestureHandler, { passive: true });
+  document.addEventListener('click', fsGestureHandler);
 }
+
 function criarSilentAudio(){
   const sr=44100, ns=sr;
   const b=new ArrayBuffer(44+ns*2);
@@ -2111,7 +2198,7 @@ function agendarCiclo(){
   const t = appState.telaAtual === 'principal' ? CONFIG.CICLO_PRINCIPAL_MS : CONFIG.CICLO_ANUNCIO_MS;
   cicloTimer = setTimeout(async ()=>{
     if(!appState.playerAtivado){ agendarCiclo(); return; }
-    if(document.querySelector('.modal.open, #adminPanel.open, #qrCodeModal.active, #downloadModal.active, #vdbDialogOverlay.active')){ agendarCiclo(); return; }
+    if(document.querySelector('.modal.open, #adminPanel.open, #qrcodeModal.active, #downloadModal.active, #vdbDialogOverlay.active')){ agendarCiclo(); return; }
     if(appState.telaAtual === 'principal') await trocarTela('anuncios');
     else await trocarTela('principal');
     if(!jaFullscreen()) forcarFullscreen();
@@ -2215,12 +2302,15 @@ function trocarTema(){
   aplicarTema(appState.temaCor);
   notif('🎨 Tema ' + TEMAS[appState.temaCor].nome);
 }
+
 async function atualizarAppMagico(){
   notif('⏳ Atualizando...', 1500);
   try{
     if('caches' in window){
       const k = await caches.keys();
-      await Promise.all(k.map(x=>caches.delete(x)));
+      await Promise.all(
+        k.filter(n => !n.startsWith('vdb-offline')).map(x => caches.delete(x))
+      );
     }
     if(navigator.serviceWorker){
       const r = await navigator.serviceWorker.getRegistrations();
@@ -2353,7 +2443,14 @@ async function iniciar(){
     $('fecharMeuId').onclick = () => fecharModal('modalMeuId');
     $('qrCloseBtn').onclick = () => $('qrCodeModal').classList.remove('active');
     $('qrCodeModal').onclick = (e) => { if(e.target === $('qrCodeModal')) $('qrCodeModal').classList.remove('active'); };
-    $('dlCancelar').onclick = () => { downloadCancelado = true; notif('🛑 Cancelando...', 1500); };
+
+    $('dlCancelar').onclick = () => {
+      downloadCancelado = true;
+      if(_downloadAbortController){
+        try{ _downloadAbortController.abort(); }catch(e){}
+      }
+      notif('🛑 Cancelando...', 1500);
+    };
     $('dlFechar').onclick = () => $('downloadModal').classList.remove('active');
 
     $('btnCopiarMeuId').onclick = () => copiarTexto(appState.fingerprint, '📋 ID copiado!');
@@ -2417,6 +2514,10 @@ async function iniciar(){
     window.addEventListener('beforeunload', () => {
       if(keepAliveInterval) clearInterval(keepAliveInterval);
       if(fsGuardInterval) clearInterval(fsGuardInterval);
+      if(fsGestureHandler){
+        document.removeEventListener('touchstart', fsGestureHandler);
+        document.removeEventListener('click', fsGestureHandler);
+      }
     });
   }catch(e){
     console.error('❌ Erro:', e);
