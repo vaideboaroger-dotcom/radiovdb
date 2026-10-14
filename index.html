@@ -7,7 +7,6 @@
 <link rel="icon" type="image/png" sizes="192x192" href="favicon192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="favicon30.png">
 <link rel="apple-touch-icon" sizes="180x180" href="favicon192.png">
-<link rel="apple-touch-icon" sizes="512x512" href="favicon30.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VDB Music">
@@ -22,21 +21,11 @@
 :root{
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bottom:env(safe-area-inset-bottom,0px);
-  --safe-left:env(safe-area-inset-left,0px);
-  --safe-right:env(safe-area-inset-right,0px);
-  --cor-1:#2563eb;
-  --cor-2:#1e40af;
-  --cor-3:#3b82f6;
-
-  /* Design tokens */
-  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-6:24px;
-  --r-sm:10px; --r-md:16px; --r-lg:24px; --r-full:999px;
+  --cor-1:#2563eb;--cor-2:#1e40af;--cor-3:#3b82f6;
   --bg-glass:rgba(15,20,35,.55);
   --border-glass:rgba(255,255,255,.12);
-  --text-2:rgba(255,255,255,.65);
   --shadow-md:0 8px 32px rgba(0,0,0,.5);
   --ease-out:cubic-bezier(.22,1,.36,1);
-  --dur-fast:.15s; --dur-base:.3s;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
   user-select:none;-webkit-touch-callout:none;
@@ -63,8 +52,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .loading-sub{font-size:.75rem;color:rgba(255,255,255,.9);letter-spacing:7px;font-weight:800}
 .loading-version{font-size:.85rem;color:#fff;letter-spacing:4px;font-weight:900;
   margin-top:-12px;background:rgba(0,0,0,.35);padding:6px 18px;border-radius:20px;
-  border:1px solid rgba(255,255,255,.25);text-shadow:0 2px 8px rgba(0,0,0,.6);
-  font-family:'Audiowide',sans-serif;box-shadow:0 4px 15px rgba(0,0,0,.3)}
+  border:1px solid rgba(255,255,255,.25);
+  font-family:'Audiowide',sans-serif}
 .loading-progress-container{width:240px;height:5px;background:rgba(0,0,0,.3);
   border-radius:5px;overflow:hidden}
 .loading-progress-fill{height:100%;width:0%;background:#fff;
@@ -88,13 +77,11 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 @keyframes gradientMove{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 
 .info-topo{position:fixed;top:0;left:0;right:0;z-index:35;
-  padding-top:max(8px,var(--safe-top));padding-bottom:0;
-  padding-left:var(--safe-left);padding-right:var(--safe-right);
+  padding-top:max(8px,var(--safe-top));
   background:linear-gradient(180deg,rgba(0,0,0,.65),transparent);
   display:flex;flex-direction:column;align-items:stretch;gap:4px;
   transition:opacity .6s;pointer-events:none}
 .info-topo > *{pointer-events:auto}
-.info-topo.escondido{opacity:0;pointer-events:none}
 .topo-linha{display:flex;align-items:center;justify-content:space-between;
   padding:0 16px;height:34px;width:100%;gap:8px}
 .titulo-topo{font-family:'Audiowide',sans-serif;font-size:1.25rem;font-weight:900;
@@ -112,15 +99,13 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .letreiro{font-size:.9rem;font-weight:700;color:rgba(255,255,255,.95);
   white-space:nowrap;animation:scrollText 70s linear infinite;
   text-shadow:0 1px 6px rgba(0,0,0,.7);flex:1;overflow:hidden}
-.letreiro.pausado{animation-play-state:paused}
 @keyframes scrollText{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
 .letreiro b{color:#fff;font-weight:900}
 .letreiro i{font-style:normal;color:rgba(255,255,255,.95)}
-.corpo-tela{flex:1;position:relative;z-index:1;pointer-events:none}
 
 .painel-baixo{position:fixed;bottom:calc(80px + var(--safe-bottom));
-  left:var(--safe-left);right:var(--safe-right);z-index:20;padding:0 22px;
-  background:transparent;text-align:center;display:flex;flex-direction:column;gap:2px;
+  left:0;right:0;z-index:20;padding:0 22px;background:transparent;
+  text-align:center;display:flex;flex-direction:column;gap:2px;
   transition:opacity .8s,transform .8s;pointer-events:none}
 .painel-baixo > *{pointer-events:auto}
 .painel-baixo.escondido{opacity:0;transform:translateY(30px);pointer-events:none}
@@ -144,16 +129,10 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .glass-musica-nome{font-family:'Rajdhani',sans-serif;font-size:1.1rem;
   font-weight:800;color:#fff;line-height:1.1;
   text-shadow:0 2px 10px rgba(0,0,0,.7);
-  padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  animation:fadeSlideIn .4s var(--ease-out)}
+  padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .glass-musica-artista{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.95);
   text-shadow:0 2px 6px rgba(0,0,0,.6);white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis;padding:0 8px;line-height:1;
-  animation:fadeSlideIn .5s var(--ease-out)}
-@keyframes fadeSlideIn{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
-}
+  text-overflow:ellipsis;padding:0 8px;line-height:1}
 .glass-controles{display:flex;justify-content:center;align-items:center;gap:28px;margin-top:6px}
 .ctrl-btn{background:transparent;border:none;color:#fff;font-size:1.5rem;
   cursor:pointer;padding:8px;display:flex;align-items:center;justify-content:center;
@@ -169,22 +148,10 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   font-weight:700;color:rgba(255,255,255,.85);font-variant-numeric:tabular-nums;
   margin-bottom:4px}
 .progress-bar{height:3px;background:rgba(0,0,0,.4);border-radius:4px;
-  overflow:hidden;cursor:pointer;touch-action:none;position:relative}
-.progress-bar::after{
-  content:'';position:absolute;top:-6px;left:0;right:0;height:15px;
-}
-.progress-fill{height:100%;width:0%;background:#fff;border-radius:4px;
-  transition:width .2s linear;position:relative}
-.progress-fill::after{
-  content:'';position:absolute;right:-4px;top:50%;
-  transform:translateY(-50%);width:10px;height:10px;
-  background:#fff;border-radius:50%;
-  box-shadow:0 0 10px var(--cor-3);
-  opacity:0;transition:opacity .2s;
-}
-.progress-bar:hover .progress-fill::after{opacity:1}
+  overflow:hidden;cursor:pointer;touch-action:none}
+.progress-fill{height:100%;width:0%;background:#fff;border-radius:4px;transition:width .2s linear}
 
-.barra-inferior{position:fixed;left:calc(12px + var(--safe-left));right:calc(12px + var(--safe-right));
+.barra-inferior{position:fixed;left:12px;right:12px;
   bottom:calc(12px + var(--safe-bottom));z-index:25;
   display:flex;align-items:center;justify-content:space-around;gap:6px;
   padding:8px 10px;background:var(--bg-glass);
@@ -197,20 +164,13 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .barra-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
   padding:8px 4px;background:transparent;border:none;color:#fff;
   font-size:.6rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
-  cursor:pointer;border-radius:14px;transition:background .2s,transform .15s;
-  position:relative;overflow:hidden}
+  cursor:pointer;border-radius:14px;transition:background .2s,transform .15s;position:relative}
 .barra-btn:active{transform:scale(.92);background:rgba(255,255,255,.12)}
 .barra-btn i{font-size:1.15rem}
 .barra-btn.fav i{color:#f472b6}
 .badge{position:absolute;top:2px;right:8px;background:#f472b6;color:#fff;
   font-size:.55rem;font-weight:900;padding:1px 5px;border-radius:8px;
   min-width:16px;text-align:center}
-.badge.pulse{animation:badgePulse .5s ease}
-@keyframes badgePulse{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.4)}
-  100%{transform:scale(1)}
-}
 
 #telaAnuncios{position:fixed;inset:0;z-index:8;background:#000;
   opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s}
@@ -220,11 +180,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
 .media-anuncios .active{opacity:1;z-index:3}
 
-.fab-container{position:fixed;bottom:calc(90px + var(--safe-bottom));
-  right:calc(16px + var(--safe-right));z-index:50;
-  display:flex;flex-direction:column;align-items:flex-end;gap:8px;
-  transition:opacity .5s}
-.fab-container.escondido{opacity:0;pointer-events:none}
+.fab-container{position:fixed;bottom:calc(90px + var(--safe-bottom));right:16px;
+  z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .fab-main{background:transparent;border:none;color:#fff;font-size:2.2rem;
   width:auto;height:auto;cursor:pointer;padding:8px;
   display:flex;align-items:center;justify-content:center;
@@ -239,12 +196,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   gap:2px;border:1px solid var(--border-glass);
   min-width:280px;max-width:calc(100vw - 32px);
   max-height:75vh;overflow-y:auto;
-  box-shadow:0 12px 40px rgba(0,0,0,.85);
-  animation:menuIn .25s var(--ease-out)}
-@keyframes menuIn{
-  from{opacity:0;transform:translateY(10px) scale(.96)}
-  to{opacity:1;transform:translateY(0) scale(1)}
-}
+  box-shadow:0 12px 40px rgba(0,0,0,.85)}
 .fab-menu.open{display:flex}
 .fab-secao{font-size:.6rem;font-weight:900;letter-spacing:3px;
   color:rgba(255,255,255,.45);text-transform:uppercase;
@@ -263,8 +215,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   font-family:'Audiowide',sans-serif;font-size:.65rem;
   color:rgba(255,255,255,.5);letter-spacing:3px;font-weight:900}
 
-/* MODAIS COMO BOTTOM SHEET */
-.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.7);
+.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.75);
   backdrop-filter:blur(12px);display:none;align-items:flex-end;justify-content:center}
 .modal.open{display:flex}
 .modal-box{background:linear-gradient(145deg,rgba(20,25,40,.99),rgba(10,15,30,.99));
@@ -275,24 +226,20 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   transform:translateY(100%);transition:transform .35s var(--ease-out);
   box-shadow:0 -10px 60px rgba(0,0,0,.8)}
 .modal.open .modal-box{transform:translateY(0)}
-.modal-box::before{
-  content:'';display:block;width:40px;height:4px;border-radius:4px;
-  background:rgba(255,255,255,.25);margin:0 auto 8px;
-}
+.modal-box::before{content:'';display:block;width:40px;height:4px;border-radius:4px;
+  background:rgba(255,255,255,.25);margin:0 auto 8px}
 .modal-header{display:flex;align-items:center;justify-content:space-between;
   padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1)}
 .modal-header .titulo{font-family:'Audiowide',sans-serif;font-size:.95rem;
   color:#fff;letter-spacing:3px}
 .modal-header .fechar{background:rgba(255,255,255,.08);border:none;color:#fff;
   font-size:1rem;cursor:pointer;width:32px;height:32px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  transition:background var(--dur-fast)}
+  display:flex;align-items:center;justify-content:center}
 .modal-header .fechar:active{background:rgba(255,255,255,.2)}
 
 .search-input{width:100%;padding:12px 16px;border-radius:30px;
   border:2px solid var(--border-glass);background:rgba(255,255,255,.06);
-  color:#fff;font-size:.88rem;outline:none;transition:border-color var(--dur-fast)}
-.search-input:focus{border-color:var(--cor-3)}
+  color:#fff;font-size:.88rem;outline:none}
 .search-filters{display:flex;gap:6px}
 .search-filters select{flex:1;padding:9px 10px;border-radius:12px;
   border:1px solid var(--border-glass);background:rgba(255,255,255,.06);
@@ -301,8 +248,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .search-count{font-size:.7rem;color:rgba(255,255,255,.6);font-weight:700;text-align:center;padding:2px}
 .search-results{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;max-height:60vh}
 .result-item{padding:11px 14px;border-radius:14px;background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;cursor:pointer;
-  animation:fadeSlideIn .3s var(--ease-out) both}
+  border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;cursor:pointer}
 .result-item:active{background:rgba(255,255,255,.12)}
 .result-item .icon{width:36px;height:36px;border-radius:50%;
   background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
@@ -322,8 +268,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   cursor:pointer;padding:14px 14px 42px 20px;display:flex;flex-direction:column;
   justify-content:center;background:rgba(255,255,255,.05);
   border:1px solid rgba(255,255,255,.1);text-align:left;width:100%;
-  overflow:hidden;transition:transform .15s,background .15s;
-  animation:fadeSlideIn .3s var(--ease-out) both}
+  overflow:hidden;transition:transform .15s,background .15s}
 .genre-card::before{content:'';position:absolute;left:0;top:50%;
   transform:translateY(-50%);width:4px;height:55%;
   background:var(--c1,var(--cor-3));border-radius:0 4px 4px 0;
@@ -332,7 +277,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .genre-card .genre-name{font-size:1.15rem;font-weight:900;text-transform:uppercase;
   color:#fff;line-height:1.2;letter-spacing:.5px;text-shadow:0 1px 4px rgba(0,0,0,.4);
   padding-right:8px}
-
 .genre-card .btn-offline{position:absolute;bottom:6px;left:20px;right:8px;
   background:linear-gradient(135deg,#f59e0b,#fbbf24);
   border:none;color:#000;font-size:.6rem;font-weight:900;
@@ -341,12 +285,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   transition:all .2s;z-index:5;text-transform:uppercase;letter-spacing:.2px;
   line-height:1}
 .genre-card .btn-offline:active{transform:scale(.95);opacity:.85}
-.genre-card .btn-offline.baixado{
-  background:linear-gradient(135deg,#10b981,#34d399);color:#fff}
-.genre-card .btn-offline.baixando{
-  background:linear-gradient(135deg,#3b82f6,#60a5fa);color:#fff;cursor:wait}
-.genre-card .btn-offline.remover{
-  background:linear-gradient(135deg,#ef4444,#f87171);color:#fff}
+.genre-card .btn-offline.baixando{background:linear-gradient(135deg,#3b82f6,#60a5fa);color:#fff;cursor:wait}
+.genre-card .btn-offline.remover{background:linear-gradient(135deg,#ef4444,#f87171);color:#fff}
 .genre-card .btn-offline i{font-size:.55rem}
 .genre-card .offline-progress{position:absolute;bottom:0;left:0;right:0;height:5px;
   background:rgba(0,0,0,.5);z-index:4;display:none;overflow:hidden}
@@ -363,8 +303,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .fav-list{display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:60vh}
 .fav-item{padding:11px 14px;border-radius:14px;background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;
-  justify-content:space-between;gap:10px;
-  animation:fadeSlideIn .3s var(--ease-out) both}
+  justify-content:space-between;gap:10px}
 .fav-item .info{flex:1;min-width:0}
 .fav-item .title{color:#fff;font-weight:700;font-size:.88rem;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
@@ -463,12 +402,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .vdb-dialog-overlay.active{display:flex}
 .vdb-dialog{background:rgba(15,20,35,.98);border-radius:24px;
   padding:24px 20px;max-width:400px;width:100%;
-  border:1px solid var(--border-glass);box-shadow:0 20px 60px rgba(0,0,0,.8);
-  animation:dialogIn .25s var(--ease-out)}
-@keyframes dialogIn{
-  from{opacity:0;transform:scale(.9)}
-  to{opacity:1;transform:scale(1)}
-}
+  border:1px solid var(--border-glass);box-shadow:0 20px 60px rgba(0,0,0,.8)}
 .vdb-dialog h3{color:#fff;font-size:1.05rem;text-align:center;
   margin-bottom:12px;font-weight:800;letter-spacing:.5px}
 .vdb-dialog p{color:rgba(255,255,255,.7);font-size:.88rem;
@@ -515,61 +449,47 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   border:none;padding:14px;border-radius:25px;color:#fff;
   font-weight:900;font-size:.9rem;cursor:pointer;width:100%;margin-top:12px}
 
-#btnInstalarFixo {
-  position: fixed; bottom: calc(180px + var(--safe-bottom)); right: 20px;
-  z-index: 999999;
-  background: linear-gradient(135deg, var(--cor-1), var(--cor-3));
-  color: #fff; border: none; border-radius: 30px;
-  padding: 12px 18px; font-weight: 900; font-size: .72rem;
-  cursor: pointer; display: none;
-  align-items: center; gap: 8px; text-transform: uppercase;
-  box-shadow: 0 8px 24px rgba(37,99,235,.6), 0 0 20px rgba(59,130,246,.4);
-  font-family: 'Audiowide', sans-serif; letter-spacing: 1px;
-  animation: pulseInstall 2s ease-in-out infinite}
-@keyframes pulseInstall {
-  0%, 100% { transform: scale(1); box-shadow: 0 8px 24px rgba(37,99,235,.6), 0 0 20px rgba(59,130,246,.4); }
-  50% { transform: scale(1.05); box-shadow: 0 12px 32px rgba(37,99,235,.8), 0 0 30px rgba(59,130,246,.6); }
+/* BOTÃO INSTALAR APP */
+#btnInstalarFixo{position:fixed;bottom:calc(180px + var(--safe-bottom));right:20px;
+  z-index:999999;
+  background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
+  color:#fff;border:none;border-radius:30px;
+  padding:14px 20px;font-weight:900;font-size:.75rem;
+  cursor:pointer;display:none;
+  align-items:center;gap:8px;text-transform:uppercase;
+  box-shadow:0 8px 24px rgba(37,99,235,.6);
+  font-family:'Audiowide',sans-serif;letter-spacing:1px;
+  animation:pulseInstall 2s ease-in-out infinite}
+@keyframes pulseInstall{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.06)}
 }
-#btnInstalarFixo:active { transform: scale(.95); animation: none; }
+#btnInstalarFixo:active{transform:scale(.95);animation:none}
 
-#instrucoesInstalar {
-  position: fixed; inset: 0; background: rgba(0,0,0,.97);
-  backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-  z-index: 1000002; display: none;
-  align-items: center; justify-content: center; padding: 20px;
-}
-#instrucoesInstalar.active { display: flex; }
-.instrucoes-box {
-  background: rgba(15,20,35,.98); border-radius: 24px;
-  padding: 24px 20px; max-width: 400px; width: 100%;
-  text-align: center; border: 1px solid var(--border-glass);
-  box-shadow: 0 20px 60px rgba(0,0,0,.8);
-}
-.passo {
-  background: rgba(255,255,255,.05); border-radius: 14px;
-  padding: 14px; margin-bottom: 10px; text-align: left;
-  display: flex; align-items: center; gap: 12px;
-  border: 1px solid rgba(255,255,255,.1);
-}
-.passo .num {
-  background: linear-gradient(135deg, var(--cor-1), var(--cor-3));
-  color: #fff; width: 30px; height: 30px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: .85rem; flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(37,99,235,.4);
-}
-.passo div { color: #fff; font-weight: 600; font-size: .85rem; }
-.passo b { color: var(--cor-3); }
-.btn-fechar-inst {
-  background: linear-gradient(135deg, var(--cor-1), var(--cor-3));
-  border: none; padding: 14px; border-radius: 30px;
-  color: #fff; font-weight: 800; font-size: .88rem; cursor: pointer;
-  width: 100%; margin-top: 12px; font-family: 'Audiowide', sans-serif;
-  letter-spacing: 1px;
-}
-.btn-fechar-inst:active { transform: scale(.97); }
+#instrucoesInstalar{position:fixed;inset:0;background:rgba(0,0,0,.97);
+  backdrop-filter:blur(30px);z-index:1000002;display:none;
+  align-items:center;justify-content:center;padding:20px}
+#instrucoesInstalar.active{display:flex}
+.instrucoes-box{background:rgba(15,20,35,.98);border-radius:24px;
+  padding:24px 20px;max-width:400px;width:100%;
+  text-align:center;border:1px solid var(--border-glass);
+  box-shadow:0 20px 60px rgba(0,0,0,.8)}
+.passo{background:rgba(255,255,255,.05);border-radius:14px;
+  padding:14px;margin-bottom:10px;text-align:left;
+  display:flex;align-items:center;gap:12px;
+  border:1px solid rgba(255,255,255,.1)}
+.passo .num{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
+  color:#fff;width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.85rem;flex-shrink:0}
+.passo div{color:#fff;font-weight:600;font-size:.85rem}
+.passo b{color:var(--cor-3)}
+.btn-fechar-inst{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
+  border:none;padding:14px;border-radius:30px;
+  color:#fff;font-weight:800;font-size:.88rem;cursor:pointer;
+  width:100%;margin-top:12px;font-family:'Audiowide',sans-serif;
+  letter-spacing:1px}
 
-/* BANNER DE REDE OFFLINE */
 #netBanner{position:fixed;top:calc(50px + var(--safe-top));left:50%;
   transform:translateX(-50%);background:rgba(239,68,68,.95);
   color:#fff;padding:8px 16px;border-radius:20px;font-size:.72rem;
@@ -579,7 +499,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 #netBanner.show{opacity:1}
 #netBanner.online{background:rgba(16,185,129,.95)}
 
-/* BANNER DE DOWNLOAD EM BACKGROUND */
 #bgDownloadBanner{position:fixed;bottom:calc(90px + var(--safe-bottom));left:50%;
   transform:translateX(-50%);background:rgba(59,130,246,.95);
   color:#fff;padding:8px 16px;border-radius:20px;font-size:.72rem;
@@ -587,10 +506,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   transition:opacity .3s;border:1px solid rgba(255,255,255,.2);
   display:flex;align-items:center;gap:8px}
 #bgDownloadBanner.show{opacity:1}
-#bgDownloadBanner .spinner{
-  width:12px;height:12px;border:2px solid rgba(255,255,255,.3);
-  border-top-color:#fff;border-radius:50%;animation:spinSlow 1s linear infinite
-}
+#bgDownloadBanner .spinner{width:12px;height:12px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spinSlow 1s linear infinite}
 
 @media(max-width:480px){
   .glass-musica-nome{font-size:1rem}
@@ -608,23 +525,14 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   .id-value{font-size:1.15rem}
   .fab-main{font-size:2rem}
   .painel-baixo{bottom:calc(75px + var(--safe-bottom))}
-  #btnInstalarFixo{bottom: calc(170px + var(--safe-bottom)); right: 16px;
-    padding: 10px 14px; font-size: .66rem}
+  #btnInstalarFixo{bottom:calc(170px + var(--safe-bottom));right:16px;
+    padding:12px 16px;font-size:.7rem}
 }
+</style>
+</head>
+<body>
 
-@media (orientation:landscape) and (max-height:500px){
-  .painel-baixo{bottom:calc(70px + var(--safe-bottom));padding:0 60px}
-  .glass-controles{gap:20px;margin-top:2px}
-  .glass-musica-nome{font-size:.95rem}
-  .progress-time{display:none}
-  .barra-inferior{bottom:calc(8px + var(--safe-bottom))}
-}
-
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;
-    animation-iteration-count:1!important;transition-duration:.01ms!important}
-}
-</style><div id="loadingScreen">
+<div id="loadingScreen">
   <div class="loading-logo-wrapper"><img src="favicon30.png" alt="VDB" class="loading-logo" onerror="this.style.display='none';this.parentElement.innerHTML='🎵'"></div>
   <span class="loading-text">VDB</span>
   <span class="loading-sub">🎵 CARREGANDO 🎵</span>
@@ -716,7 +624,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
       <span class="titulo">🔍 BUSCAR</span>
       <button class="fechar" id="fecharBusca"><i class="fas fa-times"></i></button>
     </div>
-    <input type="text" class="search-input" id="buscaInput" placeholder="Nome do artista ou música..." autocomplete="off" inputmode="search" enterkeyhint="search" autocapitalize="off">
+    <input type="text" class="search-input" id="buscaInput" placeholder="Nome do artista ou música..." autocomplete="off">
     <div class="search-filters">
       <select id="buscaGenero"><option value="">🌍 Todos os gêneros</option></select>
       <select id="buscaOrdem">
@@ -886,261 +794,189 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 (function(){
 'use strict';
 
-/* ═══════════════════════════════════════════════════════════
-   🔢 VERSÃO
-   ═══════════════════════════════════════════════════════════ */
 const VERSAO = 'v003';
 
-/* ═══════════════════════════════════════════════════════════
-   🔐 SISTEMA DE SENHAS (INTACTO)
-   ═══════════════════════════════════════════════════════════ */
-const HASH_ADMIN  = 'ae6eaa9dbe0baf078f6a56d50641fb6bcf135ee43deca13a6e10910aa7f704b5';
-const HASH_MASTER = '7eca27de328d65b0f04c3ca43eb023961c19db9ce2b3fc4e94f25e87e65c5c04';
-
-const _KEY_OBF = 'bGxtdWJcZW1gY19ifHB2Y3tgLXMubGx8IGJ8endwYit0XXdrfnB8aistfWQ=';
-function _keyDecode(){
-  try{
-    const b = atob(_KEY_OBF);
-    let r = '';
-    for(let i = 0; i < b.length; i++){ r += String.fromCharCode(b.charCodeAt(i) ^ 42); }
-    return r;
-  }catch(e){ return ''; }
-}
-const CHAVE_SECRETA = _keyDecode();
+/* ============ SENHAS (INTACTO) ============ */
+const HASH_ADMIN='ae6eaa9dbe0baf078f6a56d50641fb6bcf135ee43deca13a6e10910aa7f704b5';
+const HASH_MASTER='7eca27de328d65b0f04c3ca43eb023961c19db9ce2b3fc4e94f25e87e65c5c04';
+const _KEY_OBF='bGxtdWJcZW1gY19ifHB2Y3tgLXMubGx8IGJ8endwYit0XXdrfnB8aistfWQ=';
+function _keyDecode(){try{const b=atob(_KEY_OBF);let r='';for(let i=0;i<b.length;i++){r+=String.fromCharCode(b.charCodeAt(i)^42);}return r;}catch(e){return '';}}
+const CHAVE_SECRETA=_keyDecode();
 
 async function hashSenha(str){
-  try{
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-  }catch(e){
-    let h = 0;
-    for(let i = 0; i < str.length; i++){ h = ((h << 5) - h) + str.charCodeAt(i); h |= 0; }
-    return 'fb_' + Math.abs(h).toString(16);
-  }
+  try{const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){let h=0;for(let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}return 'fb_'+Math.abs(h).toString(16);}
 }
-async function verificarSenhaPadrao(senha){
-  if(!senha) return false;
-  const h = await hashSenha(senha);
-  return h === HASH_ADMIN || h === HASH_MASTER;
-}
+async function verificarSenhaPadrao(s){if(!s)return false;const h=await hashSenha(s);return h===HASH_ADMIN||h===HASH_MASTER;}
 
-const _K = 'VDB_2024_SECRET_XOR_KEY_VERY_LONG_KEY_ABCDEFG';
-function _enc(str){
-  if(!str) return str;
-  try{
-    let r = '';
-    for(let i = 0; i < str.length; i++){ r += String.fromCharCode(str.charCodeAt(i) ^ _K.charCodeAt(i % _K.length)); }
-    return btoa(unescape(encodeURIComponent(r)));
-  }catch(e){ return str; }
-}
-function _dec(str){
-  if(!str) return str;
-  try{
-    const b = decodeURIComponent(escape(atob(str)));
-    let r = '';
-    for(let i = 0; i < b.length; i++){ r += String.fromCharCode(b.charCodeAt(i) ^ _K.charCodeAt(i % _K.length)); }
-    return r;
-  }catch(e){ return null; }
-}
+const _K='VDB_2024_SECRET_XOR_KEY_VERY_LONG_KEY_ABCDEFG';
+function _enc(s){if(!s)return s;try{let r='';for(let i=0;i<s.length;i++){r+=String.fromCharCode(s.charCodeAt(i)^_K.charCodeAt(i%_K.length));}return btoa(unescape(encodeURIComponent(r)));}catch(e){return s;}}
+function _dec(s){if(!s)return s;try{const b=decodeURIComponent(escape(atob(s)));let r='';for(let i=0;i<b.length;i++){r+=String.fromCharCode(b.charCodeAt(i)^_K.charCodeAt(i%_K.length));}return r;}catch(e){return null;}}
 
 async function gerarFingerprintReal(){
-  const partes = [];
-  try{
-    partes.push(navigator.userAgent || '');
-    partes.push(navigator.language || '');
-    partes.push((screen.width || 0) + 'x' + (screen.height || 0) + 'x' + (screen.colorDepth || 0));
-    partes.push(new Date().getTimezoneOffset());
-    partes.push(navigator.hardwareConcurrency || 0);
-    partes.push(navigator.deviceMemory || 0);
-    partes.push(navigator.platform || '');
-  }catch(e){}
-  try{
-    const c = document.createElement('canvas');
-    c.width = 200; c.height = 50;
-    const ctx = c.getContext('2d');
-    ctx.textBaseline = 'top';
-    ctx.font = '14px Arial';
-    ctx.fillStyle = '#f60';
-    ctx.fillRect(125, 1, 62, 20);
-    ctx.fillStyle = '#069';
-    ctx.fillText('VDB🎵Music', 2, 15);
-    ctx.fillStyle = 'rgba(102,204,0,0.7)';
-    ctx.fillText('VDB🎵Music', 4, 17);
-    partes.push(c.toDataURL().slice(-64));
-  }catch(e){}
-  try{
-    const gl = document.createElement('canvas').getContext('webgl');
-    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-    if(dbg){
-      partes.push(gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || '');
-      partes.push(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '');
-    }
-  }catch(e){}
-  try{
-    const AC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-    if(AC){
-      const audioCtx = new AC(1, 44100, 44100);
-      const osc = audioCtx.createOscillator();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(10000, audioCtx.currentTime);
-      const comp = audioCtx.createDynamicsCompressor();
-      osc.connect(comp);
-      comp.connect(audioCtx.destination);
-      osc.start(0);
-      const buf = await audioCtx.startRendering();
-      const data = buf.getChannelData(0);
-      let soma = 0;
-      for(let i = 4500; i < 5000; i++) soma += Math.abs(data[i]);
-      partes.push(soma.toFixed(6));
-    }
-  }catch(e){}
-  const str = partes.join('|||');
-  try{
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 32);
-  }catch(e){
-    return btoa(str).slice(0, 32);
-  }
+  const p=[];
+  try{p.push(navigator.userAgent||'');p.push(navigator.language||'');p.push((screen.width||0)+'x'+(screen.height||0));p.push(new Date().getTimezoneOffset());p.push(navigator.hardwareConcurrency||0);p.push(navigator.platform||'');}catch(e){}
+  try{const c=document.createElement('canvas');c.width=200;c.height=50;const x=c.getContext('2d');x.textBaseline='top';x.font='14px Arial';x.fillStyle='#f60';x.fillRect(125,1,62,20);x.fillStyle='#069';x.fillText('VDB',2,15);p.push(c.toDataURL().slice(-64));}catch(e){}
+  const s=p.join('|||');
+  try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,32);
+  }catch(e){return btoa(s).slice(0,32);}
 }
 
-async function assinarHMAC(mensagem){
-  try{
-    const key = await crypto.subtle.importKey(
-      'raw',
-      new TextEncoder().encode(CHAVE_SECRETA),
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign']
-    );
-    const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(mensagem));
-    return btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/[+/=]/g, '').slice(0, 24);
-  }catch(e){
-    let h = 0;
-    const s = CHAVE_SECRETA + mensagem;
-    for(let i = 0; i < s.length; i++){ h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; }
-    return Math.abs(h).toString(16).padStart(16, '0').slice(0, 24);
-  }
+async function assinarHMAC(msg){
+  try{const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(CHAVE_SECRETA),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+    const s=await crypto.subtle.sign('HMAC',k,new TextEncoder().encode(msg));
+    return btoa(String.fromCharCode(...new Uint8Array(s))).replace(/[+/=]/g,'').slice(0,24);
+  }catch(e){let h=0;const x=CHAVE_SECRETA+msg;for(let i=0;i<x.length;i++){h=((h<<5)-h)+x.charCodeAt(i);h|=0;}return Math.abs(h).toString(16).padStart(16,'0').slice(0,24);}
 }
 
-const SecureTimer = {
-  CHAVE_DESBLOQ: 'vdb_desbloq_v2',
-  CHAVE_BLOQ_PERM: 'vdb_bloq_perm_v2',
+const CONFIG={
+  WHATSAPP:'5512988461978',
+  TEMPO_TESTE_SEGUNDOS:86400,
+  LETREIRO:'🎵 VDB MUSIC '+VERSAO+' 🎵',
+  APP_VERSION:VERSAO,
+  LOADING_DURACAO_MS:3500,
+  MIDIA_MAX_SEGURANCA_MS:60000,
+  CICLO_PRINCIPAL_MS:30000,
+  CICLO_ANUNCIO_MS:12000,
+  VOLUME_PADRAO:1.0,
+  DOWNLOAD_TIMEOUT_MS:30000,
+  DOWNLOAD_RETRY:3
+};
+
+const SecureTimer={
+  CHAVE_DESBLOQ:'vdb_desbloq_v2',
+  CHAVE_BLOQ_PERM:'vdb_bloq_perm_v2',
   async verificar(){
-    const bloqPerm = _dec(localStorage.getItem(this.CHAVE_BLOQ_PERM));
-    if(bloqPerm === 'true') return {liberado: false, motivo: 'bloqueado'};
-    const desbloq = _dec(localStorage.getItem(this.CHAVE_DESBLOQ));
-    if(desbloq === 'true') return {liberado: true, motivo: 'senha', expiracao: Infinity};
-    const expStr = _dec(localStorage.getItem('vdb_teste_expiracao_v2'));
-    const exp = parseInt(expStr || '0');
-    if(!exp){
-      const e = Date.now() + CONFIG.TEMPO_TESTE_SEGUNDOS * 1000;
-      localStorage.setItem('vdb_teste_expiracao_v2', _enc(String(e)));
-      return {liberado: true, motivo: 'novo', expiracao: e};
-    }
-    if(Date.now() > exp) return {liberado: false, motivo: 'expirado', expiracao: exp};
-    return {liberado: true, motivo: 'teste', expiracao: exp};
+    const bp=_dec(localStorage.getItem(this.CHAVE_BLOQ_PERM));
+    if(bp==='true')return{liberado:false,motivo:'bloqueado'};
+    const d=_dec(localStorage.getItem(this.CHAVE_DESBLOQ));
+    if(d==='true')return{liberado:true,motivo:'senha',expiracao:Infinity};
+    const e=parseInt(_dec(localStorage.getItem('vdb_teste_expiracao_v2'))||'0');
+    if(!e){const ne=Date.now()+CONFIG.TEMPO_TESTE_SEGUNDOS*1000;
+      localStorage.setItem('vdb_teste_expiracao_v2',_enc(String(ne)));
+      return{liberado:true,motivo:'novo',expiracao:ne};}
+    if(Date.now()>e)return{liberado:false,motivo:'expirado',expiracao:e};
+    return{liberado:true,motivo:'teste',expiracao:e};
   },
-  async tempoRestante(){
-    const r = await this.verificar();
-    if(!r.liberado) return 0;
-    if(r.expiracao === Infinity) return CONFIG.TEMPO_TESTE_SEGUNDOS;
-    return Math.max(0, Math.floor((r.expiracao - Date.now()) / 1000));
-  },
-  async desbloquearPermanente(){
-    localStorage.setItem(this.CHAVE_DESBLOQ, _enc('true'));
-    localStorage.removeItem(this.CHAVE_BLOQ_PERM);
-  },
-  async bloquearPermanente(){
-    localStorage.setItem(this.CHAVE_BLOQ_PERM, _enc('true'));
-  }
+  async tempoRestante(){const r=await this.verificar();if(!r.liberado)return 0;
+    if(r.expiracao===Infinity)return CONFIG.TEMPO_TESTE_SEGUNDOS;
+    return Math.max(0,Math.floor((r.expiracao-Date.now())/1000));},
+  async desbloquearPermanente(){localStorage.setItem(this.CHAVE_DESBLOQ,_enc('true'));localStorage.removeItem(this.CHAVE_BLOQ_PERM);},
+  async bloquearPermanente(){localStorage.setItem(this.CHAVE_BLOQ_PERM,_enc('true'));}
 };
 
-async function gerarSenhaDispositivo(fingerprint, validadeDias = 30){
-  const ts = Date.now().toString(36);
-  const exp = validadeDias === 0 ? 'ZZZZZZZZ' : (Date.now() + validadeDias * 86400000).toString(36);
-  const base = `DEV|${fingerprint}|${ts}|${exp}`;
-  const sig = await assinarHMAC(base);
-  return `DEV:${ts}:${exp}:${sig}`;
+async function gerarSenhaDispositivo(fp,dias){
+  const ts=Date.now().toString(36);
+  const exp=dias===0?'ZZZZZZZZ':(Date.now()+dias*86400000).toString(36);
+  const sig=await assinarHMAC('DEV|'+fp+'|'+ts+'|'+exp);
+  return 'DEV:'+ts+':'+exp+':'+sig;
 }
-async function gerarSenhaUniversal(validadeDias = 30){
-  const ts = Date.now().toString(36);
-  const exp = validadeDias === 0 ? 'ZZZZZZZZ' : (Date.now() + validadeDias * 86400000).toString(36);
-  const base = `UNIV|${ts}|${exp}`;
-  const sig = await assinarHMAC(base);
-  return `UNIV:${ts}:${exp}:${sig}`;
+async function gerarSenhaUniversal(dias){
+  const ts=Date.now().toString(36);
+  const exp=dias===0?'ZZZZZZZZ':(Date.now()+dias*86400000).toString(36);
+  const sig=await assinarHMAC('UNIV|'+ts+'|'+exp);
+  return 'UNIV:'+ts+':'+exp+':'+sig;
 }
-async function validarSenha(senha, fingerprint){
-  if(!senha) return { valida: false, motivo: 'vazia' };
-  const h = await hashSenha(senha);
-  if(h === HASH_ADMIN)  return { valida: true, tipo: 'admin',  msg: '✅ Admin!' };
-  if(h === HASH_MASTER) return { valida: true, tipo: 'master', msg: '👑 Master!' };
-
-  const partes = senha.split(':');
-
-  if(partes[0] === 'DEV' && partes.length === 4){
-    const [, ts, exp, sig] = partes;
-    const expMs = (exp === 'ZZZZZZZZ') ? Infinity : parseInt(exp, 36);
-    if(Date.now() > expMs) return { valida: false, motivo: 'expirada' };
-    const esperada = await assinarHMAC(`DEV|${fingerprint}|${ts}|${exp}`);
-    if(sig === esperada) return { valida: true, tipo: 'dispositivo', msg: '✅ Liberado!' };
-    return { valida: false, motivo: 'assinatura_invalida' };
+async function validarSenha(senha,fp){
+  if(!senha)return{valida:false,motivo:'vazia'};
+  const h=await hashSenha(senha);
+  if(h===HASH_ADMIN)return{valida:true,tipo:'admin',msg:'✅ Admin!'};
+  if(h===HASH_MASTER)return{valida:true,tipo:'master',msg:'👑 Master!'};
+  const p=senha.split(':');
+  if(p[0]==='DEV'&&p.length===4){
+    const [,ts,exp,sig]=p;
+    const expMs=(exp==='ZZZZZZZZ')?Infinity:parseInt(exp,36);
+    if(Date.now()>expMs)return{valida:false,motivo:'expirada'};
+    const esp=await assinarHMAC('DEV|'+fp+'|'+ts+'|'+exp);
+    if(sig===esp)return{valida:true,tipo:'dispositivo',msg:'✅ Liberado!'};
+    return{valida:false,motivo:'assinatura_invalida'};
   }
-  if(partes[0] === 'UNIV' && partes.length === 4){
-    const [, ts, exp, sig] = partes;
-    const expMs = (exp === 'ZZZZZZZZ') ? Infinity : parseInt(exp, 36);
-    if(Date.now() > expMs) return { valida: false, motivo: 'expirada' };
-    const esperada = await assinarHMAC(`UNIV|${ts}|${exp}`);
-    if(sig === esperada) return { valida: true, tipo: 'universal', msg: '✅ Universal!' };
-    return { valida: false, motivo: 'assinatura_invalida' };
+  if(p[0]==='UNIV'&&p.length===4){
+    const [,ts,exp,sig]=p;
+    const expMs=(exp==='ZZZZZZZZ')?Infinity:parseInt(exp,36);
+    if(Date.now()>expMs)return{valida:false,motivo:'expirada'};
+    const esp=await assinarHMAC('UNIV|'+ts+'|'+exp);
+    if(sig===esp)return{valida:true,tipo:'universal',msg:'✅ Universal!'};
+    return{valida:false,motivo:'assinatura_invalida'};
   }
-  try{
-    const d = atob(senha);
-    const p = d.split(':');
-    if(p.length === 2 && p[0] === fingerprint){
-      return { valida: true, tipo: 'legado', msg: '✅ Liberado!' };
-    }
-  }catch(e){}
-  return { valida: false, motivo: 'formato_invalido' };
+  return{valida:false,motivo:'formato_invalido'};
 }
 
-/* ═══════════════════════════════════════════════════════════
-   ⚙️ CONFIG
-   ═══════════════════════════════════════════════════════════ */
-const CONFIG = {
-  WHATSAPP: '5512988461978',
-  TEMPO_TESTE_SEGUNDOS: 86400,
-  PRECO: 'R$ 39,90',
-  LETREIRO: '🎵 VDB MUSIC ' + VERSAO + ' 🎵 + DE 10 MIL MÚSICAS • VITALÍCIO R$ 39,90 • SERTANEJO • MPB • ROCK • FORRÓ • PAGODE • ROMÂNTICA • FLASHBACK • FUNK • REGGAE 🎶',
-  APP_VERSION: VERSAO,
-  LOADING_DURACAO_MS: 3500,
-  MIDIA_MAX_SEGURANCA_MS: 60000,
-  CICLO_PRINCIPAL_MS: 30000,
-  CICLO_ANUNCIO_MS: 12000,
-  VOLUME_PADRAO: 1.0,
-  DOWNLOAD_TIMEOUT_MS: 30000,
-  DOWNLOAD_RETRY: 3,
-  DOWNLOAD_DELAY_MS: 30
-};
+/* ============ HELPERS ============ */
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const fmt=s=>{if(!s||isNaN(s))return'0:00';const m=Math.floor(s/60),g=Math.floor(s%60);return m+':'+(g<10?'0':'')+g;};
+const vibrar=p=>{try{navigator.vibrate&&navigator.vibrate(p||15);}catch(e){}};
+const sanitize=t=>{if(!t)return'';const d=document.createElement('div');d.textContent=t;return d.textContent;};
+function fmtTempo(s){if(s<0)s=0;s=Math.floor(s);const d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60),g=Math.floor(s%60);
+  if(d>0)return d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(g).padStart(2,'0');
+  if(h>0)return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(g).padStart(2,'0');
+  return String(m).padStart(2,'0')+':'+String(g).padStart(2,'0');}
+function shuffle(a){if(!a||!a.length)return[];const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];}return x;}
+function copiarTexto(t,msg){if(!t)return notif('⚠️ Nada!');navigator.clipboard.writeText(t).then(()=>notif(msg||'📋 Copiado!')).catch(()=>{const i=document.createElement('input');i.value=t;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();notif(msg||'📋 Copiado!');});}
 
-const TEMAS = {
-  azul: { nome:'Azul', c1:'#2563eb', c2:'#1e40af', c3:'#3b82f6' },
-  roxo: { nome:'Roxo', c1:'#7c3aed', c2:'#5b21b6', c3:'#a855f7' },
-  preto:{ nome:'Preto',c1:'#374151', c2:'#111827', c3:'#6b7280' }
-};
+const nQ=[];let nShowing=false;
+function notif(msg,dur=2000){if(nQ.length>=5)nQ.shift();nQ.push({msg,dur});processNotif();}
+async function processNotif(){if(nShowing||!nQ.length)return;nShowing=true;const it=nQ.shift();const el=$('notification');el.textContent=it.msg;el.classList.add('show');await sleep(it.dur);el.classList.remove('show');nShowing=false;setTimeout(processNotif,200);}
 
-const GENRE_COLORS = {
-  'BÔNUS':{c1:'#22d3ee'},'POP/MIX':{c1:'#60a5fa'},'MPB':{c1:'#2dd4bf'},
-  'SERTANEJO':{c1:'#fbbf24'},'ROMÂNTICA':{c1:'#f472b6'},'FLASHBACK':{c1:'#a855f7'},
-  'NOVIDADES':{c1:'#34d399'},'FUNK':{c1:'#f43f5e'},'ROCK':{c1:'#f472b6'},
-  'FORRÓ':{c1:'#fb923c'},'DISCO MUSIC':{c1:'#fbbf24'},'SAMBA':{c1:'#f59e0b'},
-  'PAGODE':{c1:'#ef4444'},'RELIGIOSA':{c1:'#8b5cf6'},'REGGAE':{c1:'#10b981'},
-  'BREGA':{c1:'#ec4899'},'HIP HOP':{c1:'#6366f1'},'BAILÃO':{c1:'#f97316'},
-  'MODA RAIZ':{c1:'#a16207'},'MODÃO SERTANEJO':{c1:'#ca8a04'},'SERESTA':{c1:'#eab308'},
-  'FORRÓ RAIZ':{c1:'#ea580c'},'MPB 2':{c1:'#14b8a6'},'MISTURA BRASIL':{c1:'#16a34a'}
-};
-const COR_PADRAO = { c1:'#22d3ee' };
+/* ============ TIMER ============ */
+let timerInterval=null;
+async function atualizarTimer(){
+  if(!$('timerLib'))return;
+  const d=_dec(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ));
+  if(d==='true'){$('timerLib').innerHTML='<i class="fas fa-lock-open"></i> Lib';$('timerLib').style.color='#10b981';return;}
+  const t=await SecureTimer.tempoRestante();
+  if(t<=0){$('timerLib').innerHTML='<i class="fas fa-lock"></i> Bloq';$('timerLib').style.color='#ff8888';return;}
+  $('timerLib').innerHTML='<i class="fas fa-clock"></i> '+fmtTempo(t);
+  $('timerLib').style.color='#fff';
+}
+async function iniciarTimer(){
+  const r=await SecureTimer.verificar();
+  if(!r.liberado){bloquear();return;}
+  await atualizarTimer();
+  if(timerInterval)clearInterval(timerInterval);
+  timerInterval=setInterval(async()=>{
+    if(_dec(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ))==='true'){clearInterval(timerInterval);timerInterval=null;return;}
+    const t=await SecureTimer.tempoRestante();
+    if(t<=0){clearInterval(timerInterval);timerInterval=null;bloquear();return;}
+    await atualizarTimer();
+  },5000);
+}
+async function bloquear(){
+  $('idUsuarioBloqueio').textContent=appState.fingerprint||'Carregando...';
+  $('blockOverlay').classList.add('active');
+  const a=$('musicPlayer');a.pause();appState.isPlaying=false;$('playBtn').innerHTML='<i class="fas fa-play"></i>';
+  await SecureTimer.bloquearPermanente();
+  notif('⏰ Tempo de teste acabou!',3000);
+}
+async function liberarAcesso(senha){
+  const r=await validarSenha(senha,appState.fingerprint);
+  if(r.valida){
+    $('blockOverlay').classList.remove('active');
+    $('erroSenha').textContent='';$('senhaInput').value='';
+    await SecureTimer.desbloquearPermanente();
+    notif(r.msg||'✅ Liberado!',3000);
+    if(!appState.playerAtivado)setTimeout(ativarPlayer,500);
+    atualizarTimer();
+    return true;
+  }
+  const motivo=r.motivo==='expirada'?'⏰ Senha expirada':r.motivo==='assinatura_invalida'?'🔒 Senha adulterada':r.motivo==='formato_invalido'?'❌ Formato inválido':'❌ Senha inválida!';
+  $('erroSenha').innerHTML=motivo;$('senhaInput').value='';
+  vibrar([50,30,50]);
+  return false;
+}
+async function liberarAgora(){
+  const s=await vdbDialog({title:'🔑 LIBERAR',msg:'Digite sua senha:',input:'password',placeholder:'Senha',okText:'Liberar'});
+  if(!s)return;
+  const r=await validarSenha(s,appState.fingerprint);
+  if(r.valida){$('blockOverlay').classList.remove('active');await SecureTimer.desbloquearPermanente();notif('✅ Liberado!',3000);atualizarTimer();}
+  else{notif('❌ Inválida!',2000);}
+}
 
-const GENRE_URLS = {
+/* ============ GÊNEROS ============ */
+const GENRE_URLS={
   'BÔNUS':'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json',
   'FLASHBACK':'https://raw.githubusercontent.com/radiolojasjc-hub/flashbacktop/refs/heads/main/flashback.json',
   'RELIGIOSA':'https://raw.githubusercontent.com/radiolojasjc-hub/religiosa/refs/heads/main/religiosa.json',
@@ -1166,1546 +1002,933 @@ const GENRE_URLS = {
   'BAILÃO':'https://raw.githubusercontent.com/radiolojasjc-hub/forrodez/refs/heads/main/bail%C3%A3o.json',
   'FORRÓ RAIZ':'https://raw.githubusercontent.com/radiolojasjc-hub/forroraiz/refs/heads/main/forroraiz.json'
 };
-const GENRE_ORDEM = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','DISCO MUSIC','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','MISTURA BRASIL'];
+const GENRE_ORDEM=['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','DISCO MUSIC','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','MISTURA BRASIL'];
+const GENRE_COLORS={
+  'BÔNUS':{c1:'#22d3ee'},'POP/MIX':{c1:'#60a5fa'},'MPB':{c1:'#2dd4bf'},
+  'SERTANEJO':{c1:'#fbbf24'},'ROMÂNTICA':{c1:'#f472b6'},'FLASHBACK':{c1:'#a855f7'},
+  'NOVIDADES':{c1:'#34d399'},'FUNK':{c1:'#f43f5e'},'ROCK':{c1:'#f472b6'},
+  'FORRÓ':{c1:'#fb923c'},'DISCO MUSIC':{c1:'#fbbf24'},'SAMBA':{c1:'#f59e0b'},
+  'PAGODE':{c1:'#ef4444'},'RELIGIOSA':{c1:'#8b5cf6'},'REGGAE':{c1:'#10b981'},
+  'BREGA':{c1:'#ec4899'},'HIP HOP':{c1:'#6366f1'},'BAILÃO':{c1:'#f97316'},
+  'MODA RAIZ':{c1:'#a16207'},'MODÃO SERTANEJO':{c1:'#ca8a04'},'SERESTA':{c1:'#eab308'},
+  'FORRÓ RAIZ':{c1:'#ea580c'},'MPB 2':{c1:'#14b8a6'},'MISTURA BRASIL':{c1:'#16a34a'}
+};
+const COR_PADRAO={c1:'#22d3ee'};
+const GENRE_REPOS={};
+Object.keys(GENRE_URLS).forEach(g=>{const m=GENRE_URLS[g].match(/githubusercontent\.com\/([^\/]+)\/([^\/]+)/);GENRE_REPOS[g]=m?m[1]+'/'+m[2]:'radiolojasjc-hub/play12';});
 
-const GENRE_REPOS = {};
-Object.keys(GENRE_URLS).forEach(g => {
-  const m = GENRE_URLS[g].match(/githubusercontent\.com\/([^\/]+)\/([^\/]+)/);
-  GENRE_REPOS[g] = m ? m[1] + '/' + m[2] : 'radiolojasjc-hub/play12';
-});
+const MIDIAS_PADRAO_URL='https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
+const MIDIAS_FALLBACK=[{tipo:'video',src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}];
+const MIDIAS_ANUNCIO_URL='https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/anuncios.json';
+const MIDIAS_ANUNCIO_FALLBACK=[{tipo:'video',src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'}];
 
-const MIDIAS_PADRAO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
-const MIDIAS_FALLBACK = [{tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}];
-const MIDIAS_ANUNCIO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/anuncios.json';
-const MIDIAS_ANUNCIO_FALLBACK = [{tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'}];
-
-/* ═══════════════════════════════════════════════════════════
-   🛠️ HELPERS
-   ═══════════════════════════════════════════════════════════ */
-const $ = id => document.getElementById(id);
-const now = () => Date.now();
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-const fmt = s => { if(!s||isNaN(s))return '0:00'; const m=Math.floor(s/60),sg=Math.floor(s%60); return m+':'+(sg<10?'0':'')+sg; };
-const vibrar = p => { try{ navigator.vibrate && navigator.vibrate(p||15); }catch(e){} };
-const sanitize = t => { if(!t)return ''; const d=document.createElement('div'); d.textContent=t; return d.textContent; };
-function fmtTempo(s){
-  if(s<0)s=0;s=Math.floor(s);
-  const d=Math.floor(s/86400),h=Math.floor((s%86400)/3600);
-  const m=Math.floor((s%3600)/60),sg=Math.floor(s%60);
-  if(d>0)return d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
-  if(h>0)return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
-  return String(m).padStart(2,'0')+':'+String(sg).padStart(2,'0');
+const CACHE_GEN_KEY='vdb_genero_cache_v1';
+function _lerCacheGenero(){try{return JSON.parse(localStorage.getItem(CACHE_GEN_KEY)||'{}');}catch(e){return{};}}
+function _salvarCacheGenero(o){try{localStorage.setItem(CACHE_GEN_KEY,JSON.stringify(o));}catch(e){}}
+function _mapMusicas(j,genero){
+  if(!Array.isArray(j))j=j.musicas||j.data||Object.values(j)[0];
+  return (j||[]).filter(m=>m&&m.src&&m.title).map(m=>({...m,id:'fav_'+(m.title+'_'+(m.artist||'Artista')).toLowerCase().replace(/[^a-z0-9]+/g,'_'),genero,artist:m.artist||'Artista'}));
 }
-function shuffle(a){
-  if(!a||!a.length) return [];
-  const x = [...a];
-  for(let i = x.length-1; i > 0; i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [x[i],x[j]] = [x[j],x[i]];
-  }
-  return x;
-}
-function copiarTexto(t,msg){
-  if(!t) return notif('⚠️ Nada!');
-  navigator.clipboard.writeText(t).then(()=>notif(msg||'📋 Copiado!'))
-    .catch(()=>{
-      const i=document.createElement('input');i.value=t;document.body.appendChild(i);
-      i.select();document.execCommand('copy');i.remove();notif(msg||'📋 Copiado!');
-    });
-}
-
-const nQ = [];
-let nShowing = false;
-function notif(msg, dur=2000){
-  if(nQ.length>=5) nQ.shift();
-  nQ.push({msg,dur});
-  processNotif();
-}
-async function processNotif(){
-  if(nShowing||!nQ.length) return;
-  nShowing = true;
-  const it = nQ.shift();
-  const el = $('notification');
-  el.textContent = it.msg;
-  el.classList.add('show');
-  await sleep(it.dur);
-  el.classList.remove('show');
-  nShowing = false;
-  setTimeout(processNotif, 200);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   ⏰ TIMER DE LIBERAÇÃO
-   ═══════════════════════════════════════════════════════════ */
-let timerInterval = null;
-async function atualizarTimer(){
-  if(!$('timerLib')) return;
-  const desbloq = _dec(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ));
-  if(desbloq === 'true'){
-    $('timerLib').innerHTML = '<i class="fas fa-lock-open"></i> Lib';
-    $('timerLib').style.color = '#10b981';
-    return;
-  }
-  const t = await SecureTimer.tempoRestante();
-  if(t <= 0){
-    $('timerLib').innerHTML = '<i class="fas fa-lock"></i> Bloq';
-    $('timerLib').style.color = '#ff8888';
-    return;
-  }
-  $('timerLib').innerHTML = '<i class="fas fa-clock"></i> ' + fmtTempo(t);
-  $('timerLib').style.color = '#fff';
-}
-async function iniciarTimer(){
-  const r = await SecureTimer.verificar();
-  if(!r.liberado){ bloquear(); return; }
-  await atualizarTimer();
-  if(timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(async ()=>{
-    if(_dec(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ)) === 'true'){
-      clearInterval(timerInterval); timerInterval = null; return;
-    }
-    const t = await SecureTimer.tempoRestante();
-    if(t <= 0){ clearInterval(timerInterval); timerInterval = null; bloquear(); return; }
-    await atualizarTimer();
-  }, 5000);
-}
-async function bloquear(){
-  $('idUsuarioBloqueio').textContent = appState.fingerprint || 'Carregando...';
-  $('blockOverlay').classList.add('active');
-  const a = $('musicPlayer');
-  a.pause();
-  appState.isPlaying = false;
-  $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
-  await SecureTimer.bloquearPermanente();
-  notif('⏰ Tempo de teste acabou!', 3000);
-}
-async function liberarAcesso(senha){
-  const r = await validarSenha(senha, appState.fingerprint);
-  if(r.valida){
-    $('blockOverlay').classList.remove('active');
-    $('erroSenha').textContent = '';
-    $('senhaInput').value = '';
-    await SecureTimer.desbloquearPermanente();
-    notif(r.msg || '✅ Liberado!', 3000);
-    if(!appState.playerAtivado) setTimeout(ativarPlayer, 500);
-    atualizarTimer();
-    return true;
-  }
-  const motivo = r.motivo === 'expirada' ? '⏰ Senha expirada'
-                : r.motivo === 'assinatura_invalida' ? '🔒 Senha adulterada'
-                : r.motivo === 'formato_invalido' ? '❌ Formato inválido'
-                : '❌ Senha inválida!';
-  $('erroSenha').innerHTML = motivo;
-  $('senhaInput').value = '';
-  vibrar([50,30,50]);
-  return false;
-}
-async function liberarAgora(){
-  const senha = await vdbDialog({title: '🔑 LIBERAR', msg: 'Digite sua senha:', input: 'password', placeholder: 'Senha', okText: 'Liberar'});
-  if(!senha) return;
-  const r = await validarSenha(senha, appState.fingerprint);
-  if(r.valida){
-    $('blockOverlay').classList.remove('active');
-    await SecureTimer.desbloquearPermanente();
-    notif('✅ Liberado!', 3000);
-    atualizarTimer();
-  } else {
-    notif('❌ Inválida!', 2000);
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   🎵 CACHE DE GÊNERO
-   ═══════════════════════════════════════════════════════════ */
-const CACHE_GEN_KEY = 'vdb_genero_cache_v1';
-function _lerCacheGenero(){
-  try{ return JSON.parse(localStorage.getItem(CACHE_GEN_KEY) || '{}'); }catch(e){ return {}; }
-}
-function _salvarCacheGenero(obj){
-  try{ localStorage.setItem(CACHE_GEN_KEY, JSON.stringify(obj)); }
-  catch(e){
-    try{
-      const keys = Object.keys(obj);
-      if(keys.length > 5){
-        keys.sort((a,b)=>(obj[b].data||0)-(obj[a].data||0));
-        const reduzido = {};
-        keys.slice(0,10).forEach(k=>reduzido[k]=obj[k]);
-        localStorage.setItem(CACHE_GEN_KEY, JSON.stringify(reduzido));
-      }
-    }catch(e2){}
-  }
-}
-function _mapMusicas(j, genero){
-  if(!Array.isArray(j)) j = j.musicas || j.data || Object.values(j)[0];
-  return (j||[]).filter(m=>m&&m.src&&m.title).map(m=>({
-    ...m,
-    id: 'fav_' + (m.title+'_'+(m.artist||'Artista')).toLowerCase().replace(/[^a-z0-9]+/g,'_'),
-    genero,
-    artist: m.artist || 'Artista'
-  }));
-}
-
-const cacheGenero = new Map();
-async function buscarGenero(genero){
-  if(cacheGenero.has(genero)) return cacheGenero.get(genero);
-
-  const persistido = _lerCacheGenero();
-  if(persistido[genero] && Array.isArray(persistido[genero].musicas)){
-    const ms = persistido[genero].musicas;
-    cacheGenero.set(genero, ms);
-    _revalidarGenero(genero).catch(()=>{});
-    return ms;
-  }
-
-  const url = GENRE_URLS[genero];
-  if(!url) return null;
+const cacheGenero=new Map();
+async function buscarGenero(g){
+  if(cacheGenero.has(g))return cacheGenero.get(g);
+  const p=_lerCacheGenero();
+  if(p[g]&&Array.isArray(p[g].musicas)){cacheGenero.set(g,p[g].musicas);_revalidarGenero(g).catch(()=>{});return p[g].musicas;}
+  const url=GENRE_URLS[g];if(!url)return null;
   try{
-    const ctrl = new AbortController();
-    const tid = setTimeout(()=>ctrl.abort(), 9000);
-    const r = await fetch(url, { signal: ctrl.signal });
-    clearTimeout(tid);
-    if(!r.ok) throw new Error('HTTP');
-    const j = await r.json();
-    const ms = _mapMusicas(j, genero);
-    cacheGenero.set(genero, ms);
-    const p = _lerCacheGenero();
-    p[genero] = { musicas: ms, data: Date.now() };
-    _salvarCacheGenero(p);
+    const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),9000);
+    const r=await fetch(url,{signal:ctrl.signal});clearTimeout(tid);
+    if(!r.ok)throw new Error('HTTP');
+    const j=await r.json();const ms=_mapMusicas(j,g);
+    cacheGenero.set(g,ms);const pp=_lerCacheGenero();pp[g]={musicas:ms,data:Date.now()};_salvarCacheGenero(pp);
     return ms;
   }catch(e){
-    const p = _lerCacheGenero();
-    if(p[genero] && Array.isArray(p[genero].musicas)){
-      cacheGenero.set(genero, p[genero].musicas);
-      return p[genero].musicas;
-    }
+    const pp=_lerCacheGenero();
+    if(pp[g]&&Array.isArray(pp[g].musicas)){cacheGenero.set(g,pp[g].musicas);return pp[g].musicas;}
     return null;
   }
 }
-
-async function _revalidarGenero(genero){
-  const url = GENRE_URLS[genero];
-  if(!url) return;
-  try{
-    const r = await fetch(url, { cache: 'no-store' });
-    if(!r.ok) return;
-    const j = await r.json();
-    const ms = _mapMusicas(j, genero);
-    if(ms.length){
-      cacheGenero.set(genero, ms);
-      const p = _lerCacheGenero();
-      p[genero] = { musicas: ms, data: Date.now() };
-      _salvarCacheGenero(p);
-    }
+async function _revalidarGenero(g){
+  const url=GENRE_URLS[g];if(!url)return;
+  try{const r=await fetch(url,{cache:'no-store'});if(!r.ok)return;
+    const j=await r.json();const ms=_mapMusicas(j,g);
+    if(ms.length){cacheGenero.set(g,ms);const p=_lerCacheGenero();p[g]={musicas:ms,data:Date.now()};_salvarCacheGenero(p);}
   }catch(e){}
 }
-
 function getUrls(m){
-  const s = m.src || '';
-  if(!s) return [];
-  if(s.startsWith('http')) return [s];
-  const nome = s.replace(/^\.\//,'').replace(/[^a-zA-Z0-9\-_.]/g,'');
-  if(!nome) return [];
-  const repo = GENRE_REPOS[m.genero] || 'radiolojasjc-hub/play12';
-  return ['https://raw.githubusercontent.com/' + repo + '/refs/heads/main/' + nome];
+  const s=m.src||'';if(!s)return[];
+  if(s.startsWith('http'))return[s];
+  const nome=s.replace(/^\.\//,'').replace(/[^a-zA-Z0-9\-_.]/g,'');
+  if(!nome)return[];
+  const repo=GENRE_REPOS[m.genero]||'radiolojasjc-hub/play12';
+  return['https://raw.githubusercontent.com/'+repo+'/refs/heads/main/'+nome];
 }
-</head><body>/* ═══════════════════════════════════════════════════════════
-   📦 ESTADO GLOBAL
-   ═══════════════════════════════════════════════════════════ */
-const appState = {
-  favorites: [],
-  musicas: [],
-  playlistAtual: [],
-  indiceAtual: 0,
-  isPlaying: false,
-  modoAtual: 'BÔNUS',
-  temaCor: localStorage.getItem('vdb_tema_cor') || 'azul',
-  carregando: false,
-  playerAtivado: false,
-  isBackgroundActive: false,
-  telaAtual: 'principal',
-  musicasComProblema: new Set(),
-  sleepTimerId: null,
-  fingerprint: '',
-  _lastBlobUrl: null
-};
-if(!TEMAS[appState.temaCor]) appState.temaCor = 'azul';
-try{ appState.favorites = JSON.parse(localStorage.getItem('vdb_fav')||'[]'); }catch(e){}
-function salvarFav(){ try{ localStorage.setItem('vdb_fav', JSON.stringify(appState.favorites)); }catch(e){} }
-function aplicarTema(nome){
-  const t = TEMAS[nome] || TEMAS.azul;
-  document.documentElement.style.setProperty('--cor-1', t.c1);
-  document.documentElement.style.setProperty('--cor-2', t.c2);
-  document.documentElement.style.setProperty('--cor-3', t.c3);
-  const m = document.querySelector('meta[name="theme-color"]');
-  if(m) m.setAttribute('content', t.c1);
-  localStorage.setItem('vdb_tema_cor', nome);
-}
-aplicarTema(appState.temaCor);
 
-/* ═══════════════════════════════════════════════════════════
-   🔋 WAKE LOCK — mantém tela ativa durante download
-   ═══════════════════════════════════════════════════════════ */
-const WakeLockManager = {
-  lock: null,
-  async ativar(){
-    if(!('wakeLock' in navigator)) return false;
-    try{
-      this.lock = await navigator.wakeLock.request('screen');
-      this.lock.addEventListener('release', () => { this.lock = null; });
-      return true;
-    }catch(e){ return false; }
-  },
-  async desativar(){
-    if(this.lock){
-      try{ await this.lock.release(); }catch(_){}
-      this.lock = null;
-    }
-  }
+/* ============ STATE ============ */
+const appState={
+  favorites:[],musicas:[],playlistAtual:[],indiceAtual:0,isPlaying:false,
+  modoAtual:'BÔNUS',temaCor:'azul',carregando:false,playerAtivado:false,
+  isBackgroundActive:false,telaAtual:'principal',musicasComProblema:new Set(),
+  sleepTimerId:null,fingerprint:'',_lastBlobUrl:null
+};
+try{appState.favorites=JSON.parse(localStorage.getItem('vdb_fav')||'[]');}catch(e){}
+function salvarFav(){try{localStorage.setItem('vdb_fav',JSON.stringify(appState.favorites));}catch(e){}}
+
+/* ============ WAKE LOCK ============ */
+const WakeLockManager={
+  lock:null,
+  async ativar(){if(!('wakeLock' in navigator))return false;
+    try{this.lock=await navigator.wakeLock.request('screen');this.lock.addEventListener('release',()=>{this.lock=null;});return true;}catch(e){return false;}},
+  async desativar(){if(this.lock){try{await this.lock.release();}catch(_){}this.lock=null;}}
 };
 
-/* ═══════════════════════════════════════════════════════════
-   🌐 STATUS DE REDE
-   ═══════════════════════════════════════════════════════════ */
-let netBannerTimer = null;
+/* ============ NETWORK BANNER ============ */
+let netBannerTimer=null;
 function atualizarNetBanner(){
-  const b = $('netBanner');
-  if(!b) return;
+  const b=$('netBanner');if(!b)return;
   clearTimeout(netBannerTimer);
-  if(!navigator.onLine){
-    b.textContent = '🔴 Você está offline — usando cache';
-    b.classList.remove('online');
-    b.classList.add('show');
-  } else {
-    b.textContent = '🟢 Online';
-    b.classList.add('online', 'show');
-    netBannerTimer = setTimeout(() => b.classList.remove('show'), 2000);
-  }
+  if(!navigator.onLine){b.textContent='🔴 Offline — usando cache';b.classList.remove('online');b.classList.add('show');}
+  else{b.textContent='🟢 Online';b.classList.add('online','show');netBannerTimer=setTimeout(()=>b.classList.remove('show'),2000);}
 }
-window.addEventListener('online', () => { atualizarNetBanner(); notif('🟢 Voltou online', 1800); });
-window.addEventListener('offline', () => { atualizarNetBanner(); notif('🔴 Ficou offline', 1800); });
+window.addEventListener('online',()=>{atualizarNetBanner();notif('🟢 Voltou online',1800);});
+window.addEventListener('offline',()=>{atualizarNetBanner();notif('🔴 Ficou offline',1800);});
 
-/* ═══════════════════════════════════════════════════════════
-   🚀 DOWNLOAD MANAGER — Worker + persistência + retomada
-   ═══════════════════════════════════════════════════════════ */
-let downloadEmAndamento = false;
-let downloadGeneroAtual = '';
-
-const DownloadManager = {
-  worker: null,
-  cacheName: 'vdb-offline-' + CONFIG.APP_VERSION,
-
+/* ============ DOWNLOAD MANAGER ============ */
+let downloadEmAndamento=false;
+let downloadGeneroAtual='';
+const DownloadManager={
+  worker:null,
+  cacheName:'vdb-offline-'+CONFIG.APP_VERSION,
   init(){
-    if(this.worker) return;
-    try{
-      this.worker = new Worker('./worker-download.js');
-      this.worker.onmessage = (e) => this._onWorkerMsg(e.data);
-      this.worker.onerror = (e) => console.warn('Worker erro:', e);
-    }catch(err){
-      console.warn('Worker indisponível');
-      this.worker = null;
-    }
+    if(this.worker)return;
+    try{this.worker=new Worker('./worker-download.js');
+      this.worker.onmessage=e=>this._onWorkerMsg(e.data);
+      this.worker.onerror=e=>console.warn('Worker:',e);
+    }catch(err){console.warn('Worker off');this.worker=null;}
     this._retomarFila();
   },
-
-  async enfileirar(genero, musicas){
-    const id = 'dl_' + genero + '_' + Date.now();
-    const item = { id, genero, musicas, status: 'pendente', criadoEm: Date.now() };
-    this._persistirItem(item);
-    notif('📥 Baixando ' + genero + ' em background...', 2500);
-    this._processar(item);
-    return id;
+  async enfileirar(genero,musicas){
+    const id='dl_'+genero+'_'+Date.now();
+    this._persistirItem({id,genero,musicas});
+    notif('📥 Baixando '+genero+' em background...',2500);
+    this._processar({id,genero,musicas});
   },
-
   cancelar(){
-    if(this.worker) this.worker.postMessage({ type: 'CANCELAR' });
+    if(this.worker)this.worker.postMessage({type:'CANCELAR'});
     localStorage.removeItem('vdb_dl_fila_v1');
-    downloadEmAndamento = false;
-    downloadGeneroAtual = '';
+    downloadEmAndamento=false;downloadGeneroAtual='';
     WakeLockManager.desativar();
-    $('downloadModal').classList.remove('active');
+    const m=$('downloadModal');if(m)m.classList.remove('active');
     esconderBannerDownload();
     notif('🛑 Cancelado');
   },
-
   _persistirItem(item){
-    try{
-      const meta = {
-        id: item.id, genero: item.genero,
-        total: item.musicas?.length || 0,
-        criadoEm: item.criadoEm
-      };
-      localStorage.setItem('vdb_dl_fila_v1', JSON.stringify(meta));
-    }catch(_){}
+    try{localStorage.setItem('vdb_dl_fila_v1',JSON.stringify({id:item.id,genero:item.genero,total:item.musicas?.length||0,criadoEm:Date.now()}));}catch(_){}
   },
-
   async _retomarFila(){
     try{
-      const salva = JSON.parse(localStorage.getItem('vdb_dl_fila_v1') || 'null');
-      if(!salva) return;
-      if(generoOffline(salva.genero)){
-        localStorage.removeItem('vdb_dl_fila_v1');
-        return;
-      }
-      const musicas = await buscarGenero(salva.genero);
-      if(musicas && musicas.length){
-        notif('🔄 Retomando download de ' + salva.genero, 3000);
-        this._processar({ id: salva.id, genero: salva.genero, musicas });
-      }
+      const s=JSON.parse(localStorage.getItem('vdb_dl_fila_v1')||'null');
+      if(!s)return;
+      if(generoOffline(s.genero)){localStorage.removeItem('vdb_dl_fila_v1');return;}
+      const m=await buscarGenero(s.genero);
+      if(m&&m.length){notif('🔄 Retomando '+s.genero,3000);this._processar({id:s.id,genero:s.genero,musicas:m});}
     }catch(_){}
   },
-
   async _processar(item){
-    if(downloadEmAndamento) return;
-    downloadEmAndamento = true;
-    downloadGeneroAtual = item.genero;
-
-    // 🔋 Ativa Wake Lock
+    if(downloadEmAndamento)return;
+    downloadEmAndamento=true;downloadGeneroAtual=item.genero;
     await WakeLockManager.ativar();
-
-    // Mostra modal + banner
-    $('downloadModal').classList.add('active');
-    $('dlTitulo').textContent = '📥 ' + item.genero;
-    $('dlSub').textContent = 'Preparando...';
-    $('dlFill').style.width = '0%';
-    $('dlContador').textContent = '0 / ' + item.musicas.length;
-    $('dlPercent').textContent = '0%';
-    $('dlAtual').textContent = '';
-    $('dlCancelar').style.display = 'block';
-    $('dlFechar').style.display = 'none';
-    mostrarBannerDownload('Preparando ' + item.genero + '...');
-
+    const dm=$('downloadModal');if(dm)dm.classList.add('active');
+    if($('dlTitulo'))$('dlTitulo').textContent='📥 '+item.genero;
+    if($('dlSub'))$('dlSub').textContent='Preparando...';
+    if($('dlFill'))$('dlFill').style.width='0%';
+    if($('dlContador'))$('dlContador').textContent='0 / '+item.musicas.length;
+    if($('dlPercent'))$('dlPercent').textContent='0%';
+    if($('dlAtual'))$('dlAtual').textContent='';
+    if($('dlCancelar'))$('dlCancelar').style.display='block';
+    if($('dlFechar'))$('dlFechar').style.display='none';
+    mostrarBannerDownload('Preparando '+item.genero+'...');
     renderizarGeneros();
-
-    const musicasComUrls = item.musicas.map(m => ({ ...m, _urls: getUrls(m) }));
-
+    const comUrls=item.musicas.map(m=>({...m,_urls:getUrls(m)}));
     if(this.worker){
-      this.worker.postMessage({
-        type: 'BAIXAR_LOTE',
-        payload: {
-          genero: item.genero,
-          musicas: musicasComUrls,
-          cacheName: this.cacheName,
-          timeoutMs: CONFIG.DOWNLOAD_TIMEOUT_MS,
-          retry: CONFIG.DOWNLOAD_RETRY
-        }
-      });
-    } else {
-      this._fallbackMainThread(item.genero, musicasComUrls);
+      this.worker.postMessage({type:'BAIXAR_LOTE',payload:{genero:item.genero,musicas:comUrls,cacheName:this.cacheName,timeoutMs:CONFIG.DOWNLOAD_TIMEOUT_MS,retry:CONFIG.DOWNLOAD_RETRY}});
+    }else{
+      this._fallbackMainThread(item.genero,comUrls);
     }
   },
-
-  _onWorkerMsg({ type, payload }){
-    if(type === 'PROGRESSO'){
-      const { atual, total, baixadas, falhas, titulo, genero } = payload;
-      const pct = Math.round((atual / total) * 100);
-
-      if($('dlFill')) $('dlFill').style.width = pct + '%';
-      if($('dlContador')) $('dlContador').textContent = atual + ' / ' + total + '  (✅ ' + baixadas + '  ❌ ' + falhas + ')';
-      if($('dlPercent')) $('dlPercent').textContent = pct + '%';
-      if($('dlAtual')) $('dlAtual').textContent = titulo || '';
-      if($('dlSub')) $('dlSub').textContent = baixadas + ' baixadas';
-      mostrarBannerDownload(genero + ': ' + pct + '% (' + baixadas + '/' + total + ')');
-
-      const progId = genero.replace(/[^a-z0-9]/gi, '_');
-      const fill = $('progfill-' + progId);
-      const perc = $('perc-' + progId);
-      const bar = $('prog-' + progId);
-      if(bar) bar.classList.add('ativo');
-      if(fill) fill.style.width = pct + '%';
-      if(perc){ perc.classList.add('ativo'); perc.textContent = pct + '%'; }
-
-      // Tela de bloqueio mostra progresso
+  _onWorkerMsg({type,payload}){
+    if(type==='PROGRESSO'){
+      const {atual,total,baixadas,falhas,titulo,genero}=payload;
+      const pct=Math.round((atual/total)*100);
+      if($('dlFill'))$('dlFill').style.width=pct+'%';
+      if($('dlContador'))$('dlContador').textContent=atual+' / '+total+'  (✅ '+baixadas+'  ❌ '+falhas+')';
+      if($('dlPercent'))$('dlPercent').textContent=pct+'%';
+      if($('dlAtual'))$('dlAtual').textContent=titulo||'';
+      if($('dlSub'))$('dlSub').textContent=baixadas+' baixadas';
+      mostrarBannerDownload(genero+': '+pct+'% ('+baixadas+'/'+total+')');
+      const pid=genero.replace(/[^a-z0-9]/gi,'_');
+      const fill=$('progfill-'+pid),perc=$('perc-'+pid),bar=$('prog-'+pid);
+      if(bar)bar.classList.add('ativo');
+      if(fill)fill.style.width=pct+'%';
+      if(perc){perc.classList.add('ativo');perc.textContent=pct+'%';}
       if('mediaSession' in navigator){
-        try{
-          navigator.mediaSession.metadata = new MediaMetadata({
-            title: '📥 ' + genero + ' — ' + pct + '%',
-            artist: baixadas + ' baixadas de ' + total,
-            album: 'VDB Download'
-          });
-        }catch(_){}
+        try{navigator.mediaSession.metadata=new MediaMetadata({title:'📥 '+genero+' — '+pct+'%',artist:baixadas+' baixadas de '+total,album:'VDB Download'});}catch(_){}
       }
-
-      if(atual % 10 === 0 || atual === total){
-        const meta = getOfflineMeta();
-        meta[genero] = { baixadas, total, falhas, data: now(), parcial: true };
+      if(atual%10===0||atual===total){
+        const meta=getOfflineMeta();
+        meta[genero]={baixadas,total,falhas,data:Date.now(),parcial:true};
         setOfflineMeta(meta);
       }
     }
-
-    if(type === 'FIM'){
-      const { genero, baixadas, falhas, total, cancelado } = payload;
-      const meta = getOfflineMeta();
-      meta[genero] = {
-        baixadas, total, falhas, data: now(),
-        completo: !cancelado && (baixadas >= total * 0.9)
-      };
+    if(type==='FIM'){
+      const {genero,baixadas,falhas,total,cancelado}=payload;
+      const meta=getOfflineMeta();
+      meta[genero]={baixadas,total,falhas,data:Date.now(),completo:!cancelado&&(baixadas>=total*0.9)};
       setOfflineMeta(meta);
-
       localStorage.removeItem('vdb_dl_fila_v1');
-      downloadEmAndamento = false;
-      downloadGeneroAtual = '';
+      downloadEmAndamento=false;downloadGeneroAtual='';
       WakeLockManager.desativar();
       esconderBannerDownload();
-
-      if($('dlCancelar')) $('dlCancelar').style.display = 'none';
-      if($('dlFechar')) $('dlFechar').style.display = 'block';
-      if($('dlSub')) $('dlSub').textContent = cancelado
-        ? '🛑 Cancelado'
-        : '✅ ' + baixadas + ' de ' + total + ' baixadas!';
-
-      if(!cancelado && baixadas > 0){
-        notif('✅ ' + baixadas + ' músicas offline!', 3000);
-        // Notifica com vibração diferente
-        vibrar([50, 50, 50, 50, 50]);
-        setTimeout(() => {
-          const modal = $('downloadModal');
-          if(modal) modal.classList.remove('active');
-        }, 3000);
+      if($('dlCancelar'))$('dlCancelar').style.display='none';
+      if($('dlFechar'))$('dlFechar').style.display='block';
+      if($('dlSub'))$('dlSub').textContent=cancelado?'🛑 Cancelado':'✅ '+baixadas+' de '+total+' baixadas!';
+      if(!cancelado&&baixadas>0){
+        notif('✅ '+baixadas+' músicas offline!',3000);
+        vibrar([50,50,50,50,50]);
+        setTimeout(()=>{const m=$('downloadModal');if(m)m.classList.remove('active');},3000);
       }
       renderizarGeneros();
     }
   },
-
-  async _fallbackMainThread(genero, musicas){
-    let baixadas = 0, falhas = 0;
-    const cache = await abrirCache();
-    for(let i = 0; i < musicas.length; i++){
-      const m = musicas[i];
-      let ok = false;
+  async _fallbackMainThread(genero,musicas){
+    let b=0,f=0;const cache=await abrirCache();
+    for(let i=0;i<musicas.length;i++){
+      const m=musicas[i];let ok=false;
       for(const u of m._urls){
-        const limpa = urlLimpa(u);
-        try{ if(await cache.match(limpa)){ ok = true; break; } }catch(_){}
-        for(let t = 1; t <= CONFIG.DOWNLOAD_RETRY; t++){
+        const limpa=urlLimpa(u);
+        try{if(await cache.match(limpa)){ok=true;break;}}catch(_){}
+        for(let t=1;t<=CONFIG.DOWNLOAD_RETRY;t++){
           try{
-            const ctrl = new AbortController();
-            const tid = setTimeout(() => ctrl.abort(), CONFIG.DOWNLOAD_TIMEOUT_MS);
-            const r = await fetch(u, { mode: 'cors', signal: ctrl.signal });
-            clearTimeout(tid);
-            if(r.ok){ await cache.put(limpa, r.clone()); ok = true; break; }
-          }catch(_){ await sleep(400 * t); }
+            const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),CONFIG.DOWNLOAD_TIMEOUT_MS);
+            const r=await fetch(u,{mode:'cors',signal:ctrl.signal});clearTimeout(tid);
+            if(r.ok){await cache.put(limpa,r.clone());ok=true;break;}
+          }catch(_){await sleep(400*t);}
         }
-        if(ok) break;
+        if(ok)break;
       }
-      ok ? baixadas++ : falhas++;
-      this._onWorkerMsg({ type: 'PROGRESSO', payload: { genero, atual: i + 1, total: musicas.length, baixadas, falhas, titulo: m.title } });
-      if((i + 1) % 3 === 0) await sleep(30);
+      ok?b++:f++;
+      this._onWorkerMsg({type:'PROGRESSO',payload:{genero,atual:i+1,total:musicas.length,baixadas:b,falhas:f,titulo:m.title}});
+      if((i+1)%3===0)await sleep(30);
     }
-    this._onWorkerMsg({ type: 'FIM', payload: { genero, baixadas, falhas, total: musicas.length, cancelado: false } });
+    this._onWorkerMsg({type:'FIM',payload:{genero,baixadas:b,falhas:f,total:musicas.length,cancelado:false}});
   }
 };
+function mostrarBannerDownload(txt){const b=$('bgDownloadBanner'),t=$('bgDownloadText');if(!b)return;if(t)t.textContent=txt||'Baixando...';b.classList.add('show');}
+function esconderBannerDownload(){const b=$('bgDownloadBanner');if(b)b.classList.remove('show');}
 
-function mostrarBannerDownload(txt){
-  const b = $('bgDownloadBanner');
-  const t = $('bgDownloadText');
-  if(!b) return;
-  if(t) t.textContent = txt || 'Baixando...';
-  b.classList.add('show');
-}
-function esconderBannerDownload(){
-  const b = $('bgDownloadBanner');
-  if(b) b.classList.remove('show');
-}
-
-/* ═══════════════════════════════════════════════════════════
-   💾 CACHE / OFFLINE
-   ═══════════════════════════════════════════════════════════ */
-const CACHE_NAME = 'vdb-offline-' + CONFIG.APP_VERSION;
-async function abrirCache(){
-  if(!('caches' in window)) return null;
-  try{ return await caches.open(CACHE_NAME); }catch(e){ return null; }
-}
-function urlLimpa(url){
-  try{
-    const u = new URL(url);
-    u.searchParams.delete('v');
-    u.searchParams.delete('t');
-    return u.toString();
-  }catch(e){ return url.split('?')[0]; }
-}
-async function estaOffline(url){
-  if(!url) return false;
-  const c = await abrirCache(); if(!c) return false;
-  try{ return !!(await c.match(urlLimpa(url))); }catch(e){ return false; }
-}
-async function salvarOffline(url, timeoutMs=30000){
-  if(!url || !url.startsWith('http')) return false;
-  const c = await abrirCache(); if(!c) return false;
-  const limpa = urlLimpa(url);
-  try{
-    if(await c.match(limpa)) return true;
-    const ctrl = new AbortController();
-    const tid = setTimeout(() => ctrl.abort(), timeoutMs);
-    const r = await fetch(url, { mode:'cors', signal: ctrl.signal });
-    clearTimeout(tid);
-    if(!r.ok) return false;
-    await c.put(limpa, r.clone());
-    return true;
-  }catch(e){ return false; }
-}
-async function buscarAudioOffline(url){
-  try{
-    const c = await abrirCache();
-    if(!c) return null;
-    const r = await c.match(urlLimpa(url));
-    if(!r) return null;
-    const b = await r.blob();
-    const novoUrl = URL.createObjectURL(b);
-    appState._lastBlobUrl = novoUrl;
-    return novoUrl;
-  }catch(e){ return null; }
+/* ============ CACHE/OFFLINE ============ */
+const CACHE_NAME='vdb-offline-'+CONFIG.APP_VERSION;
+async function abrirCache(){if(!('caches' in window))return null;try{return await caches.open(CACHE_NAME);}catch(e){return null;}}
+function urlLimpa(url){try{const u=new URL(url);u.searchParams.delete('v');u.searchParams.delete('t');return u.toString();}catch(e){return url.split('?')[0];}}
+async function estaOffline(url){if(!url)return false;const c=await abrirCache();if(!c)return false;try{return !!(await c.match(urlLimpa(url)));}catch(e){return false;}}
+async function buscarAudioOffline(url){try{const c=await abrirCache();if(!c)return null;const r=await c.match(urlLimpa(url));if(!r)return null;const b=await r.blob();const u=URL.createObjectURL(b);appState._lastBlobUrl=u;return u;}catch(e){return null;}}
+function getOfflineMeta(){try{return JSON.parse(localStorage.getItem('vdb_offline')||'{}');}catch(e){return{};}}
+function setOfflineMeta(m){try{localStorage.setItem('vdb_offline',JSON.stringify(m));}catch(e){}}
+function generoOffline(g){const m=getOfflineMeta();return !!(m[g]&&m[g].completo);}
+async function limparGeneroOffline(g){
+  const c=await abrirCache();if(!c)return;
+  const repo=GENRE_REPOS[g]||'';
+  const ks=await c.keys();
+  for(const k of ks){if(repo&&k.url.includes(repo))await c.delete(k);}
+  const m=getOfflineMeta();delete m[g];setOfflineMeta(m);
 }
 
-function getOfflineMeta(){
-  try{ return JSON.parse(localStorage.getItem('vdb_offline')||'{}'); }catch(e){ return {}; }
-}
-function setOfflineMeta(m){
-  try{ localStorage.setItem('vdb_offline', JSON.stringify(m)); }catch(e){}
-}
-function generoOffline(g){
-  const m = getOfflineMeta();
-  return !!(m[g] && m[g].completo);
-}
-async function limparGeneroOffline(genero){
-  const c = await abrirCache(); if(!c) return;
-  const repo = GENRE_REPOS[genero] || '';
-  const ks = await c.keys();
-  for(const k of ks){
-    if(repo && k.url.includes(repo)) await c.delete(k);
-  }
-  const meta = getOfflineMeta();
-  delete meta[genero];
-  setOfflineMeta(meta);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   🎧 PLAYER
-   ═══════════════════════════════════════════════════════════ */
-const audio = $('musicPlayer');
+/* ============ PLAYER ============ */
+const audio=$('musicPlayer');
 function atualizarPlaylist(){
-  if(!appState.musicas.length) return null;
-  if(!appState.playlistAtual.length){
-    appState.playlistAtual = shuffle(appState.musicas);
-    appState.indiceAtual = 0;
-  }
-  if(appState.indiceAtual >= appState.playlistAtual.length){
-    appState.playlistAtual = shuffle(appState.musicas);
-    appState.indiceAtual = 0;
-  }
-  return appState.playlistAtual[appState.indiceAtual] || null;
+  if(!appState.musicas.length)return null;
+  if(!appState.playlistAtual.length){appState.playlistAtual=shuffle(appState.musicas);appState.indiceAtual=0;}
+  if(appState.indiceAtual>=appState.playlistAtual.length){appState.playlistAtual=shuffle(appState.musicas);appState.indiceAtual=0;}
+  return appState.playlistAtual[appState.indiceAtual]||null;
 }
-
-function revogarBlobUrlAnterior(){
-  if(appState._lastBlobUrl){
-    try{ URL.revokeObjectURL(appState._lastBlobUrl); }catch(e){}
-    appState._lastBlobUrl = null;
-  }
-}
+function revogarBlobUrlAnterior(){if(appState._lastBlobUrl){try{URL.revokeObjectURL(appState._lastBlobUrl);}catch(e){}appState._lastBlobUrl=null;}}
 
 async function tocar(){
-  if(!appState.isBackgroundActive || appState.carregando || !appState.musicas.length) return;
-  appState.carregando = true;
-  revogarBlobUrlAnterior();
+  if(!appState.isBackgroundActive||appState.carregando||!appState.musicas.length)return;
+  appState.carregando=true;revogarBlobUrlAnterior();
   try{
-    $('playBtn').innerHTML = '<i class="fas fa-spinner"></i>';
+    $('playBtn').innerHTML='<i class="fas fa-spinner"></i>';
     $('playBtn').classList.add('loading');
-    const m = atualizarPlaylist();
-    if(!m){ appState.carregando = false; return; }
-    atualizarLetreiro(m);
-    atualizarInfoMusica(m);
-    atualizarCoracao();
+    const m=atualizarPlaylist();
+    if(!m){appState.carregando=false;return;}
+    atualizarLetreiro(m);atualizarInfoMusica(m);atualizarCoracao();
     if('mediaSession' in navigator){
-      try{
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: m.title||'VDB', artist: m.artist||'Artista',
-          album: m.genero||'Música',
-          artwork: [{src:'favicon30.png', sizes:'512x512', type:'image/png'}]
-        });
-      }catch(e){}
+      try{navigator.mediaSession.metadata=new MediaMetadata({title:m.title||'VDB',artist:m.artist||'Artista',album:m.genero||'Música',artwork:[{src:'favicon30.png',sizes:'512x512',type:'image/png'}]});}catch(e){}
+      registrarMediaSessionHandlers();
     }
-    try{ audio.pause(); }catch(e){}
-    audio.removeAttribute('src');
-    audio.load();
-    const urls = getUrls(m).slice(0, 8);
-    let ok = false;
-
+    try{audio.pause();}catch(e){}
+    audio.removeAttribute('src');audio.load();
+    const urls=getUrls(m).slice(0,8);let ok=false;
     for(const u of urls){
-      const cacheUrl = await buscarAudioOffline(u);
-      if(cacheUrl){
+      const cUrl=await buscarAudioOffline(u);
+      if(cUrl){
         try{
-          const car = await new Promise(r=>{
-            const t = setTimeout(()=>{ audio.oncanplay=null; audio.onerror=null; r(false); }, 5000);
-            audio.oncanplay = ()=>{ clearTimeout(t); audio.oncanplay=null; audio.onerror=null; r(true); };
-            audio.onerror = ()=>{ clearTimeout(t); audio.oncanplay=null; audio.onerror=null; r(false); };
-            audio.src = cacheUrl; audio.load();
+          const car=await new Promise(r=>{
+            const t=setTimeout(()=>{audio.oncanplay=null;audio.onerror=null;r(false);},5000);
+            audio.oncanplay=()=>{clearTimeout(t);audio.oncanplay=null;audio.onerror=null;r(true);};
+            audio.onerror=()=>{clearTimeout(t);audio.oncanplay=null;audio.onerror=null;r(false);};
+            audio.src=cUrl;audio.load();
           });
-          if(car){ ok = true; break; }
+          if(car){ok=true;break;}
         }catch(e){}
       }
     }
-
     if(!ok){
       for(const u of urls){
         try{
-          const car = await new Promise(r=>{
-            const t = setTimeout(()=>{ audio.oncanplay=null; audio.onerror=null; r(false); }, 8000);
-            audio.oncanplay = ()=>{ clearTimeout(t); audio.oncanplay=null; audio.onerror=null; r(true); };
-            audio.onerror = ()=>{ clearTimeout(t); audio.oncanplay=null; audio.onerror=null; r(false); };
-            audio.src = u; audio.load();
+          const car=await new Promise(r=>{
+            const t=setTimeout(()=>{audio.oncanplay=null;audio.onerror=null;r(false);},8000);
+            audio.oncanplay=()=>{clearTimeout(t);audio.oncanplay=null;audio.onerror=null;r(true);};
+            audio.onerror=()=>{clearTimeout(t);audio.oncanplay=null;audio.onerror=null;r(false);};
+            audio.src=u;audio.load();
           });
-          if(car){
-            ok = true;
-            salvarOffline(u).catch(()=>{});
-            break;
-          }
+          if(car){ok=true;salvarOffline(u).catch(()=>{});break;}
         }catch(e){}
       }
     }
-
     if(ok){
       try{
-        audio.volume = CONFIG.VOLUME_PADRAO;
+        audio.volume=CONFIG.VOLUME_PADRAO;
         await audio.play();
-        appState.isPlaying = true;
+        appState.isPlaying=true;
         $('playBtn').classList.remove('loading');
-        $('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
-        registrarMediaSessionHandlers();
+        $('playBtn').innerHTML='<i class="fas fa-pause"></i>';
       }catch(e){
         $('playBtn').classList.remove('loading');
-        $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
-        setTimeout(next, 200);
+        $('playBtn').innerHTML='<i class="fas fa-play"></i>';
+        setTimeout(next,200);
       }
     }else{
       appState.musicasComProblema.add(m.id);
       $('playBtn').classList.remove('loading');
-      $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
-      setTimeout(next, 200);
+      $('playBtn').innerHTML='<i class="fas fa-play"></i>';
+      setTimeout(next,200);
     }
-  }catch(e){ console.error('Erro tocar:', e); }
-  finally{ appState.carregando = false; $('playBtn').classList.remove('loading'); }
+  }catch(e){console.error('tocar:',e);}
+  finally{appState.carregando=false;$('playBtn').classList.remove('loading');}
+}
+async function salvarOffline(url,timeoutMs=30000){
+  if(!url||!url.startsWith('http'))return false;
+  const c=await abrirCache();if(!c)return false;
+  const limpa=urlLimpa(url);
+  try{
+    if(await c.match(limpa))return true;
+    const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),timeoutMs);
+    const r=await fetch(url,{mode:'cors',signal:ctrl.signal});clearTimeout(tid);
+    if(!r.ok)return false;
+    await c.put(limpa,r.clone());
+    return true;
+  }catch(e){return false;}
 }
 
 function registrarMediaSessionHandlers(){
-  if(!('mediaSession' in navigator)) return;
+  if(!('mediaSession' in navigator))return;
   try{
-    navigator.mediaSession.setActionHandler('play', () => togglePlay());
-    navigator.mediaSession.setActionHandler('pause', () => togglePlay());
-    navigator.mediaSession.setActionHandler('previoustrack', () => prev());
-    navigator.mediaSession.setActionHandler('nexttrack', () => next());
-    try{
-      navigator.mediaSession.setActionHandler('seekto', (e) => {
-        if(e.seekTime != null && audio.duration) audio.currentTime = e.seekTime;
-      });
-    }catch(_){}
+    navigator.mediaSession.setActionHandler('play',()=>togglePlay());
+    navigator.mediaSession.setActionHandler('pause',()=>togglePlay());
+    navigator.mediaSession.setActionHandler('previoustrack',()=>prev());
+    navigator.mediaSession.setActionHandler('nexttrack',()=>next());
+    try{navigator.mediaSession.setActionHandler('seekto',e=>{if(e.seekTime!=null&&audio.duration)audio.currentTime=e.seekTime;});}catch(_){}
   }catch(_){}
 }
-
 function togglePlay(){
   vibrar();
-  if(!appState.isBackgroundActive){ notif('🔊 Aguarde...'); return; }
-  if(audio.paused) tocar();
-  else{
-    audio.pause();
-    appState.isPlaying = false;
-    $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
-  }
+  if(!appState.isBackgroundActive){notif('🔊 Aguarde...');return;}
+  if(audio.paused)tocar();
+  else{audio.pause();appState.isPlaying=false;$('playBtn').innerHTML='<i class="fas fa-play"></i>';}
 }
 function next(){
-  vibrar();
-  if(appState.carregando) return;
-  if(!appState.playlistAtual.length && !appState.musicas.length) return;
+  vibrar();if(appState.carregando)return;
+  if(!appState.playlistAtual.length&&!appState.musicas.length)return;
   appState.indiceAtual++;
-  if(appState.isBackgroundActive) setTimeout(tocar, 100);
+  if(appState.isBackgroundActive)setTimeout(tocar,100);
 }
 function prev(){
-  vibrar();
-  if(appState.carregando) return;
-  if(!appState.playlistAtual.length) return;
-  appState.indiceAtual = (appState.indiceAtual - 1 + appState.playlistAtual.length) % appState.playlistAtual.length;
-  if(appState.isBackgroundActive) setTimeout(tocar, 100);
+  vibrar();if(appState.carregando)return;
+  if(!appState.playlistAtual.length)return;
+  appState.indiceAtual=(appState.indiceAtual-1+appState.playlistAtual.length)%appState.playlistAtual.length;
+  if(appState.isBackgroundActive)setTimeout(tocar,100);
 }
 function atualizarLetreiro(m){
-  const el = $('scrollText');
-  el.innerHTML = m
-    ? '🎵 <b>TOCANDO:</b> ' + sanitize(m.title) + ' — <i>' + sanitize(m.artist) + '</i> • VDB MUSIC ' + VERSAO
-    : '🎵 VDB MUSIC ' + VERSAO + ' 🎵';
+  const el=$('scrollText');
+  el.innerHTML=m?'🎵 <b>TOCANDO:</b> '+sanitize(m.title)+' — <i>'+sanitize(m.artist)+'</i> • VDB MUSIC '+VERSAO:'🎵 VDB MUSIC '+VERSAO+' 🎵';
 }
 function atualizarInfoMusica(m){
-  if(!m) return;
-  const n = $('musicaNome'), a = $('musicaArtista');
-  n.textContent = sanitize(m.title) || 'Música';
-  a.textContent = sanitize(m.artist) || 'Artista';
-  n.style.animation = 'none'; a.style.animation = 'none';
-  void n.offsetWidth;
-  n.style.animation = ''; a.style.animation = '';
+  if(!m)return;
+  $('musicaNome').textContent=sanitize(m.title)||'Música';
+  $('musicaArtista').textContent=sanitize(m.artist)||'Artista';
 }
 function atualizarCoracao(){
-  const m = appState.playlistAtual[appState.indiceAtual];
-  const btn = $('btnCoracaoInfo'), lab = $('labelTocandoAgora');
-  if(!m){ btn.classList.remove('ativo'); btn.innerHTML='<i class="far fa-heart"></i>'; return; }
-  const ehFav = appState.favorites.some(f => f.id === m.id);
-  if(ehFav){
-    btn.classList.add('ativo'); btn.innerHTML = '<i class="fas fa-heart"></i>';
-    lab.classList.add('favorita'); lab.textContent = '❤️ TOCANDO AGORA';
-  }else{
-    btn.classList.remove('ativo'); btn.innerHTML = '<i class="far fa-heart"></i>';
-    lab.classList.remove('favorita'); lab.textContent = 'TOCANDO AGORA';
-  }
+  const m=appState.playlistAtual[appState.indiceAtual];
+  const b=$('btnCoracaoInfo'),l=$('labelTocandoAgora');
+  if(!m){b.classList.remove('ativo');b.innerHTML='<i class="far fa-heart"></i>';return;}
+  const f=appState.favorites.some(x=>x.id===m.id);
+  if(f){b.classList.add('ativo');b.innerHTML='<i class="fas fa-heart"></i>';l.classList.add('favorita');l.textContent='❤️ TOCANDO AGORA';}
+  else{b.classList.remove('ativo');b.innerHTML='<i class="far fa-heart"></i>';l.classList.remove('favorita');l.textContent='TOCANDO AGORA';}
 }
 function atualizarBadgeFav(){
-  const n = appState.favorites.length;
-  const b = $('barraBadgeFav');
-  if(b){
-    b.textContent = n;
-    b.style.display = n > 0 ? 'block' : 'none';
-    b.classList.add('pulse');
-    setTimeout(() => b.classList.remove('pulse'), 500);
-  }
+  const n=appState.favorites.length;
+  const b=$('barraBadgeFav');
+  if(b){b.textContent=n;b.style.display=n>0?'block':'none';}
 }
 function toggleFav(m){
-  if(!m) return;
-  vibrar(20);
-  const i = appState.favorites.findIndex(f => f.id === m.id);
-  if(i > -1){ appState.favorites.splice(i, 1); notif('💔 Removido'); }
-  else{ appState.favorites.push({ id:m.id, title:m.title, artist:m.artist, src:m.src, genero:m.genero }); notif('❤️ Adicionado'); }
-  salvarFav(); atualizarBadgeFav(); atualizarCoracao();
+  if(!m)return;vibrar(20);
+  const i=appState.favorites.findIndex(f=>f.id===m.id);
+  if(i>-1){appState.favorites.splice(i,1);notif('💔 Removido');}
+  else{appState.favorites.push({id:m.id,title:m.title,artist:m.artist,src:m.src,genero:m.genero});notif('❤️ Adicionado');}
+  salvarFav();atualizarBadgeFav();atualizarCoracao();
 }
-function toggleFavAtual(){
-  const m = appState.playlistAtual[appState.indiceAtual];
-  if(m) toggleFav(m);
-}
+function toggleFavAtual(){const m=appState.playlistAtual[appState.indiceAtual];if(m)toggleFav(m);}
 
-/* ═══════════════════════════════════════════════════════════
-   🎸 GÊNEROS
-   ═══════════════════════════════════════════════════════════ */
+/* ============ GÊNEROS UI ============ */
 function renderizarGeneros(){
-  const grid = $('genresGrid');
-  grid.innerHTML = '';
-  GENRE_ORDEM.forEach((g, idx) => {
-    const c = GENRE_COLORS[g] || COR_PADRAO;
-    const offline = generoOffline(g);
-    const baixando = downloadEmAndamento && downloadGeneroAtual === g;
-
-    const card = document.createElement('div');
-    card.className = 'genre-card';
-    card.style.setProperty('--c1', c.c1);
-    card.style.animationDelay = (idx * 20) + 'ms';
-    card.dataset.genero = g;
-
-    const nome = document.createElement('div');
-    nome.className = 'genre-name';
-    nome.textContent = g;
-    card.appendChild(nome);
-
-    const btnOff = document.createElement('button');
-    let btnClass = 'btn-offline';
-    let btnHTML = '';
-    if(baixando){
-      btnClass += ' baixando';
-      btnHTML = '<i class="fas fa-spinner fa-spin"></i> Baixando';
-    }else if(offline){
-      btnClass += ' remover';
-      btnHTML = '<i class="fas fa-trash"></i> Remover';
-    }else{
-      btnHTML = '<i class="fas fa-download"></i> Baixar todas';
-    }
-    btnOff.className = btnClass;
-    btnOff.innerHTML = btnHTML;
-    btnOff.onclick = (e) => {
+  const grid=$('genresGrid');grid.innerHTML='';
+  GENRE_ORDEM.forEach(g=>{
+    const c=GENRE_COLORS[g]||COR_PADRAO;
+    const off=generoOffline(g);
+    const baixando=downloadEmAndamento&&downloadGeneroAtual===g;
+    const card=document.createElement('div');
+    card.className='genre-card';card.style.setProperty('--c1',c.c1);card.dataset.genero=g;
+    const nome=document.createElement('div');nome.className='genre-name';nome.textContent=g;card.appendChild(nome);
+    const btn=document.createElement('button');let cls='btn-offline',html='';
+    if(baixando){cls+=' baixando';html='<i class="fas fa-spinner fa-spin"></i> Baixando';}
+    else if(off){cls+=' remover';html='<i class="fas fa-trash"></i> Remover';}
+    else{html='<i class="fas fa-download"></i> Baixar todas';}
+    btn.className=cls;btn.innerHTML=html;
+    btn.onclick=e=>{
       e.stopPropagation();
-      if(baixando){ notif('⏳ Já está baixando'); return; }
-      if(offline){
-        if(confirm('Remover "'+g+'" do offline?')){
-          limparGeneroOffline(g).then(()=>{ notif('🗑️ '+g+' removido'); renderizarGeneros(); });
-        }
-      }else{
-        iniciarDownloadGenero(g);
-      }
+      if(baixando){notif('⏳ Já está baixando');return;}
+      if(off){if(confirm('Remover "'+g+'" do offline?')){limparGeneroOffline(g).then(()=>{notif('🗑️ '+g);renderizarGeneros();});}}
+      else{iniciarDownloadGenero(g);}
     };
-    card.appendChild(btnOff);
-
-    const progId = g.replace(/[^a-z0-9]/gi,'_');
-    const prog = document.createElement('div');
-    prog.className = 'offline-progress';
-    prog.id = 'prog-' + progId;
-    prog.innerHTML = '<div class="offline-progress-fill" id="progfill-' + progId + '"></div>';
+    card.appendChild(btn);
+    const pid=g.replace(/[^a-z0-9]/gi,'_');
+    const prog=document.createElement('div');prog.className='offline-progress';prog.id='prog-'+pid;
+    prog.innerHTML='<div class="offline-progress-fill" id="progfill-'+pid+'"></div>';
     card.appendChild(prog);
-
-    const perc = document.createElement('div');
-    perc.className = 'offline-percent';
-    perc.id = 'perc-' + progId;
-    perc.textContent = '0%';
+    const perc=document.createElement('div');perc.className='offline-percent';perc.id='perc-'+pid;perc.textContent='0%';
     card.appendChild(perc);
-
-    card.onclick = () => {
-      if(baixando){ notif('⏳ Aguarde o download terminar'); return; }
-      selecionarGenero(g);
-    };
+    card.onclick=()=>{if(baixando){notif('⏳ Aguarde');return;}selecionarGenero(g);};
     grid.appendChild(card);
   });
 }
-
 async function selecionarGenero(g){
-  vibrar();
-  notif('⏳ Carregando ' + g);
-  const m = await buscarGenero(g);
-  if(!m || !m.length){ notif('❌ Erro ' + g); return; }
-  audio.pause();
-  appState.isPlaying = false;
-  $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
-  appState.musicas = m;
-  appState.modoAtual = g;
-  appState.playlistAtual = shuffle(m);
-  appState.indiceAtual = 0;
+  vibrar();notif('⏳ Carregando '+g);
+  const m=await buscarGenero(g);
+  if(!m||!m.length){notif('❌ Erro '+g);return;}
+  audio.pause();appState.isPlaying=false;$('playBtn').innerHTML='<i class="fas fa-play"></i>';
+  appState.musicas=m;appState.modoAtual=g;appState.playlistAtual=shuffle(m);appState.indiceAtual=0;
   appState.musicasComProblema.clear();
-  aplicarTema(appState.temaCor);
-  const mm = appState.playlistAtual[0];
-  if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
-  notif('🎵 ' + g + ' (' + m.length + ')');
-  if(appState.isBackgroundActive) setTimeout(tocar, 250);
+  const mm=appState.playlistAtual[0];
+  if(mm){atualizarLetreiro(mm);atualizarInfoMusica(mm);atualizarCoracao();}
+  notif('🎵 '+g+' ('+m.length+')');
+  if(appState.isBackgroundActive)setTimeout(tocar,250);
   fecharModal('modalGeneros');
 }
-
-async function iniciarDownloadGenero(genero){
-  if(downloadEmAndamento){ notif('⚠️ Já tem download em andamento'); return; }
-  if(generoOffline(genero)){ notif('✅ Já está offline'); return; }
-
-  $('downloadModal').classList.add('active');
-  $('dlTitulo').textContent = '📥 ' + genero;
-  $('dlSub').textContent = 'Preparando...';
-  $('dlFill').style.width = '0%';
-  $('dlContador').textContent = '0 / 0';
-  $('dlPercent').textContent = '0%';
-  $('dlAtual').textContent = '';
-  $('dlCancelar').style.display = 'block';
-  $('dlFechar').style.display = 'none';
-
-  const musicas = await buscarGenero(genero);
-  if(!musicas || !musicas.length){
-    notif('❌ Erro ao carregar');
-    $('downloadModal').classList.remove('active');
-    return;
-  }
-  DownloadManager.enfileirar(genero, musicas);
+async function iniciarDownloadGenero(g){
+  if(downloadEmAndamento){notif('⚠️ Já tem download');return;}
+  if(generoOffline(g)){notif('✅ Já offline');return;}
+  const m=await buscarGenero(g);
+  if(!m||!m.length){notif('❌ Erro');return;}
+  DownloadManager.enfileirar(g,m);
 }
-
 async function abrirGerenciadorOffline(){
-  const meta = getOfflineMeta();
-  const gs = Object.keys(meta);
-  if(!gs.length){ notif('📥 Nada baixado'); return; }
-  let txt = '📥 OFFLINE\n\n';
-  gs.forEach(g => {
-    const info = meta[g];
-    txt += '• ' + g + ': ' + info.baixadas + '/' + info.total + (info.completo ? ' ✅' : ' ⏳') + '\n';
-  });
-  const acao = confirm(txt + '\n\nApagar tudo?');
-  if(acao){
-    const c = await abrirCache();
-    if(c){ const ks = await c.keys(); for(const k of ks) await c.delete(k); }
-    setOfflineMeta({});
-    notif('🗑️ Offline limpo!');
-    renderizarGeneros();
+  const meta=getOfflineMeta();const gs=Object.keys(meta);
+  if(!gs.length){notif('📥 Nada baixado');return;}
+  let txt='📥 OFFLINE\n\n';
+  gs.forEach(g=>{const i=meta[g];txt+='• '+g+': '+i.baixadas+'/'+i.total+(i.completo?' ✅':' ⏳')+'\n';});
+  if(confirm(txt+'\n\nApagar tudo?')){
+    const c=await abrirCache();if(c){const ks=await c.keys();for(const k of ks)await c.delete(k);}
+    setOfflineMeta({});notif('🗑️ Limpo!');renderizarGeneros();
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   🔍 BUSCA UNIVERSAL
-   ═══════════════════════════════════════════════════════════ */
-const UniversalPool = {
-  musicas: [], carregando: false, carregado: false,
+/* ============ BUSCA ============ */
+const UniversalPool={
+  musicas:[],carregando:false,carregado:false,
   async carregar(onProgress){
-    if(this.carregado) return this.musicas;
-    if(this.carregando){ while(this.carregando) await sleep(200); return this.musicas; }
-    this.carregando = true;
-    const todas = [];
-    const LOTE = 4;
-    let feitos = 0;
-    for(let i = 0; i < GENRE_ORDEM.length; i += LOTE){
-      const lote = GENRE_ORDEM.slice(i, i + LOTE);
-      const resultados = await Promise.allSettled(lote.map(g => buscarGenero(g)));
-      resultados.forEach(r => {
-        if(r.status === 'fulfilled' && r.value && r.value.length) todas.push(...r.value);
-      });
-      feitos += lote.length;
-      if(onProgress) onProgress(feitos, GENRE_ORDEM.length);
+    if(this.carregado)return this.musicas;
+    if(this.carregando){while(this.carregando)await sleep(200);return this.musicas;}
+    this.carregando=true;
+    const todas=[];const LOTE=4;let feitos=0;
+    for(let i=0;i<GENRE_ORDEM.length;i+=LOTE){
+      const lote=GENRE_ORDEM.slice(i,i+LOTE);
+      const res=await Promise.allSettled(lote.map(g=>buscarGenero(g)));
+      res.forEach(r=>{if(r.status==='fulfilled'&&r.value&&r.value.length)todas.push(...r.value);});
+      feitos+=lote.length;
+      if(onProgress)onProgress(feitos,GENRE_ORDEM.length);
     }
-    const vistos = new Set();
-    this.musicas = todas.filter(m => {
-      if(vistos.has(m.id)) return false;
-      vistos.add(m.id);
-      return true;
-    });
-    this.carregado = true;
-    this.carregando = false;
+    const vistos=new Set();
+    this.musicas=todas.filter(m=>{if(vistos.has(m.id))return false;vistos.add(m.id);return true;});
+    this.carregado=true;this.carregando=false;
     return this.musicas;
   }
 };
-
-const SearchManager = {
-  generoAtual: '', ordemAtual: 'az', termoAtual: '', _abortCtrl: null,
+const SearchManager={
+  generoAtual:'',ordemAtual:'az',termoAtual:'',
   init(){
-    const selGenero = $('buscaGenero');
-    if(selGenero && !selGenero.dataset.pronto){
-      selGenero.innerHTML = '<option value="">🌍 Todos os gêneros</option>';
-      GENRE_ORDEM.forEach(g => { const opt = document.createElement('option'); opt.value = g; opt.textContent = '🎸 ' + g; selGenero.appendChild(opt); });
-      selGenero.dataset.pronto = '1';
-      selGenero.onchange = () => { this.generoAtual = selGenero.value; this.buscar(); };
+    const sg=$('buscaGenero');
+    if(sg&&!sg.dataset.pronto){
+      sg.innerHTML='<option value="">🌍 Todos</option>';
+      GENRE_ORDEM.forEach(g=>{const o=document.createElement('option');o.value=g;o.textContent='🎸 '+g;sg.appendChild(o);});
+      sg.dataset.pronto='1';sg.onchange=()=>{this.generoAtual=sg.value;this.buscar();};
     }
-    const selOrdem = $('buscaOrdem');
-    if(selOrdem && !selOrdem.dataset.pronto){ selOrdem.dataset.pronto = '1'; selOrdem.onchange = () => { this.ordemAtual = selOrdem.value; this.buscar(); }; }
-    const input = $('buscaInput');
-    if(input && !input.dataset.pronto){
-      input.dataset.pronto = '1';
-      let timeout = null;
-      input.oninput = () => {
-        clearTimeout(timeout);
-        if(this._abortCtrl) try{ this._abortCtrl.abort(); }catch(_){}
-        this._abortCtrl = new AbortController();
-        timeout = setTimeout(() => { this.termoAtual = input.value.trim().toLowerCase(); this.buscar(); }, 250);
-      };
-      input.onkeydown = (e) => { if(e.key === 'Escape') this.fechar(); };
+    const so=$('buscaOrdem');
+    if(so&&!so.dataset.pronto){so.dataset.pronto='1';so.onchange=()=>{this.ordemAtual=so.value;this.buscar();};}
+    const inp=$('buscaInput');
+    if(inp&&!inp.dataset.pronto){
+      inp.dataset.pronto='1';let t=null;
+      inp.oninput=()=>{clearTimeout(t);t=setTimeout(()=>{this.termoAtual=inp.value.trim().toLowerCase();this.buscar();},250);};
+      inp.onkeydown=e=>{if(e.key==='Escape')this.fechar();};
     }
-    const btnClose = $('fecharBusca');
-    if(btnClose && !btnClose.dataset.pronto){ btnClose.dataset.pronto = '1'; btnClose.onclick = () => this.fechar(); }
-    const modal = $('modalBusca');
-    if(modal && !modal.dataset.pronto){ modal.dataset.pronto = '1'; modal.onclick = (e) => { if(e.target === modal) this.fechar(); }; }
+    const bc=$('fecharBusca');
+    if(bc&&!bc.dataset.pronto){bc.dataset.pronto='1';bc.onclick=()=>this.fechar();}
+    const md=$('modalBusca');
+    if(md&&!md.dataset.pronto){md.dataset.pronto='1';md.onclick=e=>{if(e.target===md)this.fechar();};}
   },
   async abrir(){
-    const modal = $('modalBusca');
-    if(!modal) return;
-    this.generoAtual = '';
-    const selGenero = $('buscaGenero');
-    if(selGenero) selGenero.value = '';
-    modal.classList.add('open');
-    setTimeout(() => { const i = $('buscaInput'); if(i) i.focus(); }, 250);
-    const countEl = $('buscaCount');
+    const md=$('modalBusca');if(!md)return;
+    this.generoAtual='';const sg=$('buscaGenero');if(sg)sg.value='';
+    md.classList.add('open');
+    setTimeout(()=>{const i=$('buscaInput');if(i)i.focus();},250);
+    const ce=$('buscaCount');
     if(!UniversalPool.carregado){
-      if(countEl) countEl.textContent = '🔄 Carregando todas as músicas...';
-      await UniversalPool.carregar((atual, total) => { if(countEl) countEl.textContent = `🔄 Carregando gêneros... ${atual}/${total}`; });
+      if(ce)ce.textContent='🔄 Carregando...';
+      await UniversalPool.carregar((a,t)=>{if(ce)ce.textContent='🔄 Carregando '+a+'/'+t;});
     }
     this.buscar();
   },
-  fechar(){ const modal = $('modalBusca'); if(modal) modal.classList.remove('open'); },
+  fechar(){const md=$('modalBusca');if(md)md.classList.remove('open');},
   buscar(){
-    const container = $('buscaResultados');
-    const countEl = $('buscaCount');
-    if(!container) return;
-    let resultados = UniversalPool.carregado ? [...UniversalPool.musicas] : [...appState.musicas];
+    const cont=$('buscaResultados'),ce=$('buscaCount');
+    if(!cont)return;
+    let res=UniversalPool.carregado?[...UniversalPool.musicas]:[...appState.musicas];
     if(this.termoAtual){
-      resultados = resultados.filter(m => (m.artist && m.artist.toLowerCase().includes(this.termoAtual)) || (m.title && m.title.toLowerCase().includes(this.termoAtual)));
-      resultados.sort((a, b) => {
-        const aStart = (a.artist || '').toLowerCase().startsWith(this.termoAtual) ? 0 : 1;
-        const bStart = (b.artist || '').toLowerCase().startsWith(this.termoAtual) ? 0 : 1;
-        return aStart - bStart;
-      });
+      res=res.filter(m=>(m.artist&&m.artist.toLowerCase().includes(this.termoAtual))||(m.title&&m.title.toLowerCase().includes(this.termoAtual)));
+      res.sort((a,b)=>{const A=(a.artist||'').toLowerCase().startsWith(this.termoAtual)?0:1;const B=(b.artist||'').toLowerCase().startsWith(this.termoAtual)?0:1;return A-B;});
     }
-    if(this.generoAtual){ resultados = resultados.filter(m => m.genero === this.generoAtual); }
-    if(this.ordemAtual === 'az') resultados = [...resultados].sort((a, b) => (a.title || '').localeCompare(b.title || ''));
-    else if(this.ordemAtual === 'za') resultados = [...resultados].sort((a, b) => (b.title || '').localeCompare(a.title || ''));
-    else if(this.ordemAtual === 'aleatorio') resultados = shuffle(resultados);
-    if(countEl){ countEl.textContent = resultados.length === 0 ? '❌ Nenhuma música encontrada' : `🎤 ${resultados.length} música(s) • UNIVERSAL`; }
-    if(!resultados.length){
-      container.innerHTML = '<div style="text-align:center;padding:40px;color:#888">😕 Nada encontrado</div>';
-      return;
-    }
-    container.innerHTML = '';
-    resultados.slice(0, 200).forEach((m, i) => {
-      const item = document.createElement('div');
-      item.className = 'result-item';
-      item.style.animationDelay = Math.min(i * 12, 300) + 'ms';
-      item.innerHTML =
-        '<div class="icon"><i class="fas fa-music"></i></div>' +
-        '<div class="info"><span class="title">' + sanitize(m.title) + '</span>' +
-        '<span class="artist">🎤 ' + sanitize(m.artist) + '</span></div>' +
-        '<span class="genero">' + (m.genero || '') + '</span>';
-      item.onclick = () => this.tocarResultado(m);
-      container.appendChild(item);
+    if(this.generoAtual)res=res.filter(m=>m.genero===this.generoAtual);
+    if(this.ordemAtual==='az')res=[...res].sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+    else if(this.ordemAtual==='za')res=[...res].sort((a,b)=>(b.title||'').localeCompare(a.title||''));
+    else if(this.ordemAtual==='aleatorio')res=shuffle(res);
+    if(ce){ce.textContent=res.length===0?'❌ Nada':`🎤 ${res.length} música(s)`;}
+    if(!res.length){cont.innerHTML='<div style="text-align:center;padding:40px;color:#888">😕 Nada encontrado</div>';return;}
+    cont.innerHTML='';
+    res.slice(0,200).forEach(m=>{
+      const it=document.createElement('div');it.className='result-item';
+      it.innerHTML='<div class="icon"><i class="fas fa-music"></i></div>'+
+        '<div class="info"><span class="title">'+sanitize(m.title)+'</span>'+
+        '<span class="artist">🎤 '+sanitize(m.artist)+'</span></div>'+
+        '<span class="genero">'+(m.genero||'')+'</span>';
+      it.onclick=()=>this.tocarResultado(m);
+      cont.appendChild(it);
     });
   },
   tocarResultado(m){
     vibrar(15);
-    const pool = UniversalPool.carregado ? UniversalPool.musicas : appState.musicas;
-    const idx = appState.playlistAtual.findIndex(x => x.id === m.id);
-    if(idx > -1){ appState.indiceAtual = idx; }
-    else { const restantes = pool.filter(x => x.id !== m.id); appState.playlistAtual = [m, ...shuffle(restantes)]; appState.indiceAtual = 0; }
-    if(appState.isBackgroundActive) tocar();
+    const pool=UniversalPool.carregado?UniversalPool.musicas:appState.musicas;
+    const idx=appState.playlistAtual.findIndex(x=>x.id===m.id);
+    if(idx>-1){appState.indiceAtual=idx;}
+    else{const r=pool.filter(x=>x.id!==m.id);appState.playlistAtual=[m,...shuffle(r)];appState.indiceAtual=0;}
+    if(appState.isBackgroundActive)tocar();
     this.fechar();
-    notif('🎵 ' + m.title, 1500);
+    notif('🎵 '+m.title,1500);
   }
 };
 
-function initBusca(){ SearchManager.init(); }
-
-/* ═══════════════════════════════════════════════════════════
-   ❤️ FAVORITAS
-   ═══════════════════════════════════════════════════════════ */
+/* ============ FAVORITAS UI ============ */
 function renderFavoritas(){
-  const cont = $('listaFavoritas');
-  cont.innerHTML = '';
-  if(!appState.favorites.length){
-    cont.innerHTML = '<div style="text-align:center;padding:30px;color:#666">💔 Nenhuma ainda</div>';
-    return;
-  }
-  appState.favorites.forEach((m, i) => {
-    const item = document.createElement('div');
-    item.className = 'fav-item';
-    item.style.animationDelay = (i * 25) + 'ms';
-    item.innerHTML =
-      '<div class="info"><span class="title">' + sanitize(m.title) + '</span>' +
-      '<span class="artist">' + sanitize(m.artist) + '</span></div>' +
+  const c=$('listaFavoritas');c.innerHTML='';
+  if(!appState.favorites.length){c.innerHTML='<div style="text-align:center;padding:30px;color:#666">💔 Nenhuma ainda</div>';return;}
+  appState.favorites.forEach(m=>{
+    const it=document.createElement('div');it.className='fav-item';
+    it.innerHTML='<div class="info"><span class="title">'+sanitize(m.title)+'</span>'+
+      '<span class="artist">'+sanitize(m.artist)+'</span></div>'+
       '<button class="remove"><i class="fas fa-times-circle"></i></button>';
-    item.querySelector('.info').onclick = () => {
+    it.querySelector('.info').onclick=()=>{
       fecharModal('modalFavoritas');
       setTimeout(()=>{
-        appState.playlistAtual = shuffle(appState.favorites.map(x=>({...x})));
-        const idx = appState.playlistAtual.findIndex(x=>x.id===m.id);
-        appState.indiceAtual = idx > -1 ? idx : 0;
-        if(appState.isBackgroundActive) tocar();
-      }, 100);
+        appState.playlistAtual=shuffle(appState.favorites.map(x=>({...x})));
+        const idx=appState.playlistAtual.findIndex(x=>x.id===m.id);
+        appState.indiceAtual=idx>-1?idx:0;
+        if(appState.isBackgroundActive)tocar();
+      },100);
     };
-    item.querySelector('.remove').onclick = (e) => {
-      e.stopPropagation();
-      toggleFav(m);
-      renderFavoritas();
-    };
-    cont.appendChild(item);
+    it.querySelector('.remove').onclick=e=>{e.stopPropagation();toggleFav(m);renderFavoritas();};
+    c.appendChild(it);
   });
 }
-function abrirModal(id){ $(id).classList.add('open'); }
-function fecharModal(id){ $(id).classList.remove('open'); }
+function abrirModal(id){const e=$(id);if(e)e.classList.add('open');}
+function fecharModal(id){const e=$(id);if(e)e.classList.remove('open');}
 
-/* ═══════════════════════════════════════════════════════════
-   🖥️ FULLSCREEN + BACKGROUND AUDIO
-   ═══════════════════════════════════════════════════════════ */
-let fsEmAndamento = false;
-let fsGestureHandler = null;
-
-function jaFullscreen(){
-  return !!(document.fullscreenElement || document.webkitFullscreenElement);
-}
+/* ============ FULLSCREEN + BG AUDIO ============ */
+let fsEmAndamento=false,fsGestureHandler=null;
+function jaFullscreen(){return !!(document.fullscreenElement||document.webkitFullscreenElement);}
 function forcarFullscreen(){
-  if(jaFullscreen()) return true;
-  if(fsEmAndamento) return false;
-  fsEmAndamento = true;
+  if(jaFullscreen())return true;
+  if(fsEmAndamento)return false;
+  fsEmAndamento=true;
   try{
-    const el = document.documentElement;
-    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
-    if(req){
-      const r = req.call(el);
-      if(r && r.then){ r.then(()=>{ fsEmAndamento=false; }).catch(()=>{ fsEmAndamento=false; }); }
-      else fsEmAndamento = false;
-      return true;
-    }
-    fsEmAndamento = false;
-    return false;
-  }catch(e){ fsEmAndamento = false; return false; }
+    const el=document.documentElement;
+    const req=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;
+    if(req){const r=req.call(el);if(r&&r.then){r.then(()=>{fsEmAndamento=false;}).catch(()=>{fsEmAndamento=false;});}else fsEmAndamento=false;return true;}
+    fsEmAndamento=false;return false;
+  }catch(e){fsEmAndamento=false;return false;}
 }
 function iniciarFullscreenGuard(){
-  if(fsGestureHandler) return;
-  fsGestureHandler = () => {
-    if(document.hidden) return;
-    if(!appState.playerAtivado) return;
-    if(jaFullscreen()) return;
+  if(fsGestureHandler)return;
+  fsGestureHandler=()=>{
+    if(document.hidden)return;
+    if(!appState.playerAtivado)return;
+    if(jaFullscreen())return;
     forcarFullscreen();
   };
-  document.addEventListener('touchstart', fsGestureHandler, { passive: true });
-  document.addEventListener('click', fsGestureHandler);
+  document.addEventListener('touchstart',fsGestureHandler,{passive:true});
+  document.addEventListener('click',fsGestureHandler);
 }
-
 function criarSilentAudio(){
-  const sr=44100, ns=sr;
-  const b=new ArrayBuffer(44+ns*2);
-  const v=new DataView(b);
+  const sr=44100,ns=sr;const b=new ArrayBuffer(44+ns*2);const v=new DataView(b);
   const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
-  w(0,'RIFF'); v.setUint32(4,36+ns*2,true); w(8,'WAVE'); w(12,'fmt ');
-  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
-  v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true);
-  v.setUint16(34,16,true); w(36,'data'); v.setUint32(40,ns*2,true);
+  w(0,'RIFF');v.setUint32(4,36+ns*2,true);w(8,'WAVE');w(12,'fmt ');
+  v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);
+  v.setUint16(34,16,true);w(36,'data');v.setUint32(40,ns*2,true);
   return new Blob([b],{type:'audio/wav'});
 }
-let silentUrl = null;
-function getSilentUrl(){ if(!silentUrl) silentUrl = URL.createObjectURL(criarSilentAudio()); return silentUrl; }
-let keepAliveInterval = null;
+let silentUrl=null;
+function getSilentUrl(){if(!silentUrl)silentUrl=URL.createObjectURL(criarSilentAudio());return silentUrl;}
+let keepAliveInterval=null;
 function manterAtivo(){
-  if(keepAliveInterval) clearInterval(keepAliveInterval);
-  keepAliveInterval = setInterval(()=>{
-    if(!appState.isBackgroundActive) return;
-    try{ if($('backgroundAudio').paused) $('backgroundAudio').play().catch(()=>{}); }catch(e){}
-  }, 3000);
+  if(keepAliveInterval)clearInterval(keepAliveInterval);
+  keepAliveInterval=setInterval(()=>{
+    if(!appState.isBackgroundActive)return;
+    try{if($('backgroundAudio').paused)$('backgroundAudio').play().catch(()=>{});}catch(e){}
+  },3000);
 }
 async function ativarPlayer(){
-  if(appState.playerAtivado) return;
-  appState.playerAtivado = true;
+  if(appState.playerAtivado)return;
+  appState.playerAtivado=true;
   try{
-    const bg = $('backgroundAudio');
-    bg.src = getSilentUrl();
-    bg.loop = true;
-    bg.volume = 0.001;
+    const bg=$('backgroundAudio');
+    bg.src=getSilentUrl();bg.loop=true;bg.volume=0.001;
     await bg.play();
-    appState.isBackgroundActive = true;
-    manterAtivo();
-    forcarFullscreen();
-    iniciarFullscreenGuard();
+    appState.isBackgroundActive=true;
+    manterAtivo();forcarFullscreen();iniciarFullscreenGuard();
     await iniciarTimer();
-    setTimeout(tocar, 500);
+    setTimeout(tocar,500);
   }catch(e){
-    appState.isBackgroundActive = true;
-    forcarFullscreen();
-    iniciarFullscreenGuard();
-    iniciarTimer();
-    setTimeout(tocar, 500);
+    appState.isBackgroundActive=true;
+    forcarFullscreen();iniciarFullscreenGuard();iniciarTimer();
+    setTimeout(tocar,500);
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   💬 DIÁLOGO CUSTOM
-   ═══════════════════════════════════════════════════════════ */
-function vdbDialog({title, msg, input, placeholder, okText, cancelText}){
-  return new Promise(resolve => {
-    const ov = $('vdbDialogOverlay'), ti = $('vdbDialogTitle'), me = $('vdbDialogMsg');
-    const ie = $('vdbDialogInput'), ok = $('vdbDialogOk'), ca = $('vdbDialogCancel');
-    ti.textContent = title || 'Confirmação';
-    me.textContent = msg || '';
-    if(input){ ie.style.display = 'block'; ie.value = ''; ie.type = input; ie.placeholder = placeholder || ''; setTimeout(() => ie.focus(), 150); }
-    else { ie.style.display = 'none'; }
-    ok.textContent = okText || 'OK';
-    ca.textContent = cancelText || 'Cancelar';
+/* ============ DIALOG ============ */
+function vdbDialog({title,msg,input,placeholder,okText,cancelText}){
+  return new Promise(resolve=>{
+    const ov=$('vdbDialogOverlay'),ti=$('vdbDialogTitle'),me=$('vdbDialogMsg');
+    const ie=$('vdbDialogInput'),ok=$('vdbDialogOk'),ca=$('vdbDialogCancel');
+    ti.textContent=title||'Confirmação';me.textContent=msg||'';
+    if(input){ie.style.display='block';ie.value='';ie.type=input;ie.placeholder=placeholder||'';setTimeout(()=>ie.focus(),150);}
+    else ie.style.display='none';
+    ok.textContent=okText||'OK';ca.textContent=cancelText||'Cancelar';
     ov.classList.add('active');
-    function fechar(v){ ov.classList.remove('active'); ok.onclick = null; ca.onclick = null; ie.onkeydown = null; ov.onclick = null; resolve(v); }
-    ok.onclick = () => fechar(input ? (ie.value || null) : true);
-    ca.onclick = () => fechar(null);
-    ov.onclick = e => { if(e.target === ov) fechar(null); };
-    if(input){ ie.onkeydown = e => { if(e.key === 'Enter') fechar(ie.value || null); if(e.key === 'Escape') fechar(null); }; }
+    function fechar(v){ov.classList.remove('active');ok.onclick=null;ca.onclick=null;ie.onkeydown=null;ov.onclick=null;resolve(v);}
+    ok.onclick=()=>fechar(input?(ie.value||null):true);
+    ca.onclick=()=>fechar(null);
+    ov.onclick=e=>{if(e.target===ov)fechar(null);};
+    if(input)ie.onkeydown=e=>{if(e.key==='Enter')fechar(ie.value||null);if(e.key==='Escape')fechar(null);};
   });
 }
 
-/* ═══════════════════════════════════════════════════════════
-   👑 ADMIN
-   ═══════════════════════════════════════════════════════════ */
-let cliqueTimestamps = [];
+/* ============ ADMIN ============ */
+let cliqueTimestamps=[];
 function setupCliques(){
-  const el = $('tituloGrande');
-  if(!el) return;
-  el.addEventListener('click', async (e) => {
+  const el=$('tituloGrande');if(!el)return;
+  el.addEventListener('click',async e=>{
     e.stopPropagation();
-    const t = now();
-    cliqueTimestamps = cliqueTimestamps.filter(x => t - x < 3000);
+    const t=Date.now();
+    cliqueTimestamps=cliqueTimestamps.filter(x=>t-x<3000);
     cliqueTimestamps.push(t);
-    if(cliqueTimestamps.length >= 8){
-      cliqueTimestamps = [];
-      vibrar([50,30,50]);
-      const senha = await vdbDialog({title: '🔒 ACESSO ADMIN', msg: 'Digite a senha de administrador:', input: 'password', placeholder: 'Senha admin', okText: 'Entrar'});
-      if(!senha) return;
-      const ok = await verificarSenhaPadrao(senha);
-      if(!ok){ notif('❌ Senha incorreta!', 2500); vibrar([100,50,100]); return; }
-      vibrar([30,30,30]);
-      $('adminPanel').classList.add('open');
-      notif('👑 Admin!');
+    if(cliqueTimestamps.length>=8){
+      cliqueTimestamps=[];vibrar([50,30,50]);
+      const s=await vdbDialog({title:'🔒 ACESSO ADMIN',msg:'Digite a senha de administrador:',input:'password',placeholder:'Senha admin',okText:'Entrar'});
+      if(!s)return;
+      const ok=await verificarSenhaPadrao(s);
+      if(!ok){notif('❌ Senha incorreta!',2500);vibrar([100,50,100]);return;}
+      vibrar([30,30,30]);$('adminPanel').classList.add('open');notif('👑 Admin!');
     }
   });
 }
-
-let validadeSelecionada = 7;
+let validadeSelecionada=7;
 function initValidadeSeletor(){
-  document.querySelectorAll('.validade-btn').forEach(b => {
-    b.onclick = () => {
-      document.querySelectorAll('.validade-btn').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      validadeSelecionada = parseInt(b.dataset.dias);
+  document.querySelectorAll('.validade-btn').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('.validade-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');validadeSelecionada=parseInt(b.dataset.dias);
     };
   });
 }
-
 function initAdmin(){
-  $('adminGerarBtn').onclick = async () => {
-    const id = $('adminFingerprintInput').value.trim();
-    if(!id || id.length < 10){ notif('⚠️ Cole o fingerprint do cliente!'); return; }
-    const s = await gerarSenhaDispositivo(id, validadeSelecionada);
-    $('adminSenhaGerada').value = s;
-    notif('✅ Senha DEVICE gerada! (' + (validadeSelecionada === 0 ? 'Vitalícia' : validadeSelecionada + 'd') + ')');
+  $('adminGerarBtn').onclick=async()=>{
+    const id=$('adminFingerprintInput').value.trim();
+    if(!id||id.length<10){notif('⚠️ Cole o ID!');return;}
+    const s=await gerarSenhaDispositivo(id,validadeSelecionada);
+    $('adminSenhaGerada').value=s;
+    notif('✅ DEVICE gerada!');
   };
-  $('adminGerarUniversalBtn').onclick = async () => {
-    const s = await gerarSenhaUniversal(validadeSelecionada);
-    $('adminSenhaGerada').value = s;
-    notif('✅ Senha UNIVERSAL gerada! (' + (validadeSelecionada === 0 ? 'Vitalícia' : validadeSelecionada + 'd') + ')');
+  $('adminGerarUniversalBtn').onclick=async()=>{
+    const s=await gerarSenhaUniversal(validadeSelecionada);
+    $('adminSenhaGerada').value=s;
+    notif('✅ UNIVERSAL gerada!');
   };
-  $('adminLimparBtn').onclick = () => {
-    $('adminFingerprintInput').value = '';
-    $('adminSenhaGerada').value = '';
+  $('adminLimparBtn').onclick=()=>{$('adminFingerprintInput').value='';$('adminSenhaGerada').value='';};
+  $('btnCopiarSenha').onclick=()=>copiarTexto($('adminSenhaGerada').value,'📋 Copiada!');
+  $('adminEnviarWhatsBtn').onclick=()=>{
+    const s=$('adminSenhaGerada').value,id=$('adminFingerprintInput').value.trim();
+    if(!s){notif('⚠️ Gere uma senha!');return;}
+    const msg='🔑 *VDB MUSIC '+VERSAO+'*\n\n🆔 ID: '+id+'\n\n🔐 Senha: '+s;
+    window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent(msg));
   };
-  $('btnCopiarSenha').onclick = () => copiarTexto($('adminSenhaGerada').value, '📋 Copiada!');
-  $('adminEnviarWhatsBtn').onclick = () => {
-    const s = $('adminSenhaGerada').value;
-    const id = $('adminFingerprintInput').value.trim();
-    if(!s){ notif('⚠️ Gere uma senha!'); return; }
-    const msg = '🔑 *VDB MUSIC ' + VERSAO + '*\n\n🆔 ID: ' + id + '\n\n🔐 Senha: ' + s;
-    window.open('https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(msg));
-  };
-  $('adminCloseBtn').onclick = () => $('adminPanel').classList.remove('open');
-  $('adminCloseTopBtn').onclick = () => $('adminPanel').classList.remove('open');
+  $('adminCloseBtn').onclick=()=>$('adminPanel').classList.remove('open');
+  $('adminCloseTopBtn').onclick=()=>$('adminPanel').classList.remove('open');
 }
-
-function mostrarMeuId(){
-  $('meuIdValue').textContent = appState.fingerprint || 'Carregando...';
-  abrirModal('modalMeuId');
-}
+function mostrarMeuId(){$('meuIdValue').textContent=appState.fingerprint||'Carregando...';abrirModal('modalMeuId');}
 function enviarMeuIdWhats(){
-  const id = appState.fingerprint;
-  const msg = '🔑 *VDB MUSIC ' + VERSAO + '*\n\nOlá! Quero liberar o acesso.\n\n🆔 Meu ID: *' + id + '*';
-  window.open('https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(msg));
+  const msg='🔑 *VDB MUSIC '+VERSAO+'*\n\nOlá! Quero liberar o acesso.\n\n🆔 Meu ID: *'+appState.fingerprint+'*';
+  window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent(msg));
 }
 
-/* ═══════════════════════════════════════════════════════════
-   📺 MÍDIAS DE FUNDO
-   ═══════════════════════════════════════════════════════════ */
-let midiaToken = 0, midiaTimer = null;
-let videosAtivos = new Set();
-async function carregarMidias(container, url, options={}){
-  const { fallback=[] } = options;
-  const meuToken = ++midiaToken;
-  if(midiaTimer){ clearTimeout(midiaTimer); midiaTimer = null; }
-  container.querySelectorAll('video').forEach(v => {
-    try{ v.pause(); v.removeAttribute('src'); v.load(); videosAtivos.delete(v); }catch(e){}
-  });
-  container.querySelectorAll('video,img').forEach(el => el.remove());
+/* ============ MÍDIAS ============ */
+let midiaToken=0,midiaTimer=null;
+let videosAtivos=new Set();
+async function carregarMidias(container,url,options={}){
+  const {fallback=[]}=options;
+  const meuToken=++midiaToken;
+  if(midiaTimer){clearTimeout(midiaTimer);midiaTimer=null;}
+  container.querySelectorAll('video').forEach(v=>{try{v.pause();v.removeAttribute('src');v.load();videosAtivos.delete(v);}catch(e){}});
+  container.querySelectorAll('video,img').forEach(el=>el.remove());
   try{
-    let ms = [];
+    let ms=[];
     if(url){
       try{
-        const ctrl = new AbortController();
-        const tid = setTimeout(()=>ctrl.abort(), 9000);
-        const r = await fetch(url, { signal: ctrl.signal });
-        clearTimeout(tid);
+        const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),9000);
+        const r=await fetch(url,{signal:ctrl.signal});clearTimeout(tid);
         if(r.ok){
-          const d = await r.json();
-          if(Array.isArray(d)) ms = d;
-          else if(d.medias) ms = d.medias;
-          else if(d.midias) ms = d.midias;
+          const d=await r.json();
+          if(Array.isArray(d))ms=d;
+          else if(d.medias)ms=d.medias;
+          else if(d.midias)ms=d.midias;
         }
       }catch(e){}
     }
-    if(meuToken !== midiaToken) return;
-    if(!ms.length) ms = fallback;
-    ms = ms.filter(m => m && (m.tipo==='video'||m.tipo==='imagem') && m.src);
-    if(!ms.length) return;
-    const els = [];
-    ms.forEach((m, i) => {
+    if(meuToken!==midiaToken)return;
+    if(!ms.length)ms=fallback;
+    ms=ms.filter(m=>m&&(m.tipo==='video'||m.tipo==='imagem')&&m.src);
+    if(!ms.length)return;
+    const els=[];
+    ms.forEach((m,i)=>{
       let el;
-      if(m.tipo === 'video'){
-        el = document.createElement('video');
-        el.src = m.src; el.muted = true; el.loop = false; el.playsInline = true;
-        el.setAttribute('playsinline','');
-        el.setAttribute('webkit-playsinline','');
-        el.setAttribute('muted','');
-        el.preload = 'auto';
-        el.addEventListener('error', ()=>{ el.dataset.erro = '1'; });
+      if(m.tipo==='video'){
+        el=document.createElement('video');
+        el.src=m.src;el.muted=true;el.loop=false;el.playsInline=true;
+        el.setAttribute('playsinline','');el.setAttribute('webkit-playsinline','');el.setAttribute('muted','');
+        el.preload='auto';el.addEventListener('error',()=>{el.dataset.erro='1';});
         videosAtivos.add(el);
       }else{
-        el = document.createElement('img');
-        el.src = m.src;
-        el.onerror = ()=>{ el.dataset.erro = '1'; };
+        el=document.createElement('img');el.src=m.src;el.onerror=()=>{el.dataset.erro='1';};
       }
-      el.className = i===0 ? 'active' : 'inactive';
-      container.appendChild(el);
-      els.push(el);
+      el.className=i===0?'active':'inactive';
+      container.appendChild(el);els.push(el);
     });
-    if(!els.length) return;
-    let idx = 0;
+    if(!els.length)return;
+    let idx=0;
     function tocarIdx(n){
-      if(meuToken !== midiaToken) return;
-      const el = els[n];
-      if(!el) return;
-      els.forEach((x, j) => { x.classList.toggle('active', j === n); });
-      if(el.tagName === 'VIDEO'){
-        els.forEach((x, j) => { if(x.tagName==='VIDEO' && j!==n){ try{ x.pause(); x.currentTime=0; }catch(e){} } });
-        try{ el.currentTime = 0; }catch(e){}
+      if(meuToken!==midiaToken)return;
+      const el=els[n];if(!el)return;
+      els.forEach((x,j)=>x.classList.toggle('active',j===n));
+      if(el.tagName==='VIDEO'){
+        els.forEach((x,j)=>{if(x.tagName==='VIDEO'&&j!==n){try{x.pause();x.currentTime=0;}catch(e){}}});
+        try{el.currentTime=0;}catch(e){}
         el.play().catch(()=>{});
-        el.onended = () => { if(meuToken!==midiaToken) return; setTimeout(()=>{ idx=(idx+1)%els.length; tocarIdx(idx); }, 700); };
-        midiaTimer = setTimeout(()=>{ if(meuToken===midiaToken && idx === n){ idx=(idx+1)%els.length; tocarIdx(idx); } }, CONFIG.MIDIA_MAX_SEGURANCA_MS);
+        el.onended=()=>{if(meuToken!==midiaToken)return;setTimeout(()=>{idx=(idx+1)%els.length;tocarIdx(idx);},700);};
+        midiaTimer=setTimeout(()=>{if(meuToken===midiaToken&&idx===n){idx=(idx+1)%els.length;tocarIdx(idx);}},CONFIG.MIDIA_MAX_SEGURANCA_MS);
       }else{
-        midiaTimer = setTimeout(()=>{ if(meuToken===midiaToken && idx === n){ idx=(idx+1)%els.length; tocarIdx(idx); } }, 5000);
+        midiaTimer=setTimeout(()=>{if(meuToken===midiaToken&&idx===n){idx=(idx+1)%els.length;tocarIdx(idx);}},5000);
       }
     }
     tocarIdx(0);
-  }catch(e){ console.error('Erro mídias:', e); }
+  }catch(e){console.error('midias:',e);}
 }
-async function carregarMidiasPadrao(){
-  await carregarMidias($('mediaContainer'), MIDIAS_PADRAO_URL, { fallback: MIDIAS_FALLBACK });
-}
-async function carregarMidiasAnuncio(){
-  await carregarMidias($('mediaAnuncios'), MIDIAS_ANUNCIO_URL, { fallback: MIDIAS_ANUNCIO_FALLBACK });
-}
+async function carregarMidiasPadrao(){await carregarMidias($('mediaContainer'),MIDIAS_PADRAO_URL,{fallback:MIDIAS_FALLBACK});}
+async function carregarMidiasAnuncio(){await carregarMidias($('mediaAnuncios'),MIDIAS_ANUNCIO_URL,{fallback:MIDIAS_ANUNCIO_FALLBACK});}
 
-/* ═══════════════════════════════════════════════════════════
-   🔄 CICLO DE TELAS
-   ═══════════════════════════════════════════════════════════ */
-let cicloTimer = null;
+/* ============ CICLO TELAS ============ */
+let cicloTimer=null;
 function agendarCiclo(){
   clearTimeout(cicloTimer);
-  const t = appState.telaAtual === 'principal' ? CONFIG.CICLO_PRINCIPAL_MS : CONFIG.CICLO_ANUNCIO_MS;
-  cicloTimer = setTimeout(async ()=>{
-    if(!appState.playerAtivado){ agendarCiclo(); return; }
-    if(document.querySelector('.modal.open, #adminPanel.open, #qrCodeModal.active, #downloadModal.active, #vdbDialogOverlay.active')){ agendarCiclo(); return; }
-    if(appState.telaAtual === 'principal') await trocarTela('anuncios');
+  const t=appState.telaAtual==='principal'?CONFIG.CICLO_PRINCIPAL_MS:CONFIG.CICLO_ANUNCIO_MS;
+  cicloTimer=setTimeout(async()=>{
+    if(!appState.playerAtivado){agendarCiclo();return;}
+    if(document.querySelector('.modal.open, #adminPanel.open, #qrCodeModal.active, #downloadModal.active, #vdbDialogOverlay.active')){agendarCiclo();return;}
+    if(appState.telaAtual==='principal')await trocarTela('anuncios');
     else await trocarTela('principal');
-    if(!jaFullscreen()) forcarFullscreen();
+    if(!jaFullscreen())forcarFullscreen();
     agendarCiclo();
-  }, t);
+  },t);
 }
 async function trocarTela(destino){
-  if(destino === 'anuncios'){
-    appState.telaAtual = 'anuncios';
+  if(destino==='anuncios'){
+    appState.telaAtual='anuncios';
     $('telaPrincipal').classList.add('oculta');
     $('telaAnuncios').classList.add('ativa');
-    if($('barraInferior')) $('barraInferior').classList.add('escondida');
+    if($('barraInferior'))$('barraInferior').classList.add('escondida');
     await carregarMidiasAnuncio();
   }else{
-    appState.telaAtual = 'principal';
+    appState.telaAtual='principal';
     $('telaAnuncios').classList.remove('ativa');
     $('telaPrincipal').classList.remove('oculta');
-    if($('barraInferior')) $('barraInferior').classList.remove('escondida');
+    if($('barraInferior'))$('barraInferior').classList.remove('escondida');
     await carregarMidiasPadrao();
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   🎛️ FAB MENU
-   ═══════════════════════════════════════════════════════════ */
+/* ============ FAB ============ */
 function initFab(){
-  const main = $('fabMain'), menu = $('fabMenu');
-  main.onclick = () => {
-    vibrar();
-    const open = menu.classList.toggle('open');
-    main.classList.toggle('open', open);
-  };
-  $('fabBuscar').onclick = () => { fecharFab(); SearchManager.abrir(); };
-  $('fabFavoritos').onclick = () => { fecharFab(); renderFavoritas(); abrirModal('modalFavoritas'); };
-  $('fabGeneros').onclick = () => { fecharFab(); renderizarGeneros(); abrirModal('modalGeneros'); };
-  $('fabRadio').onclick = () => { fecharFab(); ativarRadio(); };
-  $('fabBaixarAtual').onclick = () => {
+  const main=$('fabMain'),menu=$('fabMenu');
+  main.onclick=()=>{vibrar();const o=menu.classList.toggle('open');main.classList.toggle('open',o);};
+  $('fabBuscar').onclick=()=>{fecharFab();SearchManager.abrir();};
+  $('fabFavoritos').onclick=()=>{fecharFab();renderFavoritas();abrirModal('modalFavoritas');};
+  $('fabGeneros').onclick=()=>{fecharFab();renderizarGeneros();abrirModal('modalGeneros');};
+  $('fabRadio').onclick=()=>{fecharFab();ativarRadio();};
+  $('fabBaixarAtual').onclick=()=>{
     fecharFab();
-    if(ehModoRadio()){ notif('⚠️ Escolha um gênero primeiro'); return; }
-    if(appState.modoAtual === 'FAVORITAS'){ notif('⚠️ Escolha um gênero primeiro'); return; }
+    if(ehModoRadio()){notif('⚠️ Escolha um gênero primeiro');return;}
+    if(appState.modoAtual==='FAVORITAS'){notif('⚠️ Escolha um gênero primeiro');return;}
     iniciarDownloadGenero(appState.modoAtual);
   };
-  $('fabGerenciarOffline').onclick = () => { fecharFab(); abrirGerenciadorOffline(); };
-  $('fabTemas').onclick = () => { fecharFab(); trocarTema(); };
-  $('fabFullscreen').onclick = () => { fecharFab(); forcarFullscreen(); notif('🖥️ Tela cheia'); };
-  $('fabSleep').onclick = () => {
+  $('fabGerenciarOffline').onclick=()=>{fecharFab();abrirGerenciadorOffline();};
+  $('fabTemas').onclick=()=>{fecharFab();trocarTema();};
+  $('fabFullscreen').onclick=()=>{fecharFab();forcarFullscreen();notif('🖥️ Tela cheia');};
+  $('fabSleep').onclick=()=>{
     fecharFab();
-    const mins = parseInt(prompt('⏰ Desligar em minutos:','15'));
-    if(mins>0){
+    const m=parseInt(prompt('⏰ Desligar em minutos:','15'));
+    if(m>0){
       clearTimeout(appState.sleepTimerId);
-      appState.sleepTimerId = setTimeout(()=>{
-        audio.pause();
-        appState.isPlaying = false;
-        $('playBtn').innerHTML='<i class="fas fa-play"></i>';
-        notif('💤 Player desligado');
-      }, mins*60000);
-      notif('⏰ Sleep: '+mins+' min');
+      appState.sleepTimerId=setTimeout(()=>{
+        audio.pause();appState.isPlaying=false;$('playBtn').innerHTML='<i class="fas fa-play"></i>';notif('💤 Player desligado');
+      },m*60000);
+      notif('⏰ Sleep: '+m+' min');
     }
   };
-  $('fabRecarregar').onclick = () => { fecharFab(); location.reload(); };
-  $('fabAtualizarMidia').onclick = async () => { fecharFab(); notif('🔄 Atualizando...'); await carregarMidiasPadrao(); notif('✅ Atualizado!'); };
-  $('fabAtualizarApp').onclick = () => { fecharFab(); atualizarAppMagico(); };
-  $('fabMeuId').onclick = () => { fecharFab(); mostrarMeuId(); };
-  $('fabLiberar').onclick = () => { fecharFab(); liberarAgora(); };
-  $('fabQrCode').onclick = () => { fecharFab(); gerarQrCode(); };
-  $('fabShare').onclick = () => {
+  $('fabRecarregar').onclick=()=>{fecharFab();location.reload();};
+  $('fabAtualizarMidia').onclick=async()=>{fecharFab();notif('🔄 Atualizando...');await carregarMidiasPadrao();notif('✅ Atualizado!');};
+  $('fabAtualizarApp').onclick=()=>{fecharFab();atualizarAppMagico();};
+  $('fabMeuId').onclick=()=>{fecharFab();mostrarMeuId();};
+  $('fabLiberar').onclick=()=>{fecharFab();liberarAgora();};
+  $('fabQrCode').onclick=()=>{fecharFab();gerarQrCode();};
+  $('fabShare').onclick=()=>{
     fecharFab();
-    if(navigator.share) navigator.share({ title:'VDB MUSIC ' + VERSAO, url: location.href }).catch(()=>{});
-    else { navigator.clipboard.writeText(location.href).then(()=>notif('📋 Link copiado!')); }
+    if(navigator.share)navigator.share({title:'VDB MUSIC '+VERSAO,url:location.href}).catch(()=>{});
+    else navigator.clipboard.writeText(location.href).then(()=>notif('📋 Link copiado!'));
   };
-  $('fabFeedback').onclick = () => {
+  $('fabFeedback').onclick=()=>{
     fecharFab();
-    const msg = '⭐ *VDB MUSIC ' + VERSAO + '*\n\nGostaria de deixar meu feedback!';
-    window.open('https://wa.me/' + CONFIG.WHATSAPP + '?text=' + encodeURIComponent(msg));
+    const msg='⭐ *VDB MUSIC '+VERSAO+'*\n\nGostaria de deixar meu feedback!';
+    window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent(msg));
   };
-  $('fabInstalar').onclick = () => { fecharFab(); acionarInstalacaoPWA(); };
+  $('fabInstalar').onclick=()=>{fecharFab();acionarInstalacaoPWA();};
 }
-function fecharFab(){ $('fabMenu').classList.remove('open'); $('fabMain').classList.remove('open'); }
-function ehModoRadio(){ return appState.modoAtual && appState.modoAtual.indexOf('VDB') > -1; }
-
+function fecharFab(){$('fabMenu').classList.remove('open');$('fabMain').classList.remove('open');}
+function ehModoRadio(){return appState.modoAtual&&appState.modoAtual.indexOf('VDB')>-1;}
 async function ativarRadio(){
   notif('🔴 Sintonizando...');
-  const generos = ['SERTANEJO','FORRÓ','PAGODE','ROMÂNTICA'];
-  const todas = [];
-  for(const g of generos){
-    const m = await buscarGenero(g);
-    if(m) todas.push(...m.slice(0, 50));
-  }
-  if(!todas.length){ notif('❌ Erro'); return; }
-  appState.musicas = todas;
-  appState.modoAtual = 'RÁDIO VDB';
-  appState.playlistAtual = shuffle(todas);
-  appState.indiceAtual = 0;
+  const gs=['SERTANEJO','FORRÓ','PAGODE','ROMÂNTICA'];const todas=[];
+  for(const g of gs){const m=await buscarGenero(g);if(m)todas.push(...m.slice(0,50));}
+  if(!todas.length){notif('❌ Erro');return;}
+  appState.musicas=todas;appState.modoAtual='RÁDIO VDB';
+  appState.playlistAtual=shuffle(todas);appState.indiceAtual=0;
   appState.musicasComProblema.clear();
-  const mm = appState.playlistAtual[0];
-  if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
+  const mm=appState.playlistAtual[0];
+  if(mm){atualizarLetreiro(mm);atualizarInfoMusica(mm);atualizarCoracao();}
   notif('🔴 AO VIVO!');
-  if(appState.isBackgroundActive) setTimeout(tocar, 200);
+  if(appState.isBackgroundActive)setTimeout(tocar,200);
 }
 function trocarTema(){
-  const keys = Object.keys(TEMAS);
-  const i = keys.indexOf(appState.temaCor);
-  appState.temaCor = keys[(i+1) % keys.length];
-  aplicarTema(appState.temaCor);
-  notif('🎨 Tema ' + TEMAS[appState.temaCor].nome);
+  const temas={
+    azul:{nome:'Azul',c1:'#2563eb',c2:'#1e40af',c3:'#3b82f6'},
+    roxo:{nome:'Roxo',c1:'#7c3aed',c2:'#5b21b6',c3:'#a855f7'},
+    preto:{nome:'Preto',c1:'#374151',c2:'#111827',c3:'#6b7280'}
+  };
+  const keys=Object.keys(temas);
+  const cur=localStorage.getItem('vdb_tema_cor')||'azul';
+  const i=keys.indexOf(cur);
+  const next=keys[(i+1)%keys.length];
+  const t=temas[next];
+  document.documentElement.style.setProperty('--cor-1',t.c1);
+  document.documentElement.style.setProperty('--cor-2',t.c2);
+  document.documentElement.style.setProperty('--cor-3',t.c3);
+  localStorage.setItem('vdb_tema_cor',next);
+  notif('🎨 Tema '+t.nome);
 }
-
 async function atualizarAppMagico(){
-  notif('⏳ Atualizando...', 1500);
+  notif('⏳ Atualizando...',1500);
   try{
     if('caches' in window){
-      const k = await caches.keys();
-      await Promise.all(
-        k.filter(n => !n.startsWith('vdb-offline')).map(x => caches.delete(x))
-      );
+      const k=await caches.keys();
+      await Promise.all(k.filter(n=>!n.startsWith('vdb-offline')).map(x=>caches.delete(x)));
     }
     if(navigator.serviceWorker){
-      const r = await navigator.serviceWorker.getRegistrations();
+      const r=await navigator.serviceWorker.getRegistrations();
       await Promise.all(r.map(x=>x.unregister()));
     }
   }catch(e){}
-  setTimeout(()=>{ window.location.href = window.location.pathname + '?update=' + Date.now(); }, 800);
+  setTimeout(()=>{window.location.href=window.location.pathname+'?update='+Date.now();},800);
 }
 function gerarQrCode(){
-  const url = encodeURIComponent(window.location.href);
-  $('qrCodeImage').src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + url;
+  const url=encodeURIComponent(window.location.href);
+  $('qrCodeImage').src='https://api.qrserver.com/v1/create-qr-code/?size=400x400&data='+url;
   $('qrCodeModal').classList.add('active');
 }
 
-/* ═══════════════════════════════════════════════════════════
-   📱 PWA INSTALL
-   ═══════════════════════════════════════════════════════════ */
-const btnInstalarFixo = $('btnInstalarFixo');
-const instrucoesInstalar = $('instrucoesInstalar');
-let deferredInstallPrompt = null;
-
-function ehIOS(){ return /iPhone|iPad|iPod/i.test(navigator.userAgent); }
-function ehMobile(){ return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent); }
+/* ============ PWA INSTALL ============ */
+const btnInstalarFixo=$('btnInstalarFixo');
+const instrucoesInstalar=$('instrucoesInstalar');
+let deferredInstallPrompt=null;
+function ehIOS(){return /iPhone|iPad|iPod/i.test(navigator.userAgent);}
+function ehMobile(){return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);}
 function jaEstaInstalado(){
-  return window.matchMedia('(display-mode: standalone)').matches ||
-         window.navigator.standalone === true;
+  return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
 }
 function mostrarBotaoInstalar(){
-  if(!btnInstalarFixo) return;
-  if(!ehMobile() || jaEstaInstalado()){ btnInstalarFixo.style.display = 'none'; return; }
-  btnInstalarFixo.style.display = 'flex';
+  if(!btnInstalarFixo)return;
+  if(!ehMobile()||jaEstaInstalado()){btnInstalarFixo.style.display='none';return;}
+  btnInstalarFixo.style.display='flex';
 }
 function abrirInstrucoesManuais(){
-  if(!instrucoesInstalar) return;
-  const t = instrucoesInstalar.querySelector('h3');
-  const p = instrucoesInstalar.querySelectorAll('.passo');
+  if(!instrucoesInstalar)return;
+  const t=instrucoesInstalar.querySelector('h3');
+  const p=instrucoesInstalar.querySelectorAll('.passo');
   if(ehIOS()){
-    if(t) t.innerHTML = '📲 INSTALAR NO IPHONE';
-    if(p[0]) p[0].innerHTML = '<div class="num">1</div><div>Toque em <b>Compartilhar</b> (□↑)</div>';
-    if(p[1]) p[1].innerHTML = '<div class="num">2</div><div>Role e <b>"Adicionar à Tela"</b></div>';
-    if(p[2]) p[2].innerHTML = '<div class="num">3</div><div>Toque em <b>"Adicionar"</b> ✅</div>';
-  } else {
-    if(t) t.innerHTML = '📲 INSTALAR NO ANDROID';
-    if(p[0]) p[0].innerHTML = '<div class="num">1</div><div>Toque nos <b>3 pontinhos</b> ⋮</div>';
-    if(p[1]) p[1].innerHTML = '<div class="num">2</div><div>Toque em <b>"Instalar app"</b></div>';
-    if(p[2]) p[2].innerHTML = '<div class="num">3</div><div>Confirme e pronto! 🎵</div>';
+    if(t)t.innerHTML='📲 INSTALAR NO IPHONE';
+    if(p[0])p[0].innerHTML='<div class="num">1</div><div>Toque em <b>Compartilhar</b> (□↑)</div>';
+    if(p[1])p[1].innerHTML='<div class="num">2</div><div>Role e <b>"Adicionar à Tela"</b></div>';
+    if(p[2])p[2].innerHTML='<div class="num">3</div><div>Toque em <b>"Adicionar"</b> ✅</div>';
+  }else{
+    if(t)t.innerHTML='📲 INSTALAR NO ANDROID';
+    if(p[0])p[0].innerHTML='<div class="num">1</div><div>Toque nos <b>3 pontinhos</b> ⋮</div>';
+    if(p[1])p[1].innerHTML='<div class="num">2</div><div>Toque em <b>"Instalar app"</b></div>';
+    if(p[2])p[2].innerHTML='<div class="num">3</div><div>Confirme e pronto! 🎵</div>';
   }
   instrucoesInstalar.classList.add('active');
 }
@@ -2713,219 +1936,163 @@ async function acionarInstalacaoPWA(){
   if(deferredInstallPrompt){
     try{
       deferredInstallPrompt.prompt();
-      const r = await deferredInstallPrompt.userChoice;
-      if(r.outcome === 'accepted'){ notif('🎉 Instalando!', 2500); }
-      deferredInstallPrompt = null;
-    }catch(e){ abrirInstrucoesManuais(); }
-  } else {
-    abrirInstrucoesManuais();
-  }
+      const r=await deferredInstallPrompt.userChoice;
+      if(r.outcome==='accepted')notif('🎉 Instalando!',2500);
+      deferredInstallPrompt=null;
+    }catch(e){abrirInstrucoesManuais();}
+  }else{abrirInstrucoesManuais();}
 }
-if(btnInstalarFixo) btnInstalarFixo.onclick = () => acionarInstalacaoPWA();
-const fecharInst = $('fecharInstrucoesBtn');
-if(fecharInst) fecharInst.onclick = () => instrucoesInstalar.classList.remove('active');
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredInstallPrompt = e;
-  setTimeout(mostrarBotaoInstalar, 500);
+if(btnInstalarFixo)btnInstalarFixo.onclick=()=>acionarInstalacaoPWA();
+const fecharInst=$('fecharInstrucoesBtn');
+if(fecharInst)fecharInst.onclick=()=>instrucoesInstalar.classList.remove('active');
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredInstallPrompt=e;
+  setTimeout(mostrarBotaoInstalar,500);
 });
-window.addEventListener('appinstalled', () => {
-  if(btnInstalarFixo) btnInstalarFixo.style.display = 'none';
-  notif('🎉 App instalado!', 3000);
+window.addEventListener('appinstalled',()=>{
+  if(btnInstalarFixo)btnInstalarFixo.style.display='none';
+  notif('🎉 App instalado!',3000);
 });
 
-/* ═══════════════════════════════════════════════════════════
-   🚀 BOOTSTRAP
-   ═══════════════════════════════════════════════════════════ */
+/* ============ BOOT ============ */
 async function iniciar(){
   try{
-    const start = now();
-    if($('loadingVersion')) $('loadingVersion').textContent = VERSAO;
-    if($('fabVersao')) $('fabVersao').textContent = VERSAO;
-    document.title = 'VDB MUSIC ' + VERSAO;
-    if($('scrollText')) $('scrollText').textContent = CONFIG.LETREIRO;
+    const start=Date.now();
+    if($('loadingVersion'))$('loadingVersion').textContent=VERSAO;
+    if($('fabVersao'))$('fabVersao').textContent=VERSAO;
+    document.title='VDB MUSIC '+VERSAO;
+    if($('scrollText'))$('scrollText').textContent=CONFIG.LETREIRO;
 
-    // Storage persistente
-    if(navigator.storage && navigator.storage.persist){
-      try{ await navigator.storage.persist(); }catch(_){}
-    }
+    if(navigator.storage&&navigator.storage.persist){try{await navigator.storage.persist();}catch(_){}}
 
-    // Fingerprint
-    try{ appState.fingerprint = await gerarFingerprintReal(); }
-    catch(e){ appState.fingerprint = btoa(navigator.userAgent).slice(0, 32); }
+    try{appState.fingerprint=await gerarFingerprintReal();}
+    catch(e){appState.fingerprint=btoa(navigator.userAgent).slice(0,32);}
 
-    // Verifica liberação
-    const r = await SecureTimer.verificar();
+    const r=await SecureTimer.verificar();
     if(r.liberado){
       $('blockOverlay').classList.remove('active');
-      setTimeout(ativarPlayer, 800);
+      setTimeout(ativarPlayer,800);
     }else{
-      $('idUsuarioBloqueio').textContent = appState.fingerprint;
+      $('idUsuarioBloqueio').textContent=appState.fingerprint;
       $('blockOverlay').classList.add('active');
     }
 
     await carregarMidiasPadrao();
-
-    const m = await buscarGenero('BÔNUS');
-    if(m && m.length){
-      appState.musicas = m;
-      appState.modoAtual = 'BÔNUS';
-      appState.playlistAtual = shuffle(m);
-      appState.indiceAtual = 0;
-      const mm = appState.playlistAtual[0];
-      if(mm){ atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
+    const m=await buscarGenero('BÔNUS');
+    if(m&&m.length){
+      appState.musicas=m;appState.modoAtual='BÔNUS';
+      appState.playlistAtual=shuffle(m);appState.indiceAtual=0;
+      const mm=appState.playlistAtual[0];
+      if(mm){atualizarLetreiro(mm);atualizarInfoMusica(mm);atualizarCoracao();}
     }
-    renderizarGeneros();
-    atualizarBadgeFav();
+    renderizarGeneros();atualizarBadgeFav();
 
-    const dec = now() - start;
-    if(dec < CONFIG.LOADING_DURACAO_MS) await sleep(CONFIG.LOADING_DURACAO_MS - dec);
+    const dec=Date.now()-start;
+    if(dec<CONFIG.LOADING_DURACAO_MS)await sleep(CONFIG.LOADING_DURACAO_MS-dec);
     $('loadingScreen').classList.add('hide');
     $('playerContainer').classList.add('visible');
     await atualizarTimer();
-    setTimeout(()=>{ if(!jaFullscreen()) forcarFullscreen(); }, 300);
+    setTimeout(()=>{if(!jaFullscreen())forcarFullscreen();},300);
 
-    // Init módulos
-    initBusca();
-    initFab();
-    initValidadeSeletor();
-    initAdmin();
-    setupCliques();
+    SearchManager.init();
+    initFab();initValidadeSeletor();initAdmin();setupCliques();
     DownloadManager.init();
 
-    // Listeners de UI
-    $('playBtn').onclick = togglePlay;
-    $('prevBtn').onclick = prev;
-    $('nextBtn').onclick = next;
-    $('btnCoracaoInfo').onclick = (e) => { e.stopPropagation(); vibrar(20); toggleFavAtual(); };
-    $('letreiroClick').onclick = (e) => { e.stopPropagation(); vibrar(); SearchManager.abrir(); };
-    const letreiroEl = $('scrollText');
-    if(letreiroEl){
-      letreiroEl.addEventListener('touchstart', () => letreiroEl.classList.add('pausado'), { passive:true });
-      letreiroEl.addEventListener('touchend', () => letreiroEl.classList.remove('pausado'));
-    }
-    $('barraBuscar').onclick = () => { vibrar(); SearchManager.abrir(); };
-    $('barraFavoritos').onclick = () => { vibrar(); renderFavoritas(); abrirModal('modalFavoritas'); };
-    $('barraGeneros').onclick = () => { vibrar(); renderizarGeneros(); abrirModal('modalGeneros'); };
-    $('fecharFavoritas').onclick = () => fecharModal('modalFavoritas');
-    $('fecharGeneros').onclick = () => fecharModal('modalGeneros');
-    $('fecharMeuId').onclick = () => fecharModal('modalMeuId');
-    $('qrCloseBtn').onclick = () => $('qrCodeModal').classList.remove('active');
-    $('qrCodeModal').onclick = (e) => { if(e.target === $('qrCodeModal')) $('qrCodeModal').classList.remove('active'); };
+    $('playBtn').onclick=togglePlay;
+    $('prevBtn').onclick=prev;
+    $('nextBtn').onclick=next;
+    $('btnCoracaoInfo').onclick=e=>{e.stopPropagation();vibrar(20);toggleFavAtual();};
+    $('letreiroClick').onclick=e=>{e.stopPropagation();vibrar();SearchManager.abrir();};
+    $('barraBuscar').onclick=()=>{vibrar();SearchManager.abrir();};
+    $('barraFavoritos').onclick=()=>{vibrar();renderFavoritas();abrirModal('modalFavoritas');};
+    $('barraGeneros').onclick=()=>{vibrar();renderizarGeneros();abrirModal('modalGeneros');};
+    $('fecharFavoritas').onclick=()=>fecharModal('modalFavoritas');
+    $('fecharGeneros').onclick=()=>fecharModal('modalGeneros');
+    $('fecharMeuId').onclick=()=>fecharModal('modalMeuId');
+    $('qrCloseBtn').onclick=()=>$('qrCodeModal').classList.remove('active');
+    $('qrCodeModal').onclick=e=>{if(e.target===$('qrCodeModal'))$('qrCodeModal').classList.remove('active');};
+    $('dlCancelar').onclick=()=>DownloadManager.cancelar();
+    $('dlFechar').onclick=()=>$('downloadModal').classList.remove('active');
+    $('btnCopiarMeuId').onclick=()=>copiarTexto(appState.fingerprint,'📋 ID copiado!');
+    $('btnEnviarMeuIdWhats').onclick=enviarMeuIdWhats;
+    $('btnCopiarIdBloqueio').onclick=()=>copiarTexto(appState.fingerprint,'📋 ID copiado!');
+    $('btnEnviarIdWhats').onclick=enviarMeuIdWhats;
 
-    $('dlCancelar').onclick = () => DownloadManager.cancelar();
-    $('dlFechar').onclick = () => $('downloadModal').classList.remove('active');
-
-    $('btnCopiarMeuId').onclick = () => copiarTexto(appState.fingerprint, '📋 ID copiado!');
-    $('btnEnviarMeuIdWhats').onclick = enviarMeuIdWhats;
-    $('btnCopiarIdBloqueio').onclick = () => copiarTexto(appState.fingerprint, '📋 ID copiado!');
-    $('btnEnviarIdWhats').onclick = enviarMeuIdWhats;
-
-    const pb = $('progressBar');
-    pb.onclick = (e) => {
-      if(!audio.duration) return;
-      const r = pb.getBoundingClientRect();
-      audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+    $('progressBar').onclick=e=>{
+      if(!audio.duration)return;
+      const r=$('progressBar').getBoundingClientRect();
+      audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;
     };
-    $('btnLiberar').onclick = () => {
-      const s = $('senhaInput').value.trim();
-      if(!s){ $('erroSenha').textContent = '⚠️ Digite a senha'; return; }
+    $('btnLiberar').onclick=()=>{
+      const s=$('senhaInput').value.trim();
+      if(!s){$('erroSenha').textContent='⚠️ Digite a senha';return;}
       liberarAcesso(s);
     };
-    $('senhaInput').onkeydown = e => { if(e.key==='Enter') $('btnLiberar').click(); };
+    $('senhaInput').onkeydown=e=>{if(e.key==='Enter')$('btnLiberar').click();};
 
-    document.addEventListener('keydown', e => {
-      if(e.target.tagName === 'INPUT') return;
-      if(e.key === ' '){ e.preventDefault(); togglePlay(); }
-      if(e.key === 'ArrowRight') next();
-      if(e.key === 'ArrowLeft') prev();
+    document.addEventListener('keydown',e=>{
+      if(e.target.tagName==='INPUT')return;
+      if(e.key===' '){e.preventDefault();togglePlay();}
+      if(e.key==='ArrowRight')next();
+      if(e.key==='ArrowLeft')prev();
     });
-    document.addEventListener('touchstart', ativarPlayer, { once:true });
-    document.addEventListener('click', ativarPlayer, { once:true });
+    document.addEventListener('touchstart',ativarPlayer,{once:true});
+    document.addEventListener('click',ativarPlayer,{once:true});
 
-    audio.ontimeupdate = () => {
+    audio.ontimeupdate=()=>{
       if(audio.duration){
-        $('progressFill').style.width = (audio.currentTime/audio.duration*100) + '%';
-        $('currentTime').textContent = fmt(audio.currentTime);
-        $('totalTime').textContent = fmt(audio.duration);
+        $('progressFill').style.width=(audio.currentTime/audio.duration*100)+'%';
+        $('currentTime').textContent=fmt(audio.currentTime);
+        $('totalTime').textContent=fmt(audio.duration);
       }
     };
-    audio.onended = () => {
-      if(appState.carregando) return;
-      appState.isPlaying = false;
-      setTimeout(()=>{ if(!appState.carregando) next(); }, 200);
+    audio.onended=()=>{
+      if(appState.carregando)return;
+      appState.isPlaying=false;
+      setTimeout(()=>{if(!appState.carregando)next();},200);
     };
-    audio.onerror = () => {
-      if(appState.carregando) return;
-      if(!audio.src || audio.src === location.href) return;
-      const m = appState.playlistAtual[appState.indiceAtual];
-      if(m) appState.musicasComProblema.add(m.id);
-      setTimeout(()=>{ if(!appState.carregando) next(); }, 100);
+    audio.onerror=()=>{
+      if(appState.carregando)return;
+      if(!audio.src||audio.src===location.href)return;
+      const m=appState.playlistAtual[appState.indiceAtual];
+      if(m)appState.musicasComProblema.add(m.id);
+      setTimeout(()=>{if(!appState.carregando)next();},100);
     };
-
-    // Visibility — retoma player + download + wake lock
-    document.addEventListener('visibilitychange', () => {
-      if(document.visibilityState === 'visible'){
-        if(appState.isBackgroundActive && appState.isPlaying && audio.paused && !appState.carregando){
+    document.addEventListener('visibilitychange',()=>{
+      if(document.visibilityState==='visible'){
+        if(appState.isBackgroundActive&&appState.isPlaying&&audio.paused&&!appState.carregando){
           audio.play().catch(()=>{});
         }
-        videosAtivos.forEach(v => { if(v.classList.contains('active') && v.paused && v.dataset.erro !== '1') v.play().catch(()=>{}); });
-        if(!jaFullscreen() && appState.playerAtivado) forcarFullscreen();
-        // 🔋 Reativa Wake Lock se download em andamento
-        if(downloadEmAndamento) WakeLockManager.ativar();
-        // 🔄 Retoma fila se perdeu
-        if(!DownloadManager.worker) DownloadManager.init();
-      } else {
-        // App foi pra background — mantém worker rodando
+        videosAtivos.forEach(v=>{if(v.classList.contains('active')&&v.paused&&v.dataset.erro!=='1')v.play().catch(()=>{});});
+        if(!jaFullscreen()&&appState.playerAtivado)forcarFullscreen();
+        if(downloadEmAndamento)WakeLockManager.ativar();
+        if(!DownloadManager.worker)DownloadManager.init();
       }
     });
 
-    // Network
     atualizarNetBanner();
 
-    // Service Worker + Background Sync
     if('serviceWorker' in navigator){
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js', { scope: './' }).then(async reg => {
-          // Periodic Background Sync (Chrome Android)
-          if('periodicSync' in reg){
-            try{
-              const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
-              if(status.state === 'granted'){
-                await reg.periodicSync.register('vdb-sync-fila', { minInterval: 15 * 60 * 1000 });
-              }
-            }catch(_){}
-          }
-        }).catch(e => console.warn('SW:', e));
+      window.addEventListener('load',()=>{
+        navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.warn('SW:',e));
       });
-      // Escuta mensagens do SW
-      navigator.serviceWorker.addEventListener('message', (e) => {
-        if(e.data && e.data.type === 'RETOMAR_FILA'){
-          DownloadManager._retomarFila();
-        }
+      navigator.serviceWorker.addEventListener('message',e=>{
+        if(e.data&&e.data.type==='RETOMAR_FILA')DownloadManager._retomarFila();
       });
     }
 
-    // Space para espaço do localStorage
-    if(navigator.storage && navigator.storage.estimate){
-      navigator.storage.estimate().then(({ usage, quota }) => {
-        const pct = (usage / quota) * 100;
-        if(pct > 80) notif('⚠️ Armazenamento quase cheio (' + pct.toFixed(0) + '%)', 4000);
-      }).catch(()=>{});
-    }
+    setTimeout(mostrarBotaoInstalar,2500);
+    setTimeout(agendarCiclo,5000);
 
-    setTimeout(mostrarBotaoInstalar, 2500);
-    setTimeout(agendarCiclo, 5000);
-
-    window.addEventListener('beforeunload', () => {
-      if(keepAliveInterval) clearInterval(keepAliveInterval);
+    window.addEventListener('beforeunload',()=>{
+      if(keepAliveInterval)clearInterval(keepAliveInterval);
       if(fsGestureHandler){
-        document.removeEventListener('touchstart', fsGestureHandler);
-        document.removeEventListener('click', fsGestureHandler);
+        document.removeEventListener('touchstart',fsGestureHandler);
+        document.removeEventListener('click',fsGestureHandler);
       }
     });
   }catch(e){
-    console.error('❌ Erro:', e);
+    console.error('❌ Boot:',e);
     $('loadingScreen').classList.add('hide');
     $('playerContainer').classList.add('visible');
   }
