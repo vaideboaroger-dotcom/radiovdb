@@ -98,10 +98,12 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .letreiro b{color:#fff;font-weight:900}
 .letreiro i{font-style:normal}
 
+/* ===== PAINEL DE CONTROLES ===== */
 .painel-baixo{position:fixed;bottom:calc(80px + var(--safe-bottom));
   left:0;right:0;z-index:20;padding:0 22px;text-align:center;
   display:flex;flex-direction:column;gap:2px;pointer-events:none}
 .painel-baixo > *{pointer-events:auto}
+
 .btn-coracao-topo{background:rgba(255,255,255,.15);
   border:1.5px solid rgba(255,255,255,.3);border-radius:50%;
   width:38px;height:38px;color:#fff;font-size:1.15rem;cursor:pointer;
@@ -112,6 +114,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .btn-coracao-topo.ativo{color:#f472b6;background:rgba(244,114,182,.25);
   border-color:#f472b6;animation:heartBeat 1.4s ease-in-out infinite}
 @keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
 .glass-musica-label{font-size:.6rem;font-weight:800;letter-spacing:4px;
   color:rgba(255,255,255,.75);text-transform:uppercase;
   text-shadow:0 1px 4px rgba(0,0,0,.6);line-height:1}
@@ -123,21 +126,62 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .glass-musica-artista{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.95);
   text-shadow:0 2px 6px rgba(0,0,0,.6);white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis;padding:0 8px}
-.glass-controles{display:flex;justify-content:center;align-items:center;gap:28px;margin-top:6px}
-.ctrl-btn{background:transparent;border:none;color:#fff;font-size:1.5rem;
-  cursor:pointer;padding:8px;display:flex;align-items:center;justify-content:center;
-  transition:transform .15s;filter:drop-shadow(0 3px 10px rgba(0,0,0,.8))}
-.ctrl-btn:active{transform:scale(.85);opacity:.7}
-.play-big{font-size:1.9rem;padding:8px}
+
+/* ===== BOTÕES DE MÚSICA (NOVO - REDONDOS, GRANDES, COM BRILHO) ===== */
+.glass-controles{display:flex;justify-content:center;align-items:center;gap:20px;margin-top:8px}
+
+.ctrl-btn{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.15);
+  color:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  font-size:1.15rem;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  transition:all .2s cubic-bezier(.22,1,.36,1);
+  box-shadow:0 4px 15px rgba(0,0,0,.3);
+}
+.ctrl-btn:active{
+  transform:scale(.88);
+  background:rgba(255,255,255,.25);
+}
+
+.play-big{
+  background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
+  border:2px solid rgba(255,255,255,.2);
+  color:#fff;
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  font-size:1.6rem;
+  box-shadow:0 6px 24px rgba(37,99,235,.6),0 0 30px rgba(59,130,246,.4);
+  backdrop-filter:none;
+}
+.play-big:active{
+  transform:scale(.9);
+  box-shadow:0 4px 16px rgba(37,99,235,.8);
+}
 .play-big.loading i{animation:spinSlow 1s linear infinite}
 @keyframes spinSlow{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-.glass-progresso{padding:2px 4px 0}
-.progress-time{display:flex;justify-content:space-between;font-size:.65rem;
-  font-weight:700;color:rgba(255,255,255,.85);font-variant-numeric:tabular-nums;
-  margin-bottom:4px}
-.progress-bar{height:3px;background:rgba(0,0,0,.4);border-radius:4px;
-  overflow:hidden;cursor:pointer;touch-action:none}
-.progress-fill{height:100%;width:0%;background:#fff;border-radius:4px;transition:width .2s linear}
+
+/* ===== BARRA DE PROGRESSO ===== */
+.glass-progresso{padding:4px 4px 0;margin-top:6px}
+.progress-time{display:flex;justify-content:space-between;font-size:.68rem;
+  font-weight:700;color:rgba(255,255,255,.9);font-variant-numeric:tabular-nums;
+  margin-bottom:6px;text-shadow:0 1px 4px rgba(0,0,0,.6)}
+.progress-bar{height:6px;background:rgba(0,0,0,.5);border-radius:6px;
+  overflow:hidden;cursor:pointer;touch-action:none;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
+.progress-fill{height:100%;width:0%;
+  background:linear-gradient(90deg,var(--cor-1),var(--cor-3));
+  border-radius:6px;transition:width .2s linear;
+  box-shadow:0 0 12px var(--cor-3),0 0 4px #fff}
 
 .barra-inferior{position:fixed;left:12px;right:12px;
   bottom:calc(12px + var(--safe-bottom));z-index:25;
@@ -427,15 +471,37 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   border:none;padding:14px;border-radius:25px;color:#fff;
   font-weight:900;font-size:.9rem;cursor:pointer;width:100%;margin-top:12px}
 
-#btnInstalarFixo{position:fixed;bottom:calc(180px + var(--safe-bottom));right:20px;
-  z-index:999999;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
-  color:#fff;border:none;border-radius:30px;padding:14px 20px;font-weight:900;
-  font-size:.75rem;cursor:pointer;display:none;align-items:center;gap:8px;
-  text-transform:uppercase;box-shadow:0 8px 24px rgba(37,99,235,.6);
-  font-family:'Audiowide',sans-serif;letter-spacing:1px;
-  animation:pulseInstall 2s ease-in-out infinite}
-@keyframes pulseInstall{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-#btnInstalarFixo:active{transform:scale(.95);animation:none}
+/* ===== BOTÃO INSTALAR (NOVO - VIDRO DISCRETO, 1X SÓ) ===== */
+#btnInstalarFixo{
+  position:fixed;
+  bottom:calc(180px + var(--safe-bottom));
+  right:16px;
+  z-index:999999;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.9);
+  border-radius:20px;
+  padding:8px 14px;
+  font-size:.68rem;
+  font-weight:700;
+  cursor:pointer;
+  display:none;
+  align-items:center;
+  gap:6px;
+  letter-spacing:.5px;
+  box-shadow:0 4px 15px rgba(0,0,0,.4);
+  transition:all .2s ease;
+}
+#btnInstalarFixo:active{
+  transform:scale(.95);
+  background:rgba(255,255,255,.18);
+}
+#btnInstalarFixo i{
+  font-size:.75rem;
+  opacity:.8;
+}
 
 #instrucoesInstalar{position:fixed;inset:0;background:rgba(0,0,0,.97);
   backdrop-filter:blur(30px);z-index:1000002;display:none;
@@ -481,8 +547,9 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 @media(max-width:480px){
   .glass-musica-nome{font-size:1rem}
   .glass-musica-artista{font-size:.7rem}
-  .ctrl-btn{font-size:1.35rem}
-  .play-big{font-size:1.7rem}
+  .ctrl-btn{width:42px;height:42px;font-size:1rem}
+  .play-big{width:58px;height:58px;font-size:1.45rem}
+  .glass-controles{gap:16px}
   .titulo-topo{font-size:1.1rem;letter-spacing:4px}
   .letreiro{font-size:.8rem}
   .letreiro-wrap{height:28px}
@@ -494,8 +561,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   .id-value{font-size:1.15rem}
   .fab-main{font-size:2rem}
   .painel-baixo{bottom:calc(75px + var(--safe-bottom))}
-  #btnInstalarFixo{bottom:calc(170px + var(--safe-bottom));right:16px;
-    padding:12px 16px;font-size:.7rem}
+  #btnInstalarFixo{bottom:calc(170px + var(--safe-bottom));right:12px;
+    padding:7px 11px;font-size:.62rem}
 }
 </style>
 </head>
@@ -597,9 +664,10 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     <div class="search-filters">
       <select id="buscaGenero"><option value="">🌍 Todos os gêneros</option></select>
       <select id="buscaOrdem">
-        <option value="az">A-Z</option>
-        <option value="za">Z-A</option>
-        <option value="aleatorio">🎲</option>
+        <option value="aleatorio">🔀 Aleatório</option>
+        <option value="az">🔤 A-Z</option>
+        <option value="za">🔤 Z-A</option>
+        <option value="recentes">🆕 Recentes</option>
       </select>
     </div>
     <div class="search-count" id="buscaCount">🎤 Digite o nome do artista</div>
@@ -622,6 +690,13 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     <div class="modal-header">
       <span class="titulo">🎸 GÊNEROS</span>
       <button class="fechar" id="fecharGeneros"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="search-filters" style="margin-bottom:8px">
+      <select id="ordemGeneros">
+        <option value="aleatorio">🔀 Aleatório</option>
+        <option value="az">🔤 A-Z</option>
+        <option value="za">🔤 Z-A</option>
+      </select>
     </div>
     <div class="genres-grid" id="genresGrid"></div>
   </div>
@@ -740,7 +815,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   </div>
 </div>
 
-<button id="btnInstalarFixo"><i class="fas fa-download"></i> INSTALAR APP</button>
+<button id="btnInstalarFixo"><i class="fas fa-download"></i> Instalar App</button>
 
 <div id="instrucoesInstalar">
   <div class="instrucoes-box">
@@ -763,14 +838,21 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 (function(){
 'use strict';
 
-const VERSAO='v003';
+/* ═══════════════════════════════════════════════════════════
+   🔢 VERSÃO — MUDE SÓ ESSE NÚMERO (3 → 4 → 5 → 6...)
+   ═══════════════════════════════════════════════════════════ */
+const VERSAO_NUMERO = 3;
+const VERSAO = 'v' + String(VERSAO_NUMERO).padStart(3, '0');
 
-/* SENHAS */
+/* ═══════════════════════════════════════════════════════════
+   🔐 SISTEMA DE SENHAS (INTACTO)
+   ═══════════════════════════════════════════════════════════ */
 const HASH_ADMIN='ae6eaa9dbe0baf078f6a56d50641fb6bcf135ee43deca13a6e10910aa7f704b5';
 const HASH_MASTER='7eca27de328d65b0f04c3ca43eb023961c19db9ce2b3fc4e94f25e87e65c5c04';
 const _KEY_OBF='bGxtdWJcZW1gY19ifHB2Y3tgLXMubGx8IGJ8endwYit0XXdrfnB8aistfWQ=';
 function _keyDecode(){try{const b=atob(_KEY_OBF);let r='';for(let i=0;i<b.length;i++){r+=String.fromCharCode(b.charCodeAt(i)^42);}return r;}catch(e){return '';}}
 const CHAVE_SECRETA=_keyDecode();
+
 async function hashSenha(str){
   try{const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
     return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
@@ -798,6 +880,9 @@ async function assinarHMAC(msg){
   }catch(e){let h=0;const x=CHAVE_SECRETA+msg;for(let i=0;i<x.length;i++){h=((h<<5)-h)+x.charCodeAt(i);h|=0;}return Math.abs(h).toString(16).padStart(16,'0').slice(0,24);}
 }
 
+/* ═══════════════════════════════════════════════════════════
+   ⚙️ CONFIG — EDITE AQUI
+   ═══════════════════════════════════════════════════════════ */
 const CONFIG={
   WHATSAPP:'5512988461978',
   TEMPO_TESTE_SEGUNDOS:86400,
@@ -805,7 +890,7 @@ const CONFIG={
   LOADING_DURACAO_MS:3500,
   MIDIA_MAX_SEGURANCA_MS:60000,
   CICLO_PRINCIPAL_MS:30000,
-  CICLO_ANUNCIO_MS:30000,
+  CICLO_ANUNCIO_MS:12000,
   VOLUME_PADRAO:1.0,
   DOWNLOAD_TIMEOUT_MS:30000,
   DOWNLOAD_RETRY:3
@@ -923,7 +1008,6 @@ async function liberarAgora(){
   else{notif('❌ Inválida!',2000);}
 }
 
-/* GÊNEROS */
 const GENRE_URLS={
   'BÔNUS':'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/play.json',
   'FLASHBACK':'https://raw.githubusercontent.com/radiolojasjc-hub/flashbacktop/refs/heads/main/flashback.json',
@@ -968,14 +1052,14 @@ Object.keys(GENRE_URLS).forEach(g=>{const m=GENRE_URLS[g].match(/githubuserconte
 const MIDIAS_PADRAO_URL='https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/midias.json';
 const MIDIAS_FALLBACK=[{tipo:'video',src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'}];
 const MIDIAS_ANUNCIO_URL='https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/anuncios.json';
-const MIDIAS_ANUNCIO_FALLBACK=[{tipo:'video',src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/abc12.mp4'}];
+const MIDIAS_ANUNCIO_FALLBACK=[{tipo:'video',src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'}];
 
 const CACHE_GEN_KEY='vdb_genero_cache_v1';
 function _lerCacheGenero(){try{return JSON.parse(localStorage.getItem(CACHE_GEN_KEY)||'{}');}catch(e){return{};}}
 function _salvarCacheGenero(o){try{localStorage.setItem(CACHE_GEN_KEY,JSON.stringify(o));}catch(e){}}
 function _mapMusicas(j,genero){
   if(!Array.isArray(j))j=j.musicas||j.data||Object.values(j)[0];
-  return (j||[]).filter(m=>m&&m.src&&m.title).map(m=>({...m,id:'fav_'+(m.title+'_'+(m.artist||'Artista')).toLowerCase().replace(/[^a-z0-9]+/g,'_'),genero,artist:m.artist||'Artista'}));
+  return (j||[]).filter(m=>m&&m.src&&m.title).map((m,idx)=>({...m,id:'fav_'+(m.title+'_'+(m.artist||'Artista')).toLowerCase().replace(/[^a-z0-9]+/g,'_'),genero,artist:m.artist||'Artista',_ordem:idx}));
 }
 const cacheGenero=new Map();
 async function buscarGenero(g){
@@ -1014,9 +1098,9 @@ function getUrls(m){
 
 const appState={
   favorites:[],musicas:[],playlistAtual:[],indiceAtual:0,isPlaying:false,
-  modoAtual:'BÔNUS',carregando:false,playerAtivado:false,
+  modoAtual:'BÔNUS',temaCor:'azul',carregando:false,playerAtivado:false,
   isBackgroundActive:false,telaAtual:'principal',musicasComProblema:new Set(),
-  sleepTimerId:null,fingerprint:'',_lastBlobUrl:null
+  sleepTimerId:null,fingerprint:'',_lastBlobUrl:null,ordemAtual:'aleatorio'
 };
 try{appState.favorites=JSON.parse(localStorage.getItem('vdb_fav')||'[]');}catch(e){}
 function salvarFav(){try{localStorage.setItem('vdb_fav',JSON.stringify(appState.favorites));}catch(e){}}
@@ -1038,7 +1122,6 @@ function atualizarNetBanner(){
 window.addEventListener('online',()=>{atualizarNetBanner();notif('🟢 Voltou online',1800);});
 window.addEventListener('offline',()=>{atualizarNetBanner();notif('🔴 Ficou offline',1800);});
 
-/* DOWNLOAD — SEM WORKER, DIRETO NA PÁGINA */
 let downloadEmAndamento=false;
 let downloadGeneroAtual='';
 let downloadCancelado=false;
@@ -1046,25 +1129,18 @@ let downloadCancelado=false;
 function getOfflineMeta(){try{return JSON.parse(localStorage.getItem('vdb_offline')||'{}');}catch(e){return{};}}
 function setOfflineMeta(m){try{localStorage.setItem('vdb_offline',JSON.stringify(m));}catch(e){}}
 function generoOffline(g){const m=getOfflineMeta();return !!(m[g]&&m[g].completo);}
-
 async function abrirCache(){if(!('caches' in window))return null;try{return await caches.open('vdb-offline-'+VERSAO);}catch(e){return null;}}
-
 function mostrarBannerDownload(txt){const b=$('bgDownloadBanner'),t=$('bgDownloadText');if(!b)return;if(t)t.textContent=txt||'Baixando...';b.classList.add('show');}
 function esconderBannerDownload(){const b=$('bgDownloadBanner');if(b)b.classList.remove('show');}
 
 async function iniciarDownloadGenero(genero){
   if(downloadEmAndamento){notif('⚠️ Já tem download em andamento');return;}
   if(generoOffline(genero)){notif('✅ Já está offline');return;}
-
-  notif('⏳ Carregando lista de ' + genero + '...');
-  const musicas = await buscarGenero(genero);
+  notif('⏳ Carregando lista de '+genero+'...');
+  const musicas=await buscarGenero(genero);
   if(!musicas||!musicas.length){notif('❌ Erro ao carregar gênero');return;}
-
-  downloadEmAndamento = true;
-  downloadGeneroAtual = genero;
-  downloadCancelado = false;
+  downloadEmAndamento=true;downloadGeneroAtual=genero;downloadCancelado=false;
   await WakeLockManager.ativar();
-
   const dm=$('downloadModal');if(dm)dm.classList.add('active');
   if($('dlTitulo'))$('dlTitulo').textContent='📥 '+genero;
   if($('dlSub'))$('dlSub').textContent='Preparando '+musicas.length+' músicas...';
@@ -1074,63 +1150,38 @@ async function iniciarDownloadGenero(genero){
   if($('dlAtual'))$('dlAtual').textContent='';
   if($('dlCancelar'))$('dlCancelar').style.display='block';
   if($('dlFechar'))$('dlFechar').style.display='none';
-
   mostrarBannerDownload('Baixando '+genero+'...');
   renderizarGeneros();
-
-  const pid = genero.replace(/[^a-z0-9]/gi,'_');
-  const progBar = $('prog-'+pid);
-  const progFill = $('progfill-'+pid);
-  const percEl = $('perc-'+pid);
-  if(progBar) progBar.classList.add('ativo');
-  if(percEl) percEl.classList.add('ativo');
-
-  const cache = await abrirCache();
-  if(!cache){
-    notif('❌ Cache indisponível');
-    downloadEmAndamento=false;
-    return;
-  }
-
-  let baixadas = 0;
-  let falhas = 0;
-  const total = musicas.length;
-
+  const pid=genero.replace(/[^a-z0-9]/gi,'_');
+  const progBar=$('prog-'+pid);
+  const progFill=$('progfill-'+pid);
+  const percEl=$('perc-'+pid);
+  if(progBar)progBar.classList.add('ativo');
+  if(percEl)percEl.classList.add('ativo');
+  const cache=await abrirCache();
+  if(!cache){notif('❌ Cache indisponível');downloadEmAndamento=false;return;}
+  let baixadas=0;let falhas=0;const total=musicas.length;
   for(let i=0;i<musicas.length;i++){
-    if(downloadCancelado) break;
-    const m = musicas[i];
-    const urls = getUrls(m);
-    let ok = false;
-
+    if(downloadCancelado)break;
+    const m=musicas[i];const urls=getUrls(m);let ok=false;
     for(const u of urls){
-      if(downloadCancelado) break;
-      const limpa = u.split('?')[0].split('#')[0];
-      try{
-        if(await cache.match(limpa)){ ok = true; break; }
-      }catch(_){}
-
+      if(downloadCancelado)break;
+      const limpa=u.split('?')[0].split('#')[0];
+      try{if(await cache.match(limpa)){ok=true;break;}}catch(_){}
       for(let t=1;t<=CONFIG.DOWNLOAD_RETRY;t++){
-        if(downloadCancelado) break;
+        if(downloadCancelado)break;
         try{
-          const ctrl = new AbortController();
-          const tid = setTimeout(()=>{ try{ctrl.abort();}catch(_){} }, CONFIG.DOWNLOAD_TIMEOUT_MS);
-          const r = await fetch(u, { signal: ctrl.signal });
+          const ctrl=new AbortController();
+          const tid=setTimeout(()=>{try{ctrl.abort();}catch(_){}},CONFIG.DOWNLOAD_TIMEOUT_MS);
+          const r=await fetch(u,{signal:ctrl.signal});
           clearTimeout(tid);
-          if(r.ok){
-            await cache.put(limpa, r.clone());
-            ok = true;
-            break;
-          }
-        }catch(err){
-          await sleep(300*t);
-        }
+          if(r.ok){await cache.put(limpa,r.clone());ok=true;break;}
+        }catch(err){await sleep(300*t);}
       }
-      if(ok) break;
+      if(ok)break;
     }
-
-    if(ok) baixadas++; else falhas++;
-
-    const pct = Math.round(((i+1)/total)*100);
+    if(ok)baixadas++;else falhas++;
+    const pct=Math.round(((i+1)/total)*100);
     if($('dlFill'))$('dlFill').style.width=pct+'%';
     if($('dlContador'))$('dlContador').textContent=(i+1)+' / '+total+'  (✅ '+baixadas+'  ❌ '+falhas+')';
     if($('dlPercent'))$('dlPercent').textContent=pct+'%';
@@ -1139,42 +1190,25 @@ async function iniciarDownloadGenero(genero){
     if(progFill)progFill.style.width=pct+'%';
     if(percEl)percEl.textContent=pct+'%';
     mostrarBannerDownload(genero+': '+pct+'% ('+baixadas+'/'+total+')');
-
-    if((i+1)%10===0){
-      const meta = getOfflineMeta();
-      meta[genero] = { baixadas, total, falhas, data:Date.now(), parcial:true };
-      setOfflineMeta(meta);
-    }
-
-    if((i+1)%3===0) await sleep(20);
+    if((i+1)%10===0){const meta=getOfflineMeta();meta[genero]={baixadas,total,falhas,data:Date.now(),parcial:true};setOfflineMeta(meta);}
+    if((i+1)%3===0)await sleep(20);
   }
-
-  const meta = getOfflineMeta();
-  meta[genero] = { baixadas, total, falhas, data:Date.now(), completo: baixadas>=total*0.9 };
+  const meta=getOfflineMeta();
+  meta[genero]={baixadas,total,falhas,data:Date.now(),completo:baixadas>=total*0.9};
   setOfflineMeta(meta);
-
-  if(progBar) progBar.classList.remove('ativo');
-  if(percEl) percEl.classList.remove('ativo');
+  if(progBar)progBar.classList.remove('ativo');
+  if(percEl)percEl.classList.remove('ativo');
   esconderBannerDownload();
   await WakeLockManager.desativar();
-
-  downloadEmAndamento = false;
-  downloadGeneroAtual = '';
-  const cancelado = downloadCancelado;
-  downloadCancelado = false;
-
+  downloadEmAndamento=false;downloadGeneroAtual='';
+  const cancelado=downloadCancelado;downloadCancelado=false;
   if($('dlCancelar'))$('dlCancelar').style.display='none';
   if($('dlFechar'))$('dlFechar').style.display='block';
-  if($('dlSub'))$('dlSub').textContent = cancelado ? '🛑 Cancelado' : '✅ '+baixadas+' de '+total+' baixadas!';
-
-  if(!cancelado && baixadas>0){
-    notif('✅ '+baixadas+' músicas offline!', 4000);
-    vibrar([50,50,50,50,50]);
-    setTimeout(()=>{const m=$('downloadModal');if(m)m.classList.remove('active');},3000);
-  }
+  if($('dlSub'))$('dlSub').textContent=cancelado?'🛑 Cancelado':'✅ '+baixadas+' de '+total+' baixadas!';
+  if(!cancelado&&baixadas>0){notif('✅ '+baixadas+' músicas offline!',4000);vibrar([50,50,50,50,50]);
+    setTimeout(()=>{const m=$('downloadModal');if(m)m.classList.remove('active');},3000);}
   renderizarGeneros();
 }
-
 async function limparGeneroOffline(genero){
   const c=await abrirCache();if(!c)return;
   const repo=GENRE_REPOS[genero]||'';
@@ -1182,7 +1216,6 @@ async function limparGeneroOffline(genero){
   for(const k of ks){if(repo&&k.url.includes(repo))await c.delete(k);}
   const meta=getOfflineMeta();delete meta[genero];setOfflineMeta(meta);
 }
-
 async function abrirGerenciadorOffline(){
   const meta=getOfflineMeta();const gs=Object.keys(meta);
   if(!gs.length){notif('📥 Nada baixado');return;}
@@ -1194,13 +1227,25 @@ async function abrirGerenciadorOffline(){
   }
 }
 
-/* PLAYER */
 const audio=$('musicPlayer');
 function atualizarPlaylist(){
   if(!appState.musicas.length)return null;
-  if(!appState.playlistAtual.length){appState.playlistAtual=shuffle(appState.musicas);appState.indiceAtual=0;}
-  if(appState.indiceAtual>=appState.playlistAtual.length){appState.playlistAtual=shuffle(appState.musicas);appState.indiceAtual=0;}
+  if(!appState.playlistAtual.length){
+    appState.playlistAtual=ordenarLista(appState.musicas);
+    appState.indiceAtual=0;
+  }
+  if(appState.indiceAtual>=appState.playlistAtual.length){
+    appState.playlistAtual=ordenarLista(appState.musicas);
+    appState.indiceAtual=0;
+  }
   return appState.playlistAtual[appState.indiceAtual]||null;
+}
+function ordenarLista(lista){
+  const ord=appState.ordemAtual||'aleatorio';
+  if(ord==='az')return [...lista].sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+  if(ord==='za')return [...lista].sort((a,b)=>(b.title||'').localeCompare(a.title||''));
+  if(ord==='recentes')return [...lista].sort((a,b)=>(b._ordem||0)-(a._ordem||0));
+  return shuffle(lista);
 }
 function revogarBlobUrlAnterior(){if(appState._lastBlobUrl){try{URL.revokeObjectURL(appState._lastBlobUrl);}catch(e){}appState._lastBlobUrl=null;}}
 
@@ -1221,7 +1266,6 @@ async function tocar(){
     audio.removeAttribute('src');audio.load();
     const urls=getUrls(m).slice(0,8);
     let ok=false;
-
     for(const u of urls){
       try{
         const c=await abrirCache();
@@ -1242,8 +1286,7 @@ async function tocar(){
         }
       }catch(e){}
     }
-
-    if(!ok){
+    if(!ok&&navigator.onLine){
       for(const u of urls){
         try{
           const car=await new Promise(res=>{
@@ -1256,7 +1299,6 @@ async function tocar(){
         }catch(e){}
       }
     }
-
     if(ok){
       try{
         audio.volume=CONFIG.VOLUME_PADRAO;
@@ -1273,12 +1315,12 @@ async function tocar(){
       appState.musicasComProblema.add(m.id);
       $('playBtn').classList.remove('loading');
       $('playBtn').innerHTML='<i class="fas fa-play"></i>';
+      if(!navigator.onLine)notif('⚠️ Música não está offline',1500);
       setTimeout(next,200);
     }
   }catch(e){console.error('tocar:',e);}
   finally{appState.carregando=false;$('playBtn').classList.remove('loading');}
 }
-
 function registrarMediaSessionHandlers(){
   if(!('mediaSession' in navigator))return;
   try{
@@ -1318,7 +1360,12 @@ function toggleFavAtual(){const m=appState.playlistAtual[appState.indiceAtual];i
 
 function renderizarGeneros(){
   const grid=$('genresGrid');grid.innerHTML='';
-  GENRE_ORDEM.forEach(g=>{
+  const ordem=$('ordemGeneros')?$('ordemGeneros').value:'aleatorio';
+  let lista=[...GENRE_ORDEM];
+  if(ordem==='az')lista.sort((a,b)=>a.localeCompare(b));
+  else if(ordem==='za')lista.sort((a,b)=>b.localeCompare(a));
+  else lista=shuffle(lista);
+  lista.forEach(g=>{
     const c=GENRE_COLORS[g]||COR_PADRAO;
     const off=generoOffline(g);
     const baixando=downloadEmAndamento&&downloadGeneroAtual===g;
@@ -1352,7 +1399,8 @@ async function selecionarGenero(g){
   const m=await buscarGenero(g);
   if(!m||!m.length){notif('❌ Erro '+g);return;}
   audio.pause();appState.isPlaying=false;$('playBtn').innerHTML='<i class="fas fa-play"></i>';
-  appState.musicas=m;appState.modoAtual=g;appState.playlistAtual=shuffle(m);appState.indiceAtual=0;
+  appState.musicas=m;appState.modoAtual=g;
+  appState.playlistAtual=ordenarLista(m);appState.indiceAtual=0;
   appState.musicasComProblema.clear();
   const mm=appState.playlistAtual[0];
   if(mm){atualizarLetreiro(mm);atualizarInfoMusica(mm);atualizarCoracao();}
@@ -1381,7 +1429,7 @@ const UniversalPool={musicas:[],carregando:false,carregado:false,
   }
 };
 const SearchManager={
-  generoAtual:'',ordemAtual:'az',termoAtual:'',
+  generoAtual:'',ordemAtual:'aleatorio',termoAtual:'',
   init(){
     const sg=$('buscaGenero');
     if(sg&&!sg.dataset.pronto){
@@ -1425,6 +1473,7 @@ const SearchManager={
     if(this.generoAtual)res=res.filter(m=>m.genero===this.generoAtual);
     if(this.ordemAtual==='az')res=[...res].sort((a,b)=>(a.title||'').localeCompare(b.title||''));
     else if(this.ordemAtual==='za')res=[...res].sort((a,b)=>(b.title||'').localeCompare(a.title||''));
+    else if(this.ordemAtual==='recentes')res=[...res].sort((a,b)=>(b._ordem||0)-(a._ordem||0));
     else if(this.ordemAtual==='aleatorio')res=shuffle(res);
     if(ce){ce.textContent=res.length===0?'❌ Nada':`🎤 ${res.length} música(s)`;}
     if(!res.length){cont.innerHTML='<div style="text-align:center;padding:40px;color:#888">😕 Nada</div>';return;}
@@ -1806,7 +1855,13 @@ function jaEstaInstalado(){return window.matchMedia('(display-mode: standalone)'
 function mostrarBotaoInstalar(){
   if(!btnInstalarFixo)return;
   if(!ehMobile()||jaEstaInstalado()){btnInstalarFixo.style.display='none';return;}
+  // 🔥 APARECE 1X SÓ POR APARELHO
+  if(localStorage.getItem('vdb_instalar_mostrado')==='true'){
+    btnInstalarFixo.style.display='none';
+    return;
+  }
   btnInstalarFixo.style.display='flex';
+  localStorage.setItem('vdb_instalar_mostrado','true');
 }
 function abrirInstrucoesManuais(){
   if(!instrucoesInstalar)return;
@@ -1853,7 +1908,7 @@ async function iniciar(){
     if($('loadingVersion'))$('loadingVersion').textContent=VERSAO;
     if($('fabVersao'))$('fabVersao').textContent=VERSAO;
     document.title='VDB MUSIC '+VERSAO;
-    if($('scrollText'))$('scrollText').innerHTML='🎵 VDB MUSIC '+VERSAO+' 🎵 +10 MIL MÚSICAS • VITALÍCIO R$ 39,90 🎶';
+    if($('scrollText'))$('scrollText').innerHTML='🎵 VDB MUSIC '+VERSAO+' 🎵';
 
     if(navigator.storage&&navigator.storage.persist){try{await navigator.storage.persist();}catch(_){}}
 
@@ -1873,7 +1928,7 @@ async function iniciar(){
     const m=await buscarGenero('BÔNUS');
     if(m&&m.length){
       appState.musicas=m;appState.modoAtual='BÔNUS';
-      appState.playlistAtual=shuffle(m);appState.indiceAtual=0;
+      appState.playlistAtual=ordenarLista(m);appState.indiceAtual=0;
       const mm=appState.playlistAtual[0];
       if(mm){atualizarLetreiro(mm);atualizarInfoMusica(mm);atualizarCoracao();}
     }
@@ -1888,6 +1943,10 @@ async function iniciar(){
 
     SearchManager.init();
     initFab();initValidadeSeletor();initAdmin();setupCliques();
+
+    // Ordem dos gêneros
+    const og=$('ordemGeneros');
+    if(og)og.onchange=()=>renderizarGeneros();
 
     $('playBtn').onclick=togglePlay;
     $('prevBtn').onclick=prev;
