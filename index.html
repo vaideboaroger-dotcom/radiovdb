@@ -889,7 +889,7 @@ const CONFIG = {
   WHATSAPP: '5512988461978',
   TEMPO_TESTE_SEGUNDOS: 86400,
   APP_VERSION: VERSAO,
-  DEBUG: true,
+  DEBUG: false,
   INTRO_DURACAO_MS: 5000,
   INTRO_START_SEG: 0,
   LOADING_MIN_MS: 1200,
@@ -909,7 +909,6 @@ const CONFIG = {
 
 const logWarn = CONFIG.DEBUG ? console.warn : () => {};
 const logErr  = CONFIG.DEBUG ? console.error : () => {};
-const logInfo = CONFIG.DEBUG ? console.log : () => {};
 
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -1274,7 +1273,14 @@ const CACHE_GEN_KEY = 'vdb_genero_cache_v2';
 function _lerCacheGenero(){ try { return JSON.parse(localStorage.getItem(CACHE_GEN_KEY)||'{}'); } catch(e){ return {}; } }
 function _salvarCacheGenero(o){ try { localStorage.setItem(CACHE_GEN_KEY, JSON.stringify(o)); } catch(e){ logWarn('Cache cheio', e); } }
 
-/* ✅ CORRIGIDO: _mapMusicas agora trava o repo de origem em cada música */
+/* ================================================================
+   CORREÇÃO OFFLINE (mínima, 3 pontos)
+   
+   1) _mapMusicas salva o repo de origem na música
+   2) download e tocar usam a MESMA URL canônica
+   3) tocar() valida o blob antes de usar
+   ================================================================ */
+
 function _mapMusicas(j, genero){
   if(!Array.isArray(j)) j = j.musicas || j.data || Object.values(j)[0];
   const repoOrigem = GENRE_REPOS[genero] || 'radiolojasjc-hub/play12';
@@ -1282,7 +1288,7 @@ function _mapMusicas(j, genero){
     ...m,
     id: 'fav_' + (m.title + '_' + (m.artist||'Artista')).toLowerCase().replace(/[^a-z0-9]+/g, '_'),
     genero,
-    repo: repoOrigem,                    // ← CORRIGIDO: repo travado
+    repo: repoOrigem,                  // PONTO 1: repo travado
     artist: m.artist || 'Artista'
   }));
 }
@@ -1341,7 +1347,7 @@ async function _revalidarGenero(g){
   }catch(e){ logWarn('Revalidação falhou', g, e); }
 }
 
-/* ✅ CORRIGIDO: getUrlCanonica usa m.repo (travado), não m.genero */
+// PONTO 2: URL canônica única usada no download E no tocar
 function getUrlCanonica(m){
   if(!m || !m.src) return null;
   const s = String(m.src).trim();
@@ -1354,7 +1360,7 @@ function getUrlCanonica(m){
   return `https://raw.githubusercontent.com/${repo}/refs/heads/main/${encoded}`;
 }
 
-/* ✅ CORRIGIDO: normaliza a URL para chave de cache estável */
+// Chave de cache estável (remove query/hash)
 function urlCacheKey(url){
   if(!url) return null;
   try{
@@ -1392,19 +1398,16 @@ function mostrarBannerDownload(txt){
 }
 function esconderBannerDownload(){ const b = $('bgDownloadBanner'); if(b) b.classList.remove('show'); }
 
-/* ✅ CORRIGIDO: download usa getUrlCanonica + urlCacheKey */
 async function iniciarDownloadGenero(genero){
   if(downloadEmAndamento){ notif('⚠️ Já tem download em andamento'); return; }
   if(generoOffline(genero)){ notif('✅ Já está offline'); return; }
   notif('⏳ Carregando lista de '+genero+'...');
   const musicas = await buscarGenero(genero);
   if(!musicas||!musicas.length){ notif('❌ Erro ao carregar gênero', 3000, true); return; }
-
   downloadEmAndamento = true;
   downloadGeneroAtual = genero;
   downloadCancelado = false;
   await WakeLockManager.ativar();
-
   const dm = $('downloadModal'); if(dm) dm.classList.add('active');
   if($('dlTitulo')) $('dlTitulo').textContent = '📥 '+genero;
   if($('dlSub')) $('dlSub').textContent = 'Preparando '+musicas.length+' músicas...';
@@ -1416,28 +1419,23 @@ async function iniciarDownloadGenero(genero){
   if($('dlFechar')) $('dlFechar').style.display = 'none';
   mostrarBannerDownload('Baixando '+genero+'...');
   atualizarCardGenero(genero);
-
   const pid = genero.replace(/[^a-z0-9]/gi,'_');
   const progBar = $('prog-'+pid);
   const progFill = $('progfill-'+pid);
   const percEl = $('perc-'+pid);
   if(progBar) progBar.classList.add('ativo');
   if(percEl) percEl.classList.add('ativo');
-
   const cache = await abrirCache();
   if(!cache){ notif('❌ Cache indisponível', 3000, true); downloadEmAndamento = false; return; }
-
   let baixadas = 0, falhas = 0;
   const total = musicas.length;
   let ultimoUpdate = 0;
-
   for(let i=0; i<musicas.length; i++){
     if(downloadCancelado) break;
     const m = musicas[i];
     const url = getUrlCanonica(m);
     const key = urlCacheKey(url);
     let ok = false;
-
     if(url && key){
       try { if(await cache.match(key)){ ok = true; } } catch(_){}
       if(!ok){
@@ -1449,7 +1447,7 @@ async function iniciarDownloadGenero(genero){
             const r = await fetch(url, {signal:ctrl.signal, mode:'cors'});
             clearTimeout(tid);
             if(r.ok){
-              await cache.put(key, r.clone());   // ← chave normalizada
+              await cache.put(key, r.clone());   // salva com a chave normalizada
               ok = true;
               break;
             }
@@ -1457,9 +1455,7 @@ async function iniciarDownloadGenero(genero){
         }
       }
     }
-
     if(ok) baixadas++; else falhas++;
-
     const pct = Math.round(((i+1)/total)*100);
     const agora = Date.now();
     if(agora - ultimoUpdate > 300 || i === musicas.length-1){
@@ -1473,7 +1469,6 @@ async function iniciarDownloadGenero(genero){
       if(percEl) percEl.textContent = pct+'%';
       mostrarBannerDownload(genero+': '+pct+'% ('+baixadas+'/'+total+')');
     }
-
     if((i+1) % 20 === 0){
       const meta = getOfflineMeta();
       meta[genero] = {baixadas, total, falhas, data:Date.now(), parcial:true};
@@ -1481,24 +1476,20 @@ async function iniciarDownloadGenero(genero){
     }
     if((i+1) % 3 === 0) await sleep(20);
   }
-
   const meta = getOfflineMeta();
   meta[genero] = {baixadas, total, falhas, data:Date.now(), completo: baixadas >= total*0.9};
   setOfflineMeta(meta);
-
   if(progBar) progBar.classList.remove('ativo');
   if(percEl) percEl.classList.remove('ativo');
   esconderBannerDownload();
   await WakeLockManager.desativar();
   downloadEmAndamento = false;
   downloadGeneroAtual = '';
-
   const cancelado = downloadCancelado;
   downloadCancelado = false;
   if($('dlCancelar')) $('dlCancelar').style.display = 'none';
   if($('dlFechar')) $('dlFechar').style.display = 'block';
   if($('dlSub')) $('dlSub').textContent = cancelado ? '🛑 Cancelado' : '✅ '+baixadas+' de '+total+' baixadas!';
-
   if(!cancelado && baixadas > 0){
     notif('✅ '+baixadas+' músicas offline!', 4000);
     vibrar([50,50,50,50,50]);
@@ -1544,7 +1535,6 @@ function revogarBlobUrlAnterior(){
   }
 }
 
-/* ✅ CORRIGIDO: tocar() usa a MESMA chave do download */
 async function tocar(){
   if(!appState.isBackgroundActive || appState.carregando || !appState.musicas.length) return;
   const meuToken = ++_tocarToken;
@@ -1580,7 +1570,7 @@ async function tocar(){
     const key = urlCacheKey(url);
     let ok = false;
 
-    // 1ª tentativa: cache offline
+    // PONTO 3: tocar usa cache com a MESMA chave do download
     if(key){
       try{
         const c = await abrirCache();
@@ -1588,10 +1578,8 @@ async function tocar(){
           const resp = await c.match(key);
           if(resp){
             const blob = await resp.blob();
-            logInfo('[OFFLINE] Hit:', m.title, blob.size, 'bytes', blob.type);
-            if(blob.size < 1000 || blob.type === 'text/html'){
-              logWarn('[OFFLINE] Arquivo inválido no cache, ignorando');
-            }else{
+            // Valida o blob (download pode ter salvo erro HTML)
+            if(blob.size >= 1000 && blob.type !== 'text/html'){
               const blobUrl = URL.createObjectURL(blob);
               appState._lastBlobUrl = blobUrl;
               const carregou = await new Promise(res => {
@@ -1608,7 +1596,7 @@ async function tocar(){
       }catch(e){ revogarBlobUrlAnterior(); }
     }
 
-    // 2ª tentativa: online
+    // Online: tenta URL direta
     if(!ok && navigator.onLine && url){
       if(meuToken !== _tocarToken) return;
       try{
@@ -1760,7 +1748,6 @@ function atualizarBadgeFav(){
   const b = $('barraBadgeFav');
   if(b){ b.textContent = n; b.style.display = n > 0 ? 'block' : 'none'; }
 }
-/* ✅ CORRIGIDO: favorite salva o repo também */
 function toggleFav(m){
   if(!m) return;
   vibrar(20);
@@ -2794,7 +2781,7 @@ async function iniciar(){
     try { appState.fingerprint = await gerarFingerprintReal(); }
     catch(e){ appState.fingerprint = btoa(navigator.userAgent).slice(0,32); }
 
-    /* ✅ CORRIGIDO: migra favoritas antigas para incluir repo */
+    // Migração: favoritas antigas ganham repo
     appState.favorites = appState.favorites.map(f => ({
       ...f,
       repo: f.repo || GENRE_REPOS[f.genero] || 'radiolojasjc-hub/play12'
