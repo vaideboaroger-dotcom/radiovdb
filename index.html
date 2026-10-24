@@ -108,9 +108,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .timer-texto{font-family:'Rajdhani',sans-serif;font-size:.85rem;font-weight:800;
   color:#fff;font-variant-numeric:tabular-nums;
   text-shadow:0 2px 6px rgba(0,0,0,.6);white-space:nowrap;flex-shrink:0;
-  /* SOBE O TIMER */
   position:relative;top:-3px}
-/* LETREIRO MAIOR */
 .letreiro-wrap{width:100%;height:40px;padding:0 16px;overflow:hidden;
   display:flex;align-items:center;cursor:pointer}
 .letreiro{font-size:1.1rem;font-weight:800;color:rgba(255,255,255,.98);
@@ -153,7 +151,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   font-weight:700;color:rgba(255,255,255,.9);font-variant-numeric:tabular-nums;
   margin-bottom:6px;text-shadow:0 1px 4px rgba(0,0,0,.6)}
 
-/* BARRA DE PROGRESSO COM EFEITO NEON */
 .progress-bar{
   height:6px;background:rgba(0,0,0,.5);border-radius:6px;
   overflow:visible;cursor:pointer;touch-action:none;
@@ -185,7 +182,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   50%{transform:translateY(-50%) scale(1.4);opacity:.7}
 }
 
-/* BARRA INFERIOR MAIS LARGA */
 .barra-inferior{position:fixed;left:50%;transform:translateX(-50%);
   bottom:calc(14px + var(--safe-bottom));z-index:25;
   display:flex;align-items:center;justify-content:center;gap:4px;
@@ -254,7 +250,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .media-anuncios video,.media-anuncios img{position:absolute;inset:0;width:100%;height:100%;
   object-fit:cover;opacity:0;transition:opacity 1.2s}
 .media-anuncios .active{opacity:1;z-index:3}
-/* ANÚNCIO: "PUBLICIDADE" CENTRALIZADO — sem overlay no canto */
 .anuncio-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   pointer-events:none;z-index:5}
 .anuncio-label{font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:900;
@@ -263,6 +258,19 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   text-shadow:0 0 12px rgba(0,212,255,.8);backdrop-filter:blur(6px);
   animation:anuncioPulse 2s ease-in-out infinite}
 @keyframes anuncioPulse{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+
+/* BOTÃO PUBLICIDADE (link externo) */
+.btn-publicidade{position:fixed;bottom:calc(80px + var(--safe-bottom));right:16px;
+  z-index:30;background:linear-gradient(135deg,#f59e0b,#fbbf24);
+  border:none;color:#000;border-radius:50px;padding:10px 16px;
+  font-size:.7rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;
+  cursor:pointer;display:none;align-items:center;gap:6px;
+  box-shadow:0 4px 20px rgba(251,191,36,.6),inset 0 1px 0 rgba(255,255,255,.3);
+  animation:pulsePub 2s ease-in-out infinite}
+.btn-publicidade.show{display:flex}
+.btn-publicidade:active{transform:scale(.92)}
+@keyframes pulsePub{0%,100%{box-shadow:0 4px 20px rgba(251,191,36,.6)}50%{box-shadow:0 4px 30px rgba(251,191,36,1)}}
+.btn-publicidade i{font-size:.85rem}
 
 .btn-coracao-topo{background:rgba(255,255,255,.12);
   border:1.5px solid rgba(255,255,255,.25);border-radius:50%;
@@ -577,13 +585,14 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   .loading-logo-wrapper{width:130px;height:130px}
   .block-logo{width:110px;height:110px}
   .anuncio-label{font-size:.85rem;letter-spacing:4px;padding:8px 18px}
+  .btn-publicidade{bottom:calc(72px + var(--safe-bottom));right:12px;padding:8px 13px;font-size:.62rem}
 }
 </style>
 </head>
 <body>
 
 <div id="introScreen">
-  <video id="introVideo" src="vdb.mp4" muted playsinline preload="auto"></video>
+  <video id="introVideo" muted playsinline preload="auto"></video>
 </div>
 
 <div id="loadingScreen">
@@ -655,6 +664,11 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     </div>
   </div>
 </div>
+
+<!-- BOTÃO PUBLICIDADE EXTERNA (aparece se tiver link configurado) -->
+<button class="btn-publicidade" id="btnPublicidade">
+  <i class="fas fa-external-link-alt"></i> Publicidade
+</button>
 
 <div class="fab-container" id="fabContainer">
   <div class="fab-menu" id="fabMenu">
@@ -853,6 +867,56 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 (function(){
 'use strict';
 
+/* ═══════════════════════════════════════════════════════════════════
+   ████  CONFIGURAÇÃO DE MÍDIAS E PUBLICIDADE  ████
+   ═══════════════════════════════════════════════════════════════════
+   
+   EDITE APENAS ESTE BLOCO PARA TROCAR OS LINKS.
+   
+   - INTRO_URL ......... Vídeo de abertura (5 segundos)
+   - FUNDO_VIDEOS ...... Lista de vídeos que ficam passando no fundo
+                         do player (alternam automaticamente)
+   - ANUNCIO_VIDEOS .... Lista de vídeos da tela de anúncio
+                         (alternam automaticamente)
+   - LINK_PUBLICIDADE .. Link externo que abre quando o usuário
+                         clica no botão "Publicidade" (deixe null
+                         para esconder o botão)
+   - PUBLICIDADE_TEXTO . Texto do botão de publicidade
+   
+   ═══════════════════════════════════════════════════════════════════ */
+
+const MIDIA_CONFIG = {
+
+  // ── INTRO ─────────────────────────────────────────────────────
+  INTRO_URL: 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/vdb.mp4',
+
+  // ── VÍDEOS DE FUNDO (player principal) ────────────────────────
+  // Coloque quantos quiser. Vão alternar em ordem.
+  FUNDO_VIDEOS: [
+    'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/fita.mp4',
+    'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'
+  ],
+
+  // ── VÍDEOS DE ANÚNCIO (tela PUBLICIDADE) ──────────────────────
+  ANUNCIO_VIDEOS: [
+    'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'
+  ],
+
+  // ── LINK EXTERNO DE PUBLICIDADE ───────────────────────────────
+  // Aparece um botão "Publicidade" no canto da tela.
+  // Troque pelo link do seu anunciante.
+  // Coloque null para esconder o botão.
+  LINK_PUBLICIDADE: 'https://wa.me/5512988461978',
+
+  // Texto do botão
+  PUBLICIDADE_TEXTO: 'Publicidade'
+
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   FIM DO BLOCO DE CONFIGURAÇÃO
+   ═══════════════════════════════════════════════════════════════════ */
+
 const VERSAO_NUMERO = 9;
 const VERSAO = 'v' + String(VERSAO_NUMERO).padStart(3, '0');
 
@@ -861,8 +925,8 @@ const CONFIG = {
   TEMPO_TESTE_SEGUNDOS: 86400,
   APP_VERSION: VERSAO,
   DEBUG: false,
-  INTRO_DURACAO_MS: 5000,        // ✅ 5 segundos
-  INTRO_START_SEG: 0,            // ✅ começa do início
+  INTRO_DURACAO_MS: 5000,
+  INTRO_START_SEG: 0,
   LOADING_MIN_MS: 1200,
   MIDIA_MAX_SEGURANCA_MS: 60000,
   MIDIA_TIMEOUT_LOAD_MS: 2500,
@@ -874,7 +938,8 @@ const CONFIG = {
   TEMPO_BOTAO_INSTALAR: 300000,
   REVALIDAR_CACHE_MS: 6*60*60*1000,
   MAX_FALHAS_CONSECUTIVAS: 5,
-  MIX_GENEROS: ['SERTANEJO','FORRÓ','PAGODE','ROMÂNTICA','MPB','POP/MIX'] // ✅ configurável
+  MIX_GENEROS: ['SERTANEJO','FORRÓ','PAGODE','ROMÂNTICA','MPB','POP/MIX'],
+  INTERVALO_MIDIA_MS: 300
 };
 
 const logWarn = CONFIG.DEBUG ? console.warn : () => {};
@@ -909,12 +974,10 @@ function shuffle(a){
   return x;
 }
 
-/* NOTIFICAÇÕES COM PRIORIDADE */
 const notifQ = []; let notifBusy = false;
 function notif(msg, dur, prioridade){
   dur = dur || 2000;
   if(notifQ.length >= 5){
-    // ✅ Só descarta se não for prioritária
     const idx = notifQ.findIndex(n => !n.prio);
     if(idx >= 0) notifQ.splice(idx, 1);
     else notifQ.shift();
@@ -936,7 +999,7 @@ async function processarNotif(){
   setTimeout(processarNotif, 200);
 }
 
-/* SEGURANÇA (mantida) */
+/* SEGURANÇA */
 const HASH_ADMIN='ae6eaa9dbe0baf078f6a56d50641fb6bcf135ee43deca13a6e10910aa7f704b5';
 const HASH_MASTER='7eca27de328d65b0f04c3ca43eb023961c19db9ce2b3fc4e94f25e87e65c5c04';
 const _KEY_OBF='bGxtdWJcZW1gY19ifHB2Y3tgLXMubGx8IGJ8endwYit0XXdrfnB8aistfWQ=';
@@ -1168,7 +1231,6 @@ const FilaInteligente = {
       else this.fila = shuffle(this.poolOriginal.filter(m => !appState.musicasComProblema.has(m.id)));
     }
     const m = this.fila.shift();
-    // ✅ Se não há música, limpa problemas e avisa
     if(!m){
       if(appState.musicasComProblema.size >= this.poolOriginal.length && this.poolOriginal.length > 0){
         appState.musicasComProblema.clear();
@@ -1190,7 +1252,6 @@ const FilaInteligente = {
   total(){ return this.poolOriginal.length; }
 };
 
-// ✅ ESTRUTURA DECLARATIVA
 const GENRE_CONFIG = {
   'BÔNUS':            { repo:'radiolojasjc-hub/play12',        file:'play.json' },
   'FLASHBACK':        { repo:'radiolojasjc-hub/flashbacktop',  file:'flashback.json' },
@@ -1287,7 +1348,6 @@ async function buscarGenero(g, tentativa){
       cacheGenero.set(g, pp[g].musicas);
       return pp[g].musicas;
     }
-    // ✅ RETRY com backoff
     if(tentativa < 2 && navigator.onLine){
       await sleep(800 * (tentativa + 1));
       return buscarGenero(g, tentativa + 1);
@@ -1310,7 +1370,6 @@ async function _revalidarGenero(g){
     }
   }catch(e){ logWarn('Revalidação falhou', g, e); }
 }
-// ✅ getUrls com encodeURIComponent (não destrói acentos)
 function getUrls(m){
   const s = m.src||'';
   if(!s) return [];
@@ -1473,7 +1532,7 @@ async function abrirGerenciadorOffline(){
 
 const audio = $('musicPlayer');
 let mediaSessionRegistrado = false;
-let _tocarToken = 0;  // ✅ token anti-concorrência
+let _tocarToken = 0;
 
 function revogarBlobUrlAnterior(){
   if(appState._lastBlobUrl){
@@ -1493,7 +1552,7 @@ async function tocar(){
     if(appState._forcarMusica){ m = appState._forcarMusica; appState._forcarMusica = null; }
     else m = FilaInteligente.proxima();
     if(!m){ appState.carregando = false; $('playBtn').classList.remove('loading'); return; }
-    if(meuToken !== _tocarToken) return; // outra chamada assumiu
+    if(meuToken !== _tocarToken) return;
     appState.musicaAtual = m;
     atualizarLetreiro(m);
     atualizarInfoMusica(m);
@@ -1626,7 +1685,6 @@ function prev(){
   if(anterior){ appState._forcarMusica = anterior; setTimeout(tocar, 100); }
 }
 
-// ✅ Letreiro com cache para evitar reflow
 let _letreiroCache = { texto:'', dur:0 };
 function atualizarLetreiro(m){
   const el = $('scrollText');
@@ -1848,11 +1906,10 @@ const SearchManager = {
     this._ordemCacheHash = '';
     const sg = $('buscaGenero'); if(sg) sg.value = '';
     const inp = $('buscaInput');
-    if(inp) inp.value = ''; // ✅ limpa input
+    if(inp) inp.value = '';
     abrirModal('modalBusca');
     setTimeout(() => { if(inp) inp.focus(); }, 250);
     this.buscar();
-    // ✅ Carrega em idle, não bloqueia
     if(!UniversalPool.carregado && !UniversalPool.carregando){
       const ce = $('buscaCount');
       if(ce) ce.textContent = '🔄 Carregando em segundo plano...';
@@ -1983,7 +2040,7 @@ async function iniciarTimer(){
   await atualizarTimer();
   if(timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(async () => {
-    if(document.hidden) return; // ✅ pausa em background
+    if(document.hidden) return;
     if(_dec(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ)) === 'true'){ clearInterval(timerInterval); timerInterval = null; return; }
     const t = await SecureTimer.tempoRestante();
     if(t <= 0){ clearInterval(timerInterval); timerInterval = null; bloquear(); return; }
@@ -1997,7 +2054,6 @@ async function bloquear(){
   a.pause();
   appState.isPlaying = false;
   $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
-  // ✅ Pausa o silent audio também
   const bg = $('backgroundAudio');
   if(bg){ try{ bg.pause(); bg.removeAttribute('src'); bg.load(); }catch(_){} }
   if(keepAliveInterval){ clearInterval(keepAliveInterval); keepAliveInterval = null; }
@@ -2108,19 +2164,20 @@ function enviarMeuIdWhats(){
   window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent(msg));
 }
 
-/* MÍDIAS */
-const FITA_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/fita.mp4';
-const BV1_URL  = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4';
-const MIDIAS_ANUNCIO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/anuncios.json';
-const MIDIAS_ANUNCIO_FALLBACK = [{tipo:'video', src:'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'}];
+/* ═══════════════════════════════════════════════════════════════════
+   SISTEMA DE MÍDIAS — usa MIDIA_CONFIG (editável no topo)
+   ═══════════════════════════════════════════════════════════════════ */
 
 const videosAtivos = new Set();
 const midiaTokens = new WeakMap();
 const midiaTimers = new WeakMap();
 
-async function carregarMidias(container, url, options){
-  options = options || {};
-  const fallback = options.fallback || [];
+/**
+ * Carrega uma lista de URLs em um container, alternando automaticamente.
+ * @param {HTMLElement} container - onde colocar as mídias
+ * @param {string[]} urls - lista de URLs de vídeo
+ */
+async function carregarListaMidias(container, urls){
   const tokenAtual = (midiaTokens.get(container) || 0) + 1;
   midiaTokens.set(container, tokenAtual);
   const meuToken = tokenAtual;
@@ -2134,167 +2191,134 @@ async function carregarMidias(container, url, options){
   });
   container.querySelectorAll('video,img').forEach(el => el.remove());
 
-  try{
-    let ms = [];
-    if(options.alternarFitaBv1){
-      // ✅ Alterna fita.mp4 ↔ bv1.mp4 (sem espaços vazios, fallback incluído)
-      ms = [
-        {tipo:'video', src: FITA_URL},
-        {tipo:'video', src: BV1_URL},
-        ...(fallback || [])
-      ];
-    }else{
-      if(url){
-        try{
-          const ctrl = new AbortController();
-          const tid = setTimeout(() => ctrl.abort(), 9000);
-          const r = await fetch(url, {signal:ctrl.signal});
-          clearTimeout(tid);
-          if(r.ok){
-            const d = await r.json();
-            if(Array.isArray(d)) ms = d;
-            else if(d.medias) ms = d.medias;
-            else if(d.midias) ms = d.midias;
-          }
-        }catch(e){}
-      }
-      if(!ms.length) ms = fallback;
-      ms = ms.filter(m => m && (m.tipo === 'video' || m.tipo === 'imagem') && m.src);
-    }
+  if(!urls || !urls.length) return;
 
-    if(meuToken !== midiaTokens.get(container)) return;
-    if(!ms.length) return;
-
-    const els = [];
-    ms.forEach((m, i) => {
-      let el;
-      if(m.tipo === 'video'){
-        el = document.createElement('video');
-        el.src = m.src;
-        el.muted = true; el.loop = false; el.playsInline = true;
-        el.setAttribute('playsinline','');
-        el.setAttribute('webkit-playsinline','');
-        el.setAttribute('muted','');
-        el.preload = 'auto';
-        el.addEventListener('error', () => {
-          logWarn('[MÍDIA ERRO]', m.src, el.error && el.error.code);
-          el.dataset.erro = '1';
-        });
-        el.addEventListener('emptied', () => { videosAtivos.delete(el); });
-        videosAtivos.add(el);
-      }else{
-        el = document.createElement('img');
-        el.src = m.src;
-        el.onerror = () => { el.dataset.erro = '1'; };
-      }
-      el.className = i === 0 ? 'active' : 'inactive';
-      container.appendChild(el);
-      els.push(el);
+  const els = [];
+  urls.forEach((src, i) => {
+    const el = document.createElement('video');
+    el.src = src;
+    el.muted = true;
+    el.loop = false;
+    el.playsInline = true;
+    el.setAttribute('playsinline','');
+    el.setAttribute('webkit-playsinline','');
+    el.setAttribute('muted','');
+    el.preload = 'auto';
+    el.addEventListener('error', () => {
+      logWarn('[MÍDIA ERRO]', src, el.error && el.error.code);
+      el.dataset.erro = '1';
     });
-    if(!els.length) return;
+    el.addEventListener('emptied', () => { videosAtivos.delete(el); });
+    videosAtivos.add(el);
+    el.className = i === 0 ? 'active' : 'inactive';
+    container.appendChild(el);
+    els.push(el);
+  });
 
-    let idx = 0;
-    function proximoIndice(atual){
-      for(let passo=1; passo<=els.length; passo++){
-        const prox = (atual + passo) % els.length;
-        if(els[prox].dataset.erro !== '1') return prox;
-      }
-      return (atual + 1) % els.length;
+  let idx = 0;
+  function proximoIndice(atual){
+    for(let passo=1; passo<=els.length; passo++){
+      const prox = (atual + passo) % els.length;
+      if(els[prox].dataset.erro !== '1') return prox;
+    }
+    return (atual + 1) % els.length;
+  }
+
+  function tocarIdx(n){
+    if(meuToken !== midiaTokens.get(container)) return;
+    const tAnterior = midiaTimers.get(container);
+    if(tAnterior){ clearTimeout(tAnterior); midiaTimers.delete(container); }
+
+    const el = els[n];
+    if(!el) return;
+    if(el.dataset.erro === '1'){
+      idx = proximoIndice(n);
+      return tocarIdx(idx);
     }
 
-    function tocarIdx(n){
-      if(meuToken !== midiaTokens.get(container)) return;
-      const tAnterior = midiaTimers.get(container);
-      if(tAnterior){ clearTimeout(tAnterior); midiaTimers.delete(container); }
+    els.forEach((x, j) => x.classList.toggle('active', j === n));
 
-      const el = els[n];
-      if(!el) return;
-      if(el.dataset.erro === '1'){
-        idx = proximoIndice(n);
-        return tocarIdx(idx);
-      }
+    els.forEach((x, j) => {
+      if(x.tagName === 'VIDEO' && j !== n){ try { x.pause(); x.currentTime = 0; } catch(e){} }
+    });
+    try { el.currentTime = 0; } catch(e){}
 
-      els.forEach((x, j) => x.classList.toggle('active', j === n));
-
-      if(el.tagName === 'VIDEO'){
-        els.forEach((x, j) => {
-          if(x.tagName === 'VIDEO' && j !== n){ try { x.pause(); x.currentTime = 0; } catch(e){} }
-        });
-        try { el.currentTime = 0; } catch(e){}
-
-        const playPromise = el.play();
-        if(playPromise && playPromise.catch){
-          playPromise.catch(err => {
-            logWarn('[PLAY FALHOU]', el.src, err.name);
-            el.dataset.erro = '1';
-            if(meuToken === midiaTokens.get(container)){
-              setTimeout(() => {
-                if(meuToken !== midiaTokens.get(container)) return;
-                idx = proximoIndice(n);
-                tocarIdx(idx);
-              }, 300);
-            }
-          });
-        }
-
-        const checkLoaded = setTimeout(() => {
-          if(meuToken !== midiaTokens.get(container)) return;
-          if(idx !== n) return;
-          if(el.readyState < 2){
-            logWarn('[MÍDIA SEM DADOS]', el.src, 'readyState:', el.readyState);
-            el.dataset.erro = '1';
-            idx = proximoIndice(n);
-            tocarIdx(idx);
-          }
-        }, CONFIG.MIDIA_TIMEOUT_LOAD_MS);
-        el.addEventListener('loadeddata', () => clearTimeout(checkLoaded), {once:true});
-        el.addEventListener('error', () => {
-          clearTimeout(checkLoaded);
-          if(meuToken !== midiaTokens.get(container)) return;
-          if(idx !== n) return;
+    const playPromise = el.play();
+    if(playPromise && playPromise.catch){
+      playPromise.catch(err => {
+        logWarn('[PLAY FALHOU]', el.src, err.name);
+        el.dataset.erro = '1';
+        if(meuToken === midiaTokens.get(container)){
           setTimeout(() => {
             if(meuToken !== midiaTokens.get(container)) return;
             idx = proximoIndice(n);
             tocarIdx(idx);
           }, 300);
-        }, {once:true});
-
-        el.onended = () => {
-          if(meuToken !== midiaTokens.get(container)) return;
-          setTimeout(() => {
-            if(meuToken !== midiaTokens.get(container)) return;
-            idx = proximoIndice(n);
-            tocarIdx(idx);
-          }, 300); // ✅ reduzido de 700ms para 300ms (menos "espaço vazio")
-        };
-
-        const t = setTimeout(() => {
-          if(meuToken === midiaTokens.get(container) && idx === n){
-            idx = proximoIndice(n);
-            tocarIdx(idx);
-          }
-        }, CONFIG.MIDIA_MAX_SEGURANCA_MS);
-        midiaTimers.set(container, t);
-      }else{
-        const t = setTimeout(() => {
-          if(meuToken === midiaTokens.get(container) && idx === n){
-            idx = proximoIndice(n);
-            tocarIdx(idx);
-          }
-        }, 5000);
-        midiaTimers.set(container, t);
-      }
+        }
+      });
     }
-    tocarIdx(0);
-  }catch(e){ logErr('midias:', e); }
+
+    const checkLoaded = setTimeout(() => {
+      if(meuToken !== midiaTokens.get(container)) return;
+      if(idx !== n) return;
+      if(el.readyState < 2){
+        logWarn('[MÍDIA SEM DADOS]', el.src, 'readyState:', el.readyState);
+        el.dataset.erro = '1';
+        idx = proximoIndice(n);
+        tocarIdx(idx);
+      }
+    }, CONFIG.MIDIA_TIMEOUT_LOAD_MS);
+    el.addEventListener('loadeddata', () => clearTimeout(checkLoaded), {once:true});
+    el.addEventListener('error', () => {
+      clearTimeout(checkLoaded);
+      if(meuToken !== midiaTokens.get(container)) return;
+      if(idx !== n) return;
+      setTimeout(() => {
+        if(meuToken !== midiaTokens.get(container)) return;
+        idx = proximoIndice(n);
+        tocarIdx(idx);
+      }, 300);
+    }, {once:true});
+
+    el.onended = () => {
+      if(meuToken !== midiaTokens.get(container)) return;
+      setTimeout(() => {
+        if(meuToken !== midiaTokens.get(container)) return;
+        idx = proximoIndice(n);
+        tocarIdx(idx);
+      }, CONFIG.INTERVALO_MIDIA_MS);
+    };
+
+    const t = setTimeout(() => {
+      if(meuToken === midiaTokens.get(container) && idx === n){
+        idx = proximoIndice(n);
+        tocarIdx(idx);
+      }
+    }, CONFIG.MIDIA_MAX_SEGURANCA_MS);
+    midiaTimers.set(container, t);
+  }
+  tocarIdx(0);
 }
 
 async function carregarMidiasPadrao(){
-  // ✅ Modo alternado: fita.mp4 ↔ bv1.mp4 sem espaços
-  await carregarMidias($('mediaContainer'), null, {alternarFitaBv1: true});
+  await carregarListaMidias($('mediaContainer'), MIDIA_CONFIG.FUNDO_VIDEOS);
 }
 async function carregarMidiasAnuncio(){
-  await carregarMidias($('mediaAnuncios'), MIDIAS_ANUNCIO_URL, {fallback: MIDIAS_ANUNCIO_FALLBACK});
+  await carregarListaMidias($('mediaAnuncios'), MIDIA_CONFIG.ANUNCIO_VIDEOS);
+}
+
+/* BOTÃO PUBLICIDADE EXTERNA */
+function initBotaoPublicidade(){
+  const btn = $('btnPublicidade');
+  if(!btn) return;
+  const link = MIDIA_CONFIG.LINK_PUBLICIDADE;
+  if(!link){ btn.style.display = 'none'; return; }
+  btn.innerHTML = '<i class="fas fa-external-link-alt"></i> ' + sanitize(MIDIA_CONFIG.PUBLICIDADE_TEXTO || 'Publicidade');
+  btn.onclick = () => {
+    vibrar(15);
+    window.open(link, '_blank', 'noopener,noreferrer');
+  };
+  btn.classList.add('show');
 }
 
 let cicloTimer = null;
@@ -2308,7 +2332,6 @@ function agendarCiclo(){
       agendarCiclo();
       return;
     }
-    // ✅ Não interrompe música tocando
     if(appState.isPlaying && appState.telaAtual === 'principal'){
       agendarCiclo();
       return;
@@ -2346,6 +2369,12 @@ function atualizarVisibilidadeFAB(){
   const emAnuncio = appState.telaAtual === 'anuncios';
   if(bloqueado || emAnuncio) fab.style.display = 'none';
   else fab.style.display = '';
+  // Botão publicidade só na tela principal
+  const btnPub = $('btnPublicidade');
+  if(btnPub && MIDIA_CONFIG.LINK_PUBLICIDADE){
+    if(bloqueado || emAnuncio) btnPub.classList.remove('show');
+    else btnPub.classList.add('show');
+  }
 }
 function mostrarSwipeHint(){
   let h = document.querySelector('.swipe-hint');
@@ -2378,7 +2407,6 @@ const SwipeManager = {
     if(!appState.playerAtivado) return;
     if(e.touches.length !== 1) return;
     const t = e.target;
-    // ✅ Checagem otimizada
     if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(t.tagName)){ this.ignorar = true; return; }
     if(t.closest('.modal,.fab-menu,.progress-bar,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item')){ this.ignorar = true; return; }
     this.ignorar = false;
@@ -2571,7 +2599,7 @@ function initFab(){
 }
 async function ativarMix(){
   notif('🔀 Misturando...');
-  const gs = CONFIG.MIX_GENEROS; // ✅ configurável
+  const gs = CONFIG.MIX_GENEROS;
   const todas = [];
   for(const g of gs){ const m = await buscarGenero(g); if(m) todas.push(...m.slice(0, 50)); }
   if(!todas.length){ notif('❌ Erro', 3000, true); return; }
@@ -2709,11 +2737,14 @@ function setupProgressBar(){
   bar.addEventListener('pointercancel', () => { scrubbing = false; });
 }
 
-/* INTRO — 5 segundos */
+/* INTRO — usa MIDIA_CONFIG.INTRO_URL */
 async function rodarIntro(){
   const intro = $('introScreen');
   const video = $('introVideo');
   if(!intro || !video){ appState.introAtiva = false; return false; }
+  const introUrl = MIDIA_CONFIG.INTRO_URL;
+  if(!introUrl){ intro.style.display = 'none'; appState.introAtiva = false; return false; }
+  video.src = introUrl;
   try{
     video.muted = true;
     video.playsInline = true;
@@ -2734,7 +2765,7 @@ async function rodarIntro(){
     appState.introAtiva = false;
     return false;
   }
-  await sleep(CONFIG.INTRO_DURACAO_MS); // ✅ 5 segundos
+  await sleep(CONFIG.INTRO_DURACAO_MS);
   intro.classList.add('hide');
   setTimeout(() => { intro.style.display = 'none'; }, 800);
   appState.introAtiva = false;
@@ -2765,9 +2796,11 @@ async function iniciar(){
       $('btnInstalarFixo').style.display = 'none';
     }
 
+    // Inicializa botão de publicidade externa
+    initBotaoPublicidade();
+
     const introPromessa = rodarIntro();
 
-    // ✅ Paralelo: mídia + gênero BÔNUS
     const [_, m] = await Promise.all([
       carregarMidiasPadrao(),
       buscarGenero('BÔNUS')
@@ -2864,7 +2897,6 @@ async function iniciar(){
       appState.isPlaying = false;
       setTimeout(() => { if(!appState.carregando) next(); }, 200);
     };
-    // ✅ onerror com flag anti-loop
     audio.onerror = () => {
       if(appState.carregando || appState._erroProcessado) return;
       if(!audio.currentSrc || audio.currentSrc === location.href) return;
@@ -2896,7 +2928,6 @@ async function iniciar(){
         });
         if(!jaFullscreen() && appState.playerAtivado) forcarFullscreen();
         if(downloadEmAndamento) WakeLockManager.ativar();
-        // ✅ Reativa WakeLock se estiver tocando
         if(appState.isPlaying) WakeLockManager.ativar();
       }
     });
