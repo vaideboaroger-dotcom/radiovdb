@@ -259,7 +259,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   animation:anuncioPulse 2s ease-in-out infinite}
 @keyframes anuncioPulse{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
 
-/* BOTÃO PUBLICIDADE (link externo) */
 .btn-publicidade{position:fixed;bottom:calc(80px + var(--safe-bottom));right:16px;
   z-index:30;background:linear-gradient(135deg,#f59e0b,#fbbf24);
   border:none;color:#000;border-radius:50px;padding:10px 16px;
@@ -665,7 +664,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   </div>
 </div>
 
-<!-- BOTÃO PUBLICIDADE EXTERNA (aparece se tiver link configurado) -->
 <button class="btn-publicidade" id="btnPublicidade">
   <i class="fas fa-external-link-alt"></i> Publicidade
 </button>
@@ -868,54 +866,21 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 'use strict';
 
 /* ═══════════════════════════════════════════════════════════════════
-   ████  CONFIGURAÇÃO DE MÍDIAS E PUBLICIDADE  ████
-   ═══════════════════════════════════════════════════════════════════
-   
-   EDITE APENAS ESTE BLOCO PARA TROCAR OS LINKS.
-   
-   - INTRO_URL ......... Vídeo de abertura (5 segundos)
-   - FUNDO_VIDEOS ...... Lista de vídeos que ficam passando no fundo
-                         do player (alternam automaticamente)
-   - ANUNCIO_VIDEOS .... Lista de vídeos da tela de anúncio
-                         (alternam automaticamente)
-   - LINK_PUBLICIDADE .. Link externo que abre quando o usuário
-                         clica no botão "Publicidade" (deixe null
-                         para esconder o botão)
-   - PUBLICIDADE_TEXTO . Texto do botão de publicidade
-   
+   CONFIGURAÇÃO DE MÍDIAS E PUBLICIDADE (edite só este bloco)
    ═══════════════════════════════════════════════════════════════════ */
-
 const MIDIA_CONFIG = {
-
-  // ── INTRO ─────────────────────────────────────────────────────
   INTRO_URL: 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/vdb.mp4',
-
-  // ── VÍDEOS DE FUNDO (player principal) ────────────────────────
-  // Coloque quantos quiser. Vão alternar em ordem.
   FUNDO_VIDEOS: [
     'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/fita.mp4',
-    'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/vdb.mp4'
+    'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4'
   ],
-
-  // ── VÍDEOS DE ANÚNCIO (tela PUBLICIDADE) ──────────────────────
   ANUNCIO_VIDEOS: [
     'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'
   ],
-
-  // ── LINK EXTERNO DE PUBLICIDADE ───────────────────────────────
-  // Aparece um botão "Publicidade" no canto da tela.
-  // Troque pelo link do seu anunciante.
-  // Coloque null para esconder o botão.
   LINK_PUBLICIDADE: 'https://wa.me/5512988461978',
-
-  // Texto do botão
   PUBLICIDADE_TEXTO: 'Publicidade'
-
 };
-
-/* ═══════════════════════════════════════════════════════════════════
-   FIM DO BLOCO DE CONFIGURAÇÃO
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════ */
 
 const VERSAO_NUMERO = 9;
 const VERSAO = 'v' + String(VERSAO_NUMERO).padStart(3, '0');
@@ -924,7 +889,7 @@ const CONFIG = {
   WHATSAPP: '5512988461978',
   TEMPO_TESTE_SEGUNDOS: 86400,
   APP_VERSION: VERSAO,
-  DEBUG: false,
+  DEBUG: true,
   INTRO_DURACAO_MS: 5000,
   INTRO_START_SEG: 0,
   LOADING_MIN_MS: 1200,
@@ -944,6 +909,7 @@ const CONFIG = {
 
 const logWarn = CONFIG.DEBUG ? console.warn : () => {};
 const logErr  = CONFIG.DEBUG ? console.error : () => {};
+const logInfo = CONFIG.DEBUG ? console.log : () => {};
 
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -1307,12 +1273,16 @@ const GENRE_REPOS = Object.fromEntries(
 const CACHE_GEN_KEY = 'vdb_genero_cache_v2';
 function _lerCacheGenero(){ try { return JSON.parse(localStorage.getItem(CACHE_GEN_KEY)||'{}'); } catch(e){ return {}; } }
 function _salvarCacheGenero(o){ try { localStorage.setItem(CACHE_GEN_KEY, JSON.stringify(o)); } catch(e){ logWarn('Cache cheio', e); } }
+
+/* ✅ CORRIGIDO: _mapMusicas agora trava o repo de origem em cada música */
 function _mapMusicas(j, genero){
   if(!Array.isArray(j)) j = j.musicas || j.data || Object.values(j)[0];
+  const repoOrigem = GENRE_REPOS[genero] || 'radiolojasjc-hub/play12';
   return (j||[]).filter(m => m && m.src && m.title).map(m => ({
     ...m,
     id: 'fav_' + (m.title + '_' + (m.artist||'Artista')).toLowerCase().replace(/[^a-z0-9]+/g, '_'),
     genero,
+    repo: repoOrigem,                    // ← CORRIGIDO: repo travado
     artist: m.artist || 'Artista'
   }));
 }
@@ -1370,15 +1340,29 @@ async function _revalidarGenero(g){
     }
   }catch(e){ logWarn('Revalidação falhou', g, e); }
 }
-function getUrls(m){
-  const s = m.src||'';
-  if(!s) return [];
-  if(s.startsWith('http')) return [s];
-  const nome = s.replace(/^\.\//,'');
-  if(!nome) return [];
-  const repo = GENRE_REPOS[m.genero]||'radiolojasjc-hub/play12';
+
+/* ✅ CORRIGIDO: getUrlCanonica usa m.repo (travado), não m.genero */
+function getUrlCanonica(m){
+  if(!m || !m.src) return null;
+  const s = String(m.src).trim();
+  if(!s) return null;
+  if(/^https?:\/\//i.test(s)) return s;
+  const nome = s.replace(/^\.\//,'').replace(/^\//,'');
+  if(!nome) return null;
+  const repo = m.repo || GENRE_REPOS[m.genero] || 'radiolojasjc-hub/play12';
   const encoded = encodeURIComponent(nome).replace(/%2F/g, '/');
-  return ['https://raw.githubusercontent.com/'+repo+'/refs/heads/main/'+encoded];
+  return `https://raw.githubusercontent.com/${repo}/refs/heads/main/${encoded}`;
+}
+
+/* ✅ CORRIGIDO: normaliza a URL para chave de cache estável */
+function urlCacheKey(url){
+  if(!url) return null;
+  try{
+    const u = new URL(url);
+    return u.origin + u.pathname;
+  }catch(e){
+    return String(url).split('?')[0].split('#')[0];
+  }
 }
 
 let downloadEmAndamento = false;
@@ -1408,16 +1392,19 @@ function mostrarBannerDownload(txt){
 }
 function esconderBannerDownload(){ const b = $('bgDownloadBanner'); if(b) b.classList.remove('show'); }
 
+/* ✅ CORRIGIDO: download usa getUrlCanonica + urlCacheKey */
 async function iniciarDownloadGenero(genero){
   if(downloadEmAndamento){ notif('⚠️ Já tem download em andamento'); return; }
   if(generoOffline(genero)){ notif('✅ Já está offline'); return; }
   notif('⏳ Carregando lista de '+genero+'...');
   const musicas = await buscarGenero(genero);
   if(!musicas||!musicas.length){ notif('❌ Erro ao carregar gênero', 3000, true); return; }
+
   downloadEmAndamento = true;
   downloadGeneroAtual = genero;
   downloadCancelado = false;
   await WakeLockManager.ativar();
+
   const dm = $('downloadModal'); if(dm) dm.classList.add('active');
   if($('dlTitulo')) $('dlTitulo').textContent = '📥 '+genero;
   if($('dlSub')) $('dlSub').textContent = 'Preparando '+musicas.length+' músicas...';
@@ -1429,39 +1416,50 @@ async function iniciarDownloadGenero(genero){
   if($('dlFechar')) $('dlFechar').style.display = 'none';
   mostrarBannerDownload('Baixando '+genero+'...');
   atualizarCardGenero(genero);
+
   const pid = genero.replace(/[^a-z0-9]/gi,'_');
   const progBar = $('prog-'+pid);
   const progFill = $('progfill-'+pid);
   const percEl = $('perc-'+pid);
   if(progBar) progBar.classList.add('ativo');
   if(percEl) percEl.classList.add('ativo');
+
   const cache = await abrirCache();
   if(!cache){ notif('❌ Cache indisponível', 3000, true); downloadEmAndamento = false; return; }
+
   let baixadas = 0, falhas = 0;
   const total = musicas.length;
   let ultimoUpdate = 0;
+
   for(let i=0; i<musicas.length; i++){
     if(downloadCancelado) break;
     const m = musicas[i];
-    const urls = getUrls(m);
+    const url = getUrlCanonica(m);
+    const key = urlCacheKey(url);
     let ok = false;
-    for(const u of urls){
-      if(downloadCancelado) break;
-      const limpa = u.split('?')[0].split('#')[0];
-      try { if(await cache.match(limpa)){ ok = true; break; } } catch(_){}
-      for(let t=1; t<=CONFIG.DOWNLOAD_RETRY; t++){
-        if(downloadCancelado) break;
-        try{
-          const ctrl = new AbortController();
-          const tid = setTimeout(() => { try{ ctrl.abort(); }catch(_){} }, CONFIG.DOWNLOAD_TIMEOUT_MS);
-          const r = await fetch(u, {signal:ctrl.signal});
-          clearTimeout(tid);
-          if(r.ok){ await cache.put(limpa, r.clone()); ok = true; break; }
-        }catch(err){ await sleep(300*t); }
+
+    if(url && key){
+      try { if(await cache.match(key)){ ok = true; } } catch(_){}
+      if(!ok){
+        for(let t=1; t<=CONFIG.DOWNLOAD_RETRY; t++){
+          if(downloadCancelado) break;
+          try{
+            const ctrl = new AbortController();
+            const tid = setTimeout(() => { try{ ctrl.abort(); }catch(_){} }, CONFIG.DOWNLOAD_TIMEOUT_MS);
+            const r = await fetch(url, {signal:ctrl.signal, mode:'cors'});
+            clearTimeout(tid);
+            if(r.ok){
+              await cache.put(key, r.clone());   // ← chave normalizada
+              ok = true;
+              break;
+            }
+          }catch(err){ await sleep(300*t); }
+        }
       }
-      if(ok) break;
     }
+
     if(ok) baixadas++; else falhas++;
+
     const pct = Math.round(((i+1)/total)*100);
     const agora = Date.now();
     if(agora - ultimoUpdate > 300 || i === musicas.length-1){
@@ -1475,6 +1473,7 @@ async function iniciarDownloadGenero(genero){
       if(percEl) percEl.textContent = pct+'%';
       mostrarBannerDownload(genero+': '+pct+'% ('+baixadas+'/'+total+')');
     }
+
     if((i+1) % 20 === 0){
       const meta = getOfflineMeta();
       meta[genero] = {baixadas, total, falhas, data:Date.now(), parcial:true};
@@ -1482,20 +1481,24 @@ async function iniciarDownloadGenero(genero){
     }
     if((i+1) % 3 === 0) await sleep(20);
   }
+
   const meta = getOfflineMeta();
-  meta[genero] = {baixadas, total, falhas, data:Date.now(), completo:baixadas >= total*0.9};
+  meta[genero] = {baixadas, total, falhas, data:Date.now(), completo: baixadas >= total*0.9};
   setOfflineMeta(meta);
+
   if(progBar) progBar.classList.remove('ativo');
   if(percEl) percEl.classList.remove('ativo');
   esconderBannerDownload();
   await WakeLockManager.desativar();
   downloadEmAndamento = false;
   downloadGeneroAtual = '';
+
   const cancelado = downloadCancelado;
   downloadCancelado = false;
   if($('dlCancelar')) $('dlCancelar').style.display = 'none';
   if($('dlFechar')) $('dlFechar').style.display = 'block';
   if($('dlSub')) $('dlSub').textContent = cancelado ? '🛑 Cancelado' : '✅ '+baixadas+' de '+total+' baixadas!';
+
   if(!cancelado && baixadas > 0){
     notif('✅ '+baixadas+' músicas offline!', 4000);
     vibrar([50,50,50,50,50]);
@@ -1541,6 +1544,7 @@ function revogarBlobUrlAnterior(){
   }
 }
 
+/* ✅ CORRIGIDO: tocar() usa a MESMA chave do download */
 async function tocar(){
   if(!appState.isBackgroundActive || appState.carregando || !appState.musicas.length) return;
   const meuToken = ++_tocarToken;
@@ -1571,44 +1575,53 @@ async function tocar(){
     audio.removeAttribute('src');
     audio.load();
     revogarBlobUrlAnterior();
-    const urls = getUrls(m).slice(0, 8);
+
+    const url = getUrlCanonica(m);
+    const key = urlCacheKey(url);
     let ok = false;
-    for(const u of urls){
-      if(meuToken !== _tocarToken) return;
+
+    // 1ª tentativa: cache offline
+    if(key){
       try{
         const c = await abrirCache();
         if(c){
-          const r = await c.match(u.split('?')[0]);
-          if(r){
-            const b = await r.blob();
-            const bu = URL.createObjectURL(b);
-            appState._lastBlobUrl = bu;
-            const car = await new Promise(res => {
-              const t = setTimeout(() => { audio.oncanplay = null; audio.onerror = null; res(false); }, 5000);
-              audio.oncanplay = () => { clearTimeout(t); audio.oncanplay = null; audio.onerror = null; res(true); };
-              audio.onerror = () => { clearTimeout(t); audio.oncanplay = null; audio.onerror = null; res(false); };
-              audio.src = bu; audio.load();
-            });
-            if(car){ ok = true; break; }
-            revogarBlobUrlAnterior();
+          const resp = await c.match(key);
+          if(resp){
+            const blob = await resp.blob();
+            logInfo('[OFFLINE] Hit:', m.title, blob.size, 'bytes', blob.type);
+            if(blob.size < 1000 || blob.type === 'text/html'){
+              logWarn('[OFFLINE] Arquivo inválido no cache, ignorando');
+            }else{
+              const blobUrl = URL.createObjectURL(blob);
+              appState._lastBlobUrl = blobUrl;
+              const carregou = await new Promise(res => {
+                const t = setTimeout(() => { audio.oncanplay = null; audio.onerror = null; res(false); }, 5000);
+                audio.oncanplay = () => { clearTimeout(t); audio.oncanplay = null; audio.onerror = null; res(true); };
+                audio.onerror = () => { clearTimeout(t); audio.oncanplay = null; audio.onerror = null; res(false); };
+                audio.src = blobUrl; audio.load();
+              });
+              if(carregou) ok = true;
+              else revogarBlobUrlAnterior();
+            }
           }
         }
       }catch(e){ revogarBlobUrlAnterior(); }
     }
-    if(!ok && navigator.onLine){
-      for(const u of urls){
-        if(meuToken !== _tocarToken) return;
-        try{
-          const car = await new Promise(res => {
-            const t = setTimeout(() => { audio.oncanplay = null; audio.onerror = null; res(false); }, 8000);
-            audio.oncanplay = () => { clearTimeout(t); audio.oncanplay = null; audio.onerror = null; res(true); };
-            audio.onerror = () => { clearTimeout(t); audio.oncanplay = null; audio.onerror = null; res(false); };
-            audio.src = u; audio.load();
-          });
-          if(car){ ok = true; break; }
-        }catch(e){}
-      }
+
+    // 2ª tentativa: online
+    if(!ok && navigator.onLine && url){
+      if(meuToken !== _tocarToken) return;
+      try{
+        const carregou = await new Promise(res => {
+          const t = setTimeout(() => { audio.oncanplay = null; audio.onerror = null; res(false); }, 8000);
+          audio.oncanplay = () => { clearTimeout(t); audio.oncanplay = null; audio.onerror = null; res(true); };
+          audio.onerror = () => { clearTimeout(t); audio.oncanplay = null; audio.onerror = null; res(false); };
+          audio.src = url; audio.load();
+        });
+        if(carregou) ok = true;
+      }catch(e){}
     }
+
     if(meuToken !== _tocarToken) return;
     if(ok){
       try{
@@ -1628,7 +1641,8 @@ async function tocar(){
       appState.musicasComProblema.add(m.id);
       $('playBtn').classList.remove('loading');
       $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
-      if(!navigator.onLine) notif('⚠️ Música não está offline', 1500);
+      if(!navigator.onLine) notif('⚠️ "'+(m.title||'').slice(0,30)+'" não está offline', 2000);
+      else notif('⚠️ Erro: '+(m.title||'').slice(0,30), 1500);
       appState.falhasConsecutivas++;
       if(appState.falhasConsecutivas >= CONFIG.MAX_FALHAS_CONSECUTIVAS){
         notif('⚠️ Muitas músicas com problema. Escolha outro gênero.', 4000, true);
@@ -1746,12 +1760,19 @@ function atualizarBadgeFav(){
   const b = $('barraBadgeFav');
   if(b){ b.textContent = n; b.style.display = n > 0 ? 'block' : 'none'; }
 }
+/* ✅ CORRIGIDO: favorite salva o repo também */
 function toggleFav(m){
   if(!m) return;
   vibrar(20);
   const i = appState.favorites.findIndex(f => f.id === m.id);
   if(i > -1){ appState.favorites.splice(i, 1); notif('💔 Removido'); }
-  else{ appState.favorites.push({id:m.id, title:m.title, artist:m.artist, src:m.src, genero:m.genero}); notif('❤️ Adicionado'); }
+  else{
+    appState.favorites.push({
+      id: m.id, title: m.title, artist: m.artist,
+      src: m.src, genero: m.genero, repo: m.repo
+    });
+    notif('❤️ Adicionado');
+  }
   salvarFav();
   atualizarBadgeFav();
   atualizarCoracao();
@@ -2164,19 +2185,11 @@ function enviarMeuIdWhats(){
   window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent(msg));
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   SISTEMA DE MÍDIAS — usa MIDIA_CONFIG (editável no topo)
-   ═══════════════════════════════════════════════════════════════════ */
-
+/* MÍDIAS */
 const videosAtivos = new Set();
 const midiaTokens = new WeakMap();
 const midiaTimers = new WeakMap();
 
-/**
- * Carrega uma lista de URLs em um container, alternando automaticamente.
- * @param {HTMLElement} container - onde colocar as mídias
- * @param {string[]} urls - lista de URLs de vídeo
- */
 async function carregarListaMidias(container, urls){
   const tokenAtual = (midiaTokens.get(container) || 0) + 1;
   midiaTokens.set(container, tokenAtual);
@@ -2197,9 +2210,7 @@ async function carregarListaMidias(container, urls){
   urls.forEach((src, i) => {
     const el = document.createElement('video');
     el.src = src;
-    el.muted = true;
-    el.loop = false;
-    el.playsInline = true;
+    el.muted = true; el.loop = false; el.playsInline = true;
     el.setAttribute('playsinline','');
     el.setAttribute('webkit-playsinline','');
     el.setAttribute('muted','');
@@ -2237,7 +2248,6 @@ async function carregarListaMidias(container, urls){
     }
 
     els.forEach((x, j) => x.classList.toggle('active', j === n));
-
     els.forEach((x, j) => {
       if(x.tagName === 'VIDEO' && j !== n){ try { x.pause(); x.currentTime = 0; } catch(e){} }
     });
@@ -2307,7 +2317,6 @@ async function carregarMidiasAnuncio(){
   await carregarListaMidias($('mediaAnuncios'), MIDIA_CONFIG.ANUNCIO_VIDEOS);
 }
 
-/* BOTÃO PUBLICIDADE EXTERNA */
 function initBotaoPublicidade(){
   const btn = $('btnPublicidade');
   if(!btn) return;
@@ -2369,7 +2378,6 @@ function atualizarVisibilidadeFAB(){
   const emAnuncio = appState.telaAtual === 'anuncios';
   if(bloqueado || emAnuncio) fab.style.display = 'none';
   else fab.style.display = '';
-  // Botão publicidade só na tela principal
   const btnPub = $('btnPublicidade');
   if(btnPub && MIDIA_CONFIG.LINK_PUBLICIDADE){
     if(bloqueado || emAnuncio) btnPub.classList.remove('show');
@@ -2737,7 +2745,6 @@ function setupProgressBar(){
   bar.addEventListener('pointercancel', () => { scrubbing = false; });
 }
 
-/* INTRO — usa MIDIA_CONFIG.INTRO_URL */
 async function rodarIntro(){
   const intro = $('introScreen');
   const video = $('introVideo');
@@ -2787,6 +2794,12 @@ async function iniciar(){
     try { appState.fingerprint = await gerarFingerprintReal(); }
     catch(e){ appState.fingerprint = btoa(navigator.userAgent).slice(0,32); }
 
+    /* ✅ CORRIGIDO: migra favoritas antigas para incluir repo */
+    appState.favorites = appState.favorites.map(f => ({
+      ...f,
+      repo: f.repo || GENRE_REPOS[f.genero] || 'radiolojasjc-hub/play12'
+    }));
+
     const r = await SecureTimer.verificar();
     if(r.liberado){
       $('blockOverlay').classList.remove('active');
@@ -2796,7 +2809,6 @@ async function iniciar(){
       $('btnInstalarFixo').style.display = 'none';
     }
 
-    // Inicializa botão de publicidade externa
     initBotaoPublicidade();
 
     const introPromessa = rodarIntro();
