@@ -149,17 +149,38 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .progress-time{display:flex;justify-content:space-between;font-size:.7rem;
   font-weight:700;color:rgba(255,255,255,.9);font-variant-numeric:tabular-nums;
   margin-bottom:6px;text-shadow:0 1px 4px rgba(0,0,0,.6)}
-.progress-bar{height:6px;background:rgba(0,0,0,.5);border-radius:6px;
-  overflow:hidden;cursor:pointer;touch-action:none;
-  box-shadow:inset 0 1px 3px rgba(0,0,0,.6);position:relative;
-  padding:8px 0;margin:-8px 0;background-clip:content-box}
-.progress-bar::after{content:'';position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+
+/* BARRA DE PROGRESSO COM EFEITO NEON */
+.progress-bar{
+  height:6px;background:rgba(0,0,0,.5);border-radius:6px;
+  overflow:visible;cursor:pointer;touch-action:none;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.6),0 0 10px rgba(0,212,255,.15);
+  position:relative;padding:8px 0;margin:-8px 0;background-clip:content-box}
+.progress-bar::after{
+  content:'';position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
   height:6px;background:rgba(0,0,0,.5);border-radius:6px;z-index:-1;
   box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
-.progress-fill{height:100%;width:0%;
-  background:linear-gradient(90deg,var(--cor-1),var(--cor-3));
+.progress-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--cor-1),var(--cor-3),var(--cor-neon),var(--cor-3),var(--cor-1));
+  background-size:300% 100%;
+  animation:neonFlowBar 3s linear infinite;
   border-radius:6px;transition:width .15s linear;
-  box-shadow:0 0 12px var(--cor-3),0 0 4px #fff;pointer-events:none}
+  box-shadow:0 0 12px var(--cor-3),0 0 20px var(--cor-neon),0 0 4px #fff;
+  pointer-events:none;position:relative;
+}
+.progress-fill::after{
+  content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);
+  width:14px;height:14px;border-radius:50%;
+  background:radial-gradient(circle,#fff 0%,var(--cor-neon) 40%,transparent 70%);
+  box-shadow:0 0 10px var(--cor-neon),0 0 20px var(--cor-3);
+  animation:pulseDot 1.2s ease-in-out infinite;
+}
+@keyframes neonFlowBar{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+@keyframes pulseDot{
+  0%,100%{transform:translateY(-50%) scale(1);opacity:1}
+  50%{transform:translateY(-50%) scale(1.4);opacity:.7}
+}
 
 .barra-inferior{position:fixed;left:50%;transform:translateX(-50%);
   bottom:calc(14px + var(--safe-bottom));z-index:25;
@@ -562,7 +583,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   </div>
   <span class="loading-text">VAI DE BOA</span>
   <span class="loading-sub">🎵 CARREGANDO 🎵</span>
-  <span class="loading-version" id="loadingVersion">v008</span>
+  <span class="loading-version" id="loadingVersion">v009</span>
 </div>
 
 <div id="playerContainer">
@@ -576,7 +597,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
         <span class="timer-texto" id="timerLib">24:00:00</span>
       </div>
       <div class="letreiro-wrap" id="letreiroClick">
-        <p class="letreiro" id="scrollText">🎵 VAI DE BOA MUSIC v008</p>
+        <p class="letreiro" id="scrollText">🎵 VAI DE BOA MUSIC v009</p>
       </div>
       <div class="genero-tocando" id="generoTocando">
         <span class="dot"></span>
@@ -648,7 +669,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     <button class="fab-sub-btn" id="fabQrCode"><i class="fas fa-qrcode" style="color:#22d3ee"></i>QR Code</button>
     <button class="fab-sub-btn" id="fabShare"><i class="fas fa-share-alt" style="color:#a855f7"></i>Compartilhar</button>
     <button class="fab-sub-btn" id="fabFeedback"><i class="fas fa-star" style="color:#fbbf24"></i>Feedback</button>
-    <div class="fab-versao" id="fabVersao">v008</div>
+    <div class="fab-versao" id="fabVersao">v009</div>
   </div>
 </div>
 
@@ -821,7 +842,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 (function(){
 'use strict';
 
-const VERSAO_NUMERO = 8;
+const VERSAO_NUMERO = 9;
 const VERSAO = 'v' + String(VERSAO_NUMERO).padStart(3, '0');
 
 const CONFIG = {
@@ -829,6 +850,7 @@ const CONFIG = {
   TEMPO_TESTE_SEGUNDOS: 86400,
   APP_VERSION: VERSAO,
   INTRO_DURACAO_MS: 10000,
+  INTRO_START_SEG: 3,
   LOADING_MIN_MS: 1200,
   MIDIA_MAX_SEGURANCA_MS: 60000,
   MIDIA_TIMEOUT_LOAD_MS: 2500,
@@ -839,8 +861,7 @@ const CONFIG = {
   DOWNLOAD_RETRY: 3,
   TEMPO_BOTAO_INSTALAR: 300000,
   REVALIDAR_CACHE_MS: 6*60*60*1000,
-  MAX_FALHAS_CONSECUTIVAS: 5,
-  MIDIA_CACHE_TTL: 5*60*1000
+  MAX_FALHAS_CONSECUTIVAS: 5
 };
 
 const $ = id => document.getElementById(id);
@@ -1078,10 +1099,7 @@ const WakeLockManager = {
     }catch(e){ return false; }
   },
   async desativar(){
-    if(this.lock){
-      try { await this.lock.release(); } catch(_){}
-      this.lock = null;
-    }
+    if(this.lock){ try { await this.lock.release(); } catch(_){} this.lock = null; }
   }
 };
 
@@ -1103,11 +1121,7 @@ window.addEventListener('online', () => { atualizarNetBanner(); notif('🟢 Volt
 window.addEventListener('offline', () => { atualizarNetBanner(); notif('🔴 Ficou offline', 1800); });
 
 const FilaInteligente = {
-  poolOriginal: [],
-  fila: [],
-  historico: [],
-  indiceHistorico: -1,
-  generoAtual: '',
+  poolOriginal: [], fila: [], historico: [], indiceHistorico: -1, generoAtual: '',
   resetar(pool, genero){
     this.poolOriginal = pool.filter(m => !appState.musicasComProblema.has(m.id));
     this.generoAtual = genero || '';
@@ -1130,10 +1144,7 @@ const FilaInteligente = {
       else this.fila = shuffle(this.poolOriginal.filter(m => !appState.musicasComProblema.has(m.id)));
     }
     const m = this.fila.shift();
-    if(m){
-      this.historico.push(m);
-      this.indiceHistorico = this.historico.length - 1;
-    }
+    if(m){ this.historico.push(m); this.indiceHistorico = this.historico.length - 1; }
     return m;
   },
   voltar(){
@@ -1170,14 +1181,12 @@ const GENRE_URLS = {
   'BAILÃO':'https://raw.githubusercontent.com/radiolojasjc-hub/forrodez/refs/heads/main/bail%C3%A3o.json',
   'FORRÓ RAIZ':'https://raw.githubusercontent.com/radiolojasjc-hub/forroraiz/refs/heads/main/forroraiz.json'
 };
-
 const GENRE_ORDEM_BASE = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','DISCO MUSIC','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','MISTURA BRASIL'];
 const GENRE_ORDEM = (() => {
   const ordem = GENRE_ORDEM_BASE.filter(g => GENRE_URLS[g]);
   const faltando = Object.keys(GENRE_URLS).filter(g => !ordem.includes(g));
   return [...ordem, ...faltando];
 })();
-
 const GENRE_COLORS = {
   'BÔNUS':{c1:'#22d3ee'},'POP/MIX':{c1:'#60a5fa'},'MPB':{c1:'#2dd4bf'},
   'SERTANEJO':{c1:'#fbbf24'},'ROMÂNTICA':{c1:'#f472b6'},'FLASHBACK':{c1:'#a855f7'},
@@ -1274,9 +1283,7 @@ const CACHE_OFFLINE_NAME = 'vdb-offline-v1';
 function getOfflineMeta(){ try { return JSON.parse(localStorage.getItem('vdb_offline')||'{}'); } catch(e){ return {}; } }
 let _offlineMetaDirty = false;
 let _offlineMetaTimer = null;
-function setOfflineMeta(m){
-  try{ localStorage.setItem('vdb_offline', JSON.stringify(m)); _offlineMetaDirty = false; }catch(e){}
-}
+function setOfflineMeta(m){ try{ localStorage.setItem('vdb_offline', JSON.stringify(m)); _offlineMetaDirty = false; }catch(e){} }
 function setOfflineMetaDebounced(m){
   _offlineMetaDirty = true;
   clearTimeout(_offlineMetaTimer);
@@ -1738,17 +1745,12 @@ const UniversalPool = {
 };
 
 const SearchManager = {
-  generoAtual:'', ordemAtual:'az', termoAtual:'',
-  _ordemCache: null, _ordemCacheHash: '',
+  generoAtual:'', ordemAtual:'az', termoAtual:'', _ordemCache: null, _ordemCacheHash: '',
   init(){
     const sg = $('buscaGenero');
     if(sg && !sg.dataset.pronto){
       sg.innerHTML = '<option value="">🌍 Todos</option>';
-      GENRE_ORDEM.forEach(g => {
-        const o = document.createElement('option');
-        o.value = g; o.textContent = '🎸 '+g;
-        sg.appendChild(o);
-      });
+      GENRE_ORDEM.forEach(g => { const o = document.createElement('option'); o.value = g; o.textContent = '🎸 '+g; sg.appendChild(o); });
       sg.dataset.pronto = '1';
       sg.onchange = () => { this.generoAtual = sg.value; this.buscar(); };
     }
@@ -1770,10 +1772,7 @@ const SearchManager = {
     const bc = $('fecharBusca');
     if(bc && !bc.dataset.pronto){ bc.dataset.pronto = '1'; bc.onclick = () => this.fechar(); }
     const md = $('modalBusca');
-    if(md && !md.dataset.pronto){
-      md.dataset.pronto = '1';
-      md.onclick = e => { if(e.target === md) this.fechar(); };
-    }
+    if(md && !md.dataset.pronto){ md.dataset.pronto = '1'; md.onclick = e => { if(e.target === md) this.fechar(); }; }
   },
   async abrir(){
     const md = $('modalBusca'); if(!md) return;
@@ -1805,10 +1804,7 @@ const SearchManager = {
     else if(this.ordemAtual === 'za') res = [...res].sort((a,b) => (b.title||'').localeCompare(a.title||''));
     else if(this.ordemAtual === 'aleatorio'){
       const hash = this.termoAtual + '|' + this.generoAtual + '|' + res.length;
-      if(this._ordemCacheHash !== hash || !this._ordemCache){
-        this._ordemCache = shuffle(res);
-        this._ordemCacheHash = hash;
-      }
+      if(this._ordemCacheHash !== hash || !this._ordemCache){ this._ordemCache = shuffle(res); this._ordemCacheHash = hash; }
       res = this._ordemCache;
     }
     if(ce) ce.textContent = res.length === 0 ? '❌ Nada encontrado' : `🎤 ${res.length} música(s)`;
@@ -1882,20 +1878,12 @@ function vdbDialog({title, msg, input, placeholder, okText, cancelText}){
     const ie = $('vdbDialogInput'), ok = $('vdbDialogOk'), ca = $('vdbDialogCancel');
     ti.textContent = title || 'Confirmação';
     me.textContent = msg || '';
-    if(input){
-      ie.style.display = 'block';
-      ie.value = ''; ie.type = input;
-      ie.placeholder = placeholder || '';
-      setTimeout(() => ie.focus(), 150);
-    }else ie.style.display = 'none';
+    if(input){ ie.style.display = 'block'; ie.value = ''; ie.type = input; ie.placeholder = placeholder || ''; setTimeout(() => ie.focus(), 150); }
+    else ie.style.display = 'none';
     ok.textContent = okText || 'OK';
     ca.textContent = cancelText || 'Cancelar';
     ov.classList.add('active');
-    function fechar(v){
-      ov.classList.remove('active');
-      ok.onclick = null; ca.onclick = null; ie.onkeydown = null; ov.onclick = null;
-      resolve(v);
-    }
+    function fechar(v){ ov.classList.remove('active'); ok.onclick = null; ca.onclick = null; ie.onkeydown = null; ov.onclick = null; resolve(v); }
     ok.onclick = () => fechar(input ? (ie.value||null) : true);
     ca.onclick = () => fechar(null);
     ov.onclick = e => { if(e.target === ov) fechar(null); };
@@ -1910,17 +1898,9 @@ let timerInterval = null;
 async function atualizarTimer(){
   if(!$('timerLib')) return;
   const d = _dec(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ));
-  if(d === 'true'){
-    $('timerLib').innerHTML = '<i class="fas fa-lock-open"></i> Lib';
-    $('timerLib').style.color = '#10b981';
-    return;
-  }
+  if(d === 'true'){ $('timerLib').innerHTML = '<i class="fas fa-lock-open"></i> Lib'; $('timerLib').style.color = '#10b981'; return; }
   const t = await SecureTimer.tempoRestante();
-  if(t <= 0){
-    $('timerLib').innerHTML = '<i class="fas fa-lock"></i> Bloq';
-    $('timerLib').style.color = '#ff8888';
-    return;
-  }
+  if(t <= 0){ $('timerLib').innerHTML = '<i class="fas fa-lock"></i> Bloq'; $('timerLib').style.color = '#ff8888'; return; }
   $('timerLib').innerHTML = '<i class="fas fa-clock"></i> '+fmtTempo(t);
   $('timerLib').style.color = '#fff';
 }
@@ -1930,9 +1910,7 @@ async function iniciarTimer(){
   await atualizarTimer();
   if(timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(async () => {
-    if(_dec(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ)) === 'true'){
-      clearInterval(timerInterval); timerInterval = null; return;
-    }
+    if(_dec(localStorage.getItem(SecureTimer.CHAVE_DESBLOQ)) === 'true'){ clearInterval(timerInterval); timerInterval = null; return; }
     const t = await SecureTimer.tempoRestante();
     if(t <= 0){ clearInterval(timerInterval); timerInterval = null; bloquear(); return; }
     await atualizarTimer();
@@ -2052,7 +2030,7 @@ function enviarMeuIdWhats(){
   window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent(msg));
 }
 
-/* MÍDIAS — FITA ↔ BV1 ALTERNANDO */
+/* MÍDIAS */
 const FITA_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/fita.mp4';
 const BV1_URL  = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/bv1.mp4';
 const MIDIAS_ANUNCIO_URL = 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/anuncios.json';
@@ -2080,8 +2058,6 @@ async function carregarMidias(container, url, options){
 
   try{
     let ms = [];
-
-    // Se for o container principal (player), força alternância fita ↔ bv1
     if(options.alternarFitaBv1){
       ms = [
         {tipo:'video', src: FITA_URL},
@@ -2089,7 +2065,6 @@ async function carregarMidias(container, url, options){
       ];
       console.log('[MÍDIAS] Alternando: fita.mp4 ↔ bv1.mp4');
     }else{
-      // Anúncios: usa JSON
       if(url){
         try{
           const ctrl = new AbortController();
@@ -2164,9 +2139,7 @@ async function carregarMidias(container, url, options){
 
       if(el.tagName === 'VIDEO'){
         els.forEach((x, j) => {
-          if(x.tagName === 'VIDEO' && j !== n){
-            try { x.pause(); x.currentTime = 0; } catch(e){}
-          }
+          if(x.tagName === 'VIDEO' && j !== n){ try { x.pause(); x.currentTime = 0; } catch(e){} }
         });
         try { el.currentTime = 0; } catch(e){}
 
@@ -2515,10 +2488,7 @@ async function ativarMix(){
   notif('🔀 Misturando...');
   const gs = ['SERTANEJO','FORRÓ','PAGODE','ROMÂNTICA'];
   const todas = [];
-  for(const g of gs){
-    const m = await buscarGenero(g);
-    if(m) todas.push(...m.slice(0, 50));
-  }
+  for(const g of gs){ const m = await buscarGenero(g); if(m) todas.push(...m.slice(0, 50)); }
   if(!todas.length){ notif('❌ Erro'); return; }
   appState.musicas = todas;
   appState.modoAtual = 'MISTURA VDB';
@@ -2647,22 +2617,14 @@ function setupProgressBar(){
     $('progressFill').style.width = (pct * 100) + '%';
     $('currentTime').textContent = fmt(audio.currentTime);
   }
-  bar.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    scrubbing = true;
-    try { bar.setPointerCapture(e.pointerId); } catch(_){}
-    seekTo(e);
-  });
+  bar.addEventListener('pointerdown', e => { e.preventDefault(); scrubbing = true; try { bar.setPointerCapture(e.pointerId); } catch(_){} seekTo(e); });
   bar.addEventListener('pointermove', e => { if(scrubbing) seekTo(e); });
-  const parar = e => {
-    if(!scrubbing) return;
-    scrubbing = false;
-    try { bar.releasePointerCapture(e.pointerId); } catch(_){}
-  };
+  const parar = e => { if(!scrubbing) return; scrubbing = false; try { bar.releasePointerCapture(e.pointerId); } catch(_){} };
   bar.addEventListener('pointerup', parar);
   bar.addEventListener('pointercancel', () => { scrubbing = false; });
 }
 
+/* INTRO — vdb.mp4 começando no 3º segundo */
 async function rodarIntro(){
   const intro = $('introScreen');
   const video = $('introVideo');
@@ -2670,7 +2632,20 @@ async function rodarIntro(){
   try{
     video.muted = true;
     video.playsInline = true;
+    // Começa no 3º segundo
+    await new Promise((resolve) => {
+      const setStart = () => {
+        try { video.currentTime = CONFIG.INTRO_START_SEG; } catch(e){}
+        resolve();
+      };
+      if(video.readyState >= 1) setStart();
+      else {
+        video.addEventListener('loadedmetadata', setStart, {once:true});
+        setTimeout(setStart, 1500);
+      }
+    });
     await video.play();
+    console.log('[INTRO] vdb.mp4 iniciou em', CONFIG.INTRO_START_SEG + 's');
   }catch(e){
     intro.style.display = 'none';
     appState.introAtiva = false;
