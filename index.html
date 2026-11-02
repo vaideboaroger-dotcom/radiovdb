@@ -756,10 +756,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
       <button class="barra-btn" id="barraGeneros" aria-label="Gêneros">
         <i class="fas fa-guitar"></i><span>Gêneros</span>
       </button>
-      <!-- BOTÃO DO YOUTUBE NA BARRA INFERIOR -->
-      <button class="barra-btn youtube apagado" id="barraYoutube" aria-label="YouTube">
-        <i class="fab fa-youtube"></i><span>YouTube</span>
-      </button>
       <button class="barra-btn" id="barraFila" aria-label="Fila">
         <i class="fas fa-list-ol"></i><span>Fila</span>
       </button>
@@ -801,6 +797,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     <button class="fab-sub-btn" id="fabGeneros"><i class="fas fa-guitar" style="color:#22d3ee"></i>Gêneros</button>
     <button class="fab-sub-btn" id="fabFila"><i class="fas fa-list-ol" style="color:#22d3ee"></i>Ver Fila de Reprodução</button>
     <button class="fab-sub-btn" id="fabFavoritos"><i class="fas fa-heart" style="color:#f472b6"></i>Favoritas</button>
+    <div class="fab-secao">📺 YouTube</div>
+    <button class="fab-sub-btn" id="fabYoutube"><i class="fab fa-youtube" style="color:#ff0000"></i>Abrir Canal no YouTube</button>
     <div class="fab-secao">📥 Offline</div>
     <button class="fab-sub-btn" id="fabBaixarAtual"><i class="fas fa-download" style="color:#fbbf24"></i>Baixar Gênero Atual</button>
     <button class="fab-sub-btn" id="fabGerenciarOffline"><i class="fas fa-hdd" style="color:#10b981"></i>Gerenciar Offline</button>
@@ -998,7 +996,8 @@ const MIDIA_CONFIG = {
   ],
   ANUNCIO_VIDEOS: [
     'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'
-  ]
+  ],
+  LINK_YOUTUBE_CANAL: 'https://www.youtube.com/@SEU_CANAL_AQUI'
 };
 
 const VERSAO_NUMERO = 10;
@@ -1659,7 +1658,6 @@ async function tocar(){
     atualizarLetreiro(m);
     atualizarInfoMusica(m);
     atualizarCoracao();
-    atualizarBotaoYoutube(m); // NOVO
     if(typeof filaAberta !== 'undefined' && filaAberta) renderizarFila();
     if('mediaSession' in navigator){
       try{
@@ -1753,22 +1751,6 @@ async function tocar(){
       appState.carregando = false;
       $('playBtn').classList.remove('loading');
     }
-  }
-}
-
-function atualizarBotaoYoutube(m){
-  const btn = $('barraYoutube');
-  if(!btn) return;
-  if(m && m.youtube){
-    btn.classList.remove('apagado');
-    btn.onclick = (e) => {
-      e.stopPropagation();
-      vibrar(15);
-      window.open(m.youtube, '_blank', 'noopener,noreferrer');
-    };
-  } else {
-    btn.classList.add('apagado');
-    btn.onclick = () => notif('🎬 Vídeo não disponível', 1500);
   }
 }
 
@@ -1886,7 +1868,7 @@ function toggleFav(m){
     appState.favorites.push({
       id: m.id, title: m.title, artist: m.artist,
       src: m.src, genero: m.genero, repo: m.repo,
-      youtube: m.youtube // preserva o link
+      youtube: m.youtube
     });
     notif('❤️ Adicionado');
   }
@@ -2796,6 +2778,13 @@ function initFab(){
   $('fabGeneros').onclick = () => { fecharFab(); renderizarGeneros(); abrirModal('modalGeneros'); };
   $('fabFila').onclick = () => { fecharFab(); abrirFila(); };
   $('fabMix').onclick = () => { fecharFab(); ativarMix(); };
+  $('fabYoutube').onclick = () => {
+    fecharFab();
+    vibrar(15);
+    const link = MIDIA_CONFIG.LINK_YOUTUBE_CANAL;
+    if (link) window.open(link, '_blank', 'noopener,noreferrer');
+    else notif('🎬 Link do YouTube não configurado', 2000);
+  };
   $('fabBaixarAtual').onclick = () => {
     fecharFab();
     if(appState.isRadio){ notif('⚠️ Escolha um gênero primeiro'); return; }
