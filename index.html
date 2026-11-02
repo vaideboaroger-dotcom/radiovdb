@@ -130,12 +130,13 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   box-shadow:0 0 8px var(--cor-neon);animation:blinkDot 1.4s ease-in-out infinite;flex-shrink:0}
 @keyframes blinkDot{0%,100%{opacity:.4;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
 
-.painel-baixo{position:fixed;bottom:calc(85px + var(--safe-bottom));
+/* ─── Painel Baixo (Player) subiu para 140px ─── */
+.painel-baixo{position:fixed;bottom:calc(140px + var(--safe-bottom));
   left:0;right:0;z-index:20;padding:0 22px;text-align:center;
-  display:flex;flex-direction:column;gap:2px;pointer-events:none}
+  display:flex;flex-direction:column;gap:2px;pointer-events:none;
+  transition:opacity .35s ease,transform .35s ease}
 .painel-baixo > *{pointer-events:auto}
 
-/* ─── Botões de controle ─── */
 .glass-controles{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:2px}
 .ctrl-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);
   color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
@@ -187,14 +188,11 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   50%{transform:translateY(-50%) scale(1.4);opacity:.7}
 }
 
-/* ─── UI escondida até toque ─── */
+/* ─── UI escondida (Corrigido: só painel-baixo some) ─── */
 .info-topo,.painel-baixo{transition:opacity .35s ease,transform .35s ease}
-.info-topo.ui-oculta{opacity:0;transform:translateY(-16px);pointer-events:none!important}
+/* REMOVIDO: .info-topo.ui-oculta agora NÃO é usado. O topo fica sempre visível. */
 .painel-baixo.ui-oculta{opacity:0;transform:translateY(16px);pointer-events:none!important}
-.info-topo.ui-oculta>*,.painel-baixo.ui-oculta>*{pointer-events:none!important}
-
-/* Quando a UI está oculta, ESCONDE APENAS O TÍTULO 'VDB' */
-.info-topo.ui-oculta .titulo-topo { opacity: 0; pointer-events: none; }
+.painel-baixo.ui-oculta>*{pointer-events:none!important}
 
 /* Barra inferior moderna */
 .barra-inferior{position:fixed;left:50%;transform:translateX(-50%);
@@ -223,10 +221,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   font-size:.5rem;font-weight:900;padding:1px 5px;border-radius:8px;
   min-width:15px;text-align:center;box-shadow:0 2px 6px rgba(244,114,182,.5)}
 
-/* Botão do YouTube na barra */
-.barra-btn.youtube i { color: #ff0000; }
-.barra-btn.youtube.apagado i { color: #666; }
-.barra-btn.youtube.apagado { opacity: 0.5; }
+/* Botão do Site (Google Sites) */
+.barra-btn.site i { color: #22d3ee; }
 
 .fab-main{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   padding:6px 8px;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
@@ -672,7 +668,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   .fab-main{padding:5px 6px}
   .fab-main i{font-size:1.25rem}
   .id-value{font-size:1.15rem}
-  .painel-baixo{bottom:calc(72px + var(--safe-bottom))}
+  .painel-baixo{bottom:calc(130px + var(--safe-bottom))}
   #btnInstalarFixo{bottom:calc(160px + var(--safe-bottom));right:12px;padding:7px 11px;font-size:.62rem}
   .loading-text{font-size:1.5rem;letter-spacing:6px}
   .loading-logo{width:100px;height:100px}
@@ -705,7 +701,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     <div class="media-container" id="mediaContainer">
       <div class="media-fallback-visual">VDB MUSIC</div>
     </div>
-    <div class="info-topo ui-oculta" id="infoTopo">
+    <div class="info-topo" id="infoTopo">
       <div class="topo-linha">
         <div class="titulo-topo" id="tituloGrande">VDB</div>
         <span class="timer-texto" id="timerLib">24:00:00</span>
@@ -719,7 +715,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
         <span id="generoTocandoNome">BÔNUS</span>
       </div>
     </div>
-    <div class="painel-baixo ui-oculta" id="bottomControls">
+    <div class="painel-baixo" id="bottomControls">
       <button class="btn-coracao-topo" id="btnCoracaoInfo" aria-label="Favoritar">
         <i class="far fa-heart"></i>
       </button>
@@ -755,6 +751,10 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
       </button>
       <button class="barra-btn" id="barraGeneros" aria-label="Gêneros">
         <i class="fas fa-guitar"></i><span>Gêneros</span>
+      </button>
+      <!-- BOTÃO DO SITE (GOOGLE SITES) -->
+      <button class="barra-btn site" id="barraSite" aria-label="Site">
+        <i class="fas fa-globe"></i><span>Site</span>
       </button>
       <button class="barra-btn" id="barraFila" aria-label="Fila">
         <i class="fas fa-list-ol"></i><span>Fila</span>
@@ -797,8 +797,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     <button class="fab-sub-btn" id="fabGeneros"><i class="fas fa-guitar" style="color:#22d3ee"></i>Gêneros</button>
     <button class="fab-sub-btn" id="fabFila"><i class="fas fa-list-ol" style="color:#22d3ee"></i>Ver Fila de Reprodução</button>
     <button class="fab-sub-btn" id="fabFavoritos"><i class="fas fa-heart" style="color:#f472b6"></i>Favoritas</button>
-    <div class="fab-secao">📺 YouTube</div>
-    <button class="fab-sub-btn" id="fabYoutube"><i class="fab fa-youtube" style="color:#ff0000"></i>Abrir Canal no YouTube</button>
+    <button class="fab-sub-btn" id="fabSite"><i class="fas fa-globe" style="color:#22d3ee"></i>Abrir Site VDB</button>
     <div class="fab-secao">📥 Offline</div>
     <button class="fab-sub-btn" id="fabBaixarAtual"><i class="fas fa-download" style="color:#fbbf24"></i>Baixar Gênero Atual</button>
     <button class="fab-sub-btn" id="fabGerenciarOffline"><i class="fas fa-hdd" style="color:#10b981"></i>Gerenciar Offline</button>
@@ -997,7 +996,7 @@ const MIDIA_CONFIG = {
   ANUNCIO_VIDEOS: [
     'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'
   ],
-  LINK_YOUTUBE_CANAL: 'https://www.youtube.com/@SEU_CANAL_AQUI'
+  LINK_SITE: 'https://sites.google.com/view/rogersjc/in%C3%ADcio'
 };
 
 const VERSAO_NUMERO = 10;
@@ -2777,14 +2776,13 @@ function initFab(){
   $('fabFavoritos').onclick = () => { fecharFab(); renderFavoritas(); abrirModal('modalFavoritas'); };
   $('fabGeneros').onclick = () => { fecharFab(); renderizarGeneros(); abrirModal('modalGeneros'); };
   $('fabFila').onclick = () => { fecharFab(); abrirFila(); };
-  $('fabMix').onclick = () => { fecharFab(); ativarMix(); };
-  $('fabYoutube').onclick = () => {
+  $('fabSite').onclick = () => {
     fecharFab();
     vibrar(15);
-    const link = MIDIA_CONFIG.LINK_YOUTUBE_CANAL;
-    if (link) window.open(link, '_blank', 'noopener,noreferrer');
-    else notif('🎬 Link do YouTube não configurado', 2000);
+    if (MIDIA_CONFIG.LINK_SITE) window.open(MIDIA_CONFIG.LINK_SITE, '_blank', 'noopener,noreferrer');
+    else notif('🌐 Link do site não configurado', 2000);
   };
+  $('fabMix').onclick = () => { fecharFab(); ativarMix(); };
   $('fabBaixarAtual').onclick = () => {
     fecharFab();
     if(appState.isRadio){ notif('⚠️ Escolha um gênero primeiro'); return; }
@@ -3095,6 +3093,11 @@ async function iniciar(){
     $('barraFavoritos').onclick = () => { vibrar(); renderFavoritas(); abrirModal('modalFavoritas'); };
     $('barraGeneros').onclick = () => { vibrar(); renderizarGeneros(); abrirModal('modalGeneros'); };
     $('barraFila').onclick = () => { vibrar(); toggleFila(); };
+    $('barraSite').onclick = () => {
+      vibrar(15);
+      if (MIDIA_CONFIG.LINK_SITE) window.open(MIDIA_CONFIG.LINK_SITE, '_blank', 'noopener,noreferrer');
+      else notif('🌐 Link não configurado', 2000);
+    };
     $('fecharFavoritas').onclick = () => fecharModal('modalFavoritas');
     $('fecharGeneros').onclick = () => fecharModal('modalGeneros');
     $('fecharMeuId').onclick = () => fecharModal('modalMeuId');
