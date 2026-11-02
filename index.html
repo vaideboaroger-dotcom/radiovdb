@@ -135,7 +135,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   display:flex;flex-direction:column;gap:2px;pointer-events:none}
 .painel-baixo > *{pointer-events:auto}
 
-/* ─── Botões menores ─── */
 .glass-controles{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:2px}
 .ctrl-btn{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);
   color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
@@ -192,6 +191,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .info-topo.ui-oculta{opacity:0;transform:translateY(-16px);pointer-events:none!important}
 .painel-baixo.ui-oculta{opacity:0;transform:translateY(16px);pointer-events:none!important}
 .info-topo.ui-oculta>*,.painel-baixo.ui-oculta>*{pointer-events:none!important}
+.info-topo.ui-oculta .titulo-topo { opacity: 0; pointer-events: none; }
 
 .barra-inferior{position:fixed;left:50%;transform:translateX(-50%);
   bottom:calc(14px + var(--safe-bottom));z-index:25;
@@ -269,6 +269,80 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   text-shadow:0 0 12px rgba(0,212,255,.8);backdrop-filter:blur(6px);
   animation:anuncioPulse 2s ease-in-out infinite}
 @keyframes anuncioPulse{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+
+/* ══════════ BANNER DE VENDAS (NOVO) ══════════ */
+.banner-vendas {
+  position: fixed;
+  bottom: calc(80px + var(--safe-bottom));
+  left: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+  border: 2px solid #fbbf24;
+  border-radius: 12px;
+  padding: 10px 14px;
+  text-decoration: none;
+  z-index: 100;
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.4);
+  animation: pulseBanner 2s infinite;
+  display: none;
+}
+.banner-vendas.show { display: block; }
+@keyframes pulseBanner {
+  0%, 100% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.4); }
+  50% { box-shadow: 0 0 45px rgba(251, 191, 36, 0.8); }
+}
+.banner-conteudo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.banner-tag {
+  background: #fbbf24;
+  color: #000;
+  font-size: 0.55rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 1px;
+}
+.banner-texto h3 {
+  color: #fff;
+  font-family: 'Audiowide', sans-serif;
+  font-size: 1rem;
+  margin: 2px 0;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+.banner-texto p {
+  color: #a5b4fc;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.banner-preco {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.preco-antigo {
+  color: #ef4444;
+  font-size: 0.65rem;
+  text-decoration: line-through;
+  font-weight: 700;
+}
+.preco-novo {
+  color: #fbbf24;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  text-shadow: 0 0 15px rgba(251, 191, 36, 0.8);
+}
+@media(max-width: 480px) {
+  .banner-vendas { bottom: calc(75px + var(--safe-bottom)); padding: 8px 10px; }
+  .banner-texto h3 { font-size: 0.85rem; }
+  .banner-texto p { font-size: 0.6rem; }
+  .preco-novo { font-size: 1.1rem; }
+}
 
 .btn-publicidade{position:fixed;bottom:calc(80px + var(--safe-bottom));right:16px;
   z-index:30;background:linear-gradient(135deg,#f59e0b,#fbbf24);
@@ -572,143 +646,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
   border-radius:50%;animation:spinSlow 1s linear infinite}
 
-/* ══════════ FILA DE REPRODUÇÃO (NOVO) ══════════ */
-.fila-painel {
-  position: fixed;
-  bottom: calc(85px + var(--safe-bottom));
-  left: 8px;
-  right: 8px;
-  max-height: 55vh;
-  background: rgba(10, 15, 28, .96);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-radius: 16px;
-  border: 1px solid var(--border-glass);
-  padding: 10px;
-  z-index: 24;
-  transform: translateY(calc(100% + 120px));
-  transition: transform .45s cubic-bezier(.22,1,.36,1), opacity .3s;
-  opacity: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 12px 40px rgba(0,0,0,.7);
-}
-.fila-painel.show {
-  transform: translateY(0);
-  opacity: 1;
-}
-.fila-topo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 10px 10px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
-  margin-bottom: 6px;
-}
-.fila-topo-titulo {
-  font-family: 'Audiowide', sans-serif;
-  font-size: .8rem;
-  color: #fff;
-  letter-spacing: 2px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.fila-topo-titulo i {
-  color: var(--cor-neon);
-  font-size: .8rem;
-}
-.fila-topo-info {
-  font-size: .68rem;
-  font-weight: 800;
-  color: var(--cor-neon);
-  letter-spacing: 1px;
-  background: rgba(0, 212, 255, .1);
-  padding: 3px 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(0, 212, 255, .3);
-}
-.fila-lista {
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-right: 4px;
-  flex: 1;
-}
-.fila-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(255,255,255,.03);
-  cursor: pointer;
-  transition: background .15s, transform .1s;
-  border: 1px solid transparent;
-}
-.fila-item:active {
-  background: rgba(255,255,255,.12);
-  transform: scale(.98);
-}
-.fila-item.tocando {
-  background: linear-gradient(90deg, rgba(37,99,235,.25), rgba(59,130,246,.1));
-  border-color: rgba(59,130,246,.45);
-}
-.fila-item .num {
-  color: rgba(255,255,255,.4);
-  font-size: .72rem;
-  font-weight: 800;
-  width: 22px;
-  text-align: center;
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-.fila-item.tocando .num {
-  color: var(--cor-neon);
-}
-.fila-item .info-fila {
-  flex: 1;
-  min-width: 0;
-}
-.fila-item .titulo-fila {
-  color: #fff;
-  font-weight: 700;
-  font-size: .84rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-}
-.fila-item.tocando .titulo-fila {
-  color: var(--cor-neon);
-}
-.fila-item .artista-fila {
-  color: rgba(255,255,255,.55);
-  font-size: .7rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-}
-.fila-item .play-ind {
-  color: var(--cor-neon);
-  font-size: .85rem;
-  animation: pulsePlayInd 1.2s ease-in-out infinite;
-}
-@keyframes pulsePlayInd {
-  0%,100% { opacity: .6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.15); }
-}
-.fila-vazio {
-  text-align: center;
-  padding: 30px 20px;
-  color: rgba(255,255,255,.4);
-  font-size: .8rem;
-  font-weight: 600;
-}
-
 @media(max-width:480px){
   .ctrl-btn{width:40px;height:40px;font-size:1rem}
   .play-big{width:54px;height:54px;font-size:1.3rem}
@@ -733,7 +670,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   .block-logo{width:110px;height:110px}
   .anuncio-label{font-size:.85rem;letter-spacing:4px;padding:8px 18px}
   .btn-publicidade{bottom:calc(72px + var(--safe-bottom));right:12px;padding:8px 13px;font-size:.62rem}
-  .fila-painel { bottom: calc(75px + var(--safe-bottom)); max-height: 60vh; }
 }
 </style>
 </head>
@@ -828,9 +764,20 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   </div>
 </div>
 
-<button class="btn-publicidade" id="btnPublicidade">
-  <i class="fas fa-external-link-alt"></i> Publicidade
-</button>
+<!-- BANNER DE VENDAS (só aparece no anúncio) -->
+<a href="https://wa.me/5512988461978?text=Ol%C3%A1!%20Quero%20comprar%20o%20plano%20vital%C3%ADcio%20do%20VDB%20Music%20por%20R%24%2039%2C90" target="_blank" class="banner-vendas" id="bannerVendas">
+  <div class="banner-conteudo">
+    <div class="banner-texto">
+      <span class="banner-tag">OFERTA ESPECIAL</span>
+      <h3>Plano Vitalício</h3>
+      <p>+10.000 músicas • Sem anúncios</p>
+    </div>
+    <div class="banner-preco">
+      <span class="preco-antigo">R$ 97,00</span>
+      <span class="preco-novo">R$ 39,90</span>
+    </div>
+  </div>
+</a>
 
 <div class="fab-container" id="fabContainer">
   <div class="fab-menu" id="fabMenu">
@@ -1037,9 +984,7 @@ const MIDIA_CONFIG = {
   ],
   ANUNCIO_VIDEOS: [
     'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'
-  ],
-  LINK_PUBLICIDADE: 'https://wa.me/5512988461978',
-  PUBLICIDADE_TEXTO: 'Publicidade'
+  ]
 };
 
 const VERSAO_NUMERO = 10;
@@ -2459,19 +2404,6 @@ async function carregarMidiasAnuncio(){
   await carregarListaMidias($('mediaAnuncios'), MIDIA_CONFIG.ANUNCIO_VIDEOS);
 }
 
-function initBotaoPublicidade(){
-  const btn = $('btnPublicidade');
-  if(!btn) return;
-  const link = MIDIA_CONFIG.LINK_PUBLICIDADE;
-  if(!link){ btn.style.display = 'none'; return; }
-  btn.innerHTML = '<i class="fas fa-external-link-alt"></i> ' + sanitize(MIDIA_CONFIG.PUBLICIDADE_TEXTO || 'Publicidade');
-  btn.onclick = () => {
-    vibrar(15);
-    window.open(link, '_blank', 'noopener,noreferrer');
-  };
-  btn.classList.add('show');
-}
-
 let cicloTimer = null;
 let swipeHintTimer = null;
 function agendarCiclo(){
@@ -2518,12 +2450,15 @@ function atualizarVisibilidadeFAB(){
   if(!fab) return;
   const bloqueado = $('blockOverlay').classList.contains('active');
   const emAnuncio = appState.telaAtual === 'anuncios';
+  
   if(bloqueado || emAnuncio) fab.style.display = 'none';
   else fab.style.display = '';
-  const btnPub = $('btnPublicidade');
-  if(btnPub && MIDIA_CONFIG.LINK_PUBLICIDADE){
-    if(bloqueado || emAnuncio) btnPub.classList.remove('show');
-    else btnPub.classList.add('show');
+
+  // Mostra o Banner APENAS durante o anúncio (publicidade)
+  const banner = $('bannerVendas');
+  if(banner) {
+    if(emAnuncio) banner.classList.add('show');
+    else banner.classList.remove('show');
   }
 }
 function mostrarSwipeHint(){
@@ -2558,7 +2493,7 @@ const SwipeManager = {
     if(e.touches.length !== 1) return;
     const t = e.target;
     if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(t.tagName)){ this.ignorar = true; return; }
-    if(t.closest('.modal,.fab-menu,.progress-bar,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel')){ this.ignorar = true; return; }
+    if(t.closest('.modal,.fab-menu,.progress-bar,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.banner-vendas')){ this.ignorar = true; return; }
     this.ignorar = false;
     this.startX = e.touches[0].clientX;
     this.startY = e.touches[0].clientY;
@@ -2630,7 +2565,7 @@ function initTapToShowUI() {
   let ultimoToque = 0;
   alvo.addEventListener('click', e => {
     if (appState.telaAtual !== 'principal') return;
-    if (e.target.closest('.barra-inferior,.modal,.fab-container,.fab-menu,.btn-coracao-topo,.ctrl-btn,.play-big,.progress-bar,.fila-painel')) return;
+    if (e.target.closest('.barra-inferior,.modal,.fab-container,.fab-menu,.btn-coracao-topo,.ctrl-btn,.play-big,.progress-bar,.fila-painel,.banner-vendas')) return;
     
     const agora = Date.now();
     if (agora - ultimoToque < 300) return;
@@ -3089,8 +3024,6 @@ async function iniciar(){
       $('blockOverlay').classList.add('active');
       $('btnInstalarFixo').style.display = 'none';
     }
-
-    initBotaoPublicidade();
 
     const introPromessa = rodarIntro();
 
