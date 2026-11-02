@@ -13,6 +13,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#2563eb">
 <link rel="manifest" href="./manifest.json">
+<link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+<link rel="dns-prefetch" href="https://raw.githubusercontent.com">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -132,17 +134,19 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   left:0;right:0;z-index:20;padding:0 22px;text-align:center;
   display:flex;flex-direction:column;gap:2px;pointer-events:none}
 .painel-baixo > *{pointer-events:auto}
-.glass-controles{display:flex;justify-content:center;align-items:center;gap:24px;margin-top:4px}
+
+/* ─── Botões menores ─── */
+.glass-controles{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:2px}
 .ctrl-btn{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);
   color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  width:54px;height:54px;border-radius:50%;font-size:1.35rem;
+  width:44px;height:44px;border-radius:50%;font-size:1.1rem;
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   transition:all .2s cubic-bezier(.22,1,.36,1);
   box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.15)}
 .ctrl-btn:active{transform:scale(.88);background:rgba(255,255,255,.3);box-shadow:0 2px 10px rgba(0,0,0,.5)}
 .play-big{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
   border:2px solid rgba(255,255,255,.3);color:#fff;
-  width:76px;height:76px;border-radius:50%;font-size:1.9rem;
+  width:58px;height:58px;border-radius:50%;font-size:1.4rem;
   box-shadow:0 8px 30px rgba(37,99,235,.6),0 0 40px rgba(59,130,246,.4),inset 0 2px 0 rgba(255,255,255,.2)}
 .play-big:active{transform:scale(.9);box-shadow:0 4px 20px rgba(37,99,235,.8),0 0 60px rgba(59,130,246,.6)}
 .play-big.loading i{animation:spinSlow 1s linear infinite}
@@ -182,6 +186,12 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   0%,100%{transform:translateY(-50%) scale(1);opacity:1}
   50%{transform:translateY(-50%) scale(1.4);opacity:.7}
 }
+
+/* ─── UI escondida até toque ─── */
+.info-topo,.painel-baixo{transition:opacity .35s ease,transform .35s ease}
+.info-topo.ui-oculta{opacity:0;transform:translateY(-16px);pointer-events:none!important}
+.painel-baixo.ui-oculta{opacity:0;transform:translateY(16px);pointer-events:none!important}
+.info-topo.ui-oculta>*,.painel-baixo.ui-oculta>*{pointer-events:none!important}
 
 .barra-inferior{position:fixed;left:50%;transform:translateX(-50%);
   bottom:calc(14px + var(--safe-bottom));z-index:25;
@@ -563,9 +573,9 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   border-radius:50%;animation:spinSlow 1s linear infinite}
 
 @media(max-width:480px){
-  .ctrl-btn{width:48px;height:48px;font-size:1.2rem}
-  .play-big{width:68px;height:68px;font-size:1.7rem}
-  .glass-controles{gap:18px}
+  .ctrl-btn{width:40px;height:40px;font-size:1rem}
+  .play-big{width:54px;height:54px;font-size:1.3rem}
+  .glass-controles{gap:14px}
   .titulo-topo{font-size:1.1rem;letter-spacing:4px}
   .letreiro{font-size:1rem}
   .letreiro-wrap{height:36px}
@@ -611,7 +621,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     <div class="media-container" id="mediaContainer">
       <div class="media-fallback-visual">VDB MUSIC</div>
     </div>
-    <div class="info-topo" id="infoTopo">
+    <div class="info-topo ui-oculta" id="infoTopo">
       <div class="topo-linha">
         <div class="titulo-topo" id="tituloGrande">VDB</div>
         <span class="timer-texto" id="timerLib">24:00:00</span>
@@ -625,7 +635,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
         <span id="generoTocandoNome">BÔNUS</span>
       </div>
     </div>
-    <div class="painel-baixo" id="bottomControls">
+    <div class="painel-baixo ui-oculta" id="bottomControls">
       <button class="btn-coracao-topo" id="btnCoracaoInfo" aria-label="Favoritar">
         <i class="far fa-heart"></i>
       </button>
@@ -873,7 +883,6 @@ const MIDIA_CONFIG = {
   INTRO_URL: 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/vdb.mp4',
   FUNDO_VIDEOS: [
     'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/fita.mp4',
-   
   ],
   ANUNCIO_VIDEOS: [
     'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'
@@ -891,7 +900,7 @@ const CONFIG = {
   TEMPO_TESTE_SEGUNDOS: 86400,
   APP_VERSION: VERSAO,
   DEBUG: false,
-  INTRO_DURACAO_MS: 5000,
+  INTRO_DURACAO_MS: 3000,
   INTRO_START_SEG: 0,
   LOADING_MIN_MS: 1200,
   MIDIA_MAX_SEGURANCA_MS: 60000,
@@ -1134,8 +1143,7 @@ const appState = {
   _lastBlobUrl: null,
   _forcarMusica: null,
   introAtiva: true,
-  falhasConsecutivas: 0,
-  _erroProcessado: false
+  falhasConsecutivas: 0
 };
 try { appState.favorites = JSON.parse(localStorage.getItem('vdb_fav')||'[]'); } catch(e){}
 function salvarFav(){ try { localStorage.setItem('vdb_fav', JSON.stringify(appState.favorites)); } catch(e){} }
@@ -1242,14 +1250,16 @@ const GENRE_CONFIG = {
   'HIP HOP':          { repo:'radiolojasjc-hub/poptop',        file:'hiphop.json' },
   'PAGODE':           { repo:'radiolojasjc-hub/sambatop',      file:'pagode.json' },
   'BAILÃO':           { repo:'radiolojasjc-hub/forrodez',      file:'bailão.json' },
-  'FORRÓ RAIZ':       { repo:'radiolojasjc-hub/forroraiz',     file:'forroraiz.json' }
+  'FORRÓ RAIZ':       { repo:'radiolojasjc-hub/forroraiz',     file:'forroraiz.json' },
+  'CHORINHO':         { repo:'radiolojasjc-hub/chorinho',      file:'chorinho.json' },
+  'TESTE':            { repo:'radiolojasjc-hub/testemidias',   file:'teste.json' }
 };
 const GENRE_URLS = Object.fromEntries(
   Object.entries(GENRE_CONFIG).map(([g, c]) =>
     [g, `https://raw.githubusercontent.com/${c.repo}/refs/heads/main/${c.file}`]
   )
 );
-const GENRE_ORDEM_BASE = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','DISCO MUSIC','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','MISTURA BRASIL'];
+const GENRE_ORDEM_BASE = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','DISCO MUSIC','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','MISTURA BRASIL','CHORINHO','TESTE'];
 const GENRE_ORDEM = (() => {
   const ordem = GENRE_ORDEM_BASE.filter(g => GENRE_URLS[g]);
   const faltando = Object.keys(GENRE_URLS).filter(g => !ordem.includes(g));
@@ -1263,7 +1273,8 @@ const GENRE_COLORS = {
   'PAGODE':{c1:'#ef4444'},'RELIGIOSA':{c1:'#8b5cf6'},'REGGAE':{c1:'#10b981'},
   'BREGA':{c1:'#ec4899'},'HIP HOP':{c1:'#6366f1'},'BAILÃO':{c1:'#f97316'},
   'MODA RAIZ':{c1:'#a16207'},'MODÃO SERTANEJO':{c1:'#ca8a04'},'SERESTA':{c1:'#eab308'},
-  'FORRÓ RAIZ':{c1:'#ea580c'},'MPB 2':{c1:'#14b8a6'},'MISTURA BRASIL':{c1:'#16a34a'}
+  'FORRÓ RAIZ':{c1:'#ea580c'},'MPB 2':{c1:'#14b8a6'},'MISTURA BRASIL':{c1:'#16a34a'},
+  'CHORINHO':{c1:'#e879f9'},'TESTE':{c1:'#94a3b8'}
 };
 const COR_PADRAO = {c1:'#22d3ee'};
 const GENRE_REPOS = Object.fromEntries(
@@ -1514,6 +1525,7 @@ async function abrirGerenciadorOffline(){
 const audio = $('musicPlayer');
 let mediaSessionRegistrado = false;
 let _tocarToken = 0;
+let _navLock = 0;
 
 function revogarBlobUrlAnterior(){
   if(appState._lastBlobUrl){
@@ -1660,6 +1672,9 @@ async function togglePlay(){
 function next(){
   vibrar();
   if(appState.carregando || !appState.musicas.length) return;
+  const t = Date.now();
+  if(t - _navLock < 400) return;
+  _navLock = t;
   if(appState.isBackgroundActive) setTimeout(tocar, 100);
 }
 function prev(){
@@ -2414,11 +2429,13 @@ const SwipeManager = {
   },
   onSwipeLeft(){
     vibrar(15);
+    mostrarUI(true);
     if(appState.telaAtual === 'anuncios'){ trocarTela('principal'); notif('🎵 Player', 1200); }
     else{ next(); notif('⏭️ Próxima', 1000); }
   },
   onSwipeRight(){
     vibrar(15);
+    mostrarUI(true);
     if(appState.telaAtual === 'anuncios'){ notif('📢 Anúncio', 1000); }
     else{
       if(audio.currentTime > 3){ audio.currentTime = 0; notif('⏮️ Recomeçando', 1000); }
@@ -2427,6 +2444,36 @@ const SwipeManager = {
   },
   reset(){ this.tracking = false; this.ignorar = false; }
 };
+
+/* ─── UI auto-hide ─── */
+let uiHideTimer = null;
+let _scrubbingProgress = false;
+function mostrarUI(autoHide){
+  if(autoHide === undefined) autoHide = true;
+  const it = $('infoTopo'), bc = $('bottomControls');
+  if(!it || !bc) return;
+  it.classList.remove('ui-oculta');
+  bc.classList.remove('ui-oculta');
+  clearTimeout(uiHideTimer);
+  if(autoHide){
+    uiHideTimer = setTimeout(() => {
+      if(appState.telaAtual !== 'principal') return;
+      if(_scrubbingProgress){ mostrarUI(true); return; }
+      const it2 = $('infoTopo'), bc2 = $('bottomControls');
+      if(it2) it2.classList.add('ui-oculta');
+      if(bc2) bc2.classList.add('ui-oculta');
+    }, 4000);
+  }
+}
+function initTapToShowUI(){
+  const alvo = $('telaPrincipal');
+  if(!alvo) return;
+  alvo.addEventListener('click', e => {
+    if(appState.telaAtual !== 'principal') return;
+    if(e.target.closest('.barra-inferior,.modal,.fab-container,.fab-menu,.btn-coracao-topo,.ctrl-btn,.play-big,.progress-bar')) return;
+    mostrarUI(true);
+  });
+}
 
 let fsEmAndamento = false, fsGestureHandler = null;
 function jaFullscreen(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
@@ -2496,6 +2543,7 @@ async function ativarPlayer(){
     registrarMediaSessionHandlers();
     await iniciarTimer();
     setTimeout(tocar, 500);
+    setTimeout(() => mostrarUI(true), 800);
   }catch(e){
     appState.isBackgroundActive = true;
     forcarFullscreen();
@@ -2503,6 +2551,7 @@ async function ativarPlayer(){
     registrarMediaSessionHandlers();
     iniciarTimer();
     setTimeout(tocar, 500);
+    setTimeout(() => mostrarUI(true), 800);
   }
 }
 
@@ -2708,11 +2757,20 @@ function setupProgressBar(){
     $('progressFill').style.width = (pct * 100) + '%';
     $('currentTime').textContent = fmt(audio.currentTime);
   }
-  bar.addEventListener('pointerdown', e => { e.preventDefault(); scrubbing = true; try { bar.setPointerCapture(e.pointerId); } catch(_){} seekTo(e); });
+  bar.addEventListener('pointerdown', e => {
+    e.preventDefault(); scrubbing = true; _scrubbingProgress = true;
+    try { bar.setPointerCapture(e.pointerId); } catch(_){}
+    seekTo(e);
+  });
   bar.addEventListener('pointermove', e => { if(scrubbing) seekTo(e); });
-  const parar = e => { if(!scrubbing) return; scrubbing = false; try { bar.releasePointerCapture(e.pointerId); } catch(_){} };
+  const parar = e => {
+    if(!scrubbing) return;
+    scrubbing = false; _scrubbingProgress = false;
+    try { bar.releasePointerCapture(e.pointerId); } catch(_){}
+    mostrarUI(true);
+  };
   bar.addEventListener('pointerup', parar);
-  bar.addEventListener('pointercancel', () => { scrubbing = false; });
+  bar.addEventListener('pointercancel', () => { scrubbing = false; _scrubbingProgress = false; });
 }
 
 async function rodarIntro(){
@@ -2818,6 +2876,7 @@ async function iniciar(){
     setupCliques();
     SwipeManager.init();
     setupProgressBar();
+    initTapToShowUI();
 
     $('playBtn').onclick = togglePlay;
     $('prevBtn').onclick = prev;
@@ -2879,24 +2938,11 @@ async function iniciar(){
       setTimeout(() => { if(!appState.carregando) next(); }, 200);
     };
     audio.onerror = () => {
-      if(appState.carregando || appState._erroProcessado) return;
+      if(appState.carregando) return;
       if(!audio.currentSrc || audio.currentSrc === location.href) return;
-      appState._erroProcessado = true;
       const m = appState.musicaAtual;
       if(m) appState.musicasComProblema.add(m.id);
-      appState.falhasConsecutivas++;
-      if(appState.falhasConsecutivas >= CONFIG.MAX_FALHAS_CONSECUTIVAS){
-        notif('⚠️ Muitas músicas com problema. Escolha outro gênero.', 4000, true);
-        appState.falhasConsecutivas = 0;
-        appState.isPlaying = false;
-        $('playBtn').innerHTML = '<i class="fas fa-play"></i>';
-        appState._erroProcessado = false;
-        return;
-      }
-      setTimeout(() => {
-        appState._erroProcessado = false;
-        if(!appState.carregando) next();
-      }, 300);
+      setTimeout(() => { if(!appState.carregando) next(); }, 300);
     };
 
     document.addEventListener('visibilitychange', () => {
