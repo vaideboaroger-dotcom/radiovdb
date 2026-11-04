@@ -58,13 +58,38 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   display:flex;align-items:center;justify-content:center;
   font-family:'Orbitron',sans-serif;font-size:1.5rem;color:rgba(255,255,255,.1);letter-spacing:8px}
 
+/* ★ BARRA DE PROGRESSO FINA no topo */
+.mini-progresso{position:fixed;top:0;left:0;right:0;height:3px;z-index:38;
+  background:rgba(0,0,0,.4);pointer-events:none}
+.mini-progresso-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--cor-1),var(--cor-3),var(--cor-neon));
+  transition:width .3s linear;box-shadow:0 0 6px rgba(0,212,255,.6)}
+
 .info-topo{position:fixed;top:0;left:0;right:0;z-index:35;
   padding-top:max(8px,var(--safe-top));padding-bottom:8px;
   background:linear-gradient(180deg,rgba(0,0,0,.7) 0%,rgba(0,0,0,.3) 60%,transparent 100%);
   display:flex;flex-direction:column;gap:2px}
 .topo-linha{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:34px;width:100%;gap:8px}
+.titulo-wrap{display:flex;align-items:center;gap:10px}
 .titulo-topo{font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:900;letter-spacing:4px;color:#fff;
   text-shadow:0 0 10px rgba(255,255,255,.45);cursor:pointer;white-space:nowrap}
+
+/* ★ Coração ao lado do VDB, transparente, piscando */
+.btn-fav-vdb{background:transparent;border:none;
+  color:rgba(255,255,255,.85);font-size:1.3rem;cursor:pointer;
+  padding:0;display:flex;align-items:center;justify-content:center;
+  transition:color .3s,transform .2s;
+  animation:piscaCoracao 2s ease-in-out infinite}
+.btn-fav-vdb:active{transform:scale(.85)}
+.btn-fav-vdb.ativo{color:#f472b6;animation:piscaCoracaoAtivo 1.2s ease-in-out infinite}
+@keyframes piscaCoracao{
+  0%,100%{opacity:.35;transform:scale(.95)}
+  50%{opacity:.9;transform:scale(1.05)}
+}
+@keyframes piscaCoracaoAtivo{
+  0%,100%{opacity:.7;transform:scale(1);text-shadow:0 0 6px rgba(244,114,182,.6)}
+  50%{opacity:1;transform:scale(1.15);text-shadow:0 0 16px rgba(244,114,182,1)}
+}
+
 .timer-texto{font-family:'Rajdhani',sans-serif;font-size:.85rem;font-weight:800;color:#fff;white-space:nowrap}
 .letreiro-wrap{width:100%;height:40px;padding:0 16px;overflow:hidden;display:flex;align-items:center;cursor:pointer}
 .letreiro{font-size:1.1rem;font-weight:800;color:#fff;white-space:nowrap;
@@ -78,54 +103,37 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   box-shadow:0 0 6px var(--cor-neon);animation:blinkDot 1.4s ease-in-out infinite;flex-shrink:0}
 @keyframes blinkDot{0%,100%{opacity:.4;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
 
-/* ★ CONTROLES — ocultos, agora é tudo por toque na tela */
+/* ★ CONTROLES ocultos — tudo por toque */
 .painel-baixo{display:none !important}
 
-/* ★ BARRA DE PROGRESSO FINA no topo — só visual */
-.mini-progresso{position:fixed;top:0;left:0;right:0;height:3px;z-index:38;
-  background:rgba(0,0,0,.4);pointer-events:none}
-.mini-progresso-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--cor-1),var(--cor-3),var(--cor-neon));
-  transition:width .3s linear;box-shadow:0 0 6px rgba(0,212,255,.6)}
-
-/* ★ VOLUME DISCRETO no canto superior direito */
-.volume-discreto{position:fixed;top:calc(52px + var(--safe-top));right:12px;z-index:36;
-  display:flex;align-items:center;gap:6px;
-  background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);
-  padding:5px 9px;border-radius:20px;
-  transition:opacity .3s,background .3s}
-.volume-discreto:active{background:rgba(0,0,0,.6)}
-.volume-discreto i{color:#fff;font-size:.7rem;flex-shrink:0;width:14px;text-align:center}
-.volume-slider-mini{width:60px;height:3px;-webkit-appearance:none;appearance:none;
-  background:rgba(255,255,255,.25);border-radius:3px;outline:none;cursor:pointer}
-.volume-slider-mini::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
-  width:10px;height:10px;border-radius:50%;background:#fff;cursor:pointer;
-  box-shadow:0 0 4px rgba(0,212,255,.6)}
-.volume-slider-mini::-moz-range-thumb{width:10px;height:10px;border-radius:50%;
-  background:#fff;cursor:pointer;border:none;box-shadow:0 0 4px rgba(0,212,255,.6)}
-
+/* ★ BARRA INFERIOR — botões SEM círculo/arredondado */
 .barra-inferior{position:fixed;left:50%;transform:translateX(-50%);
   bottom:calc(14px + var(--safe-bottom));z-index:25;
-  display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 10px;
-  background:rgba(15,20,35,.72);
-  border:1px solid rgba(255,255,255,.12);border-radius:12px;
-  box-shadow:0 8px 28px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:6px 4px;
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
   width:calc(100vw - 16px);max-width:560px;
   transition:opacity .35s,transform .35s}
 .barra-inferior.escondida{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(120px)}
 .barra-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;
-  background:transparent;border:none;color:rgba(255,255,255,.85);font-size:.55rem;font-weight:800;
-  letter-spacing:.4px;text-transform:uppercase;cursor:pointer;border-radius:8px;position:relative;flex:1;min-width:0}
-.barra-btn:active{transform:scale(.9);background:rgba(255,255,255,.1)}
+  background:transparent !important;border:none !important;box-shadow:none !important;border-radius:0 !important;
+  color:rgba(255,255,255,.85);font-size:.55rem;font-weight:800;
+  letter-spacing:.4px;text-transform:uppercase;cursor:pointer;position:relative;flex:1;min-width:0}
+.barra-btn:active{transform:scale(.9);background:transparent !important}
 .barra-btn i{font-size:1.2rem}
 .barra-btn.fav i{color:#f472b6}
 .barra-btn.ytm i{color:#ff0000}
 .badge{position:absolute;top:0;right:6px;background:#f472b6;color:#fff;font-size:.5rem;font-weight:900;
   padding:1px 5px;border-radius:8px;min-width:15px;text-align:center}
 .fab-main{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  padding:6px 4px;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
-  border:none;color:#fff;font-size:.55rem;font-weight:900;text-transform:uppercase;cursor:pointer;
-  border-radius:8px;flex:1;min-width:0;box-shadow:0 4px 14px rgba(37,99,235,.45)}
-.fab-main:active{transform:scale(.9)}
+  padding:6px 4px;
+  background:transparent !important;border:none !important;box-shadow:none !important;border-radius:0 !important;
+  color:#fff;font-size:.55rem;font-weight:900;text-transform:uppercase;cursor:pointer;
+  flex:1;min-width:0}
+.fab-main:active{transform:scale(.9);background:transparent !important}
 .fab-main i{font-size:1.3rem;transition:transform .3s ease;display:block}
 .fab-main.open i{transform:rotate(45deg)}
 
@@ -397,11 +405,13 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   .mini-progresso-fill{transition:none!important}
   .genero-tocando .dot{animation:none!important}
   .fila-item.tocando{animation:none!important}
+  .btn-fav-vdb,.btn-fav-vdb.ativo{animation:none!important;opacity:.9}
   *{transition-duration:.01ms!important}
 }
 
 @media(max-width:480px){
   .titulo-topo{font-size:1.05rem;letter-spacing:3px}
+  .btn-fav-vdb{font-size:1.15rem}
   .letreiro{font-size:1rem}
   .letreiro-wrap{height:36px}
   .timer-texto{font-size:.75rem}
@@ -417,14 +427,13 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   .loading-logo{width:100px;height:100px}
   .block-logo{width:110px;height:110px}
   #btnInstalarFixo{bottom:calc(160px + var(--safe-bottom));right:12px;padding:7px 11px;font-size:.62rem}
-  .volume-discreto{top:calc(48px + var(--safe-top));right:8px;padding:4px 7px}
-  .volume-slider-mini{width:50px}
 }
 
 @media (orientation: landscape) and (max-height: 500px){
   .info-topo{padding-top:4px}
   .topo-linha{height:28px}
   .titulo-topo{font-size:.95rem;letter-spacing:2px}
+  .btn-fav-vdb{font-size:1rem}
   .letreiro-wrap{height:28px}
   .letreiro{font-size:.85rem}
   .genero-tocando{font-size:.6rem;padding-top:0}
@@ -436,8 +445,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   #bgDownloadBanner{bottom:calc(56px + var(--safe-bottom))}
   .fab-container{bottom:calc(56px + var(--safe-bottom))}
   #btnInstalarFixo{bottom:calc(70px + var(--safe-bottom));right:8px;padding:5px 9px;font-size:.55rem}
-  .volume-discreto{top:calc(34px + var(--safe-top));right:6px;padding:3px 6px}
-  .volume-slider-mini{width:45px}
 }
 </style>
 </head>
@@ -461,7 +468,12 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 
     <div class="info-topo" id="infoTopo">
       <div class="topo-linha">
-        <div class="titulo-topo" id="tituloGrande">VDB</div>
+        <div class="titulo-wrap">
+          <div class="titulo-topo" id="tituloGrande">VDB</div>
+          <button class="btn-fav-vdb" id="btnFavVDB" aria-label="Favoritar">
+            <i class="far fa-heart"></i>
+          </button>
+        </div>
         <span class="timer-texto" id="timerLib">24:00:00</span>
       </div>
       <div class="letreiro-wrap" id="letreiroClick">
@@ -474,14 +486,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
       </div>
     </div>
 
-    <!-- ★ VOLUME DISCRETO no canto superior direito -->
-    <div class="volume-discreto" id="volumeDiscreto">
-      <i class="fas fa-volume-low" id="volumeIcone"></i>
-      <input type="range" class="volume-slider-mini" id="volumeSlider" min="0" max="100" value="100" aria-label="Volume">
-    </div>
-
-    <!-- ★ Controles de música agora são por TOQUE na tela -->
-    <!-- ★ Elementos escondidos mantidos pro JS não quebrar -->
+    <!-- ★ Controles ocultos (só por toque) -->
     <div class="painel-baixo" id="bottomControls" style="display:none">
       <button class="btn-coracao-topo" id="btnCoracaoInfo" aria-label="Favoritar"><i class="far fa-heart"></i></button>
       <div class="glass-controles">
@@ -716,10 +721,11 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 /* ============================================================
    VDB MUSIC — v010
    Segurança: INTACTA
-   Design: refeito
-   Tela cheia: agressiva
    Ciclo: PLAYER (1min) → ANÚNCIO (10s) → BANNER (10s) → loop
    Controles: por TOQUE na tela
+   Coração: ao lado do VDB, transparente, piscando
+   Volume: REMOVIDO
+   Botões: SEM círculo
    ============================================================ */
 
 const MIDIA_CONFIG = {
@@ -981,7 +987,28 @@ function atualizarLetreiro(m){
 }
 function atualizarGenero(g){ const el=$('generoTocandoNome'); if(el) el.textContent=(g||'VDB').toUpperCase(); }
 function atualizarInfoMusica(m){ if(m) atualizarGenero(m.genero||appState.modoAtual||''); }
-function atualizarCoracao(){ const atual=appState.musicaAtual; const b=$('btnCoracaoInfo'); const bFav=$('barraFavoritos'); if(!atual){ b.classList.remove('ativo'); b.innerHTML='<i class="far fa-heart"></i>'; if(bFav) bFav.classList.remove('ativo'); return; } const f=appState.favorites.some(x=>x.id===atual.id); if(f){ b.classList.add('ativo'); b.innerHTML='<i class="fas fa-heart"></i>'; if(bFav) bFav.classList.add('ativo'); }else{ b.classList.remove('ativo'); b.innerHTML='<i class="far fa-heart"></i>'; if(bFav) bFav.classList.remove('ativo'); } }
+function atualizarCoracao(){
+  const atual=appState.musicaAtual;
+  const b=$('btnCoracaoInfo');
+  const bFav=$('barraFavoritos');
+  const bVDB=$('btnFavVDB');
+  if(!atual){
+    b.classList.remove('ativo'); b.innerHTML='<i class="far fa-heart"></i>';
+    if(bFav) bFav.classList.remove('ativo');
+    if(bVDB){ bVDB.classList.remove('ativo'); bVDB.innerHTML='<i class="far fa-heart"></i>'; }
+    return;
+  }
+  const f=appState.favorites.some(x=>x.id===atual.id);
+  if(f){
+    b.classList.add('ativo'); b.innerHTML='<i class="fas fa-heart"></i>';
+    if(bFav) bFav.classList.add('ativo');
+    if(bVDB){ bVDB.classList.add('ativo'); bVDB.innerHTML='<i class="fas fa-heart"></i>'; }
+  }else{
+    b.classList.remove('ativo'); b.innerHTML='<i class="far fa-heart"></i>';
+    if(bFav) bFav.classList.remove('ativo');
+    if(bVDB){ bVDB.classList.remove('ativo'); bVDB.innerHTML='<i class="far fa-heart"></i>'; }
+  }
+}
 function atualizarBadgeFav(){ const n=appState.favorites.length; const b=$('barraBadgeFav'); if(b){ b.textContent=n; b.style.display=n>0?'block':'none'; } }
 function toggleFav(m){ if(!m) return; vibrar(20); const i=appState.favorites.findIndex(f=>f.id===m.id); if(i>-1){ appState.favorites.splice(i,1); notif('💔 Removido'); }else{ appState.favorites.push({id:m.id,title:m.title,artist:m.artist,src:m.src,genero:m.genero,repo:m.repo}); notif('❤️ Adicionado'); } salvarFav(); atualizarBadgeFav(); atualizarCoracao(); }
 function toggleFavAtual(){ const m=appState.musicaAtual; if(m) toggleFav(m); }
@@ -1309,7 +1336,6 @@ function agendarCiclo(){
   cicloTimer=setTimeout(async()=>{
     if(!appState.playerAtivado){ agendarCiclo(); return; }
     if(document.querySelector('.modal.open, #adminPanel.open, #qrCodeModal.active, #downloadModal.active, #vdbDialogOverlay.active')){ agendarCiclo(); return; }
-    /* ★ CICLO INFINITO */
     if(appState.telaAtual==='principal'){
       await trocarTela('anuncios');
     } else if(appState.telaAtual==='anuncios'){
@@ -1325,7 +1351,6 @@ async function trocarTela(destino){
   const bf=$('bannerFullscreen'), ta=$('telaAnuncios'), tp=$('telaPrincipal'), bi=$('barraInferior');
   clearInterval(bannerTimerFill); bannerTimerFill=null;
   if(bf) bf.classList.remove('show');
-  /* ★ fecha qualquer modal aberto pra não travar o ciclo */
   document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open'));
 
   if(destino==='anuncios'){
@@ -1356,7 +1381,6 @@ function iniciarTimerBanner(){
   fill.style.width='0%';
   const inicio=Date.now();
   bannerTimerFill=setInterval(()=>{ const pct=Math.min(100,((Date.now()-inicio)/CONFIG.CICLO_BANNER_MS)*100); fill.style.width=pct+'%'; if(pct>=100) clearInterval(bannerTimerFill); },100);
-  /* ★ NÃO agenda auto-close — o agendarCiclo() é quem troca de tela */
 }
 
 /* ============================================================
@@ -1381,7 +1405,7 @@ function initTapControls(){
     if(!target) return true;
     const t=target;
     if(['INPUT','TEXTAREA','SELECT','BUTTON','A'].includes(t.tagName)) return true;
-    if(t.closest('.modal,.fab-menu,.fab-container,.barra-inferior,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.bf-cta,#tapFeedback,.progress-bar,.letreiro-wrap,.info-topo,.volume-discreto')) return true;
+    if(t.closest('.modal,.fab-menu,.fab-container,.barra-inferior,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.bf-cta,#tapFeedback,.progress-bar,.letreiro-wrap,.info-topo,.volume-discreto,.btn-fav-vdb,.titulo-wrap')) return true;
     return false;
   }
 
@@ -1429,11 +1453,10 @@ function initTapControls(){
     }, 280);
   },{passive:true});
 
-  /* Fallback pra desktop (mouse) */
+  /* Fallback desktop */
   document.addEventListener('click',e=>{
     if(ehIgnorado(e.target)) return;
     if(appState.telaAtual!=='principal') return;
-    /* só dispara toque se não for touch (evita duplicar no mobile) */
     if('ontouchstart' in window) return;
     vibrar(15);
     if(audio.paused){ mostrarTapFeedback('fa-play','Play'); togglePlay(); }
@@ -1442,44 +1465,12 @@ function initTapControls(){
 }
 
 /* ============================================================
-   VOLUME DISCRETO
-   ============================================================ */
-function initVolume(){
-  const slider=$('volumeSlider'), icone=$('volumeIcone');
-  if(!slider) return;
-  /* restaura volume salvo */
-  try{
-    const v=parseInt(localStorage.getItem('vdb_volume')||'100');
-    slider.value=v;
-    audio.volume=v/100;
-    CONFIG.VOLUME_PADRAO=v/100;
-  }catch(_){}
-  function atualizarIcone(v){
-    if(!icone) return;
-    if(v===0) icone.className='fas fa-volume-mute';
-    else if(v<50) icone.className='fas fa-volume-low';
-    else icone.className='fas fa-volume-high';
-  }
-  atualizarIcone(parseInt(slider.value));
-  slider.addEventListener('input',e=>{
-    const v=parseInt(e.target.value);
-    audio.volume=v/100;
-    CONFIG.VOLUME_PADRAO=v/100;
-    try{ localStorage.setItem('vdb_volume',String(v)); }catch(_){}
-    atualizarIcone(v);
-  });
-  /* impede que o toque no slider dispare o play/pause */
-  slider.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
-  slider.addEventListener('pointerdown',e=>e.stopPropagation());
-}
-
-/* ============================================================
-   SWIPE (não interfere nos botões)
+   SWIPE
    ============================================================ */
 const SwipeManager = {
   startX:0, startY:0, startTime:0, tracking:false, limiarX:60, limiarTempo:600, ignorar:false,
   init(){ document.addEventListener('touchstart',e=>this.onStart(e),{passive:true}); document.addEventListener('touchend',e=>this.onEnd(e),{passive:true}); document.addEventListener('touchcancel',()=>this.reset(),{passive:true}); },
-  onStart(e){ if(!appState.playerAtivado) return; if(e.touches.length!==1) return; const t=e.target; if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(t.tagName)){ this.ignorar=true; return; } if(t.closest('.modal,.fab-menu,.progress-bar,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.bf-cta,.volume-discreto')){ this.ignorar=true; return; } this.ignorar=false; this.startX=e.touches[0].clientX; this.startY=e.touches[0].clientY; this.startTime=Date.now(); this.tracking=true; },
+  onStart(e){ if(!appState.playerAtivado) return; if(e.touches.length!==1) return; const t=e.target; if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(t.tagName)){ this.ignorar=true; return; } if(t.closest('.modal,.fab-menu,.progress-bar,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.bf-cta,.volume-discreto,.btn-fav-vdb,.titulo-wrap')){ this.ignorar=true; return; } this.ignorar=false; this.startX=e.touches[0].clientX; this.startY=e.touches[0].clientY; this.startTime=Date.now(); this.tracking=true; },
   onEnd(e){ if(!this.tracking||this.ignorar){ this.reset(); return; } const t=e.changedTouches[0]; const dx=t.clientX-this.startX; const dy=t.clientY-this.startY; const dt=Date.now()-this.startTime; this.reset(); if(dt>this.limiarTempo) return; if(Math.abs(dx)<this.limiarX) return; if(Math.abs(dx)<Math.abs(dy)*1.2) return; if(dx<0) this.onSwipeLeft(); else this.onSwipeRight(); },
   onSwipeLeft(){ vibrar(15); if(appState.telaAtual==='anuncios'||appState.telaAtual==='banner'){ trocarTela('principal'); } else { next(); } },
   onSwipeRight(){ vibrar(15); if(appState.telaAtual==='anuncios'||appState.telaAtual==='banner'){ return; } if(audio.currentTime>3){ audio.currentTime=0; } else { prev(); } },
@@ -1487,7 +1478,7 @@ const SwipeManager = {
 };
 
 /* ============================================================
-   FULLSCREEN — agressivo
+   FULLSCREEN
    ============================================================ */
 let fsEmAndamento=false, fsRetryTimer=null;
 function jaFullscreen(){ return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement); }
@@ -1666,12 +1657,12 @@ async function iniciar(){
     SwipeManager.init();
     setupProgressBar();
     initTapControls();
-    initVolume();
 
     $('playBtn').onclick=togglePlay;
     $('prevBtn').onclick=prev;
     $('nextBtn').onclick=next;
     $('btnCoracaoInfo').onclick=e=>{ e.stopPropagation(); vibrar(20); toggleFavAtual(); };
+    $('btnFavVDB').onclick=e=>{ e.stopPropagation(); vibrar(20); toggleFavAtual(); };
     $('letreiroClick').onclick=e=>{ e.stopPropagation(); vibrar(); SearchManager.abrir(); };
     $('barraBuscar').onclick=()=>{ vibrar(); SearchManager.abrir(); };
     $('barraFavoritos').onclick=()=>{ vibrar(); renderFavoritas(); abrirModal('modalFavoritas'); };
@@ -1697,7 +1688,6 @@ async function iniciar(){
     document.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; if(e.key===' '){ e.preventDefault(); togglePlay(); } if(e.key==='ArrowRight') next(); if(e.key==='ArrowLeft') prev(); if(e.key==='f'||e.key==='F'){ forcarFullscreen(); } });
     document.addEventListener('touchstart',ativarPlayer,{once:true});
     document.addEventListener('click',ativarPlayer,{once:true});
-    /* ★ TENTA ATIVAR SOZINHO AO ABRIR */
     setTimeout(()=>{ if(!appState.playerAtivado){ ativarPlayer(); } },1500);
 
     audio.ontimeupdate=()=>{ if(audio.duration&&isFinite(audio.duration)){ const pct=(audio.currentTime/audio.duration*100); $('progressFill').style.width=pct+'%'; $('miniProgressFill').style.width=pct+'%'; $('currentTime').textContent=fmt(audio.currentTime); $('totalTime').textContent=fmt(audio.duration); } };
