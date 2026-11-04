@@ -78,41 +78,30 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   box-shadow:0 0 6px var(--cor-neon);animation:blinkDot 1.4s ease-in-out infinite;flex-shrink:0}
 @keyframes blinkDot{0%,100%{opacity:.4;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
 
-/* ★ CONTROLES — baixados de 140px pra 100px */
-.painel-baixo{position:fixed;bottom:calc(100px + var(--safe-bottom));left:0;right:0;z-index:20;
-  padding:0 22px;text-align:center;display:flex;flex-direction:column;gap:2px}
-.glass-controles{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:2px}
-.ctrl-btn{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);color:#fff;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  width:44px;height:44px;border-radius:50%;font-size:1.1rem;
-  box-shadow:0 4px 16px rgba(0,0,0,.35)}
-.ctrl-btn:active{transform:scale(.88);background:rgba(255,255,255,.3)}
-.play-big{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));
-  border:2px solid rgba(255,255,255,.3);color:#fff;width:58px;height:58px;border-radius:50%;font-size:1.4rem;
-  box-shadow:0 6px 24px rgba(37,99,235,.5),inset 0 2px 0 rgba(255,255,255,.2)}
-.play-big:active{transform:scale(.9)}
-.play-big.loading i{animation:spinSlow 1s linear infinite}
-@keyframes spinSlow{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+/* ★ CONTROLES — ocultos, agora é tudo por toque na tela */
+.painel-baixo{display:none !important}
 
-/* ★ BARRA DE PROGRESSO — mais grossa e mais fácil de arrastar */
-.glass-progresso{padding:6px 4px 0;margin-top:6px}
-.progress-time{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;color:#fff;margin-bottom:4px}
-.progress-bar{height:24px;cursor:pointer;touch-action:none;position:relative;display:flex;align-items:center}
-.progress-bar::before{content:'';position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
-  height:8px;background:rgba(0,0,0,.6);border-radius:8px;box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
-.progress-fill{height:8px;width:0%;position:relative;z-index:1;
-  background:linear-gradient(90deg,var(--cor-1),var(--cor-3),var(--cor-neon),var(--cor-3),var(--cor-1));
-  background-size:300% 100%;animation:neonFlowBar 3s linear infinite;border-radius:8px;transition:width .15s;
-  box-shadow:0 0 10px rgba(59,130,246,.7);pointer-events:none}
-@keyframes neonFlowBar{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+/* ★ BARRA DE PROGRESSO FINA no topo — só visual */
+.mini-progresso{position:fixed;top:0;left:0;right:0;height:3px;z-index:38;
+  background:rgba(0,0,0,.4);pointer-events:none}
+.mini-progresso-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--cor-1),var(--cor-3),var(--cor-neon));
+  transition:width .3s linear;box-shadow:0 0 6px rgba(0,212,255,.6)}
 
-.btn-coracao-topo{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:50%;
-  width:46px;height:46px;color:#fff;font-size:1.3rem;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
-.btn-coracao-topo.ativo{color:#fff;background:linear-gradient(135deg,#f472b6,#ec4899);border-color:#f472b6;
-  box-shadow:0 0 14px rgba(244,114,182,.5)}
-.btn-coracao-topo.ativo i{animation:pulseHeartBig .5s}
-@keyframes pulseHeartBig{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+/* ★ VOLUME DISCRETO no canto superior direito */
+.volume-discreto{position:fixed;top:calc(52px + var(--safe-top));right:12px;z-index:36;
+  display:flex;align-items:center;gap:6px;
+  background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);
+  padding:5px 9px;border-radius:20px;
+  transition:opacity .3s,background .3s}
+.volume-discreto:active{background:rgba(0,0,0,.6)}
+.volume-discreto i{color:#fff;font-size:.7rem;flex-shrink:0;width:14px;text-align:center}
+.volume-slider-mini{width:60px;height:3px;-webkit-appearance:none;appearance:none;
+  background:rgba(255,255,255,.25);border-radius:3px;outline:none;cursor:pointer}
+.volume-slider-mini::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+  width:10px;height:10px;border-radius:50%;background:#fff;cursor:pointer;
+  box-shadow:0 0 4px rgba(0,212,255,.6)}
+.volume-slider-mini::-moz-range-thumb{width:10px;height:10px;border-radius:50%;
+  background:#fff;cursor:pointer;border:none;box-shadow:0 0 4px rgba(0,212,255,.6)}
 
 .barra-inferior{position:fixed;left:50%;transform:translateX(-50%);
   bottom:calc(14px + var(--safe-bottom));z-index:25;
@@ -292,6 +281,15 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .notif.show{opacity:1}
 .notif.prio{background:rgba(239,68,68,.97)}
 
+/* ★ TOAST de controle por toque */
+#tapFeedback{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);
+  background:rgba(0,0,0,.85);color:#fff;padding:18px 28px;border-radius:16px;
+  font-size:1.6rem;font-weight:900;z-index:9998;opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;display:flex;align-items:center;gap:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15)}
+#tapFeedback.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#tapFeedback i{font-size:2rem}
+
 #blockOverlay{position:fixed;inset:0;background:rgba(0,0,0,.98);z-index:10000;display:none;
   flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;overflow-y:auto}
 #blockOverlay.active{display:flex}
@@ -396,17 +394,13 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 
 @media (prefers-reduced-motion: reduce){
   .letreiro{animation:none!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .progress-fill{animation:none!important;background:var(--cor-3)!important}
+  .mini-progresso-fill{transition:none!important}
   .genero-tocando .dot{animation:none!important}
   .fila-item.tocando{animation:none!important}
-  .btn-coracao-topo.ativo i{animation:none!important}
   *{transition-duration:.01ms!important}
 }
 
 @media(max-width:480px){
-  .ctrl-btn{width:40px;height:40px;font-size:1rem}
-  .play-big{width:54px;height:54px;font-size:1.3rem}
-  .glass-controles{gap:14px}
   .titulo-topo{font-size:1.05rem;letter-spacing:3px}
   .letreiro{font-size:1rem}
   .letreiro-wrap{height:36px}
@@ -419,11 +413,12 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   .fab-main{padding:5px 4px}
   .fab-main i{font-size:1.2rem}
   .id-value{font-size:1.15rem}
-  .painel-baixo{bottom:calc(92px + var(--safe-bottom))}
   .loading-text{font-size:1.5rem;letter-spacing:6px}
   .loading-logo{width:100px;height:100px}
   .block-logo{width:110px;height:110px}
   #btnInstalarFixo{bottom:calc(160px + var(--safe-bottom));right:12px;padding:7px 11px;font-size:.62rem}
+  .volume-discreto{top:calc(48px + var(--safe-top));right:8px;padding:4px 7px}
+  .volume-slider-mini{width:50px}
 }
 
 @media (orientation: landscape) and (max-height: 500px){
@@ -433,12 +428,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   .letreiro-wrap{height:28px}
   .letreiro{font-size:.85rem}
   .genero-tocando{font-size:.6rem;padding-top:0}
-  .painel-baixo{bottom:calc(56px + var(--safe-bottom));padding:0 12px}
-  .btn-coracao-topo{width:34px;height:34px;font-size:1rem;margin-bottom:4px}
-  .ctrl-btn{width:34px;height:34px;font-size:.9rem}
-  .play-big{width:44px;height:44px;font-size:1.1rem}
-  .glass-controles{gap:10px}
-  .glass-progresso{margin-top:2px;padding-top:2px}
   .barra-inferior{bottom:4px;padding:4px 6px;width:calc(100vw - 8px)}
   .barra-btn{padding:3px 2px;font-size:.45rem}
   .barra-btn i{font-size:.95rem}
@@ -447,6 +436,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   #bgDownloadBanner{bottom:calc(56px + var(--safe-bottom))}
   .fab-container{bottom:calc(56px + var(--safe-bottom))}
   #btnInstalarFixo{bottom:calc(70px + var(--safe-bottom));right:8px;padding:5px 9px;font-size:.55rem}
+  .volume-discreto{top:calc(34px + var(--safe-top));right:6px;padding:3px 6px}
+  .volume-slider-mini{width:45px}
 }
 </style>
 </head>
@@ -465,6 +456,9 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   <div id="telaPrincipal">
     <div class="media-container" id="mediaContainer"><div class="media-fallback-visual">VDB MUSIC</div></div>
 
+    <!-- ★ Barra de progresso fina no topo (só visual) -->
+    <div class="mini-progresso"><div class="mini-progresso-fill" id="miniProgressFill"></div></div>
+
     <div class="info-topo" id="infoTopo">
       <div class="topo-linha">
         <div class="titulo-topo" id="tituloGrande">VDB</div>
@@ -480,7 +474,15 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
       </div>
     </div>
 
-    <div class="painel-baixo" id="bottomControls">
+    <!-- ★ VOLUME DISCRETO no canto superior direito -->
+    <div class="volume-discreto" id="volumeDiscreto">
+      <i class="fas fa-volume-low" id="volumeIcone"></i>
+      <input type="range" class="volume-slider-mini" id="volumeSlider" min="0" max="100" value="100" aria-label="Volume">
+    </div>
+
+    <!-- ★ Controles de música agora são por TOQUE na tela -->
+    <!-- ★ Elementos escondidos mantidos pro JS não quebrar -->
+    <div class="painel-baixo" id="bottomControls" style="display:none">
       <button class="btn-coracao-topo" id="btnCoracaoInfo" aria-label="Favoritar"><i class="far fa-heart"></i></button>
       <div class="glass-controles">
         <button class="ctrl-btn" id="prevBtn" aria-label="Anterior"><i class="fas fa-backward-step"></i></button>
@@ -703,6 +705,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 
 <div class="notif" id="notification"></div>
 <div id="bgDownloadBanner"><span class="spinner"></span><span id="bgDownloadText">Baixando...</span></div>
+<div id="tapFeedback"><i class="fas fa-play"></i><span>Play</span></div>
 
 <audio id="musicPlayer" preload="none"></audio>
 <audio id="backgroundAudio" preload="auto" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;"></audio>
@@ -715,7 +718,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
    Segurança: INTACTA
    Design: refeito
    Tela cheia: agressiva
-   Ciclo: PLAYER (1min) → ANÚNCIO (10s) → BANNER (8s) → loop
+   Ciclo: PLAYER (1min) → ANÚNCIO (10s) → BANNER (10s) → loop
+   Controles: por TOQUE na tela
    ============================================================ */
 
 const MIDIA_CONFIG = {
@@ -736,7 +740,7 @@ const CONFIG = {
   MIDIA_TIMEOUT_LOAD_MS:2500,
   CICLO_PLAYER_MS:60000,    /* ★ 1 min de música */
   CICLO_VIDEO_MS:10000,     /* ★ 10s de anúncio */
-  CICLO_BANNER_MS:8000,     /* ★ 8s de banner */
+  CICLO_BANNER_MS:10000,    /* ★ 10s de banner */
   VOLUME_PADRAO:1.0,
   DOWNLOAD_TIMEOUT_MS:30000,
   DOWNLOAD_RETRY:3,
@@ -1294,9 +1298,9 @@ async function carregarMidiasAnuncio(){ await carregarListaMidias($('mediaAnunci
 
 /* ============================================================
    CICLO PLAYER → ANÚNCIO → BANNER
-   ★ Ciclo INFINITO: PLAYER (1min) → ANÚNCIO (10s) → BANNER (8s) → loop
+   ★ Ciclo INFINITO: PLAYER (1min) → ANÚNCIO (10s) → BANNER (10s) → loop
    ============================================================ */
-let cicloTimer=null, bannerTimerFill=null, bannerAutoClose=null;
+let cicloTimer=null, bannerTimerFill=null;
 function agendarCiclo(){
   clearTimeout(cicloTimer);
   const t = appState.telaAtual==='principal' ? CONFIG.CICLO_PLAYER_MS
@@ -1307,11 +1311,11 @@ function agendarCiclo(){
     if(document.querySelector('.modal.open, #adminPanel.open, #qrCodeModal.active, #downloadModal.active, #vdbDialogOverlay.active')){ agendarCiclo(); return; }
     /* ★ CICLO INFINITO */
     if(appState.telaAtual==='principal'){
-      await trocarTela('anuncios');   /* player → anúncio (10s) */
+      await trocarTela('anuncios');
     } else if(appState.telaAtual==='anuncios'){
-      await trocarTela('banner');     /* anúncio → banner (8s) */
+      await trocarTela('banner');
     } else {
-      await trocarTela('principal');  /* banner → player (1min) */
+      await trocarTela('principal');
     }
     if(!jaFullscreen()) forcarFullscreen();
     agendarCiclo();
@@ -1319,8 +1323,10 @@ function agendarCiclo(){
 }
 async function trocarTela(destino){
   const bf=$('bannerFullscreen'), ta=$('telaAnuncios'), tp=$('telaPrincipal'), bi=$('barraInferior');
-  clearInterval(bannerTimerFill); clearTimeout(bannerAutoClose);
+  clearInterval(bannerTimerFill); bannerTimerFill=null;
   if(bf) bf.classList.remove('show');
+  /* ★ fecha qualquer modal aberto pra não travar o ciclo */
+  document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open'));
 
   if(destino==='anuncios'){
     appState.telaAtual='anuncios';
@@ -1338,6 +1344,7 @@ async function trocarTela(destino){
     iniciarTimerBanner();
   } else {
     appState.telaAtual='principal';
+    clearInterval(bannerTimerFill); bannerTimerFill=null;
     ta.classList.remove('ativa');
     tp.classList.remove('oculta');
     bi.classList.remove('escondida');
@@ -1349,16 +1356,130 @@ function iniciarTimerBanner(){
   fill.style.width='0%';
   const inicio=Date.now();
   bannerTimerFill=setInterval(()=>{ const pct=Math.min(100,((Date.now()-inicio)/CONFIG.CICLO_BANNER_MS)*100); fill.style.width=pct+'%'; if(pct>=100) clearInterval(bannerTimerFill); },100);
-  bannerAutoClose=setTimeout(()=>{ if(appState.telaAtual==='banner') trocarTela('principal'); },CONFIG.CICLO_BANNER_MS);
+  /* ★ NÃO agenda auto-close — o agendarCiclo() é quem troca de tela */
 }
 
 /* ============================================================
-   SWIPE
+   CONTROLE POR TOQUE NA TELA
+   1 toque = play/pause
+   2 toques = próxima
+   3 toques = anterior
+   ============================================================ */
+function initTapControls(){
+  let tapCount=0, tapTimer=null;
+  let startX=0, startY=0, startTime=0, moved=false;
+
+  function mostrarTapFeedback(icone, texto){
+    const el=$('tapFeedback'); if(!el) return;
+    el.innerHTML='<i class="fas '+icone+'"></i><span>'+texto+'</span>';
+    el.classList.add('show');
+    clearTimeout(el._hideTimer);
+    el._hideTimer=setTimeout(()=>el.classList.remove('show'),700);
+  }
+
+  function ehIgnorado(target){
+    if(!target) return true;
+    const t=target;
+    if(['INPUT','TEXTAREA','SELECT','BUTTON','A'].includes(t.tagName)) return true;
+    if(t.closest('.modal,.fab-menu,.fab-container,.barra-inferior,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.bf-cta,#tapFeedback,.progress-bar,.letreiro-wrap,.info-topo,.volume-discreto')) return true;
+    return false;
+  }
+
+  document.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1) return;
+    if(ehIgnorado(e.target)) return;
+    startX=e.touches[0].clientX;
+    startY=e.touches[0].clientY;
+    startTime=Date.now();
+    moved=false;
+  },{passive:true});
+
+  document.addEventListener('touchmove',e=>{
+    if(e.touches.length!==1) return;
+    const dx=Math.abs(e.touches[0].clientX-startX);
+    const dy=Math.abs(e.touches[0].clientY-startY);
+    if(dx>15||dy>15) moved=true;
+  },{passive:true});
+
+  document.addEventListener('touchend',e=>{
+    if(e.changedTouches.length!==1) return;
+    if(ehIgnorado(e.target)) return;
+    if(moved) return;
+    if(Date.now()-startTime>500) return;
+    if(appState.telaAtual!=='principal') return;
+
+    tapCount++;
+    clearTimeout(tapTimer);
+    tapTimer=setTimeout(()=>{
+      const n=tapCount;
+      tapCount=0;
+      if(n===1){
+        vibrar(15);
+        if(audio.paused){ mostrarTapFeedback('fa-play','Play'); togglePlay(); }
+        else{ mostrarTapFeedback('fa-pause','Pause'); togglePlay(); }
+      } else if(n===2){
+        vibrar([15,30,15]);
+        mostrarTapFeedback('fa-forward-step','Próxima');
+        next();
+      } else if(n>=3){
+        vibrar([15,30,15,30,15]);
+        mostrarTapFeedback('fa-backward-step','Anterior');
+        prev();
+      }
+    }, 280);
+  },{passive:true});
+
+  /* Fallback pra desktop (mouse) */
+  document.addEventListener('click',e=>{
+    if(ehIgnorado(e.target)) return;
+    if(appState.telaAtual!=='principal') return;
+    /* só dispara toque se não for touch (evita duplicar no mobile) */
+    if('ontouchstart' in window) return;
+    vibrar(15);
+    if(audio.paused){ mostrarTapFeedback('fa-play','Play'); togglePlay(); }
+    else{ mostrarTapFeedback('fa-pause','Pause'); togglePlay(); }
+  });
+}
+
+/* ============================================================
+   VOLUME DISCRETO
+   ============================================================ */
+function initVolume(){
+  const slider=$('volumeSlider'), icone=$('volumeIcone');
+  if(!slider) return;
+  /* restaura volume salvo */
+  try{
+    const v=parseInt(localStorage.getItem('vdb_volume')||'100');
+    slider.value=v;
+    audio.volume=v/100;
+    CONFIG.VOLUME_PADRAO=v/100;
+  }catch(_){}
+  function atualizarIcone(v){
+    if(!icone) return;
+    if(v===0) icone.className='fas fa-volume-mute';
+    else if(v<50) icone.className='fas fa-volume-low';
+    else icone.className='fas fa-volume-high';
+  }
+  atualizarIcone(parseInt(slider.value));
+  slider.addEventListener('input',e=>{
+    const v=parseInt(e.target.value);
+    audio.volume=v/100;
+    CONFIG.VOLUME_PADRAO=v/100;
+    try{ localStorage.setItem('vdb_volume',String(v)); }catch(_){}
+    atualizarIcone(v);
+  });
+  /* impede que o toque no slider dispare o play/pause */
+  slider.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
+  slider.addEventListener('pointerdown',e=>e.stopPropagation());
+}
+
+/* ============================================================
+   SWIPE (não interfere nos botões)
    ============================================================ */
 const SwipeManager = {
   startX:0, startY:0, startTime:0, tracking:false, limiarX:60, limiarTempo:600, ignorar:false,
   init(){ document.addEventListener('touchstart',e=>this.onStart(e),{passive:true}); document.addEventListener('touchend',e=>this.onEnd(e),{passive:true}); document.addEventListener('touchcancel',()=>this.reset(),{passive:true}); },
-  onStart(e){ if(!appState.playerAtivado) return; if(e.touches.length!==1) return; const t=e.target; if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(t.tagName)){ this.ignorar=true; return; } if(t.closest('.modal,.fab-menu,.progress-bar,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.bf-cta')){ this.ignorar=true; return; } this.ignorar=false; this.startX=e.touches[0].clientX; this.startY=e.touches[0].clientY; this.startTime=Date.now(); this.tracking=true; },
+  onStart(e){ if(!appState.playerAtivado) return; if(e.touches.length!==1) return; const t=e.target; if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(t.tagName)){ this.ignorar=true; return; } if(t.closest('.modal,.fab-menu,.progress-bar,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.bf-cta,.volume-discreto')){ this.ignorar=true; return; } this.ignorar=false; this.startX=e.touches[0].clientX; this.startY=e.touches[0].clientY; this.startTime=Date.now(); this.tracking=true; },
   onEnd(e){ if(!this.tracking||this.ignorar){ this.reset(); return; } const t=e.changedTouches[0]; const dx=t.clientX-this.startX; const dy=t.clientY-this.startY; const dt=Date.now()-this.startTime; this.reset(); if(dt>this.limiarTempo) return; if(Math.abs(dx)<this.limiarX) return; if(Math.abs(dx)<Math.abs(dy)*1.2) return; if(dx<0) this.onSwipeLeft(); else this.onSwipeRight(); },
   onSwipeLeft(){ vibrar(15); if(appState.telaAtual==='anuncios'||appState.telaAtual==='banner'){ trocarTela('principal'); } else { next(); } },
   onSwipeRight(){ vibrar(15); if(appState.telaAtual==='anuncios'||appState.telaAtual==='banner'){ return; } if(audio.currentTime>3){ audio.currentTime=0; } else { prev(); } },
@@ -1406,12 +1527,23 @@ function manterAtivo(){ if(keepAliveInterval) clearInterval(keepAliveInterval); 
 async function ativarPlayer(){
   if(appState.playerAtivado||appState.introAtiva) return;
   appState.playerAtivado=true;
-  try{ const bg=$('backgroundAudio'); bg.src=getSilentUrl(); bg.loop=true; bg.volume=0.001; await bg.play(); appState.isBackgroundActive=true; manterAtivo(); }catch(e){ appState.isBackgroundActive=true; }
+  try{
+    const bg=$('backgroundAudio');
+    bg.src=getSilentUrl();
+    bg.loop=true;
+    bg.volume=0.001;
+    await bg.play();
+    appState.isBackgroundActive=true;
+    manterAtivo();
+  }catch(e){
+    appState.isBackgroundActive=true;
+  }
   forcarFullscreen();
   iniciarFullscreenRetry();
   registrarMediaSessionHandlers();
   await iniciarTimer();
   setTimeout(tocar,500);
+  setTimeout(()=>{ if(!appState.isPlaying && appState.musicas.length && !appState.carregando){ tocar(); } },2500);
 }
 
 /* ============================================================
@@ -1533,6 +1665,8 @@ async function iniciar(){
     setupCliques();
     SwipeManager.init();
     setupProgressBar();
+    initTapControls();
+    initVolume();
 
     $('playBtn').onclick=togglePlay;
     $('prevBtn').onclick=prev;
@@ -1563,8 +1697,10 @@ async function iniciar(){
     document.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; if(e.key===' '){ e.preventDefault(); togglePlay(); } if(e.key==='ArrowRight') next(); if(e.key==='ArrowLeft') prev(); if(e.key==='f'||e.key==='F'){ forcarFullscreen(); } });
     document.addEventListener('touchstart',ativarPlayer,{once:true});
     document.addEventListener('click',ativarPlayer,{once:true});
+    /* ★ TENTA ATIVAR SOZINHO AO ABRIR */
+    setTimeout(()=>{ if(!appState.playerAtivado){ ativarPlayer(); } },1500);
 
-    audio.ontimeupdate=()=>{ if(audio.duration&&isFinite(audio.duration)){ $('progressFill').style.width=(audio.currentTime/audio.duration*100)+'%'; $('currentTime').textContent=fmt(audio.currentTime); $('totalTime').textContent=fmt(audio.duration); } };
+    audio.ontimeupdate=()=>{ if(audio.duration&&isFinite(audio.duration)){ const pct=(audio.currentTime/audio.duration*100); $('progressFill').style.width=pct+'%'; $('miniProgressFill').style.width=pct+'%'; $('currentTime').textContent=fmt(audio.currentTime); $('totalTime').textContent=fmt(audio.duration); } };
     audio.onplay=()=>{ appState.falhasConsecutivas=0; if('mediaSession' in navigator) navigator.mediaSession.playbackState='playing'; };
     audio.onpause=()=>{ if('mediaSession' in navigator) navigator.mediaSession.playbackState='paused'; };
     audio.onended=()=>{ if(appState.carregando) return; appState.isPlaying=false; setTimeout(()=>{ if(!appState.carregando) next(); },200); };
@@ -1576,6 +1712,7 @@ async function iniciar(){
         videosAtivos.forEach(v=>{ if(v.classList.contains('active')&&v.paused&&v.dataset.erro!=='1') v.play().catch(()=>{}); });
         if(!jaFullscreen()&&appState.playerAtivado) forcarFullscreen();
         if(appState.isPlaying) WakeLockManager.ativar();
+        if(appState.playerAtivado) agendarCiclo();
       }
     });
 
