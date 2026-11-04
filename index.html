@@ -1072,328 +1072,317 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 <audio id="musicPlayer" preload="none"></audio>
 <audio id="backgroundAudio" preload="auto" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;"></audio>
 
-<script><div id="introScreen">
-  <video id="introVideo" muted playsinline preload="auto"></video>
-</div>
+<script>(function(){
+'use strict';
 
-<div id="loadingScreen">
-  <div class="loading-grid"></div>
-  <div class="loading-particles" id="loadingParticles"></div>
-  <div class="loading-logo-wrapper">
-    <img src="favicon192.png" alt="VDB Music" class="loading-logo" onerror="this.style.display='none'">
-  </div>
-  <span class="loading-text">VDB</span>
-  <span class="loading-sub">🎵 CARREGANDO 🎵</span>
-  <span class="loading-version" id="loadingVersion">v010</span>
-</div>
+const MIDIA_CONFIG = {
+  INTRO_URL: 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/vdb.mp4',
+  FUNDO_VIDEOS: [
+    'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/fita.mp4',
+  ],
+  ANUNCIO_VIDEOS: [
+    'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'
+  ],
+  LINK_SITE: 'https://sites.google.com/view/rogersjc/in%C3%ADcio'
+};
 
-<div id="playerContainer">
-  <div id="telaPrincipal">
-    <div class="media-container" id="mediaContainer">
-      <div class="media-fallback-visual">VDB MUSIC</div>
-    </div>
-    <div class="info-topo" id="infoTopo">
-      <div class="topo-linha">
-        <div class="titulo-topo" id="tituloGrande">VDB</div>
-        <span class="timer-texto" id="timerLib">24:00:00</span>
-      </div>
-      <div class="letreiro-wrap" id="letreiroClick">
-        <p class="letreiro" id="scrollText">🎵 VDB MUSIC</p>
-      </div>
-      <div class="genero-tocando" id="generoTocando">
-        <span class="dot"></span>
-        <i class="fas fa-guitar"></i>
-        <span id="generoTocandoNome">BÔNUS</span>
-      </div>
-    </div>
+const VERSAO_NUMERO = 10;
+const VERSAO = 'v' + String(VERSAO_NUMERO).padStart(3, '0');
 
-    <div class="painel-baixo" id="bottomControls">
-      <button class="btn-coracao-topo" id="btnCoracaoInfo" aria-label="Favoritar">
-        <i class="far fa-heart"></i>
-      </button>
-      <div class="glass-controles">
-        <button class="ctrl-btn" id="prevBtn" aria-label="Anterior"><i class="fas fa-backward-step"></i></button>
-        <button class="ctrl-btn play-big" id="playBtn" aria-label="Play/Pause"><i class="fas fa-play"></i></button>
-        <button class="ctrl-btn" id="nextBtn" aria-label="Próxima"><i class="fas fa-forward-step"></i></button>
-      </div>
-      <div class="glass-progresso">
-        <div class="progress-time"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
-        <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
-      </div>
-    </div>
+const CONFIG = {
+  WHATSAPP: '5512988461978',
+  TEMPO_TESTE_SEGUNDOS: 86400,
+  APP_VERSION: VERSAO,
+  DEBUG: false,
+  INTRO_DURACAO_MS: 3000,
+  INTRO_START_SEG: 0,
+  LOADING_MIN_MS: 1200,
+  MIDIA_MAX_SEGURANCA_MS: 60000,
+  MIDIA_TIMEOUT_LOAD_MS: 2500,
+  CICLO_PLAYER_MS: 30000,
+  CICLO_VIDEO_MS: 10000,
+  CICLO_BANNER_MS: 10000,
+  VOLUME_PADRAO: 1.0,
+  DOWNLOAD_TIMEOUT_MS: 30000,
+  DOWNLOAD_RETRY: 3,
+  TEMPO_BOTAO_INSTALAR: 300000,
+  MAX_FALHAS_CONSECUTIVAS: 5,
+  MIX_GENEROS: ['SERTANEJO','FORRÓ','PAGODE','ROMÂNTICA','MPB','POP/MIX'],
+  INTERVALO_MIDIA_MS: 300
+};
 
-    <div class="fila-painel" id="filaPainel">
-      <div class="fila-topo">
-        <div class="fila-topo-titulo">
-          <i class="fas fa-list-ol"></i>
-          <span>FILA</span>
-        </div>
-        <div class="fila-topo-info" id="filaInfo">0 músicas</div>
-        <button class="fila-fechar" id="filaFecharBtn" aria-label="Fechar">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="fila-lista" id="filaLista"></div>
-    </div>
+const logWarn = CONFIG.DEBUG ? console.warn : () => {};
+const logErr  = CONFIG.DEBUG ? console.error : () => {};
 
-    <div class="barra-inferior" id="barraInferior">
-      <button class="barra-btn" id="barraBuscar" aria-label="Buscar">
-        <i class="fas fa-magnifying-glass"></i><span>Buscar</span>
-      </button>
-      <button class="barra-btn fav" id="barraFavoritos" aria-label="Favoritas">
-        <i class="fas fa-heart"></i><span>Favoritas</span>
-        <span class="badge" id="barraBadgeFav" style="display:none" aria-hidden="true">0</span>
-      </button>
-      <button class="barra-btn" id="barraGeneros" aria-label="Gêneros">
-        <i class="fas fa-guitar"></i><span>Gêneros</span>
-      </button>
-      <button class="barra-btn yt" id="barraYouTube" aria-label="YouTube Music">
-        <i class="fab fa-youtube"></i><span>YT Music</span>
-      </button>
-      <button class="barra-btn" id="barraFila" aria-label="Fila">
-        <i class="fas fa-list-ol"></i><span>Fila</span>
-      </button>
-      <button class="fab-main" id="fabMain" aria-label="Menu">
-        <i class="fas fa-plus"></i>
-      </button>
-    </div>
-  </div>
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const fmt = s => {
+  if(!s || isNaN(s)) return '0:00';
+  const m = Math.floor(s/60), g = Math.floor(s%60);
+  return m + ':' + (g<10?'0':'') + g;
+};
+const vibrar = p => { try { navigator.vibrate && navigator.vibrate(p||15); } catch(e){} };
+const sanitize = t => {
+  if(t==null||t==='') return '';
+  const d = document.createElement('div');
+  d.textContent = String(t);
+  return d.textContent;
+};
+function fmtTempo(s){
+  if(s<0) s=0; s=Math.floor(s);
+  const d = Math.floor(s/86400), h = Math.floor((s%86400)/3600), m = Math.floor((s%3600)/60), g = Math.floor(s%60);
+  if(d>0) return d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(g).padStart(2,'0');
+  if(h>0) return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(g).padStart(2,'0');
+  return String(m).padStart(2,'0')+':'+String(g).padStart(2,'0');
+}
+function copiarTexto(t, msg){
+  if(!t) return notif('⚠️ Nada pra copiar!');
+  navigator.clipboard.writeText(t).then(()=>notif(msg||'📋 Copiado!')).catch(()=>{
+    const i = document.createElement('input'); i.value = t; document.body.appendChild(i);
+    i.select(); document.execCommand('copy'); i.remove(); notif(msg||'📋 Copiado!');
+  });
+}
+function shuffle(a){
+  if(!a || !a.length) return [];
+  const x = [...a];
+  for(let i = x.length-1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i+1));
+    [x[i], x[j]] = [x[j], x[i]];
+  }
+  return x;
+}
 
-  <div id="telaAnuncios">
-    <div class="media-anuncios" id="mediaAnuncios">
-      <div class="media-fallback-visual">PUBLICIDADE</div>
-    </div>
-    <div class="anuncio-overlay">
-      <span class="anuncio-label">PUBLICIDADE</span>
-    </div>
-  </div>
+const notifQ = []; let notifBusy = false;
+function notif(msg, dur, prioridade){
+  dur = dur || 2000;
+  if(notifQ.length >= 5){
+    const idx = notifQ.findIndex(n => !n.prio);
+    if(idx >= 0) notifQ.splice(idx, 1);
+    else notifQ.shift();
+  }
+  notifQ.push({msg, dur, prio: !!prioridade});
+  processarNotif();
+}
+async function processarNotif(){
+  if(notifBusy || !notifQ.length) return;
+  notifBusy = true;
+  const it = notifQ.shift();
+  const el = $('notification');
+  el.textContent = it.msg;
+  el.classList.toggle('prio', it.prio);
+  el.classList.add('show');
+  await sleep(it.dur);
+  el.classList.remove('show');
+  notifBusy = false;
+  setTimeout(processarNotif, 200);
+}
 
-  <div id="bannerFullscreen">
-    <img src="favicon512.png" alt="VDB" class="bf-logo" onerror="this.style.display='none'">
-    <div class="bf-tag">OFERTA ESPECIAL</div>
-    <h1 class="bf-titulo">VDB MUSIC<br><span>VITALÍCIO</span></h1>
-    <p class="bf-sub">+10.000 músicas • Sem anúncios • Acesso total pra sempre</p>
+/* ══════════ SEGURANÇA ══════════ */
+const HASH_ADMIN='ae6eaa9dbe0baf078f6a56d50641fb6bcf135ee43deca13a6e10910aa7f704b5';
+const HASH_MASTER='7eca27de328d65b0f04c3ca43eb023961c19db9ce2b3fc4e94f25e87e65c5c04';
+const _KEY_OBF='bGxtdWJcZW1gY19ifHB2Y3tgLXMubGx8IGJ8endwYit0XXdrfnB8aistfWQ=';
+function _keyDecode(){
+  try{
+    const b = atob(_KEY_OBF); let r = '';
+    for(let i=0; i<b.length; i++) r += String.fromCharCode(b.charCodeAt(i) ^ 42);
+    return r;
+  }catch(e){ return ''; }
+}
+const CHAVE_SECRETA = _keyDecode();
 
-    <div class="bf-beneficios">
-      <div class="bf-beneficio"><i class="fas fa-infinity"></i> Acesso vitalício</div>
-      <div class="bf-beneficio"><i class="fas fa-ban"></i> Sem anúncios</div>
-      <div class="bf-beneficio"><i class="fas fa-download"></i> Modo offline</div>
-      <div class="bf-beneficio"><i class="fas fa-music"></i> +10.000 músicas</div>
-    </div>
+async function hashSenha(str){
+  try{
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }catch(e){
+    let h = 0;
+    for(let i=0; i<str.length; i++){ h = ((h<<5)-h) + str.charCodeAt(i); h |= 0; }
+    return 'fb_' + Math.abs(h).toString(16);
+  }
+}
+async function verificarSenhaPadrao(s){
+  if(!s) return false;
+  const h = await hashSenha(s);
+  return h === HASH_ADMIN || h === HASH_MASTER;
+}
 
-    <div class="bf-preco-antigo">De R$ 97,00 por</div>
-    <div class="bf-preco">R$ 39,90</div>
-    <div class="bf-parcela">💳 Pagamento único</div>
+const _K = 'VDB_2024_SECRET_XOR_KEY_VERY_LONG_KEY_ABCDEFG';
+function _enc(s){
+  if(!s) return s;
+  try{
+    let r = '';
+    for(let i=0; i<s.length; i++) r += String.fromCharCode(s.charCodeAt(i) ^ _K.charCodeAt(i % _K.length));
+    return btoa(unescape(encodeURIComponent(r)));
+  }catch(e){ return s; }
+}
+function _dec(s){
+  if(!s) return s;
+  try{
+    const b = decodeURIComponent(escape(atob(s)));
+    let r = '';
+    for(let i=0; i<b.length; i++) r += String.fromCharCode(b.charCodeAt(i) ^ _K.charCodeAt(i % _K.length));
+    return r;
+  }catch(e){ return null; }
+}
 
-    <a href="https://wa.me/5512988461978?text=Ol%C3%A1!%20Quero%20comprar%20o%20plano%20vital%C3%ADcio%20do%20VDB%20Music%20por%20R%24%2039%2C90"
-       target="_blank" rel="noopener" class="bf-cta">
-      <i class="fab fa-whatsapp"></i> COMPRAR AGORA
-    </a>
+async function gerarFingerprintReal(){
+  const p = [];
+  try{
+    p.push(navigator.userAgent||'');
+    p.push(navigator.language||'');
+    p.push((screen.width||0)+'x'+(screen.height||0));
+    p.push(new Date().getTimezoneOffset());
+    p.push(navigator.hardwareConcurrency||0);
+    p.push(navigator.platform||'');
+  }catch(e){}
+  try{
+    const c = document.createElement('canvas'); c.width=200; c.height=50;
+    const x = c.getContext('2d');
+    x.textBaseline='top'; x.font='14px Arial'; x.fillStyle='#f60'; x.fillRect(125,1,62,20);
+    x.fillStyle='#069'; x.fillText('VDB',2,15);
+    p.push(c.toDataURL().slice(-64));
+  }catch(e){}
+  const s = p.join('|||');
+  try{
+    const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,'0')).join('').slice(0,32);
+  }catch(e){ return btoa(s).slice(0,32); }
+}
+async function assinarHMAC(msg){
+  try{
+    const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(CHAVE_SECRETA), {name:'HMAC',hash:'SHA-256'}, false, ['sign']);
+    const s = await crypto.subtle.sign('HMAC', k, new TextEncoder().encode(msg));
+    return btoa(String.fromCharCode(...new Uint8Array(s))).replace(/[+/=]/g,'').slice(0,24);
+  }catch(e){
+    let h = 0; const x = CHAVE_SECRETA + msg;
+    for(let i=0; i<x.length; i++){ h = ((h<<5)-h) + x.charCodeAt(i); h |= 0; }
+    return Math.abs(h).toString(16).padStart(16,'0').slice(0,24);
+  }
+}
 
-    <div class="bf-timer">
-      <span>⏳ Fechando em</span>
-      <div class="bf-timer-bar"><div class="bf-timer-fill" id="bfTimerFill"></div></div>
-    </div>
-  </div>
-</div>
+const SecureTimer = {
+  CHAVE_DESBLOQ: 'vdb_desbloq_v2',
+  CHAVE_BLOQ_PERM: 'vdb_bloq_perm_v2',
+  async verificar(){
+    const bp = _dec(localStorage.getItem(this.CHAVE_BLOQ_PERM));
+    if(bp === 'true') return {liberado:false, motivo:'bloqueado'};
+    const d = _dec(localStorage.getItem(this.CHAVE_DESBLOQ));
+    if(d === 'true') return {liberado:true, motivo:'senha', expiracao:Infinity};
+    const e = parseInt(_dec(localStorage.getItem('vdb_teste_expiracao_v2'))||'0');
+    if(!e){
+      const ne = Date.now() + CONFIG.TEMPO_TESTE_SEGUNDOS*1000;
+      localStorage.setItem('vdb_teste_expiracao_v2', _enc(String(ne)));
+      return {liberado:true, motivo:'novo', expiracao:ne};
+    }
+    if(Date.now() > e) return {liberado:false, motivo:'expirado', expiracao:e};
+    return {liberado:true, motivo:'teste', expiracao:e};
+  },
+  async tempoRestante(){
+    const r = await this.verificar();
+    if(!r.liberado) return 0;
+    if(r.expiracao === Infinity) return CONFIG.TEMPO_TESTE_SEGUNDOS;
+    return Math.max(0, Math.floor((r.expiracao - Date.now())/1000));
+  },
+  async desbloquearPermanente(){
+    localStorage.setItem(this.CHAVE_DESBLOQ, _enc('true'));
+    localStorage.removeItem(this.CHAVE_BLOQ_PERM);
+  },
+  async bloquearPermanente(){
+    localStorage.setItem(this.CHAVE_BLOQ_PERM, _enc('true'));
+  }
+};
 
-<div class="fab-container" id="fabContainer">
-  <div class="fab-menu" id="fabMenu">
-    <div class="fab-secao">🎵 Reprodução</div>
-    <button class="fab-sub-btn" id="fabMix"><i class="fas fa-shuffle" style="color:#f59e0b"></i>Mistura VDB</button>
-    <button class="fab-sub-btn" id="fabBuscar"><i class="fas fa-search" style="color:#22d3ee"></i>Buscar Música</button>
-    <button class="fab-sub-btn" id="fabGeneros"><i class="fas fa-guitar" style="color:#22d3ee"></i>Gêneros</button>
-    <button class="fab-sub-btn" id="fabFila"><i class="fas fa-list-ol" style="color:#22d3ee"></i>Ver Fila de Reprodução</button>
-    <button class="fab-sub-btn" id="fabFavoritos"><i class="fas fa-heart" style="color:#f472b6"></i>Favoritas</button>
-    <button class="fab-sub-btn" id="fabYouTubeMusic"><i class="fab fa-youtube" style="color:#ff0000"></i>YouTube Music</button>
-    <button class="fab-sub-btn" id="fabSite"><i class="fas fa-globe" style="color:#22d3ee"></i>Abrir Site VDB</button>
-    <div class="fab-secao">📥 Offline</div>
-    <button class="fab-sub-btn" id="fabBaixarAtual"><i class="fas fa-download" style="color:#fbbf24"></i>Baixar Gênero Atual</button>
-    <button class="fab-sub-btn" id="fabGerenciarOffline"><i class="fas fa-hdd" style="color:#10b981"></i>Gerenciar Offline</button>
-    <div class="fab-secao">📱 App</div>
-    <button class="fab-sub-btn" id="fabInstalar"><i class="fas fa-mobile-alt" style="color:#22d3ee"></i>Instalar como App</button>
-    <button class="fab-sub-btn" id="fabTemas"><i class="fas fa-palette" style="color:#fbbf24"></i>Cores do App</button>
-    <button class="fab-sub-btn" id="fabFullscreen"><i class="fas fa-expand" style="color:#10b981"></i>Tela Cheia</button>
-    <button class="fab-sub-btn" id="fabSleep"><i class="fas fa-moon" style="color:#a855f7"></i>Sleep Timer</button>
-    <button class="fab-sub-btn" id="fabRecarregar"><i class="fas fa-sync" style="color:#3b82f6"></i>Recarregar</button>
-    <button class="fab-sub-btn" id="fabAtualizarMidia"><i class="fas fa-sync-alt" style="color:#22d3ee"></i>Atualizar Mídias</button>
-    <button class="fab-sub-btn" id="fabAtualizarApp"><i class="fas fa-magic" style="color:#fbbf24"></i>🪄 Atualizar App</button>
-    <div class="fab-secao">👤 Conta</div>
-    <button class="fab-sub-btn" id="fabMeuId"><i class="fas fa-id-card" style="color:#3b82f6"></i>Ver Meu ID</button>
-    <button class="fab-sub-btn" id="fabLiberar"><i class="fas fa-unlock" style="color:#10b981"></i>Liberar Agora</button>
-    <button class="fab-sub-btn" id="fabQrCode"><i class="fas fa-qrcode" style="color:#22d3ee"></i>QR Code</button>
-    <button class="fab-sub-btn" id="fabShare"><i class="fas fa-share-alt" style="color:#a855f7"></i>Compartilhar</button>
-    <button class="fab-sub-btn" id="fabFeedback"><i class="fas fa-star" style="color:#fbbf24"></i>Feedback</button>
-    <div class="fab-versao" id="fabVersao">v010</div>
-  </div>
-</div>
+async function gerarSenhaDispositivo(fp, dias){
+  const ts = Date.now().toString(36);
+  const exp = dias === 0 ? 'ZZZZZZZZ' : (Date.now() + dias*86400000).toString(36);
+  const sig = await assinarHMAC('DEV|'+fp+'|'+ts+'|'+exp);
+  return 'DEV:'+ts+':'+exp+':'+sig;
+}
+async function gerarSenhaUniversal(dias){
+  const ts = Date.now().toString(36);
+  const exp = dias === 0 ? 'ZZZZZZZZ' : (Date.now() + dias*86400000).toString(36);
+  const sig = await assinarHMAC('UNIV|'+ts+'|'+exp);
+  return 'UNIV:'+ts+':'+exp+':'+sig;
+}
+async function validarSenha(senha, fp){
+  if(!senha) return {valida:false, motivo:'vazia'};
+  const h = await hashSenha(senha);
+  if(h === HASH_ADMIN) return {valida:true, tipo:'admin', msg:'✅ Admin!'};
+  if(h === HASH_MASTER) return {valida:true, tipo:'master', msg:'👑 Master!'};
+  const p = senha.split(':');
+  if(p[0] === 'DEV' && p.length === 4){
+    const [,ts,exp,sig] = p;
+    const expMs = (exp === 'ZZZZZZZZ') ? Infinity : parseInt(exp, 36);
+    if(Date.now() > expMs) return {valida:false, motivo:'expirada'};
+    const esp = await assinarHMAC('DEV|'+fp+'|'+ts+'|'+exp);
+    if(sig === esp) return {valida:true, tipo:'dispositivo', msg:'✅ Liberado!'};
+    return {valida:false, motivo:'assinatura_invalida'};
+  }
+  if(p[0] === 'UNIV' && p.length === 4){
+    const [,ts,exp,sig] = p;
+    const expMs = (exp === 'ZZZZZZZZ') ? Infinity : parseInt(exp, 36);
+    if(Date.now() > expMs) return {valida:false, motivo:'expirada'};
+    const esp = await assinarHMAC('UNIV|'+ts+'|'+exp);
+    if(sig === esp) return {valida:true, tipo:'universal', msg:'✅ Universal!'};
+    return {valida:false, motivo:'assinatura_invalida'};
+  }
+  return {valida:false, motivo:'formato_invalido'};
+}
 
-<div class="modal" id="modalBusca">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span class="titulo">🔍 BUSCAR</span>
-      <button class="fechar" id="fecharBusca"><i class="fas fa-times"></i></button>
-    </div>
-    <input type="text" class="search-input" id="buscaInput" placeholder="Artista (Gustavo Lima, Zezo...), música..." autocomplete="off">
-    <div class="search-filters">
-      <select id="buscaGenero"><option value="">🌍 Todos os gêneros</option></select>
-      <select id="buscaOrdem">
-        <option value="az">A-Z</option>
-        <option value="za">Z-A</option>
-        <option value="aleatorio">🎲</option>
-      </select>
-    </div>
-    <div class="search-count" id="buscaCount">🎤 Digite o nome do artista</div>
-    <div class="search-results" id="buscaResultados"></div>
-  </div>
-</div>
+const appState = {
+  favorites: [],
+  musicas: [],
+  musicaAtual: null,
+  isPlaying: false,
+  modoAtual: 'BÔNUS',
+  carregando: false,
+  playerAtivado: false,
+  isBackgroundActive: false,
+  isRadio: false,
+  telaAtual: 'principal',
+  musicasComProblema: new Set(),
+  sleepTimerId: null,
+  fingerprint: '',
+  _lastBlobUrl: null,
+  _forcarMusica: null,
+  introAtiva: true,
+  falhasConsecutivas: 0
+};
+try { appState.favorites = JSON.parse(localStorage.getItem('vdb_fav')||'[]'); } catch(e){}
+function salvarFav(){ try { localStorage.setItem('vdb_fav', JSON.stringify(appState.favorites)); } catch(e){} }
 
-<div class="modal" id="modalFavoritas">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span class="titulo">❤️ FAVORITAS</span>
-      <button class="fechar" id="fecharFavoritas"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="fav-list" id="listaFavoritas"></div>
-  </div>
-</div>
+const WakeLockManager = {
+  lock: null,
+  async ativar(){
+    if(!('wakeLock' in navigator)) return false;
+    if(this.lock) return true;
+    try{
+      this.lock = await navigator.wakeLock.request('screen');
+      this.lock.addEventListener('release', () => { this.lock = null; });
+      return true;
+    }catch(e){ return false; }
+  },
+  async desativar(){
+    if(this.lock){ try { await this.lock.release(); } catch(_){} this.lock = null; }
+  }
+};
 
-<div class="modal" id="modalGeneros">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span class="titulo">🎸 GÊNEROS</span>
-      <button class="fechar" id="fecharGeneros"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="genres-grid" id="genresGrid"></div>
-  </div>
-</div>
-
-<div class="modal" id="modalMeuId">
-  <div class="modal-box" style="max-width:400px">
-    <div class="modal-header">
-      <span class="titulo">🆔 MEU ID</span>
-      <button class="fechar" id="fecharMeuId"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="block-info-box" style="margin-bottom:16px">📱 <b>Envie este ID</b> pro vendedor pelo WhatsApp.</div>
-    <div class="id-box">
-      <div class="id-label">🆔 SEU ID ÚNICO</div>
-      <div class="id-value" id="meuIdValue">Carregando...</div>
-      <div class="id-btns">
-        <button class="id-btn id-btn-copy" id="btnCopiarMeuId"><i class="fas fa-copy"></i> Copiar</button>
-        <button class="id-btn id-btn-whats" id="btnEnviarMeuIdWhats"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="download-modal" id="downloadModal">
-  <div class="download-box">
-    <div class="titulo" id="dlTitulo">📥 BAIXANDO</div>
-    <div class="sub" id="dlSub">Preparando...</div>
-    <div class="dl-bar"><div class="dl-fill" id="dlFill"></div></div>
-    <div class="dl-info">
-      <span id="dlContador">0 / 0</span>
-      <span id="dlPercent">0%</span>
-    </div>
-    <div class="dl-info" style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:-8px" id="dlAtual"></div>
-    <button class="dl-btn cancel" id="dlCancelar">🛑 Cancelar</button>
-    <button class="dl-btn close" id="dlFechar" style="display:none">✕ Fechar</button>
-    <div class="dl-hint">💡 <b>Deixe o app aberto para baixar mais rápido.</b></div>
-  </div>
-</div>
-
-<div id="qrCodeModal">
-  <div class="qr-content">
-    <h3>📱 QR CODE</h3>
-    <p style="color:#aaa;font-size:.8rem;margin-bottom:10px">Compartilhe o app!</p>
-    <div class="qr-wrapper"><img id="qrCodeImage" src="" alt="QR"></div>
-    <button class="qr-btn" id="qrCloseBtn">✕ Fechar</button>
-  </div>
-</div>
-
-<div id="blockOverlay">
-  <div class="block-content">
-    <img src="favicon512.png" alt="VDB Music" class="block-logo" onerror="this.style.display='none'">
-    <h1 class="block-title">VDB</h1>
-    <div class="block-sub">🔒 DIGITE SUA SENHA</div>
-    <div class="block-info-box"><b>Envie seu ID abaixo pro vendedor</b><br>pra receber a senha de liberação.</div>
-    <div class="id-box">
-      <div class="id-label">🆔 SEU ID ÚNICO</div>
-      <div class="id-value" id="idUsuarioBloqueio">Carregando...</div>
-      <div class="id-btns">
-        <button class="id-btn id-btn-copy" id="btnCopiarIdBloqueio"><i class="fas fa-copy"></i> Copiar ID</button>
-        <button class="id-btn id-btn-whats" id="btnEnviarIdWhats"><i class="fab fa-whatsapp"></i> Enviar</button>
-      </div>
-    </div>
-    <div class="block-divider">OU</div>
-    <input type="password" id="senhaInput" placeholder="Cole sua senha aqui" autocomplete="off">
-    <button class="btn-liberar" id="btnLiberar"><i class="fas fa-unlock"></i> LIBERAR ACESSO</button>
-    <div class="erro" id="erroSenha"></div>
-  </div>
-</div>
-
-<div id="adminPanel">
-  <button id="adminCloseTopBtn" style="position:absolute;top:10px;right:14px;background:transparent;border:none;color:#888;font-size:1.3rem;cursor:pointer">✕</button>
-  <h2>👑 GERENCIADOR DE SENHAS</h2>
-  <div class="info-box">💡 Cole o ID do cliente abaixo, escolha a validade e clique em DEVICE ou UNIVERSAL.</div>
-  <label>🆔 ID do Cliente:</label>
-  <input type="text" id="adminFingerprintInput" placeholder="Cole o fingerprint do cliente" autocomplete="off">
-  <label style="margin-top:14px">⏱️ Validade:</label>
-  <div class="validade-seletor">
-    <button class="validade-btn active" data-dias="7">7 dias</button>
-    <button class="validade-btn" data-dias="30">30 dias</button>
-    <button class="validade-btn" data-dias="90">90 dias</button>
-    <button class="validade-btn" data-dias="365">1 ano</button>
-    <button class="validade-btn" data-dias="0">∞ Vitalício</button>
-  </div>
-  <div class="row-btns">
-    <button class="btn-gerar" id="adminGerarBtn">📱 DEVICE</button>
-    <button class="btn-universal" id="adminGerarUniversalBtn">🌍 UNIVERSAL</button>
-    <button class="btn-limpar" id="adminLimparBtn">🗑️</button>
-  </div>
-  <div class="senha-box">
-    <label>🔑 SENHA GERADA:</label>
-    <input type="text" id="adminSenhaGerada" readonly placeholder="Clique em gerar" style="margin-top:8px">
-    <div class="row-btns" style="margin-top:8px">
-      <button class="btn-copiar" id="btnCopiarSenha" style="flex:1">📋 Copiar</button>
-      <button class="btn-whats" id="adminEnviarWhatsBtn" style="flex:1">📱 WhatsApp</button>
-    </div>
-  </div>
-  <button id="adminCloseBtn" style="background:rgba(255,255,255,.06);border:none;padding:12px;border-radius:8px;color:#aaa;cursor:pointer;width:100%;margin-top:10px;font-weight:900">✕ Fechar</button>
-</div>
-
-<div class="vdb-dialog-overlay" id="vdbDialogOverlay">
-  <div class="vdb-dialog">
-    <h3 id="vdbDialogTitle">Título</h3>
-    <p id="vdbDialogMsg">Mensagem</p>
-    <input type="text" id="vdbDialogInput" style="display:none;">
-    <div class="btns">
-      <button class="btn-cancel" id="vdbDialogCancel">Cancelar</button>
-      <button class="btn-ok" id="vdbDialogOk">Confirmar</button>
-    </div>
-  </div>
-</div>
-
-<button id="btnInstalarFixo"><i class="fas fa-download"></i> Instalar App</button>
-
-<div id="instrucoesInstalar">
-  <div class="instrucoes-box">
-    <h3 style="color:#fff;margin-bottom:14px;font-family:'Audiowide',sans-serif;letter-spacing:2px">📲 INSTALAR APP</h3>
-    <div class="passo"><div class="num">1</div><div>Toque no menu do navegador</div></div>
-    <div class="passo"><div class="num">2</div><div>Toque em <b>"Instalar app"</b></div></div>
-    <div class="passo"><div class="num">3</div><div>Confirme e pronto! 🎵</div></div>
-    <button class="btn-fechar-inst" id="fecharInstrucoesBtn">ENTENDI ✅</button>
-  </div>
-</div>
-
-<div class="notif" id="notification" role="status" aria-live="polite"></div>
-<div id="netBanner"></div>
-<div id="bgDownloadBanner"><span class="spinner"></span><span id="bgDownloadText">Baixando...</span></div>
-
-<audio id="musicPlayer" preload="none"></audio>
-<audio id="backgroundAudio" preload="auto" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;"></audio>
-
-<script>const FilaInteligente = {
+let netBannerTimer = null;
+function atualizarNetBanner(){
+  const b = $('netBanner'); if(!b) return;
+  clearTimeout(netBannerTimer);
+  if(!navigator.onLine){
+    b.textContent = '🔴 Offline';
+    b.classList.remove('online');
+    b.classList.add('show');
+  }else{
+    b.textContent = '🟢 Online';
+    b.classList.add('online','show');
+    netBannerTimer = setTimeout(() => b.classList.remove('show'), 2000);
+  }
+}
+window.addEventListener('online', () => { atualizarNetBanner(); notif('🟢 Voltou online', 1800); });
+window.addEventListener('offline', () => { atualizarNetBanner(); notif('🔴 Ficou offline', 1800); });const FilaInteligente = {
   poolOriginal: [], fila: [], historico: [], indiceHistorico: -1, generoAtual: '',
   resetar(pool, genero){
     this.poolOriginal = pool.filter(m => !appState.musicasComProblema.has(m.id));
@@ -3257,7 +3246,12 @@ function setupProgressBar(){
   const parar = e => {
     if(!scrubbing) return;
     scrubbing = false; _scrubbingProgress = false;
-    tr/* ══════════ INICIAR ══════════ */
+    try { bar.releasePointerCapture(e.pointerId); } catch(_){}
+    mostrarUI(true);
+  };
+  bar.addEventListener('pointerup', parar);
+  bar.addEventListener('pointercancel', () => { scrubbing = false; _scrubbingProgress = false; });
+}/* ══════════ INICIAR ══════════ */
 async function iniciar(){
   try{
     const start = Date.now();
@@ -3477,9 +3471,4 @@ iniciar();
 })();
 </script>
 </body>
-</html>y { bar.releasePointerCapture(e.pointerId); } catch(_){}
-    mostrarUI(true);
-  };
-  bar.addEventListener('pointerup', parar);
-  bar.addEventListener('pointercancel', () => { scrubbing = false; _scrubbingProgress = false; });
-}
+</html>
