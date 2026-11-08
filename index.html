@@ -58,7 +58,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   display:flex;align-items:center;justify-content:center;
   font-family:'Orbitron',sans-serif;font-size:1.5rem;color:rgba(255,255,255,.1);letter-spacing:8px}
 
-/* ===== BARRA DE PROGRESSO CIRCULAR (dá a volta na tela) ===== */
 .progress-ring{
   position:fixed;inset:0;width:100%;height:100%;
   z-index:37;pointer-events:none;
@@ -67,7 +66,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   transition:stroke-dasharray .25s linear;
   filter:drop-shadow(0 0 4px rgba(0,212,255,.7));
 }
-/* esconde a barra linear antiga */
 .mini-progresso{display:none !important}
 .mini-progresso-fill{display:none !important}
 
@@ -89,6 +87,18 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .btn-fav-vdb.ativo{color:#f472b6;animation:piscaCoracaoAtivo 1.2s ease-in-out infinite}
 @keyframes piscaCoracao{0%,100%{opacity:.35;transform:scale(.95)}50%{opacity:.9;transform:scale(1.05)}}
 @keyframes piscaCoracaoAtivo{0%,100%{opacity:.7;transform:scale(1);text-shadow:0 0 6px rgba(244,114,182,.6)}50%{opacity:1;transform:scale(1.15);text-shadow:0 0 16px rgba(244,114,182,1)}}
+
+.timer-wrap{display:flex;align-items:center;gap:8px}
+/* Indicador de voz (microfone piscando) */
+#voiceIndicator{
+  display:none;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(239,68,68,.18);
+  border:1px solid rgba(239,68,68,.5);
+  color:#f87171;font-size:.8rem;
+}
+#voiceIndicator.ativo{display:flex;animation:piscaMic 1.2s ease-in-out infinite}
+@keyframes piscaMic{0%,100%{opacity:.5;box-shadow:0 0 4px rgba(239,68,68,.4)}50%{opacity:1;box-shadow:0 0 14px rgba(239,68,68,.9)}}
 
 .timer-texto{font-family:'Rajdhani',sans-serif;font-size:.85rem;font-weight:800;color:#fff;white-space:nowrap}
 .letreiro-wrap{width:100%;height:40px;padding:0 16px;overflow:hidden;display:flex;align-items:center;cursor:pointer;position:relative}
@@ -147,6 +157,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left;width:100%}
 .fab-sub-btn:active{background:rgba(255,255,255,.12)}
 .fab-sub-btn i{width:22px;text-align:center;font-size:1rem}
+.fab-sub-btn.voice-on{color:#10b981}
+.fab-sub-btn.voice-on i{color:#10b981}
 .fab-versao{text-align:center;padding:10px 14px 4px;margin-top:4px;
   border-top:1px solid rgba(255,255,255,.08);font-family:'Orbitron',sans-serif;
   font-size:.65rem;color:rgba(255,255,255,.5);letter-spacing:3px;font-weight:900}
@@ -393,6 +405,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   .genero-tocando .dot{animation:none!important}
   .fila-item.tocando{animation:none!important}
   .btn-fav-vdb,.btn-fav-vdb.ativo{animation:none!important;opacity:.9}
+  #voiceIndicator.ativo{animation:none!important;opacity:1}
   *{transition-duration:.01ms!important}
 }
 
@@ -414,6 +427,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   .loading-logo{width:100px;height:100px}
   .block-logo{width:110px;height:110px}
   #btnInstalarFixo{bottom:calc(160px + var(--safe-bottom));right:12px;padding:7px 11px;font-size:.62rem}
+  #voiceIndicator{width:24px;height:24px;font-size:.72rem}
 }
 
 @media (orientation: landscape) and (max-height: 500px){
@@ -450,7 +464,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   <div id="telaPrincipal">
     <div class="media-container" id="mediaContainer"><div class="media-fallback-visual">VDB MUSIC</div></div>
 
-    <!-- BARRA DE PROGRESSO CIRCULAR (dá a volta na tela) -->
     <svg id="progressRing" class="progress-ring" viewBox="0 0 100 100" preserveAspectRatio="none">
       <rect x="0.5" y="0.5" width="99" height="99" rx="2" fill="none"
             stroke="rgba(0,0,0,.35)" stroke-width="1"/>
@@ -474,7 +487,10 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
             <i class="far fa-heart"></i>
           </button>
         </div>
-        <span class="timer-texto" id="timerLib">24:00:00</span>
+        <div class="timer-wrap">
+          <div id="voiceIndicator" title="Escutando..."><i class="fas fa-microphone"></i></div>
+          <span class="timer-texto" id="timerLib">24:00:00</span>
+        </div>
       </div>
       <div class="letreiro-wrap" id="letreiroClick">
         <p class="letreiro" id="scrollText">🎵 VDB MUSIC</p>
@@ -543,6 +559,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
     <button class="fab-sub-btn" id="fabMix"><i class="fas fa-shuffle" style="color:#f59e0b"></i>Mistura VDB</button>
     <button class="fab-sub-btn" id="fabSite"><i class="fas fa-globe" style="color:#22d3ee"></i>Abrir Site VDB</button>
     <button class="fab-sub-btn" id="fabYTMusic"><i class="fab fa-youtube" style="color:#ff0000"></i>Abrir YouTube Music</button>
+    <div class="fab-secao">🎤 Voz</div>
+    <button class="fab-sub-btn" id="fabVoice"><i class="fas fa-microphone" style="color:#ef4444"></i>Ativar Comando de Voz</button>
     <div class="fab-secao">📥 Offline</div>
     <button class="fab-sub-btn" id="fabBaixarAtual"><i class="fas fa-download" style="color:#fbbf24"></i>Baixar Gênero Atual</button>
     <button class="fab-sub-btn" id="fabGerenciarOffline"><i class="fas fa-hdd" style="color:#10b981"></i>Gerenciar Offline</button>
@@ -743,6 +761,7 @@ const fmt = s => { if(!s||isNaN(s)) return '0:00'; const m=Math.floor(s/60), g=M
 const vibrar = p => { try{ navigator.vibrate && navigator.vibrate(p||15); }catch(e){} };
 const sanitize = t => { if(t==null||t==='') return ''; const d=document.createElement('div'); d.textContent=String(t); return d.textContent; };
 const shuffle = a => { if(!a||!a.length) return []; const x=[...a]; for(let i=x.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [x[i],x[j]]=[x[j],x[i]];} return x; };
+const normalizar = s => (s||'').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
 function fmtTempo(s){ if(s<0)s=0; s=Math.floor(s); const d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60),g=Math.floor(s%60); if(d>0) return d+'d '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(g).padStart(2,'0'); if(h>0) return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(g).padStart(2,'0'); return String(m).padStart(2,'0')+':'+String(g).padStart(2,'0'); }
 function copiarTexto(t,msg){ if(!t) return notif('⚠️ Nada pra copiar!'); navigator.clipboard.writeText(t).then(()=>notif(msg||'📋 Copiado!')).catch(()=>{ const i=document.createElement('input'); i.value=t; document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); notif(msg||'📋 Copiado!'); }); }
 
@@ -1191,7 +1210,7 @@ const SearchManager = {
     const cont=$('buscaResultados'), ce=$('buscaCount'); if(!cont) return;
     let res=UniversalPool.carregado?[...UniversalPool.musicas]:[...appState.musicas];
     const termo=this.termoAtual.trim().toLowerCase();
-    const norm=s=>(s||'').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+    const norm=s=>normalizar(s);
     const termoNorm=norm(termo);
     if(termoNorm){
       const partes=termoNorm.split(/\s+/).filter(Boolean);
@@ -1575,6 +1594,253 @@ async function ativarMix(){
 function trocarTema(){ const temas={azul:{nome:'Azul',c1:'#2563eb',c2:'#1e40af',c3:'#3b82f6'},roxo:{nome:'Roxo',c1:'#7c3aed',c2:'#5b21b6',c3:'#a855f7'},preto:{nome:'Preto',c1:'#374151',c2:'#111827',c3:'#6b7280'}}; const keys=Object.keys(temas); const cur=localStorage.getItem('vdb_tema_cor')||'azul'; const i=keys.indexOf(cur); const next=keys[(i+1)%keys.length]; const t=temas[next]; document.documentElement.style.setProperty('--cor-1',t.c1); document.documentElement.style.setProperty('--cor-2',t.c2); document.documentElement.style.setProperty('--cor-3',t.c3); try{ localStorage.setItem('vdb_tema_cor',next); }catch(e){} notif('🎨 Tema '+t.nome); }
 async function atualizarAppMagico(){ notif('⏳ Atualizando...',1500); try{ if('caches' in window){ const k=await caches.keys(); await Promise.all(k.filter(n=>!n.startsWith('vdb-offline')).map(x=>caches.delete(x))); } if(navigator.serviceWorker){ const r=await navigator.serviceWorker.getRegistrations(); await Promise.all(r.map(x=>x.unregister())); } }catch(e){} setTimeout(()=>{ const u=new URL(window.location.href); u.searchParams.set('update',Date.now()); window.location.href=u.toString(); },800); }
 function abrirYouTubeMusic(){ vibrar(15); const m = appState.musicaAtual; const q = m ? encodeURIComponent((m.title||'')+' '+(m.artist||'')) : ''; const url = q ? 'https://music.youtube.com/search?q='+q : 'https://music.youtube.com/'; window.open(url,'_blank','noopener,noreferrer'); }
+
+/* ============================================================
+   MÓDULO DE COMANDO DE VOZ
+   ============================================================ */
+const VoiceControl = {
+  reconhecimento: null,
+  ativo: false,
+  suportado: false,
+  _reiniciarTimer: null,
+  _pararDeVez: false,
+  _ultimoResultado: '',
+  _ultimoTs: 0,
+
+  init() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    this.suportado = !!SR;
+    const btn = $('fabVoice');
+    if (!btn) return;
+    if (!this.suportado) {
+      btn.innerHTML = '<i class="fas fa-microphone-slash" style="color:#666"></i>Voz não suportada';
+      btn.style.opacity = '.5';
+      btn.onclick = () => { fecharFab(); notif('🎤 Não suportado neste navegador', 2500, true); };
+      return;
+    }
+    btn.onclick = () => { fecharFab(); this.toggle(); };
+    // Se já tem permissão concedida antes, tenta religar sozinho (sem forçar prompt)
+    if (navigator.permissions && navigator.permissions.query) {
+      try {
+        navigator.permissions.query({ name: 'microphone' }).then(p => {
+          if (p.state === 'granted' && localStorage.getItem('vdb_voice_auto') === '1') {
+            this.iniciar();
+          }
+        }).catch(() => {});
+      } catch (_) {}
+    }
+  },
+
+  toggle() {
+    if (this.ativo) this.parar();
+    else this.iniciar();
+  },
+
+  iniciar() {
+    if (!this.suportado || this.ativo) return;
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!this.reconhecimento) {
+      const r = new SR();
+      r.lang = 'pt-BR';
+      r.continuous = true;
+      r.interimResults = false;
+      r.maxAlternatives = 1;
+      r.onresult = (e) => {
+        const ult = e.results[e.results.length - 1];
+        if (!ult || !ult.isFinal) return;
+        const txt = (ult[0] && ult[0].transcript || '').trim();
+        if (!txt) return;
+        const agora = Date.now();
+        if (txt === this._ultimoResultado && (agora - this._ultimoTs) < 1500) return;
+        this._ultimoResultado = txt;
+        this._ultimoTs = agora;
+        this.processar(txt);
+      };
+      r.onerror = (e) => {
+        const err = e.error || '';
+        if (err === 'not-allowed' || err === 'service-not-allowed') {
+          this._pararDeVez = true;
+          this.ativo = false;
+          this._atualizarUI();
+          localStorage.removeItem('vdb_voice_auto');
+          notif('🎤 Microfone negado. Ative nas permissões.', 3500, true);
+        } else if (err === 'no-speech') {
+          // silêncio normal, só reinicia
+        } else if (err === 'network') {
+          notif('🎤 Sem rede para reconhecer', 2500, true);
+        } else if (err === 'aborted') {
+          // ignorar
+        }
+      };
+      r.onend = () => {
+        if (this._pararDeVez) return;
+        if (!this.ativo) return;
+        // reinicia pra manter escuta contínua
+        clearTimeout(this._reiniciarTimer);
+        this._reiniciarTimer = setTimeout(() => {
+          if (!this.ativo || this._pararDeVez) return;
+          try { r.start(); } catch (_) {}
+        }, 400);
+      };
+      this.reconhecimento = r;
+    }
+    this._pararDeVez = false;
+    this.ativo = true;
+    try {
+      this.reconhecimento.start();
+      localStorage.setItem('vdb_voice_auto', '1');
+      notif('🎤 Escutando... fale "toca sertanejo"', 3000);
+    } catch (e) {
+      notif('🎤 Não consegui iniciar o microfone', 2500, true);
+      this.ativo = false;
+    }
+    this._atualizarUI();
+  },
+
+  parar() {
+    this._pararDeVez = true;
+    this.ativo = false;
+    clearTimeout(this._reiniciarTimer);
+    try { if (this.reconhecimento) this.reconhecimento.stop(); } catch (_) {}
+    this._atualizarUI();
+    notif('🎤 Voz desativada', 2000);
+  },
+
+  _atualizarUI() {
+    const ind = $('voiceIndicator');
+    const btn = $('fabVoice');
+    if (ind) ind.classList.toggle('ativo', this.ativo);
+    if (btn) {
+      btn.classList.toggle('voice-on', this.ativo);
+      if (this.ativo) btn.innerHTML = '<i class="fas fa-microphone" style="color:#10b981"></i>Desativar Voz';
+      else btn.innerHTML = '<i class="fas fa-microphone" style="color:#ef4444"></i>Ativar Comando de Voz';
+    }
+  },
+
+  // Normaliza texto: minúsculo, sem acento, sem pontuação
+  _norm(t) {
+    return (t || '').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[.,!?;:]/g, ' ')
+      .replace(/\s+/g, ' ').trim();
+  },
+
+  processar(textoBruto) {
+    const t = this._norm(textoBruto);
+    if (!t) return;
+    let acao = null;
+
+    // 1) Desligar voz
+    if (/\b(desliga|desativar|parar|para) (a )?voz\b/.test(t) || /\bparar de escutar\b/.test(t) || /\bdesliga o microfone\b/.test(t)) {
+      this.parar();
+      return;
+    }
+
+    // 2) Gêneros (com ou sem "toca")
+    const generoAchado = this._detectarGenero(t);
+    if (generoAchado) {
+      acao = `🎤 ${textoBruto}`;
+      notif(acao, 1800);
+      selecionarGenero(generoAchado);
+      return;
+    }
+
+    // 3) Play/Pause
+    if (/\b(pausa|pausar|para|parar)\b/.test(t) && !/\bpara de\b/.test(t)) {
+      if (!audio.paused) { togglePlay(); notif('🎤 pausa', 1200); }
+      return;
+    }
+    if (/\b(play|toca|tocar|continua|continuar|volta a tocar)\b/.test(t) && !/\btoca (sertanejo|forro|pagode|mpb|rock|samba|brega|reggae|funk|romantica|flashback|religiosa|moda|bailao|chorinho|novidades|disco|seresta|hip hop|pop|mistura|bonus)\b/.test(t)) {
+      if (audio.paused) { togglePlay(); notif('🎤 play', 1200); }
+      return;
+    }
+
+    // 4) Próxima / Anterior
+    if (/\b(proxima|passa|pula|avanca|next)\b/.test(t)) {
+      next(); notif('🎤 próxima', 1200); return;
+    }
+    if (/\b(anterior|volta|prev|previous)\b/.test(t)) {
+      prev(); notif('🎤 anterior', 1200); return;
+    }
+
+    // 5) Favorita
+    if (/\b(favorita|favoritar|curte|curtir|like)\b/.test(t)) {
+      toggleFavAtual(); return;
+    }
+
+    // 6) Volume
+    if (/\b(aumenta|aumentar|sobe|subir|mais) (o )?volume\b/.test(t) || /\bvolume (mais|alto|acima)\b/.test(t)) {
+      audio.volume = Math.min(1, (audio.volume || 0) + 0.1);
+      notif('🔊 Volume ' + Math.round(audio.volume * 100) + '%', 1200); return;
+    }
+    if (/\b(abaixa|abaixar|diminui|diminuir|desce|descer|menos) (o )?volume\b/.test(t) || /\bvolume (menos|baixo|abaixo)\b/.test(t)) {
+      audio.volume = Math.max(0, (audio.volume || 0) - 0.1);
+      notif('🔉 Volume ' + Math.round(audio.volume * 100) + '%', 1200); return;
+    }
+    if (/\b(silencio|mudo|muta|mutar)\b/.test(t)) {
+      audio.volume = 0; notif('🔇 Mudo', 1200); return;
+    }
+
+    // 7) Mistura
+    if (/\b(mistura|aleatorio|random|shuffle)\b/.test(t)) {
+      ativarMix(); notif('🎤 mistura', 1200); return;
+    }
+
+    // Se chegou aqui, não reconheceu
+    // (silencioso — não polui com notificação de erro)
+  },
+
+  _detectarGenero(t) {
+    // Aliases comuns falados
+    const aliases = {
+      'sertanejo': 'SERTANEJO',
+      'forro': 'FORRÓ',
+      'forro dez': 'FORRÓ',
+      'pagode': 'PAGODE',
+      'mpb': 'MPB',
+      'mpb dois': 'MPB 2',
+      'romantica': 'ROMÂNTICA',
+      'romanticas': 'ROMÂNTICA',
+      'flashback': 'FLASHBACK',
+      'rock': 'ROCK',
+      'samba': 'SAMBA',
+      'brega': 'BREGA',
+      'reggae': 'REGGAE',
+      'funk': 'FUNK',
+      'moda raiz': 'MODA RAIZ',
+      'modao sertanejo': 'MODÃO SERTANEJO',
+      'modao': 'MODÃO SERTANEJO',
+      'disco music': 'DISCO MUSIC',
+      'disco': 'DISCO MUSIC',
+      'seresta': 'SERESTA',
+      'hip hop': 'HIP HOP',
+      'hiphop': 'HIP HOP',
+      'bailao': 'BAILÃO',
+      'forro raiz': 'FORRÓ RAIZ',
+      'chorinho': 'CHORINHO',
+      'novidades': 'NOVIDADES',
+      'mistura brasil': 'MISTURA BRASIL',
+      'pop mix': 'POP/MIX',
+      'pop': 'POP/MIX',
+      'religiosa': 'RELIGIOSA',
+      'gospel': 'RELIGIOSA',
+      'bonus': 'BÔNUS',
+      'teste': 'TESTE'
+    };
+    // Procura alias mais longo primeiro (evita "pop" casar antes de "pop mix")
+    const chaves = Object.keys(aliases).sort((a, b) => b.length - a.length);
+    for (const k of chaves) {
+      const re = new RegExp('(^|\\s)' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\s|$)');
+      if (re.test(t)) return aliases[k];
+    }
+    return null;
+  }
+};
+
+/* ============================================================
+   FIM DO MÓDULO DE VOZ
+   ============================================================ */
+
 function initFab(){
   const main=$('fabMain'), menu=$('fabMenu');
   if(!main||!menu) return;
@@ -1634,14 +1900,12 @@ function setupProgressBar(){
   bar.addEventListener('pointercancel',()=>{ scrubbing=false; });
 }
 
-/* ===== PROGRESSO CIRCULAR (dá a volta na tela) ===== */
-const RING_PERIM = 99 * 4; // perímetro aproximado do rect 99x99 no viewBox 100x100
+const RING_PERIM = 99 * 4;
 function atualizarProgressoCircular(pct){
   const el = $('progressRingFill'); if(!el) return;
   const dash = (Math.max(0, Math.min(100, pct)) / 100) * RING_PERIM;
   el.setAttribute('stroke-dasharray', `${dash} ${RING_PERIM}`);
 }
-// recalcula em resize para manter alinhado (o viewBox preserva proporção com preserveAspectRatio="none", então o perímetro visual se ajusta; aqui só garantimos o valor correto no estado inicial)
 window.addEventListener('resize', () => { if(appState.musicaAtual && audio.duration && isFinite(audio.duration)){ atualizarProgressoCircular((audio.currentTime/audio.duration)*100); } });
 
 async function iniciar(){
@@ -1681,6 +1945,7 @@ async function iniciar(){
     SwipeManager.init();
     setupProgressBar();
     initTapControls();
+    VoiceControl.init();
 
     $('playBtn').onclick=togglePlay;
     $('prevBtn').onclick=prev;
@@ -1741,6 +2006,8 @@ async function iniciar(){
         if(!jaFullscreen()&&appState.playerAtivado) forcarFullscreen();
         if(appState.isPlaying) WakeLockManager.ativar();
         if(appState.playerAtivado) agendarCiclo();
+        // Reativa voz se estava ativa (o navegador pode ter parado ao trocar de aba)
+        if(VoiceControl.ativo && VoiceControl.reconhecimento){ try{ VoiceControl.reconhecimento.start(); }catch(_){} }
       }
     });
 
@@ -1751,7 +2018,7 @@ async function iniciar(){
     if(!appState.introAtiva){ setTimeout(ativarPlayer,800); }
     else{ const check=setInterval(()=>{ if(!appState.introAtiva){ clearInterval(check); setTimeout(ativarPlayer,500); } },200); }
 
-    window.addEventListener('beforeunload',()=>{ if(keepAliveInterval) clearInterval(keepAliveInterval); if(fsRetryTimer) clearInterval(fsRetryTimer); if(silentUrl){ try{ URL.revokeObjectURL(silentUrl); }catch(_){} silentUrl=null; } });
+    window.addEventListener('beforeunload',()=>{ if(keepAliveInterval) clearInterval(keepAliveInterval); if(fsRetryTimer) clearInterval(fsRetryTimer); if(silentUrl){ try{ URL.revokeObjectURL(silentUrl); }catch(_){} silentUrl=null; } if(VoiceControl.ativo) VoiceControl.parar(); });
   }catch(e){
     $('loadingScreen').classList.add('hide');
     $('playerContainer').classList.add('visible');
