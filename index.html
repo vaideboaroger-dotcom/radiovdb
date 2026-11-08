@@ -58,10 +58,18 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   display:flex;align-items:center;justify-content:center;
   font-family:'Orbitron',sans-serif;font-size:1.5rem;color:rgba(255,255,255,.1);letter-spacing:8px}
 
-.mini-progresso{position:fixed;top:0;left:0;right:0;height:3px;z-index:38;
-  background:rgba(0,0,0,.4);pointer-events:none}
-.mini-progresso-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--cor-1),var(--cor-3),var(--cor-neon));
-  transition:width .3s linear;box-shadow:0 0 6px rgba(0,212,255,.6)}
+/* ===== BARRA DE PROGRESSO CIRCULAR (dá a volta na tela) ===== */
+.progress-ring{
+  position:fixed;inset:0;width:100%;height:100%;
+  z-index:37;pointer-events:none;
+}
+#progressRingFill{
+  transition:stroke-dasharray .25s linear;
+  filter:drop-shadow(0 0 4px rgba(0,212,255,.7));
+}
+/* esconde a barra linear antiga */
+.mini-progresso{display:none !important}
+.mini-progresso-fill{display:none !important}
 
 .info-topo{position:fixed;top:0;left:0;right:0;z-index:35;
   padding-top:max(8px,var(--safe-top));padding-bottom:8px;
@@ -83,10 +91,9 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 @keyframes piscaCoracaoAtivo{0%,100%{opacity:.7;transform:scale(1);text-shadow:0 0 6px rgba(244,114,182,.6)}50%{opacity:1;transform:scale(1.15);text-shadow:0 0 16px rgba(244,114,182,1)}}
 
 .timer-texto{font-family:'Rajdhani',sans-serif;font-size:.85rem;font-weight:800;color:#fff;white-space:nowrap}
-.letreiro-wrap{width:100%;height:40px;padding:0 16px;overflow:hidden;display:flex;align-items:center;cursor:pointer}
+.letreiro-wrap{width:100%;height:40px;padding:0 16px;overflow:hidden;display:flex;align-items:center;cursor:pointer;position:relative}
 .letreiro{font-size:1.1rem;font-weight:800;color:#fff;white-space:nowrap;
-  animation:scrollText 25s linear infinite;text-shadow:0 1px 6px rgba(0,0,0,.7);flex:1;overflow:hidden;will-change:transform}
-@keyframes scrollText{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+  text-shadow:0 1px 6px rgba(0,0,0,.7);flex:1;overflow:hidden;will-change:transform}
 .letreiro b{color:#fff;font-weight:900}
 .letreiro i{font-style:normal;color:rgba(255,255,255,.8)}
 .genero-tocando{width:100%;padding:2px 16px 0;font-size:.72rem;font-weight:800;letter-spacing:3px;
@@ -143,12 +150,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .fab-versao{text-align:center;padding:10px 14px 4px;margin-top:4px;
   border-top:1px solid rgba(255,255,255,.08);font-family:'Orbitron',sans-serif;
   font-size:.65rem;color:rgba(255,255,255,.5);letter-spacing:3px;font-weight:900}
-
-#telaAnuncios{position:fixed;inset:0;z-index:8;background:#000;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s}
-#telaAnuncios.ativa{opacity:1;visibility:visible;pointer-events:auto}
-.media-anuncios{position:absolute;inset:0;overflow:hidden}
-.media-anuncios video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
-.media-anuncios .active{opacity:1;z-index:3}
 
 #bannerFullscreen{position:fixed;inset:0;z-index:60;
   background:linear-gradient(160deg,#0a0a1a 0%,#1a0f2e 50%,#0a0a1a 100%);
@@ -389,7 +390,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 
 @media (prefers-reduced-motion: reduce){
   .letreiro{animation:none!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .mini-progresso-fill{transition:none!important}
   .genero-tocando .dot{animation:none!important}
   .fila-item.tocando{animation:none!important}
   .btn-fav-vdb,.btn-fav-vdb.ativo{animation:none!important;opacity:.9}
@@ -450,7 +450,21 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
   <div id="telaPrincipal">
     <div class="media-container" id="mediaContainer"><div class="media-fallback-visual">VDB MUSIC</div></div>
 
-    <div class="mini-progresso"><div class="mini-progresso-fill" id="miniProgressFill"></div></div>
+    <!-- BARRA DE PROGRESSO CIRCULAR (dá a volta na tela) -->
+    <svg id="progressRing" class="progress-ring" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <rect x="0.5" y="0.5" width="99" height="99" rx="2" fill="none"
+            stroke="rgba(0,0,0,.35)" stroke-width="1"/>
+      <rect id="progressRingFill" x="0.5" y="0.5" width="99" height="99" rx="2" fill="none"
+            stroke="url(#ringGrad)" stroke-width="1.2"
+            stroke-dasharray="0 400" stroke-linecap="round"/>
+      <defs>
+        <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#2563eb"/>
+          <stop offset="50%" stop-color="#3b82f6"/>
+          <stop offset="100%" stop-color="#00d4ff"/>
+        </linearGradient>
+      </defs>
+    </svg>
 
     <div class="info-topo" id="infoTopo">
       <div class="topo-linha">
@@ -502,10 +516,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
       <button class="barra-btn" id="barraFila" aria-label="Fila"><i class="fas fa-list-ol"></i><span>Fila</span></button>
       <button class="fab-main" id="fabMain" aria-label="Menu"><i class="fas fa-plus"></i></button>
     </div>
-  </div>
-
-  <div id="telaAnuncios">
-    <div class="media-anuncios" id="mediaAnuncios"><div class="media-fallback-visual">PUBLICIDADE</div></div>
   </div>
 
   <div id="bannerFullscreen">
@@ -706,7 +716,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 const MIDIA_CONFIG = {
   INTRO_URL: 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/vdb.mp4',
   FUNDO_VIDEOS: ['https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/fita.mp4'],
-  ANUNCIO_VIDEOS: ['https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/tes.mp4'],
   LINK_SITE: 'https://sites.google.com/view/rogersjc/in%C3%ADcio'
 };
 const VERSAO = 'v010';
@@ -718,7 +727,6 @@ const CONFIG = {
   LOADING_MIN_MS:1200,
   MIDIA_MAX_SEGURANCA_MS:60000,
   CICLO_PLAYER_MS:60000,
-  CICLO_VIDEO_MS:10000,
   CICLO_BANNER_MS:10000,
   VOLUME_PADRAO:1.0,
   DOWNLOAD_TIMEOUT_MS:30000,
@@ -1039,27 +1047,49 @@ function prev(){
 }
 
 let _letreiroCache={texto:'',dur:0};
+let letreiroRAF=null, letreiroX=0, letreiroVel=0, letreiroLargura=0, letreiroContainerLargura=0;
+
+function iniciarLetreiroAnimacao(el, container){
+  cancelAnimationFrame(letreiroRAF);
+  letreiroX = container.clientWidth;
+  letreiroVel = 60; // px por segundo
+  letreiroLargura = el.scrollWidth;
+  letreiroContainerLargura = container.clientWidth;
+  let ultimoTempo = performance.now();
+
+  function passo(agora){
+    const dt = (agora - ultimoTempo) / 1000;
+    ultimoTempo = agora;
+    letreiroX -= letreiroVel * dt;
+    if(letreiroX < -letreiroLargura){
+      letreiroX = letreiroContainerLargura;
+    }
+    el.style.transform = `translateX(${letreiroX}px)`;
+    letreiroRAF = requestAnimationFrame(passo);
+  }
+  letreiroRAF = requestAnimationFrame(passo);
+}
+
 function atualizarLetreiro(m){
   const el=$('scrollText'); if(!el) return;
-  const txt=m&&m.title?(m.title+' — '+(m.artist||'Artista')):('VDB MUSIC '+VERSAO);
-  if(_letreiroCache.texto===txt) return;
-  _letreiroCache.texto=txt; el.innerHTML=''; el.append('🎵 ');
-  if(m&&m.title){
-    const b=document.createElement('b'); b.textContent='TOCANDO:'; el.append(b,' ');
+  const container = el.parentElement;
+  const txt = m && m.title ? (m.title + ' — ' + (m.artist||'Artista')) : ('VDB MUSIC ' + VERSAO);
+  if(_letreiroCache.texto === txt) return;
+  _letreiroCache.texto = txt;
+  el.innerHTML = '';
+  el.append('🎵 ');
+  if(m && m.title){
+    const b = document.createElement('b'); b.textContent = 'TOCANDO:'; el.append(b, ' ');
     el.append(sanitize(m.title)); el.append(' — ');
-    const i=document.createElement('i'); i.textContent=m.artist||'Artista'; el.append(i);
-    requestAnimationFrame(()=>{
-      const txtWidth=el.scrollWidth||(el.textContent.length*9);
-      if(txtWidth<=window.innerWidth){ el.style.animation='none'; el.style.transform='translateX(0)'; return; }
-      el.style.animation='';
-      const totalWidth=window.innerWidth+txtWidth;
-      const dur=Math.max(20,totalWidth/50);
-      el.style.animationDuration=dur+'s';
-      _letreiroCache.dur=dur;
-    });
+    const i = document.createElement('i'); i.textContent = m.artist || 'Artista'; el.append(i);
+  } else {
+    el.append('VDB MUSIC ' + VERSAO + ' 🎵');
   }
-  else el.append('VDB MUSIC '+VERSAO+' 🎵');
+  requestAnimationFrame(() => {
+    if(container) iniciarLetreiroAnimacao(el, container);
+  });
 }
+
 function atualizarGenero(g){ const el=$('generoTocandoNome'); if(el) el.textContent=(g||'VDB').toUpperCase(); }
 function atualizarInfoMusica(m){ if(m) atualizarGenero(m.genero||appState.modoAtual||''); }
 
@@ -1388,41 +1418,32 @@ async function carregarListaMidias(container,urls){
   tocarIdx(0);
 }
 async function carregarMidiasPadrao(){ await carregarListaMidias($('mediaContainer'),MIDIA_CONFIG.FUNDO_VIDEOS); }
-async function carregarMidiasAnuncio(){ await carregarListaMidias($('mediaAnuncios'),MIDIA_CONFIG.ANUNCIO_VIDEOS); }
 
 let cicloTimer=null, bannerTimerFill=null;
 function agendarCiclo(){
   clearTimeout(cicloTimer);
-  const t = appState.telaAtual==='principal' ? CONFIG.CICLO_PLAYER_MS
-          : appState.telaAtual==='banner'    ? CONFIG.CICLO_BANNER_MS
-          : CONFIG.CICLO_VIDEO_MS;
+  const t = appState.telaAtual==='principal' ? CONFIG.CICLO_PLAYER_MS : CONFIG.CICLO_BANNER_MS;
   cicloTimer=setTimeout(async()=>{
     if(!appState.playerAtivado){ agendarCiclo(); return; }
     if(document.querySelector('.modal.open, #adminPanel.open, #qrCodeModal.active, #downloadModal.active, #vdbDialogOverlay.active')){ agendarCiclo(); return; }
-    if(appState.telaAtual==='principal'){ await trocarTela('anuncios'); }
-    else if(appState.telaAtual==='anuncios'){ await trocarTela('banner'); }
+    if(appState.telaAtual==='principal'){ await trocarTela('banner'); }
     else { await trocarTela('principal'); }
     if(!jaFullscreen()) forcarFullscreen();
     agendarCiclo();
   }, t);
 }
 async function trocarTela(destino){
-  const bf=$('bannerFullscreen'), ta=$('telaAnuncios'), tp=$('telaPrincipal'), bi=$('barraInferior');
+  const bf=$('bannerFullscreen'), tp=$('telaPrincipal'), bi=$('barraInferior');
   clearInterval(bannerTimerFill); bannerTimerFill=null;
   if(bf) bf.classList.remove('show');
   document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open'));
-  if(destino==='anuncios'){
-    appState.telaAtual='anuncios'; fecharFab();
-    tp.classList.add('oculta'); ta.classList.add('ativa'); bi.classList.add('escondida');
-    await carregarMidiasAnuncio();
-  } else if(destino==='banner'){
-    appState.telaAtual='banner'; ta.classList.remove('ativa'); bi.classList.add('escondida');
-    document.querySelectorAll('#mediaAnuncios video').forEach(v=>{ try{v.pause();}catch(_){} });
+  if(destino==='banner'){
+    appState.telaAtual='banner'; bi.classList.add('escondida');
     if(bf) bf.classList.add('show');
     iniciarTimerBanner();
   } else {
     appState.telaAtual='principal'; clearInterval(bannerTimerFill); bannerTimerFill=null;
-    ta.classList.remove('ativa'); tp.classList.remove('oculta'); bi.classList.remove('escondida');
+    tp.classList.remove('oculta'); bi.classList.remove('escondida');
     if(!$('mediaContainer').querySelector('video.active')){ await carregarMidiasPadrao(); }
   }
 }
@@ -1496,8 +1517,8 @@ const SwipeManager = {
   init(){ document.addEventListener('touchstart',e=>this.onStart(e),{passive:true}); document.addEventListener('touchend',e=>this.onEnd(e),{passive:true}); document.addEventListener('touchcancel',()=>this.reset(),{passive:true}); },
   onStart(e){ if(!appState.playerAtivado) return; if(e.touches.length!==1) return; const t=e.target; if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(t.tagName)){ this.ignorar=true; return; } if(t.closest('.modal,.fab-menu,.progress-bar,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.bf-cta,.btn-fav-vdb,.titulo-wrap')){ this.ignorar=true; return; } this.ignorar=false; this.startX=e.touches[0].clientX; this.startY=e.touches[0].clientY; this.startTime=Date.now(); this.tracking=true; },
   onEnd(e){ if(!this.tracking||this.ignorar){ this.reset(); return; } const t=e.changedTouches[0]; const dx=t.clientX-this.startX; const dy=t.clientY-this.startY; const dt=Date.now()-this.startTime; this.reset(); if(dt>this.limiarTempo) return; if(Math.abs(dx)<this.limiarX) return; if(Math.abs(dx)<Math.abs(dy)*1.2) return; if(dx<0) this.onSwipeLeft(); else this.onSwipeRight(); },
-  onSwipeLeft(){ vibrar(15); if(appState.telaAtual==='anuncios'||appState.telaAtual==='banner'){ trocarTela('principal'); } else { next(); } },
-  onSwipeRight(){ vibrar(15); if(appState.telaAtual==='anuncios'||appState.telaAtual==='banner'){ return; } if(audio.currentTime>3){ audio.currentTime=0; } else { prev(); } },
+  onSwipeLeft(){ vibrar(15); if(appState.telaAtual==='banner'){ trocarTela('principal'); } else { next(); } },
+  onSwipeRight(){ vibrar(15); if(appState.telaAtual==='banner'){ return; } if(audio.currentTime>3){ audio.currentTime=0; } else { prev(); } },
   reset(){ this.tracking=false; this.ignorar=false; }
 };
 
@@ -1606,12 +1627,22 @@ function toggleFila(){ if(filaAberta) fecharFila(); else abrirFila(); }
 function setupProgressBar(){
   const bar=$('progressBar'); if(!bar) return;
   let scrubbing=false;
-  function seekTo(e){ if(!audio.duration||!isFinite(audio.duration)) return; const r=bar.getBoundingClientRect(); const x=Math.max(0,Math.min(e.clientX-r.left,r.width)); const pct=x/r.width; audio.currentTime=pct*audio.duration; $('progressFill').style.width=(pct*100)+'%'; $('currentTime').textContent=fmt(audio.currentTime); }
+  function seekTo(e){ if(!audio.duration||!isFinite(audio.duration)) return; const r=bar.getBoundingClientRect(); const x=Math.max(0,Math.min(e.clientX-r.left,r.width)); const pct=x/r.width; audio.currentTime=pct*audio.duration; $('progressFill').style.width=(pct*100)+'%'; atualizarProgressoCircular(pct*100); $('currentTime').textContent=fmt(audio.currentTime); }
   bar.addEventListener('pointerdown',e=>{ e.preventDefault(); scrubbing=true; try{ bar.setPointerCapture(e.pointerId); }catch(_){} seekTo(e); });
   bar.addEventListener('pointermove',e=>{ if(scrubbing) seekTo(e); });
   bar.addEventListener('pointerup',e=>{ scrubbing=false; try{ bar.releasePointerCapture(e.pointerId); }catch(_){} });
   bar.addEventListener('pointercancel',()=>{ scrubbing=false; });
 }
+
+/* ===== PROGRESSO CIRCULAR (dá a volta na tela) ===== */
+const RING_PERIM = 99 * 4; // perímetro aproximado do rect 99x99 no viewBox 100x100
+function atualizarProgressoCircular(pct){
+  const el = $('progressRingFill'); if(!el) return;
+  const dash = (Math.max(0, Math.min(100, pct)) / 100) * RING_PERIM;
+  el.setAttribute('stroke-dasharray', `${dash} ${RING_PERIM}`);
+}
+// recalcula em resize para manter alinhado (o viewBox preserva proporção com preserveAspectRatio="none", então o perímetro visual se ajusta; aqui só garantimos o valor correto no estado inicial)
+window.addEventListener('resize', () => { if(appState.musicaAtual && audio.duration && isFinite(audio.duration)){ atualizarProgressoCircular((audio.currentTime/audio.duration)*100); } });
 
 async function iniciar(){
   try{
@@ -1687,7 +1718,7 @@ async function iniciar(){
       if(audio.duration&&isFinite(audio.duration)){
         const pct=(audio.currentTime/audio.duration*100);
         $('progressFill').style.width=pct+'%';
-        $('miniProgressFill').style.width=pct+'%';
+        atualizarProgressoCircular(pct);
         $('currentTime').textContent=fmt(audio.currentTime);
         $('totalTime').textContent=fmt(audio.duration);
       }
