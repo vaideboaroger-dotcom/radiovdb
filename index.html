@@ -551,8 +551,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 <div id="bgDownloadBanner"><span class="spinner"></span><span id="bgDownloadText">Baixando...</span></div>
 <div id="tapFeedback"><i class="fas fa-play"></i><span>Play</span></div>
 
-<audio id="musicPlayer" preload="auto" crossorigin="anonymous"></audio>
-<audio id="backgroundAudio" preload="auto" playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;"></audio>
+<audio id="musicPlayer" preload="auto" playsinline></audio>
+<audio id="backgroundAudio" preload="auto" playsinline loop style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;"></audio>
 
 <script>(function(){
 'use strict';
@@ -577,10 +577,12 @@ const CONFIG = {
   DOWNLOAD_RETRY:3,
   DOWNLOAD_PARALELO:4,
   TEMPO_BOTAO_INSTALAR:300000,
-  MAX_FALHAS_CONSECUTIVAS:5,
+  MAX_FALHAS_CONSECUTIVAS:8,
   MIX_GENEROS:['SERTANEJO','FORRÓ','PAGODE','ROMÂNTICA','MPB','POP/MIX'],
   INTERVALO_MIDIA_MS:300,
-  BG_KEEPALIVE_MS:2000
+  BG_KEEPALIVE_MS:800,
+  PREFETCH_QTD:5,
+  PREFETCH_DELAY_MS:1500
 };
 
 const $ = id => document.getElementById(id);
@@ -635,7 +637,9 @@ const FilaInteligente = {
   poolOriginal:[], fila:[], historico:[], indiceHistorico:-1, generoAtual:'',
   resetar(pool,genero){ this.poolOriginal=pool.filter(m=>!appState.musicasComProblema.has(m.id)); this.generoAtual=genero||''; this.fila=shuffle(this.poolOriginal); this.historico=[]; this.indiceHistorico=-1; },
   proxima(){ this.fila=this.fila.filter(m=>!appState.musicasComProblema.has(m.id)); if(this.indiceHistorico<this.historico.length-1){ this.indiceHistorico++; return this.historico[this.indiceHistorico]; } if(this.fila.length===0){ const idsUsados=new Set(this.historico.map(h=>h.id)); const restantes=this.poolOriginal.filter(m=>!appState.musicasComProblema.has(m.id)&&!idsUsados.has(m.id)); if(restantes.length>0) this.fila=shuffle(restantes); else this.fila=shuffle(this.poolOriginal.filter(m=>!appState.musicasComProblema.has(m.id))); } const m=this.fila.shift(); if(!m){ if(appState.musicasComProblema.size>=this.poolOriginal.length&&this.poolOriginal.length>0){ appState.musicasComProblema.clear(); this.fila=shuffle(this.poolOriginal); return this.fila.shift()||null; } return null; } this.historico.push(m); this.indiceHistorico=this.historico.length-1; return m; },
-  voltar(){ if(this.indiceHistorico<=0) return null; this.indiceHistorico--; return this.historico[this.indiceHistorico]; }
+  voltar(){ if(this.indiceHistorico<=0) return null; this.indiceHistorico--; return this.historico[this.indiceHistorico]; },
+  /* NOVO: só olha a próxima SEM consumir da fila (usado no prefetch) */
+  peek(){ const backupFila=[...this.fila]; const backupHist=this.indiceHistorico; const m=this.proxima(); this.fila=backupFila; this.indiceHistorico=backupHist; return m; }
 };
 
 const GENRES = {
@@ -731,6 +735,48 @@ async function _baixarUma(cache, url, key){
   return false;
 }
 
+/* ============ PREFETCH AUTOMÁTICO (NOVO) ============
+   Popula o cache com as próximas músicas em background
+   para que a troca com tela fechada seja instantânea. */
+let _prefetchTimer=null, _prefetchEmAndamento=false;
+function agendarPrefetch(){
+  clearTimeout(_prefetchTimer);
+  _prefetchTimer = setTimeout(prefetchProximas, CONFIG.PREFETCH_DELAY_MS);
+}
+async function prefetchProximas(){
+  if(_prefetchEmAndamento) return;
+  if(!navigator.onLine) return;
+  if(!appState.musicas.length) return;
+  _prefetchEmAndamento=true;
+  try{
+    const cache=await abrirCache();
+    if(!cache) return;
+    const filaAtual = FilaInteligente.fila.slice(0, CONFIG.PREFETCH_QTD);
+    for(const m of filaAtual){
+      if(appState.musicasComProblema.has(m.id)) continue;
+      const url=getUrlCanonica(m); const key=urlCacheKey(url);
+      if(!url||!key) continue;
+      try{
+        if(await cache.match(key)) continue;
+        const ctrl=new AbortController();
+        const tid=setTimeout(()=>{ try{ctrl.abort();}catch(_){} }, 20000);
+        const r=await fetch(url,{signal:ctrl.signal,mode:'cors'});
+        clearTimeout(tid);
+        if(!r.ok) continue;
+        const blob=await r.blob();
+        if(blob.size<500) continue;
+        const tipo=(blob.type||'');
+        if(tipo.includes('text/html')||tipo.includes('application/json')) continue;
+        const tipoFinal = tipo.startsWith('audio/') || tipo.startsWith('video/') ? tipo : 'audio/mpeg';
+        const novoBlob = new Blob([blob], {type:tipoFinal});
+        await cache.put(key, new Response(novoBlob, {status:200, headers:{'Content-Type':tipoFinal,'Content-Length':String(novoBlob.size)}}));
+      }catch(_){}
+    }
+  }finally{
+    _prefetchEmAndamento=false;
+  }
+}
+
 async function iniciarDownloadGenero(genero){
   if(downloadEmAndamento){ notif('⚠️ Já tem download em andamento'); return; }
   downloadEmAndamento=true; downloadGeneroAtual=genero; downloadCancelado=false;
@@ -814,7 +860,7 @@ async function limparGeneroOffline(genero){
 }
 async function abrirGerenciadorOffline(){ const meta=getOfflineMeta(); const gs=Object.keys(meta); if(!gs.length){ notif('📥 Nada baixado'); return; } let txt='📥 OFFLINE\n\n'; gs.forEach(g=>{ const i=meta[g]; txt+='• '+g+': '+i.baixadas+'/'+i.total+(i.completo?' ✅':' ⏳')+'\n'; }); const ok=await vdbDialog({title:'🗑️ LIMPAR OFFLINE',msg:txt+'\n\nApagar tudo?',okText:'Apagar'}); if(ok){ const c=await abrirCache(); if(c){ const ks=await c.keys(); for(const k of ks) await c.delete(k); } setOfflineMeta({}); notif('🗑️ Limpo!'); renderizarGeneros(true); } }
 
-/* ============ PLAYER COM BACKGROUND ROBUSTO ============ */
+/* ============ PLAYER ============ */
 const audio=$('musicPlayer');
 let mediaSessionRegistrado=false, _tocarToken=0;
 function revogarBlobUrlAnterior(){ if(appState._lastBlobUrl){ try{ URL.revokeObjectURL(appState._lastBlobUrl); }catch(e){} appState._lastBlobUrl=null; } }
@@ -878,18 +924,50 @@ async function tocar(){
         if(meuToken!==_tocarToken) return;
         appState.isPlaying=true; appState.falhasConsecutivas=0;
         $('playBtn').innerHTML='<i class="fas fa-pause"></i>';
+        /* NOVO: agenda prefetch das próximas em background */
+        agendarPrefetch();
       }catch(e){
         $('playBtn').innerHTML='<i class="fas fa-play"></i>';
         setTimeout(next,200);
       }
     }else{
-      appState.musicasComProblema.add(m.id);
+      /* Só marca como problema se for erro real (não de rede instável) */
+      if(navigator.onLine){
+        appState.musicasComProblema.add(m.id);
+        notif('⚠️ '+(m.title||'').slice(0,25), 1200);
+      }
       $('playBtn').innerHTML='<i class="fas fa-play"></i>';
-      if(!navigator.onLine) notif('⚠️ "'+(m.title||'').slice(0,30)+'" não está offline',2000);
-      else notif('⚠️ Erro: '+(m.title||'').slice(0,30),1500);
       appState.falhasConsecutivas++;
-      if(appState.falhasConsecutivas>=CONFIG.MAX_FALHAS_CONSECUTIVAS){ notif('⚠️ Muitas músicas com problema',4000,true); appState.falhasConsecutivas=0; appState.carregando=false; return; }
-      setTimeout(next,200);
+      if(appState.falhasConsecutivas>=CONFIG.MAX_FALHAS_CONSECUTIVAS){
+        /* Fallback: loop na música em cache (não para de tocar) */
+        notif('🔁 Repetindo (rede instável)', 2500, true);
+        appState.falhasConsecutivas=0;
+        /* Tenta tocar a mesma em loop */
+        if(key){
+          try{
+            const c=await abrirCache();
+            if(c){
+              const resp=await c.match(key);
+              if(resp){
+                const blob=await resp.blob();
+                if(blob.size>=500){
+                  const blobUrl=URL.createObjectURL(blob);
+                  appState._lastBlobUrl=blobUrl;
+                  audio.src=blobUrl;
+                  audio.loop=true;
+                  audio.volume=appState.volume;
+                  await audio.play().catch(()=>{});
+                  appState.isPlaying=true;
+                  $('playBtn').innerHTML='<i class="fas fa-pause"></i>';
+                  appState.carregando=false;
+                  return;
+                }
+              }
+            }
+          }catch(_){}
+        }
+      }
+      setTimeout(next,400);
     }
   }catch(e){}
   finally{ if(meuToken===_tocarToken){ appState.carregando=false; } }
@@ -917,11 +995,16 @@ async function togglePlay(){
   else { audio.pause(); appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>'; WakeLockManager.desativar(); }
 }
 
+/* FIX PRINCIPAL: next() chama tocar() direto, SEM setTimeout */
 function next(){
   vibrar();
   if(typeof fecharFila==='function') fecharFila();
-  if(appState.carregando||!appState.musicas.length) return;
-  if(appState.isBackgroundActive) setTimeout(tocar,100);
+  if(!appState.musicas.length) return;
+  if(appState.carregando){
+    /* Se já está carregando, marca para tocar assim que liberar */
+    return;
+  }
+  if(appState.isBackgroundActive) tocar();
 }
 function prev(){
   vibrar();
@@ -930,7 +1013,7 @@ function prev(){
   if(audio.currentTime>3){ audio.currentTime=0; return; }
   if(!appState.isBackgroundActive) return;
   const anterior=FilaInteligente.voltar();
-  if(anterior){ appState._forcarMusica=anterior; setTimeout(tocar,100); }
+  if(anterior){ appState._forcarMusica=anterior; tocar(); }
 }
 
 let _letreiroCache={texto:'',dur:0};
@@ -1070,13 +1153,13 @@ async function selecionarGenero(g){
   vibrar(); if(typeof fecharFila==='function') fecharFila(); notif('⏳ Carregando '+g);
   const m=await buscarGenero(g);
   if(!m||!m.length){ notif('❌ Erro ao carregar "'+g+'"',3000,true); return; }
-  audio.pause(); appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>';
+  audio.pause(); audio.loop=false; appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>';
   appState.musicas=m; appState.modoAtual=g; appState.isRadio=false; appState.musicasComProblema.clear(); appState.falhasConsecutivas=0;
   FilaInteligente.resetar(m,g); appState.musicaAtual=null;
   const mm=FilaInteligente.proxima(); if(mm){ appState.musicaAtual=mm; atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
   if(typeof filaAberta!=='undefined'&&filaAberta) renderizarFila();
   notif('🎵 '+g+' ('+m.length+')');
-  if(appState.isBackgroundActive) setTimeout(tocar,250);
+  if(appState.isBackgroundActive) tocar();
   fecharModal('modalGeneros');
 }
 const UniversalPool={ musicas:[], carregando:false, carregado:false, async carregar(onProgress){ if(this.carregado) return this.musicas; if(this.carregando){ while(this.carregando) await sleep(200); return this.musicas; } this.carregando=true; const todas=[]; const LOTE=4; let feitos=0; for(let i=0;i<GENRE_ORDEM.length;i+=LOTE){ const lote=GENRE_ORDEM.slice(i,i+LOTE); const res=await Promise.allSettled(lote.map(g=>buscarGenero(g))); res.forEach(r=>{ if(r.status==='fulfilled'&&r.value&&r.value.length) todas.push(...r.value); }); feitos+=lote.length; if(onProgress) onProgress(feitos,GENRE_ORDEM.length); } const vistos=new Set(); this.musicas=todas.filter(m=>{ if(vistos.has(m.id)) return false; vistos.add(m.id); return true; }); this.carregado=true; this.carregando=false; return this.musicas; } };
@@ -1486,7 +1569,7 @@ function iniciarFullscreenRetry(){
 document.addEventListener('fullscreenchange',()=>{ fsEmAndamento=false; });
 document.addEventListener('webkitfullscreenchange',()=>{ fsEmAndamento=false; });
 
-/* ============ SILENT AUDIO + KEEP ALIVE (CORRIGIDO) ============ */
+/* ============ SILENT AUDIO + KEEP ALIVE REFORÇADO ============ */
 let silentUrl=null;
 function criarSilentAudio(){
   const sr=44100, ns=sr*2;
@@ -1505,24 +1588,18 @@ function getSilentUrl(){ if(!silentUrl) silentUrl=URL.createObjectURL(criarSilen
 
 let keepAliveInterval=null;
 
-/* FIX PRINCIPAL: mantém áudio de fundo E áudio principal tocando com tela fechada */
 function manterAtivo(){
   if(keepAliveInterval) clearInterval(keepAliveInterval);
   keepAliveInterval=setInterval(async ()=>{
     if(!appState.isBackgroundActive) return;
     try{
-      /* 1) Garante que o silent WAV está tocando (mesmo com tela bloqueada) */
       const bg=$('backgroundAudio');
-      if(bg.paused && bg.src){
-        bg.play().catch(()=>{});
+      if(bg && bg.paused && bg.src){
+        try{ await bg.play(); }catch(_){}
       }
-      /* 2) Se o áudio principal estava tocando e o sistema pausou, retoma */
       if(appState.isPlaying && audio.paused && !appState.carregando && audio.currentSrc && audio.currentSrc !== location.href){
-        try{
-          await audio.play();
-        }catch(_){}
+        try{ await audio.play(); }catch(_){}
       }
-      /* 3) Re-adquire wake lock se estiver visível */
       if(document.visibilityState==='visible' && appState.isPlaying && !WakeLockManager.lock){
         WakeLockManager.ativar().catch(()=>{});
       }
@@ -1537,14 +1614,14 @@ async function ativarPlayer(){
     const bg=$('backgroundAudio');
     bg.src=getSilentUrl();
     bg.loop=true;
-    bg.volume=0.001;          /* NÃO MUTADO — muted é pausado em background */
+    /* volume 0.01 — NÃO mutado (mutado é pausado em background) */
+    bg.volume=0.01;
     bg.setAttribute('playsinline','');
     bg.preload='auto';
     await bg.play();
     appState.isBackgroundActive=true;
     manterAtivo();
   }catch(e){
-    /* fallback: tenta de novo em 1s (iOS às vezes precisa) */
     appState.isBackgroundActive=true;
     setTimeout(async ()=>{
       try{
@@ -1573,7 +1650,7 @@ async function ativarMix(){
   const mm=FilaInteligente.proxima(); if(mm){ appState.musicaAtual=mm; atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
   if(typeof filaAberta!=='undefined'&&filaAberta) renderizarFila();
   notif('🔀 Mistura ativa!');
-  if(appState.isBackgroundActive) setTimeout(tocar,200);
+  if(appState.isBackgroundActive) tocar();
 }
 function trocarTema(){
   const temas={azul:{nome:'Azul',c1:'#2563eb',c2:'#1e40af',c3:'#3b82f6'},roxo:{nome:'Roxo',c1:'#7c3aed',c2:'#5b21b6',c3:'#a855f7'},preto:{nome:'Preto',c1:'#374151',c2:'#111827',c3:'#6b7280'}};
@@ -1608,7 +1685,7 @@ const VoiceControl = {
     if (!this.suportado) {
       btn.innerHTML = '<i class="fas fa-microphone-slash" style="color:#666"></i>Voz não suportada';
       btn.style.opacity = '.5';
-      btn.onclick = () => { fecharFab(); notif('🎤 Não suportado neste navegador', 2500, true); };
+      btn.onclick = () => { fecharFab(); notif('🎤 Não suportado', 2500, true); };
       return;
     }
     btn.onclick = () => { fecharFab(); this.toggle(); };
@@ -1716,7 +1793,7 @@ function initFab(){
   if(!main||!menu) return;
   main.onclick=e=>{ e.stopPropagation(); vibrar(); const o=menu.classList.toggle('open'); main.classList.toggle('open',o); };
   document.addEventListener('click',e=>{ if(menu.classList.contains('open')&&!menu.contains(e.target)&&e.target!==main&&!main.contains(e.target)) fecharFab(); });
-  $('fabSite').onclick=()=>{ fecharFab(); vibrar(15); if(MIDIA_CONFIG.LINK_SITE) window.open(MIDIA_CONFIG.LINK_SITE,'_blank','noopener,noreferrer'); else notif('🌐 Link do site não configurado',2000); };
+  $('fabSite').onclick=()=>{ fecharFab(); vibrar(15); if(MIDIA_CONFIG.LINK_SITE) window.open(MIDIA_CONFIG.LINK_SITE,'_blank','noopener,noreferrer'); else notif('🌐 Link não configurado',2000); };
   $('fabYTMusic').onclick=()=>{ fecharFab(); abrirYouTubeMusic(); };
   $('fabMix').onclick=()=>{ fecharFab(); ativarMix(); };
   $('fabBaixarAtual').onclick=()=>{ fecharFab(); if(appState.isRadio){ notif('⚠️ Escolha um gênero primeiro'); return; } iniciarDownloadGenero(appState.modoAtual); };
@@ -1731,7 +1808,7 @@ function initFab(){
   $('fabLiberar').onclick=()=>{ fecharFab(); liberarAgora(); };
   $('fabQrCode').onclick=()=>{ fecharFab(); gerarQrCode(); };
   $('fabShare').onclick=()=>{ fecharFab(); if(navigator.share) navigator.share({title:'VDB MUSIC '+VERSAO,url:location.href}).catch(()=>{}); else navigator.clipboard.writeText(location.href).then(()=>notif('📋 Link copiado!')); };
-  $('fabFeedback').onclick=async()=>{ fecharFab(); const nota=await vdbDialog({title:'⭐ FEEDBACK',msg:'De 1 a 5, como avalia o app?',input:'number',placeholder:'5',okText:'Enviar'}); if(!nota) return; const msg='⭐ *VDB MUSIC '+VERSAO+'*\n\nNota: '+nota+'/5'; window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent(msg)); };
+  $('fabFeedback').onclick=async()=>{ fecharFab(); const nota=await vdbDialog({title:'⭐ FEEDBACK',msg:'De 1 a 5, como avalia?',input:'number',placeholder:'5',okText:'Enviar'}); if(!nota) return; const msg='⭐ *VDB MUSIC '+VERSAO+'*\n\nNota: '+nota+'/5'; window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent(msg)); };
   $('fabInstalar').onclick=()=>{ fecharFab(); acionarInstalacaoPWA(); };
 }
 
@@ -1861,25 +1938,36 @@ async function iniciar(){
     };
     audio.onplay=()=>{ appState.falhasConsecutivas=0; if('mediaSession' in navigator) navigator.mediaSession.playbackState='playing'; };
     audio.onpause=()=>{ if('mediaSession' in navigator) navigator.mediaSession.playbackState='paused'; };
-    audio.onended=()=>{ if(appState.carregando) return; appState.isPlaying=false; setTimeout(()=>{ if(!appState.carregando) next(); },200); };
+
+    /* FIX PRINCIPAL: onended chama next() DIRETO, sem setTimeout.
+       Isso evita que o throttling do background atrase/impeça a troca. */
+    audio.onended=()=>{
+      if(appState.carregando) return;
+      appState.isPlaying=false;
+      /* Se estava em loop fallback, sai do loop */
+      if(audio.loop){ audio.loop=false; }
+      /* Chama next() direto — sem setTimeout */
+      next();
+    };
+
     audio.onerror=()=>{
       if(appState.carregando) return;
       if(!audio.currentSrc||audio.currentSrc===location.href) return;
       const m=appState.musicaAtual;
       if(m){
         const e=audio.error;
+        /* Só marca como problema se for erro de formato (code 4), NÃO de rede */
         if(e && e.code===4){
           appState.musicasComProblema.add(m.id);
           notif('⚠️ Não carregou: '+(m.title||'').slice(0,25), 1800);
         }
       }
-      setTimeout(()=>{ if(!appState.carregando) next(); }, 300);
+      /* Tenta próxima — sem delay longo (200ms é ok) */
+      setTimeout(()=>{ if(!appState.carregando) next(); }, 200);
     };
 
-    /* ============ VISIBILITY — CORAÇÃO DO BACKGROUND PLAY ============ */
     document.addEventListener('visibilitychange',()=>{
       if(document.visibilityState==='visible'){
-        /* Voltou visível: retoma tudo */
         try{
           const bg=$('backgroundAudio');
           if(bg && bg.paused && bg.src && appState.isBackgroundActive) bg.play().catch(()=>{});
@@ -1893,7 +1981,6 @@ async function iniciar(){
         if(appState.playerAtivado) agendarCiclo();
         if(VoiceControl.ativo && VoiceControl.reconhecimento){ try{ VoiceControl.reconhecimento.start(); }catch(_){} }
       } else {
-        /* Ficou oculto (tela bloqueada / app em background): garante que o silent WAV continua tocando */
         try{
           const bg=$('backgroundAudio');
           if(bg && bg.paused && bg.src && appState.isBackgroundActive) bg.play().catch(()=>{});
@@ -1901,7 +1988,6 @@ async function iniciar(){
       }
     });
 
-    /* Detecta screen lock / unlock (Android) */
     window.addEventListener('pageshow', ()=>{
       if(appState.isBackgroundActive && appState.isPlaying && audio.paused && !appState.carregando && audio.currentSrc){
         audio.play().catch(()=>{});
