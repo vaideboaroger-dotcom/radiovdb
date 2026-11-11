@@ -1,5 +1,360 @@
 <!DOCTYPE html>
+<html lang="pt-br"><!DOCTYPE html>
 <html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>VDB MUSIC</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&family=Orbitron:wght@600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--cor-1:#2563eb;--cor-2:#1e40af;--cor-3:#3b82f6;--cor-neon:#00d4ff;--border-glass:rgba(255,255,255,.12);--font-display:'Orbitron',sans-serif;--font-body:'Rajdhani',sans-serif;--radius-pill:999px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:var(--font-body)}
+html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;position:fixed;top:0;left:0;color:#fff}
+button{touch-action:manipulation;cursor:pointer}
+.titulo-topo{font-family:var(--font-display);font-size:1.25rem;font-weight:900;letter-spacing:5px;background:linear-gradient(135deg,#fff,#a5d8ff,#00d4ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;white-space:nowrap}
+.letreiro{font-size:1.08rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.letreiro b,.letreiro i{font-style:normal}
+.timer-texto{font-family:var(--font-display);font-size:.78rem;font-weight:700;color:#fff;padding:4px 10px;border-radius:var(--radius-pill);background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);display:inline-flex;align-items:center;gap:6px}
+#voiceIndicator{display:none}
+#loadingScreen{position:fixed;inset:0;z-index:99998;background:radial-gradient(ellipse at center,#0a0e27,#000);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;transition:opacity .8s}
+#loadingScreen.hide{opacity:0;pointer-events:none}
+.loading-text{font-family:var(--font-display);font-size:1.8rem;color:#fff;letter-spacing:8px;font-weight:900}
+.loading-sub{font-family:var(--font-display);font-size:.65rem;color:var(--cor-neon);letter-spacing:6px;font-weight:700}
+.loading-version{font-family:var(--font-display);font-size:.7rem;color:#fff;background:rgba(0,212,255,.1);padding:5px 18px;border-radius:20px;border:1px solid rgba(0,212,255,.4)}
+#playerContainer{position:fixed;inset:0;z-index:10;display:none}
+#playerContainer.visible{display:block}
+#telaPrincipal{position:fixed;inset:0;display:flex;flex-direction:column}
+.media-container{position:absolute;inset:0;z-index:0;background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a)}
+.media-fallback-visual{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.5rem;color:rgba(255,255,255,.08);letter-spacing:8px}
+.info-topo{position:fixed;top:0;left:0;right:0;z-index:35;padding-top:max(10px,var(--safe-top));padding-bottom:8px;background:linear-gradient(180deg,rgba(0,0,0,.85),rgba(0,0,0,.3),transparent);display:flex;flex-direction:column;gap:4px}
+.topo-linha{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:34px;gap:8px}
+.titulo-wrap{display:flex;align-items:center;gap:10px}
+.btn-fav-vdb{background:transparent;border:none;color:rgba(255,255,255,.85);font-size:1.28rem;padding:0}
+.btn-fav-vdb.ativo{color:#f472b6}
+.letreiro-wrap{width:100%;height:42px;padding:0 16px;overflow:hidden;display:flex;align-items:center;cursor:pointer}
+.genero-tocando{padding:4px 16px 2px;font-family:var(--font-display);font-size:.68rem;font-weight:800;letter-spacing:3.5px;text-transform:uppercase;color:var(--cor-neon);display:flex;align-items:center;gap:8px}
+.genero-tocando .dot{width:6px;height:6px;border-radius:50%;background:var(--cor-neon);box-shadow:0 0 8px var(--cor-neon)}
+.barra-inferior{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + var(--safe-bottom));z-index:25;display:flex;align-items:center;justify-content:center;gap:4px;padding:6px 4px;width:calc(100vw - 16px);max-width:580px}
+.barra-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;background:transparent;border:none;color:rgba(255,255,255,.85);font-size:.55rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;position:relative;flex:1;min-width:0;font-family:var(--font-body)}
+.barra-btn i{font-size:1.2rem}
+.barra-btn.fav i{color:#f472b6}
+.barra-btn.ytm i{color:#ff0000}
+.badge{position:absolute;top:0;right:6px;background:#f472b6;color:#fff;font-size:.5rem;font-weight:900;padding:1px 5px;border-radius:8px;min-width:15px;text-align:center}
+.fab-main{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 4px;background:transparent;border:none;color:#fff;font-size:.55rem;font-weight:900;text-transform:uppercase;flex:1;min-width:0;font-family:var(--font-body)}
+.fab-main i{font-size:1.3rem;transition:transform .3s;display:block}
+.fab-main.open i{transform:rotate(45deg)}
+.vol-control{position:fixed;bottom:calc(78px + var(--safe-bottom));left:50%;transform:translateX(-50%);z-index:26;display:none;align-items:center;gap:8px;padding:6px 14px;background:rgba(10,15,28,.9);border:1px solid rgba(255,255,255,.15);border-radius:var(--radius-pill);width:min(260px,calc(100vw - 40px))}
+.vol-control.show{display:flex}
+.vol-slider{flex:1;height:4px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,.2);border-radius:4px;outline:none}
+.vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--cor-neon);cursor:pointer}
+.vol-pct{font-family:var(--font-display);font-size:.6rem;font-weight:800;color:#fff;min-width:30px;text-align:right}
+.fab-container{position:fixed;bottom:calc(78px + var(--safe-bottom));right:12px;left:12px;z-index:50;display:flex;flex-direction:column;pointer-events:none}
+.fab-container > *{pointer-events:auto}
+.fab-menu{background:rgba(15,20,35,.95);border-radius:18px;padding:8px;display:none;flex-direction:column;gap:2px;border:1px solid rgba(255,255,255,.15);max-height:70vh;overflow-y:auto;align-self:flex-end;min-width:280px}
+.fab-menu.open{display:flex}
+.fab-secao{font-family:var(--font-display);font-size:.58rem;font-weight:800;letter-spacing:3px;color:rgba(255,255,255,.45);text-transform:uppercase;padding:12px 14px 6px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:4px}
+.fab-sub-btn{background:transparent;border:none;color:#e8e4f5;padding:11px 14px;border-radius:8px;font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:12px;text-align:left;width:100%;font-family:var(--font-body)}
+.fab-sub-btn i{width:22px;text-align:center;font-size:1rem}
+.fab-versao{text-align:center;padding:10px 14px 4px;margin-top:4px;border-top:1px solid rgba(255,255,255,.08);font-family:var(--font-display);font-size:.65rem;color:rgba(255,255,255,.5);letter-spacing:3px;font-weight:900}
+.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.85);display:none;align-items:flex-end;justify-content:center}
+.modal.open{display:flex}
+.modal-box{background:#0f141e;border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:640px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;gap:12px;border:1px solid rgba(255,255,255,.15)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1)}
+.modal-header .titulo{font-family:var(--font-display);font-size:.9rem;color:#fff;letter-spacing:2.5px;font-weight:800}
+.modal-header .fechar{background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:1rem}
+.search-input{width:100%;padding:12px 16px;border-radius:8px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:.88rem;outline:none;font-family:var(--font-body);font-weight:600}
+.search-filters{display:flex;gap:6px}
+.search-filters select{flex:1;padding:9px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:#1a1a2e;color:#fff;font-size:.72rem;font-weight:700;outline:none}
+.search-count{font-size:.7rem;color:rgba(255,255,255,.6);font-weight:700;text-align:center;padding:2px}
+.search-results{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;max-height:60vh}
+.result-item{padding:11px 14px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;cursor:pointer}
+.result-item .icon{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#fff;flex-shrink:0}
+.result-item .info{flex:1;min-width:0;overflow:hidden}
+.result-item .title{color:#fff;font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.result-item .artist{color:rgba(255,255,255,.6);font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.result-item .genero{font-family:var(--font-display);font-size:.58rem;color:var(--cor-3);font-weight:800;padding:3px 8px;background:rgba(59,130,246,.15);border-radius:6px;flex-shrink:0}
+.genres-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;flex:1;overflow-y:auto;padding:4px;max-height:70vh}
+.genre-card{position:relative;min-height:90px;border-radius:12px;padding:16px 16px 16px 18px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(155deg,rgba(255,255,255,.075),rgba(255,255,255,.02)),radial-gradient(120% 80% at 0% 0%,var(--c1,#3b82f6) 0%,transparent 55%);border:1px solid rgba(255,255,255,.09);text-align:left;width:100%;cursor:pointer}
+.genre-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c1,#3b82f6);border-radius:0 3px 3px 0}
+.genre-card .genre-name{font-family:var(--font-display);font-size:1.02rem;font-weight:800;text-transform:uppercase;color:#fff;letter-spacing:1px;line-height:1.2;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.fav-list{display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:60vh}
+.fav-item{padding:11px 14px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.fav-item .info{flex:1;min-width:0;cursor:pointer}
+.fav-item .title{color:#fff;font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.fav-item .artist{color:rgba(255,255,255,.55);font-size:.72rem;display:block}
+.fav-item .remove{background:transparent;border:none;color:#f472b6;font-size:1.1rem}
+.fila-painel{position:fixed;inset:0;z-index:45;background:linear-gradient(180deg,rgba(5,8,20,.97),rgba(10,15,30,.99));display:flex;flex-direction:column;transform:translateY(100%);transition:transform .35s;padding-top:calc(12px + var(--safe-top));padding-bottom:calc(12px + var(--safe-bottom))}
+.fila-painel.show{transform:translateY(0)}
+.fila-topo{display:flex;align-items:center;justify-content:space-between;padding:6px 18px 12px;border-bottom:1px solid rgba(255,255,255,.08);gap:10px}
+.fila-topo-titulo{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-size:.85rem;color:#fff;letter-spacing:2.5px;font-weight:800}
+.fila-topo-titulo i{color:var(--cor-neon)}
+.fila-topo-info{color:rgba(255,255,255,.6);font-size:.72rem;font-weight:700;background:rgba(255,255,255,.06);padding:4px 10px;border-radius:10px}
+.fila-fechar{background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:.9rem}
+.fila-lista{flex:1;overflow-y:auto;padding:8px 12px;display:flex;flex-direction:column;gap:6px}
+.fila-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);cursor:pointer}
+.fila-item.tocando{background:linear-gradient(135deg,rgba(37,99,235,.25),rgba(59,130,246,.15));border-color:rgba(0,212,255,.4)}
+.fila-item .num{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:rgba(255,255,255,.6);flex-shrink:0}
+.fila-item.tocando .num{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));color:#fff}
+.fila-item .info-fila{flex:1;min-width:0}
+.fila-item .titulo-fila{display:block;color:#fff;font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fila-item.tocando .titulo-fila{color:var(--cor-neon)}
+.fila-item .artista-fila{display:block;color:rgba(255,255,255,.55);font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fila-vazio{text-align:center;padding:60px 20px;color:rgba(255,255,255,.4);font-size:.85rem}
+.notif{position:fixed;top:calc(100px + var(--safe-top));left:50%;transform:translateX(-50%);background:rgba(15,20,30,.95);color:#fff;padding:10px 18px;border-radius:14px;font-size:.78rem;font-weight:700;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid rgba(255,255,255,.15);max-width:calc(100vw - 40px);text-align:center}
+.notif.show{opacity:1}
+.notif.prio{background:rgba(239,68,68,.97)}
+#tapFeedback{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);background:rgba(0,0,0,.85);color:#fff;padding:18px 28px;border-radius:16px;font-size:1.6rem;font-weight:900;z-index:9998;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,.15)}
+#tapFeedback.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#blockOverlay{position:fixed;inset:0;background:rgba(0,0,0,.98);z-index:10000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;overflow-y:auto}
+#blockOverlay.active{display:flex}
+.block-content{max-width:440px;width:100%;padding:20px 0}
+.block-title{font-family:var(--font-display);font-size:2.2rem;color:#fff;letter-spacing:5px;margin-bottom:6px}
+.block-sub{color:rgba(255,255,255,.75);font-size:.95rem;font-weight:700;margin-bottom:22px}
+.block-info-box{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:10px;padding:16px;margin-bottom:16px;color:#fbbf24;font-weight:700;font-size:.85rem;line-height:1.4}
+.id-box{background:rgba(59,130,246,.1);border:2px solid rgba(59,130,246,.4);border-radius:10px;padding:18px 16px;margin-bottom:14px}
+.id-label{font-size:.65rem;color:rgba(255,255,255,.6);letter-spacing:3px;font-weight:800;text-transform:uppercase;margin-bottom:8px}
+.id-value{font-family:var(--font-display);font-size:1.2rem;color:#fff;letter-spacing:2px;font-weight:900;background:rgba(0,0,0,.4);padding:12px;border-radius:8px;word-break:break-all;margin-bottom:12px;border:1px dashed rgba(255,255,255,.2)}
+.id-btns{display:flex;gap:8px}
+.id-btn{flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font-body);color:#fff}
+.id-btn-copy{background:linear-gradient(135deg,#3b82f6,#2563eb)}
+.id-btn-whats{background:#25d366}
+.block-divider{display:flex;align-items:center;gap:10px;margin:20px 0 14px;color:rgba(255,255,255,.4);font-size:.7rem;font-weight:800;letter-spacing:2px}
+.block-divider::before,.block-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.15)}
+.block-content input{width:100%;padding:16px 18px;border-radius:8px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;text-align:center;margin-bottom:12px;outline:none;letter-spacing:2px;font-weight:700;font-family:var(--font-body)}
+.btn-liberar{width:100%;padding:16px;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;border-radius:8px;color:#fff;font-weight:900;font-size:1rem;letter-spacing:2px;margin-bottom:8px;font-family:var(--font-body)}
+.erro{color:#ec4899;font-size:.85rem;min-height:30px;padding:6px 0;font-weight:700}
+#adminPanel{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,10,.99);border-radius:12px;padding:20px;z-index:99999;width:94%;max-width:480px;border:2px solid #fbbf24;max-height:92vh;overflow-y:auto}
+#adminPanel.open{display:block}
+#adminPanel h2{text-align:center;font-size:1.15rem;color:#fbbf24;margin-bottom:12px;font-weight:900;letter-spacing:2px}
+#adminPanel label{font-size:.7rem;color:#aaa;font-weight:700;display:block;margin-bottom:6px;text-transform:uppercase}
+#adminPanel input{width:100%;padding:13px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:.85rem;font-family:monospace;outline:none;font-weight:700}
+#adminPanel .row-btns{display:flex;gap:6px;margin:12px 0}
+#adminPanel .row-btns button{flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;color:#fff}
+.btn-gerar{background:#fbbf24;color:#000!important}
+.btn-universal{background:#10b981}
+.senha-box{background:rgba(255,255,255,.05);border-radius:8px;padding:14px;margin:12px 0;border:1px solid rgba(255,255,255,.1)}
+.senha-box label{color:#fbbf24}
+#adminPanel .btn-copiar{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;padding:11px 14px;border-radius:8px;font-size:.72rem;font-weight:700}
+#adminPanel .btn-whats{background:#25d366;color:#fff;border:none;padding:11px;border-radius:8px;font-weight:900;font-size:.78rem}
+#adminPanel .info-box{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:8px;padding:12px;margin:10px 0;color:#93c5fd;font-size:.75rem;line-height:1.5;font-weight:600}
+.validade-seletor{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}
+.validade-btn{flex:1;min-width:60px;padding:10px 8px;border-radius:6px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:800;font-family:inherit}
+.validade-btn.active{background:linear-gradient(135deg,#fbbf24,#f59e0b);border-color:transparent;color:#000}
+.vdb-dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:100004;display:none;align-items:center;justify-content:center;padding:20px}
+.vdb-dialog-overlay.active{display:flex}
+.vdb-dialog{background:#0f141e;border-radius:14px;padding:24px 20px;max-width:400px;width:100%;border:1px solid rgba(255,255,255,.15)}
+.vdb-dialog h3{color:#fff;font-size:1.05rem;text-align:center;margin-bottom:12px;font-weight:800}
+.vdb-dialog p{color:rgba(255,255,255,.7);font-size:.88rem;text-align:center;margin-bottom:16px}
+.vdb-dialog input{width:100%;padding:14px;border-radius:8px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:.95rem;text-align:center;outline:none;margin-bottom:14px}
+.vdb-dialog .btns{display:flex;gap:8px}
+.vdb-dialog .btns button{flex:1;padding:13px;border-radius:8px;border:none;font-weight:800;font-size:.85rem;color:#fff}
+.vdb-dialog .btn-ok{background:linear-gradient(135deg,var(--cor-1),var(--cor-3))}
+.vdb-dialog .btn-cancel{background:rgba(255,255,255,.06);color:rgba(255,255,255,.7)}
+</style>
+</head>
+<body>
+
+<div id="loadingScreen">
+  <span class="loading-text">VDB</span>
+  <span class="loading-sub">🎵 CARREGANDO 🎵</span>
+  <span class="loading-version" id="loadingVersion">v012</span>
+</div>
+
+<div id="playerContainer">
+  <div id="telaPrincipal">
+    <div class="media-container" id="mediaContainer"><div class="media-fallback-visual">VDB MUSIC</div></div>
+
+    <div class="info-topo">
+      <div class="topo-linha">
+        <div class="titulo-wrap">
+          <div class="titulo-topo" id="tituloGrande">VDB</div>
+          <button class="btn-fav-vdb" id="btnFavVDB"><i class="far fa-heart"></i></button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div id="voiceIndicator"><i class="fas fa-microphone"></i></div>
+          <span class="timer-texto" id="timerLib"><i class="fas fa-clock"></i> ...</span>
+        </div>
+      </div>
+      <div class="letreiro-wrap" id="letreiroClick">
+        <p class="letreiro" id="scrollText">🎵 VDB MUSIC</p>
+      </div>
+      <div class="genero-tocando">
+        <span class="dot"></span>
+        <i class="fas fa-guitar"></i>
+        <span id="generoTocandoNome">BÔNUS</span>
+      </div>
+    </div>
+
+    <div class="vol-control" id="volControl">
+      <i class="fas fa-volume-high" id="volIcon"></i>
+      <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="100">
+      <span class="vol-pct" id="volPct">100%</span>
+    </div>
+
+    <div style="position:fixed;bottom:calc(80px + var(--safe-bottom));left:50%;transform:translateX(-50%);z-index:30;display:flex;gap:16px;align-items:center;">
+      <button id="prevBtn" style="background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);color:#fff;width:44px;height:44px;border-radius:50%;font-size:16px;"><i class="fas fa-backward-step"></i></button>
+      <button id="playBtn" style="background:rgba(37,99,235,.85);border:1px solid rgba(255,255,255,.2);color:#fff;width:64px;height:64px;border-radius:50%;font-size:24px;"><i class="fas fa-play"></i></button>
+      <button id="nextBtn" style="background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);color:#fff;width:44px;height:44px;border-radius:50%;font-size:16px;"><i class="fas fa-forward-step"></i></button>
+    </div>
+    <div style="position:fixed;bottom:calc(52px + var(--safe-bottom));left:12px;right:12px;z-index:30;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#fff;margin-bottom:4px;">
+        <span id="currentTime">0:00</span>
+        <span id="totalTime">0:00</span>
+      </div>
+      <div id="progressBar" style="height:4px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;cursor:pointer;">
+        <div id="progressFill" style="height:100%;width:0%;background:linear-gradient(90deg,#2563eb,#00d4ff);transition:width .2s;"></div>
+      </div>
+    </div>
+
+    <div class="fila-painel" id="filaPainel">
+      <div class="fila-topo">
+        <div class="fila-topo-titulo"><i class="fas fa-list-ol"></i><span>FILA</span></div>
+        <div class="fila-topo-info" id="filaInfo">0 músicas</div>
+        <button class="fila-fechar" id="filaFecharBtn"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="fila-lista" id="filaLista"></div>
+    </div>
+
+    <div class="barra-inferior" id="barraInferior">
+      <button class="barra-btn" id="barraBuscar"><i class="fas fa-magnifying-glass"></i><span>Buscar</span></button>
+      <button class="barra-btn fav" id="barraFavoritos"><i class="fas fa-heart"></i><span>Favoritas</span><span class="badge" id="barraBadgeFav" style="display:none">0</span></button>
+      <button class="barra-btn" id="barraGeneros"><i class="fas fa-guitar"></i><span>Gêneros</span></button>
+      <button class="barra-btn" id="barraVolume"><i class="fas fa-volume-high"></i><span>Volume</span></button>
+      <button class="barra-btn ytm" id="barraYTMusic"><i class="fab fa-youtube"></i><span>YT Music</span></button>
+      <button class="barra-btn" id="barraFila"><i class="fas fa-list-ol"></i><span>Fila</span></button>
+      <button class="fab-main" id="fabMain"><i class="fas fa-plus"></i></button>
+    </div>
+  </div>
+</div>
+
+<div class="fab-container" id="fabContainer">
+  <div class="fab-menu" id="fabMenu">
+    <div class="fab-secao">🎵 Reprodução</div>
+    <button class="fab-sub-btn" id="fabMix"><i class="fas fa-shuffle" style="color:#f59e0b"></i>Mistura VDB</button>
+    <button class="fab-sub-btn" id="fabSite"><i class="fas fa-globe" style="color:#22d3ee"></i>Abrir Site VDB</button>
+    <button class="fab-sub-btn" id="fabYTMusic"><i class="fab fa-youtube" style="color:#ff0000"></i>Abrir YouTube Music</button>
+    <div class="fab-secao">📱 App</div>
+    <button class="fab-sub-btn" id="fabTemas"><i class="fas fa-palette" style="color:#fbbf24"></i>Cores do App</button>
+    <button class="fab-sub-btn" id="fabFullscreen"><i class="fas fa-expand" style="color:#10b981"></i>Tela Cheia</button>
+    <button class="fab-sub-btn" id="fabSleep"><i class="fas fa-moon" style="color:#a855f7"></i>Sleep Timer</button>
+    <button class="fab-sub-btn" id="fabRecarregar"><i class="fas fa-sync" style="color:#3b82f6"></i>Recarregar</button>
+    <div class="fab-secao">👤 Conta</div>
+    <button class="fab-sub-btn" id="fabMeuId"><i class="fas fa-id-card" style="color:#3b82f6"></i>Ver Meu ID</button>
+    <button class="fab-sub-btn" id="fabLiberar"><i class="fas fa-unlock" style="color:#10b981"></i>Liberar Agora</button>
+    <button class="fab-sub-btn" id="fabShare"><i class="fas fa-share-alt" style="color:#a855f7"></i>Compartilhar</button>
+    <div class="fab-versao" id="fabVersao">v012</div>
+  </div>
+</div>
+
+<div class="modal" id="modalBusca">
+  <div class="modal-box">
+    <div class="modal-header"><span class="titulo">🔍 BUSCAR</span><button class="fechar" id="fecharBusca"><i class="fas fa-times"></i></button></div>
+    <input type="text" class="search-input" id="buscaInput" placeholder="Artista, música..." autocomplete="off">
+    <div class="search-filters">
+      <select id="buscaGenero"><option value="">🌍 Todos os gêneros</option></select>
+      <select id="buscaOrdem"><option value="az">A-Z</option><option value="za">Z-A</option><option value="aleatorio">🎲</option></select>
+    </div>
+    <div class="search-count" id="buscaCount">🎤 Digite o nome do artista</div>
+    <div class="search-results" id="buscaResultados"></div>
+  </div>
+</div>
+
+<div class="modal" id="modalFavoritas">
+  <div class="modal-box">
+    <div class="modal-header"><span class="titulo">❤️ FAVORITAS</span><button class="fechar" id="fecharFavoritas"><i class="fas fa-times"></i></button></div>
+    <div class="fav-list" id="listaFavoritas"></div>
+  </div>
+</div>
+
+<div class="modal" id="modalGeneros">
+  <div class="modal-box">
+    <div class="modal-header"><span class="titulo">🎸 GÊNEROS</span><button class="fechar" id="fecharGeneros"><i class="fas fa-times"></i></button></div>
+    <div class="genres-grid" id="genresGrid"></div>
+  </div>
+</div>
+
+<div class="modal" id="modalMeuId">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-header"><span class="titulo">🆔 MEU ID</span><button class="fechar" id="fecharMeuId"><i class="fas fa-times"></i></button></div>
+    <div class="block-info-box" style="margin-bottom:16px">📱 <b>Envie este ID</b> pro vendedor pelo WhatsApp.</div>
+    <div class="id-box">
+      <div class="id-label">🆔 SEU ID ÚNICO</div>
+      <div class="id-value" id="meuIdValue">Carregando...</div>
+      <div class="id-btns">
+        <button class="id-btn id-btn-copy" id="btnCopiarMeuId"><i class="fas fa-copy"></i> Copiar</button>
+        <button class="id-btn id-btn-whats" id="btnEnviarMeuIdWhats"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="blockOverlay">
+  <div class="block-content">
+    <h1 class="block-title">VDB</h1>
+    <div class="block-sub">🔒 DIGITE SUA LICENÇA</div>
+    <div class="block-info-box"><b>Envie seu ID pro vendedor</b><br>pra receber a licença de liberação.</div>
+    <div class="id-box">
+      <div class="id-label">🆔 SEU ID ÚNICO</div>
+      <div class="id-value" id="idUsuarioBloqueio">Carregando...</div>
+      <div class="id-btns">
+        <button class="id-btn id-btn-copy" id="btnCopiarIdBloqueio"><i class="fas fa-copy"></i> Copiar ID</button>
+        <button class="id-btn id-btn-whats" id="btnEnviarIdWhats"><i class="fab fa-whatsapp"></i> Enviar</button>
+      </div>
+    </div>
+    <div class="block-divider">OU</div>
+    <input type="text" id="senhaInput" placeholder="Cole sua licença aqui" autocomplete="off">
+    <button class="btn-liberar" id="btnLiberar"><i class="fas fa-unlock"></i> LIBERAR ACESSO</button>
+    <div class="erro" id="erroSenha"></div>
+  </div>
+</div>
+
+<div id="adminPanel">
+  <button id="adminCloseTopBtn" style="position:absolute;top:10px;right:14px;background:transparent;border:none;color:#888;font-size:1.3rem;">✕</button>
+  <h2>👑 GERENCIADOR DE LICENÇAS</h2>
+  <div class="info-box">💡 Escolha a validade e clique em GERAR. Copie e mande pro cliente.</div>
+  <label style="margin-top:14px">⏱️ Validade:</label>
+  <div class="validade-seletor">
+    <button class="validade-btn active" data-dias="7">7 dias</button>
+    <button class="validade-btn" data-dias="30">30 dias</button>
+    <button class="validade-btn" data-dias="90">90 dias</button>
+    <button class="validade-btn" data-dias="365">1 ano</button>
+    <button class="validade-btn" data-dias="0">∞ Vitalício</button>
+  </div>
+  <div class="row-btns">
+    <button class="btn-universal" id="adminGerarUniversalBtn" style="flex:1">🎫 GERAR LICENÇA</button>
+    <button class="btn-gerar" id="adminGerarDevBtn" style="flex:1">📱 AMARRADA</button>
+  </div>
+  <div class="senha-box">
+    <label>🔑 LICENÇA GERADA:</label>
+    <input type="text" id="adminSenhaGerada" readonly placeholder="Clique em gerar" style="margin-top:8px">
+    <div class="row-btns" style="margin-top:8px">
+      <button class="btn-copiar" id="btnCopiarSenha" style="flex:1">📋 Copiar</button>
+      <button class="btn-whats" id="adminEnviarWhatsBtn" style="flex:1">📱 WhatsApp</button>
+    </div>
+  </div>
+  <button id="adminCloseBtn" style="background:rgba(255,255,255,.06);border:none;padding:12px;border-radius:8px;color:#aaa;width:100%;margin-top:10px;font-weight:900">✕ Fechar</button>
+</div>
+
+<div class="vdb-dialog-overlay" id="vdbDialogOverlay">
+  <div class="vdb-dialog">
+    <h3 id="vdbDialogTitle">Título</h3>
+    <p id="vdbDialogMsg">Mensagem</p>
+    <input type="text" id="vdbDialogInput" style="display:none;">
+    <div class="btns">
+      <button class="btn-cancel" id="vdbDialogCancel">Cancelar</button>
+      <button class="btn-ok" id="vdbDialogOk">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div class="notif" id="notification"></div>
+<div id="tapFeedback"><i class="fas fa-play"></i></div>
+
+<audio id="musicPlayer" preload="auto" playsinline></audio>
+<audio id="backgroundAudio" preload="auto" playsinline loop style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;"></audio>
+
+<script>0
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
