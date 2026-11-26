@@ -303,7 +303,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 <body>
 
 <div id="introScreen">
-  <video id="introVideo" muted playsinline preload="auto"></video>
+  <video id="introVideo" playsinline preload="auto"></video>
   <button id="introPlayBtn" aria-label="Iniciar" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;width:90px;height:90px;border-radius:50%;background:rgba(0,212,255,.95);border:3px solid #fff;color:#000;font-size:2.5rem;cursor:pointer;box-shadow:0 0 40px rgba(0,212,255,.8);display:flex;align-items:center;justify-content:center">
     <i class="fas fa-play"></i>
   </button>
@@ -1255,7 +1255,7 @@ function initEventos(){
   if(audio){ audio.addEventListener('ended',()=>{ next(); }); audio.addEventListener('timeupdate',()=>{ const c=$('currentTime'),t=$('totalTime'); if(c) c.textContent=fmt(audio.currentTime); if(t) t.textContent=fmt(audio.duration||0); }); }
 }
 
-/* ============ INTRO ============ */
+/* ============ INTRO (com áudio) ============ */
 async function initIntro(){
   const screen=$('introScreen'), vid=$('introVideo'), btn=$('introPlayBtn');
   if(!screen||!vid){ appState.introAtiva=false; return; }
@@ -1264,16 +1264,21 @@ async function initIntro(){
   const finalizar=()=>{ if(terminou) return; terminou=true; terminar(); setTimeout(async()=>{ if(!appState.isBackgroundActive){ ativarPlayer(); } else if(!appState.isPlaying){ await tocar(); } }, 500); };
   vid.src = MIDIA_CONFIG.INTRO_URL;
   vid.currentTime = CONFIG.INTRO_START_SEG;
+  vid.volume = 1.0; // áudio ligado
   vid.addEventListener('ended', finalizar);
   vid.addEventListener('error', finalizar);
   if(btn){
     btn.addEventListener('click', async ()=>{
       btn.style.display = 'none';
-      try{ await vid.play(); }catch(e){ finalizar(); return; }
+      try{
+        vid.muted = false;
+        vid.volume = 1.0;
+        await vid.play();
+      }catch(e){ finalizar(); return; }
       setTimeout(finalizar, CONFIG.INTRO_DURACAO_MS);
     }, { once: true });
   } else {
-    try{ await vid.play(); }catch(e){ finalizar(); return; }
+    try{ vid.muted = false; vid.volume = 1.0; await vid.play(); }catch(e){ finalizar(); return; }
     setTimeout(finalizar, CONFIG.INTRO_DURACAO_MS);
   }
 }
