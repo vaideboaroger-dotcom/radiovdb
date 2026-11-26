@@ -92,7 +92,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 #voiceIndicator{display:none;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.5);color:#f87171;font-size:.8rem}
 #voiceIndicator.ativo{display:flex;animation:piscaMic 1.2s ease-in-out infinite}
 @keyframes piscaMic{0%,100%{opacity:.5;box-shadow:0 0 4px rgba(239,68,68,.4)}50%{opacity:1;box-shadow:0 0 14px rgba(239,68,68,.9)}}
-.letreiro-wrap{width:100%;height:42px;padding:0 16px;overflow:hidden;display:flex;align-items:center;cursor:pointer;position:relative}<style>
+.letreiro-wrap{width:100%;height:42px;padding:0 16px;overflow:hidden;display:flex;align-items:center;cursor:pointer;position:relative}
 .barra-inferior{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + var(--safe-bottom));z-index:25;display:flex;align-items:center;justify-content:center;gap:4px;padding:6px 4px;width:calc(100vw - 16px);max-width:580px;transition:opacity .35s,transform .35s}
 .barra-inferior.escondida{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(120px)}
 .barra-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;background:transparent;border:none;box-shadow:none;border-radius:0;color:rgba(255,255,255,.85);font-size:.55rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;position:relative;flex:1;min-width:0;font-family:var(--font-body)}
@@ -273,8 +273,106 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .btn-fechar-inst{background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;padding:14px;border-radius:8px;color:#fff;font-weight:800;font-size:.88rem;cursor:pointer;width:100%;margin-top:12px}
 #bgDownloadBanner{position:fixed;bottom:calc(96px + var(--safe-bottom));left:50%;transform:translateX(-50%);background:rgba(59,130,246,.95);color:#fff;padding:8px 16px;border-radius:8px;font-size:.72rem;font-weight:800;z-index:24;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;gap:8px}
 #bgDownloadBanner.show{opacity:1}
+
+/* ===== NOVA BARRA DE BOTÕES NO TOPO ===== */
+.topo-botoes{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:2px;
+  padding:4px 8px 2px;
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+  border-top:1px solid rgba(255,255,255,.06);
+  margin-top:4px;
+}
+.topo-botoes::-webkit-scrollbar{display:none}
+.topo-botoes .barra-btn{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1px;
+  padding:4px 3px;
+  background:transparent;
+  border:none;
+  box-shadow:none;
+  border-radius:0;
+  color:rgba(255,255,255,.85);
+  font-size:.5rem;
+  font-weight:800;
+  letter-spacing:.3px;
+  text-transform:uppercase;
+  cursor:pointer;
+  position:relative;
+  flex:1;
+  min-width:0;
+  font-family:var(--font-body);
+}
+.topo-botoes .barra-btn:active{transform:scale(.9)}
+.topo-botoes .barra-btn i{font-size:1.05rem}
+.topo-botoes .barra-btn.fav i{color:#f472b6}
+.topo-botoes .barra-btn.ytm i{color:#ff0000}
+.topo-botoes .barra-btn.ativo i{color:var(--cor-neon);filter:drop-shadow(0 0 6px rgba(0,212,255,.7))}
+.topo-botoes .badge{
+  position:absolute;
+  top:-2px;
+  right:2px;
+  background:#f472b6;
+  color:#fff;
+  font-size:.45rem;
+  font-weight:900;
+  padding:1px 4px;
+  border-radius:8px;
+  min-width:13px;
+  text-align:center;
+}
+.topo-botoes .fab-main{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:1px;
+  padding:4px 3px;
+  background:transparent;
+  border:none;
+  box-shadow:none;
+  color:#fff;
+  font-size:.5rem;
+  font-weight:900;
+  text-transform:uppercase;
+  cursor:pointer;
+  flex:1;
+  min-width:0;
+  font-family:var(--font-body);
+}
+.topo-botoes .fab-main:active{transform:scale(.9)}
+.topo-botoes .fab-main i{font-size:1.15rem;transition:transform .3s ease;display:block}
+.topo-botoes .fab-main.open i{transform:rotate(45deg)}
+
+/* Volume control agora sobe do topo */
+.vol-control{
+  top:calc(158px + var(--safe-top));
+  bottom:auto !important;
+  transform:translateX(-50%) translateY(-10px) !important;
+}
+.vol-control.show{transform:translateX(-50%) translateY(0) !important}
+
+/* Banner de download logo abaixo dos botões */
+#bgDownloadBanner{
+  top:calc(198px + var(--safe-top));
+  bottom:auto !important;
+}
+
+/* FAB menu agora sobe de baixo */
+.fab-container{
+  bottom:calc(20px + var(--safe-bottom));
+}
+
 @media (prefers-reduced-motion: reduce){.letreiro{animation:none!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.genero-tocando .dot{animation:none!important}.btn-fav-vdb,.btn-fav-vdb.ativo{animation:none!important;opacity:.9}#voiceIndicator.ativo{animation:none!important;opacity:1}*{transition-duration:.01ms!important}}
-@media(max-width:480px){.titulo-topo{font-size:1.05rem;letter-spacing:4px}.btn-fav-vdb{font-size:1.15rem}.letreiro{font-size:1rem}.letreiro-wrap{height:38px}.timer-texto{font-size:.72rem;padding:3px 8px}.genero-tocando{font-size:.62rem;letter-spacing:2.5px}.genre-card .genre-name{font-size:.95rem}.genres-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.barra-btn{padding:5px 3px;font-size:.5rem}.barra-btn i{font-size:1.1rem}.fab-main{padding:5px 4px}.fab-main i{font-size:1.2rem}.id-value{font-size:1.05rem}.loading-text{font-size:1.5rem;letter-spacing:6px}.loading-logo{width:100px;height:100px}.block-logo{width:110px;height:110px}#btnInstalarFixo{bottom:calc(160px + var(--safe-bottom));right:12px;padding:7px 11px;font-size:.62rem}#voiceIndicator{width:24px;height:24px;font-size:.72rem}.vol-control{bottom:calc(70px + var(--safe-bottom))}}
+@media(max-width:480px){.titulo-topo{font-size:1.05rem;letter-spacing:4px}.btn-fav-vdb{font-size:1.15rem}.letreiro{font-size:1rem}.letreiro-wrap{height:38px}.timer-texto{font-size:.72rem;padding:3px 8px}.genero-tocando{font-size:.62rem;letter-spacing:2.5px}.genre-card .genre-name{font-size:.95rem}.genres-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.barra-btn{padding:5px 3px;font-size:.5rem}.barra-btn i{font-size:1.1rem}.fab-main{padding:5px 4px}.fab-main i{font-size:1.2rem}.id-value{font-size:1.05rem}.loading-text{font-size:1.5rem;letter-spacing:6px}.loading-logo{width:100px;height:100px}.block-logo{width:110px;height:110px}#btnInstalarFixo{bottom:calc(160px + var(--safe-bottom));right:12px;padding:7px 11px;font-size:.62rem}#voiceIndicator{width:24px;height:24px;font-size:.72rem}.vol-control{bottom:calc(70px + var(--safe-bottom))}.topo-botoes .barra-btn{padding:3px 2px;font-size:.46rem}.topo-botoes .barra-btn i{font-size:.95rem}.topo-botoes .fab-main{padding:3px 2px}.topo-botoes .fab-main i{font-size:1.05rem}.vol-control{top:calc(150px + var(--safe-top)) !important}#bgDownloadBanner{top:calc(190px + var(--safe-top)) !important}}
 @media (orientation: landscape) and (max-height: 500px){.info-topo{padding-top:4px}.topo-linha{height:28px}.titulo-topo{font-size:.95rem;letter-spacing:3px}.btn-fav-vdb{font-size:1rem}.letreiro-wrap{height:30px}.letreiro{font-size:.85rem}.genero-tocando{font-size:.58rem;padding-top:0}.barra-inferior{bottom:4px;padding:4px 6px;width:calc(100vw - 8px)}.barra-btn{padding:3px 2px;font-size:.45rem}.barra-btn i{font-size:.95rem}.fab-main{padding:3px 2px}.fab-main i{font-size:1rem}#bgDownloadBanner{bottom:calc(56px + var(--safe-bottom))}.fab-container{bottom:calc(56px + var(--safe-bottom))}#btnInstalarFixo{bottom:calc(70px + var(--safe-bottom));right:8px;padding:5px 9px;font-size:.55rem}.vol-control{bottom:calc(52px + var(--safe-bottom))}}
 </style>
 </head>
@@ -324,6 +422,16 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
         <i class="fas fa-guitar"></i>
         <span id="generoTocandoNome">BÔNUS</span>
       </div>
+      <!-- NOVA LINHA DE BOTÕES NO TOPO -->
+      <div class="topo-botoes" id="topoBotoes">
+        <button class="barra-btn" id="barraBuscar" aria-label="Buscar"><i class="fas fa-magnifying-glass"></i><span>Buscar</span></button>
+        <button class="barra-btn fav" id="barraFavoritos" aria-label="Favoritas"><i class="fas fa-heart"></i><span>Favoritas</span><span class="badge" id="barraBadgeFav" style="display:none">0</span></button>
+        <button class="barra-btn" id="barraGeneros" aria-label="Gêneros"><i class="fas fa-guitar"></i><span>Gêneros</span></button>
+        <button class="barra-btn" id="barraVolume" aria-label="Volume"><i class="fas fa-volume-high"></i><span>Volume</span></button>
+        <button class="barra-btn ytm" id="barraYTMusic" aria-label="YouTube Music"><i class="fab fa-youtube"></i><span>YT Music</span></button>
+        <button class="barra-btn" id="barraFila" aria-label="Fila"><i class="fas fa-list-ol"></i><span>Fila</span></button>
+        <button class="fab-main" id="fabMain" aria-label="Menu"><i class="fas fa-plus"></i></button>
+      </div>
     </div>
 
     <div class="vol-control" id="volControl">
@@ -352,16 +460,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
         <button class="fila-fechar" id="filaFecharBtn" aria-label="Fechar"><i class="fas fa-times"></i></button>
       </div>
       <div class="fila-lista" id="filaLista"></div>
-    </div>
-
-    <div class="barra-inferior" id="barraInferior">
-      <button class="barra-btn" id="barraBuscar" aria-label="Buscar"><i class="fas fa-magnifying-glass"></i><span>Buscar</span></button>
-      <button class="barra-btn fav" id="barraFavoritos" aria-label="Favoritas"><i class="fas fa-heart"></i><span>Favoritas</span><span class="badge" id="barraBadgeFav" style="display:none">0</span></button>
-      <button class="barra-btn" id="barraGeneros" aria-label="Gêneros"><i class="fas fa-guitar"></i><span>Gêneros</span></button>
-      <button class="barra-btn" id="barraVolume" aria-label="Volume"><i class="fas fa-volume-high"></i><span>Volume</span></button>
-      <button class="barra-btn ytm" id="barraYTMusic" aria-label="YouTube Music"><i class="fab fa-youtube"></i><span>YT Music</span></button>
-      <button class="barra-btn" id="barraFila" aria-label="Fila"><i class="fas fa-list-ol"></i><span>Fila</span></button>
-      <button class="fab-main" id="fabMain" aria-label="Menu"><i class="fas fa-plus"></i></button>
     </div>
   </div>
 
@@ -557,38 +655,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 <div id="tapFeedback"><i class="fas fa-play"></i><span>Play</span></div>
 
 <audio id="musicPlayer" preload="auto" playsinline></audio>
-<audio id="backgroundAudio" preload="auto" playsinline loop style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;"></audio><script>(function(){
-'use strict';
-
-const MIDIA_CONFIG = {
-  INTRO_URL: 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/vdb.mp4',
-  FUNDO_VIDEOS: ['https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/fita.mp4'],
-  LINK_SITE: 'https://sites.google.com/view/rogersjc/in%C3%ADcio'
-};
-const VERSAO = 'v011';
-const CONFIG = {
-  WHATSAPP:'5512988461978',
-  TEMPO_TESTE_SEGUNDOS:86400,
-  INTRO_DURACAO_MS:10000,
-  INTRO_START_SEG:0,
-  LOADING_MIN_MS:1200,
-  MIDIA_MAX_SEGURANCA_MS:60000,
-  CICLO_PLAYER_MS:60000,
-  CICLO_BANNER_MS:180000,
-  BANNER_DURACAO_MS:1000,
-  VOLUME_PADRAO:1.0,
-  DOWNLOAD_TIMEOUT_MS:30000,
-  DOWNLOAD_RETRY:3,
-  DOWNLOAD_PARALELO:4,
-  TEMPO_BOTAO_INSTALAR:300000,
-  MAX_FALHAS_CONSECUTIVAS:8,
-  MIX_GENEROS:['SERTANEJO','FORRÓ','PAGODE','ROMÂNTICA','MPB','POP/MIX'],
-  INTERVALO_MIDIA_MS:300,
-  BG_KEEPALIVE_MS:800,
-  PREFETCH_QTD:5,
-  PREFETCH_DELAY_MS:1500
-};
-
+<audio id="backgroundAudio" preload="auto" playsinline loop style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;"></audio>
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const fmt = s => { if(!s||isNaN(s)) return '0:00'; const m=Math.floor(s/60), g=Math.floor(s%60); return m+':'+(g<10?'0':'')+g; };
