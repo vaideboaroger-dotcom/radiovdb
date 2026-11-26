@@ -40,7 +40,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .letreiro i{font-style:normal;color:rgba(255,255,255,.72);font-weight:600}
 .genero-tocando{width:100%;padding:4px 16px 2px;font-family:var(--font-display);font-size:.68rem;font-weight:800;letter-spacing:3.5px;text-transform:uppercase;color:var(--cor-neon);display:flex;align-items:center;gap:8px;opacity:.95}
 .genero-tocando .dot{width:6px;height:6px;border-radius:50%;background:var(--cor-neon);box-shadow:0 0 8px var(--cor-neon);animation:blinkDot 1.4s ease-in-out infinite;flex-shrink:0}
-@keyframes blinkDot{0%,100%{opacity:.35}50%{opacity:1}}
 .timer-texto{font-family:var(--font-display);font-size:.78rem;font-weight:700;color:#fff;white-space:nowrap;letter-spacing:1px;padding:4px 10px;border-radius:var(--radius-pill);background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:inline-flex;align-items:center;gap:6px}
 .timer-texto i{font-size:.72rem;opacity:.85}
 .genre-card{position:relative;min-height:88px;border-radius:16px;cursor:pointer;padding:16px 16px 16px 18px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);text-align:left;width:100%;overflow:hidden;transition:transform .15s,background .2s,border-color .2s,box-shadow .2s}
@@ -280,7 +279,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 
 <div id="introScreen">
   <video id="introVideo" muted playsinline preload="auto"></video>
-  <button id="introPlayBtn" aria-label="Iniciar">
+  <button id="introPlayBtn" aria-label="Iniciar" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;width:90px;height:90px;border-radius:50%;background:rgba(0,212,255,.95);border:3px solid #fff;color:#000;font-size:2.5rem;cursor:pointer;box-shadow:0 0 40px rgba(0,212,255,.8);display:flex;align-items:center;justify-content:center">
     <i class="fas fa-play"></i>
   </button>
 </div>
@@ -949,6 +948,7 @@ function registrarMediaSessionHandlers(){
 async function togglePlay(){
   vibrar();
   if(typeof fecharFila==='function') fecharFila();
+  forcarFullscreen();
   if(!appState.isBackgroundActive){ ativarPlayer(); return; }
   if(!appState.musicas.length){ notif('⚠️ Escolha um gênero primeiro'); return; }
   if(audio.paused){ await tocar(); WakeLockManager.ativar(); }
@@ -1028,18 +1028,6 @@ function initVolume(){
   document.addEventListener('click',e=>{ if(!ctrl) return; if(!ctrl.classList.contains('show')) return; if(ctrl.contains(e.target)) return; if(btn && (btn===e.target||btn.contains(e.target))) return; ctrl.classList.remove('show'); if(btn) btn.classList.remove('ativo'); });
   setTimeout(()=>{ if(ctrl) ctrl.classList.remove('show'); if(btn) btn.classList.remove('ativo'); },4000);
   atualizarUI(); audio.volume=appState.volume;
-}
-
-function vdbDialog(opts){
-  return new Promise(resolve=>{
-    const ov=$('vdbDialogOverlay'), tt=$('vdbDialogTitle'), msg=$('vdbDialogMsg'), inp=$('vdbDialogInput'), ok=$('vdbDialogOk'), cancel=$('vdbDialogCancel');
-    if(!ov){ resolve(false); return; }
-    tt.textContent=opts.title||'Aviso'; msg.textContent=opts.msg||'';
-    if(opts.input){ inp.style.display='block'; inp.value=opts.inputValue||''; inp.placeholder=opts.placeholder||''; } else { inp.style.display='none'; }
-    ok.textContent=opts.okText||'Confirmar'; ov.classList.add('active');
-    function fechar(v){ ov.classList.remove('active'); ok.onclick=null; cancel.onclick=null; resolve(v); }
-    ok.onclick=()=>{ const v=opts.input?inp.value:true; fechar(v); }; cancel.onclick=()=>fechar(false);
-  });
 }
 
 let _generosRenderizados=false;
@@ -1191,7 +1179,7 @@ function initAdmin(){
   const lBtn=$('adminLimparBtn'); if(lBtn) lBtn.addEventListener('click',()=>{ const out=$('adminSenhaGerada'); if(out) out.value=''; const i=$('adminFingerprintInput'); if(i) i.value=''; });
   const cBtn=$('btnCopiarSenha'); if(cBtn) cBtn.addEventListener('click',()=>{ const out=$('adminSenhaGerada'); if(out) copiarTexto(out.value); });
   const wBtn=$('adminEnviarWhatsBtn'); if(wBtn) wBtn.addEventListener('click',()=>{ const out=$('adminSenhaGerada'); if(out&&out.value){ window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent('Senha VDB: '+out.value),'_blank'); } });
-  const closeBtns=[$('adminCloseBtn'),$('adminCloseTopBtn')]; closeBtns.forEach(b=>{ if(b) b.addEventListener('click',()=>painel.classList.remove('open')); });
+  [$('adminCloseBtn'),$('adminCloseTopBtn')].forEach(b=>{ if(b) b.addEventListener('click',()=>painel.classList.remove('open')); });
 }
 
 function initEventos(){
@@ -1244,6 +1232,7 @@ function initEventos(){
   if(audio){ audio.addEventListener('ended',()=>{ next(); }); audio.addEventListener('timeupdate',()=>{ const c=$('currentTime'),t=$('totalTime'); if(c) c.textContent=fmt(audio.currentTime); if(t) t.textContent=fmt(audio.duration||0); }); }
 }
 
+/* ============ INTRO (NOVA VERSÃO COM BOTÃO) ============ */
 async function initIntro(){
   const screen=$('introScreen'), vid=$('introVideo'), btn=$('introPlayBtn');
   if(!screen||!vid){ appState.introAtiva=false; return; }
