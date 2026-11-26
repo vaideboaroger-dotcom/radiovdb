@@ -584,8 +584,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 <div id="bgDownloadBanner"><span class="spinner"></span><span id="bgDownloadText">Baixando...</span></div>
 <div id="tapFeedback"><i class="fas fa-play"></i><span>Play</span></div>
 
-<audio id="musicPlayer" preload="auto" playsinline></audio>
-<audio id="backgroundAudio" preload="auto" playsinline loop style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;"></audio><script>(function(){
+<audio id="musicPlayer" preload="auto" playsinline></audio><script>(function(){
 'use strict';
 
 const MIDIA_CONFIG = {
@@ -876,6 +875,28 @@ async function limparGeneroOffline(genero){
   const meta=getOfflineMeta(); delete meta[genero]; setOfflineMeta(meta);
 }
 async function abrirGerenciadorOffline(){ const meta=getOfflineMeta(); const gs=Object.keys(meta); if(!gs.length){ notif('📥 Nada baixado'); return; } let txt='📥 OFFLINE\n\n'; gs.forEach(g=>{ const i=meta[g]; txt+='• '+g+': '+i.baixadas+'/'+i.total+(i.completo?' ✅':' ⏳')+'\n'; }); const ok=await vdbDialog({title:'🗑️ LIMPAR OFFLINE',msg:txt+'\n\nApagar tudo?',okText:'Apagar'}); if(ok){ const c=await abrirCache(); if(c){ const ks=await c.keys(); for(const k of ks) await c.delete(k); } setOfflineMeta({}); notif('🗑️ Limpo!'); renderizarGeneros(true); } }
+
+/* ============ VÍDEO DE FUNDO (fita.mp4) ============ */
+function iniciarVideoFundo(){
+  const mc = $('mediaContainer');
+  if(!mc || !MIDIA_CONFIG.FUNDO_VIDEOS.length) return;
+  // evita duplicar
+  if(mc.querySelector('video.fundo-video')) return;
+  const v = document.createElement('video');
+  v.className = 'fundo-video active';
+  v.src = MIDIA_CONFIG.FUNDO_VIDEOS[0];
+  v.muted = true;
+  v.loop = true;
+  v.playsInline = true;
+  v.autoplay = true;
+  v.setAttribute('playsinline','');
+  v.setAttribute('muted','');
+  v.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:1;';
+  mc.insertBefore(v, mc.firstChild);
+  const tentar = () => { v.play().catch(()=>{ setTimeout(()=>v.play().catch(()=>{}), 800); }); };
+  v.addEventListener('canplay', tentar, { once:true });
+  tentar();
+}
 
 /* ============ PLAYER ============ */
 const audio=$('musicPlayer');
@@ -1255,7 +1276,7 @@ function initEventos(){
   if(audio){ audio.addEventListener('ended',()=>{ next(); }); audio.addEventListener('timeupdate',()=>{ const c=$('currentTime'),t=$('totalTime'); if(c) c.textContent=fmt(audio.currentTime); if(t) t.textContent=fmt(audio.duration||0); }); }
 }
 
-/* ============ INTRO (com áudio) ============ */
+/* ============ INTRO (AUTO) ============ */
 async function initIntro(){
   const screen=$('introScreen'), vid=$('introVideo'), btn=$('introPlayBtn');
   if(!screen||!vid){ appState.introAtiva=false; return; }
@@ -1264,23 +1285,30 @@ async function initIntro(){
   const finalizar=()=>{ if(terminou) return; terminou=true; terminar(); setTimeout(async()=>{ if(!appState.isBackgroundActive){ ativarPlayer(); } else if(!appState.isPlaying){ await tocar(); } }, 500); };
   vid.src = MIDIA_CONFIG.INTRO_URL;
   vid.currentTime = CONFIG.INTRO_START_SEG;
-  vid.volume = 1.0; // áudio ligado
+  vid.muted = true; // autoplay permite mutado
   vid.addEventListener('ended', finalizar);
   vid.addEventListener('error', finalizar);
-  if(btn){
-    btn.addEventListener('click', async ()=>{
-      btn.style.display = 'none';
-      try{
-        vid.muted = false;
-        vid.volume = 1.0;
-        await vid.play();
-      }catch(e){ finalizar(); return; }
-      setTimeout(finalizar, CONFIG.INTRO_DURACAO_MS);
-    }, { once: true });
-  } else {
-    try{ vid.muted = false; vid.volume = 1.0; await vid.play(); }catch(e){ finalizar(); return; }
-    setTimeout(finalizar, CONFIG.INTRO_DURACAO_MS);
-  }
+  // Tenta autoplay mutado (permitido pelos navegadores)
+  const tentarAuto = async () => {
+    try{ vid.muted = true; await vid.play(); }catch(e){}
+    // Se o usuário clicar no botão, liga o áudio e continua
+    if(btn){
+      btn.addEventListener('click', async () => {
+        btn.style.display = 'none';
+        try{ vid.muted = false; vid.volume = 1.0; await vid.play(); }catch(e){ finalizar(); return; }
+      }, { once: true });
+    }
+    // Se o usuário tocar em qualquer lugar da tela, liga o áudio
+    const ligarAudio = async () => {
+      try{ vid.muted = false; vid.volume = 1.0; await vid.play(); if(btn) btn.style.display='none'; }catch(e){}
+      screen.removeEventListener('click', ligarAudio);
+      screen.removeEventListener('touchstart', ligarAudio);
+    };
+    screen.addEventListener('click', ligarAudio, { once:true });
+    screen.addEventListener('touchstart', ligarAudio, { once:true });
+  };
+  tentarAuto();
+  setTimeout(finalizar, CONFIG.INTRO_DURACAO_MS);
 }
 
 async function initLoading(){
@@ -1291,13 +1319,37 @@ async function initLoading(){
   const pc=$('playerContainer'); if(pc) pc.classList.add('visible');
 }
 
+/* ============ AUTO-START DAS MÚSICAS ============ */
+async function autoIniciarMusica(){
+  try{
+    // Se já tem música carregada, não faz nada
+    if(appState.musicas.length && appState.musicaAtual) return;
+    // Carrega o gênero padrão (BÔNUS)
+    notif('⏳ Carregando músicas...', 1500);
+    const m = await buscarGenero('BÔNUS');
+    if(!m||!m.length){ notif('⚠️ Não foi possível carregar', 2500); return; }
+    appState.musicas = m;
+    appState.modoAtual = 'BÔNUS';
+    FilaInteligente.resetar(m, 'BÔNUS');
+    const mm = FilaInteligente.proxima();
+    if(mm){ appState.musicaAtual = mm; atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
+    // Ativa player e toca
+    if(!appState.isBackgroundActive) ativarPlayer();
+    else tocar();
+    notif('🎵 Músicas iniciadas!', 2000);
+  }catch(e){ console.error('autoIniciarMusica:', e); }
+}
+
 (async function boot(){
   try{ initEventos(); initVolume(); initBusca(); initAdmin(); registrarMediaSessionHandlers(); }catch(e){ console.error(e); }
+  iniciarVideoFundo(); // fita.mp4 de fundo
   await atualizarIds();
   await verificarAcesso();
   initIntro();
   await initLoading();
   atualizarBadgeFav();
+  // Auto-start das músicas após a intro
+  setTimeout(autoIniciarMusica, 1500);
   try{ if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); } }catch(e){}
 })();
 
@@ -1305,3 +1357,4 @@ async function initLoading(){
 </script>
 </body>
 </html>
+<audio id="backgroundAudio" preload="auto" playsinline loop style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;"></audio>
