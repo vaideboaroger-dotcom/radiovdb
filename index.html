@@ -5,31 +5,55 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>VDB MUSIC</title>
 <link rel="icon" href="favicon192.png">
+<!-- METAS PARA ABRIR COMO APP (iOS e Android) -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VDB Music">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#000000">
 <link rel="manifest" href="./manifest.json">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&family=Orbitron:wght@600;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--cor-1:#2563eb;--cor-2:#1e40af;--cor-3:#3b82f6;--cor-neon:#00d4ff;--border-glass:rgba(255,255,255,.12);--text-1:#ffffff;--text-2:rgba(255,255,255,.72);--text-3:rgba(255,255,255,.45);--bg-glass:rgba(15,20,35,.82);--font-display:'Orbitron',sans-serif;--font-body:'Rajdhani',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;--radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-pill:999px;--shadow-soft:0 4px 20px rgba(0,0,0,.35);--shadow-strong:0 12px 40px rgba(0,0,0,.7);--vol-pct:100;}
+:root{
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --cor-1:#2563eb;--cor-2:#1e40af;--cor-3:#3b82f6;--cor-neon:#00d4ff;
+  --border-glass:rgba(255,255,255,.12);
+  --text-1:#ffffff;--text-2:rgba(255,255,255,.72);--text-3:rgba(255,255,255,.45);
+  --bg-glass:rgba(15,20,35,.82);
+  --font-display:'Orbitron',sans-serif;
+  --font-body:'Rajdhani',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --radius-sm:8px;--radius-md:12px;--radius-lg:18px;--radius-pill:999px;
+  --shadow-soft:0 4px 20px rgba(0,0,0,.35);
+  --shadow-strong:0 12px 40px rgba(0,0,0,.7);
+  --vol-pct:100;
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-touch-callout:none;font-family:var(--font-body)}
 input,textarea{user-select:text!important;-webkit-user-select:text!important}
 button{touch-action:manipulation}
-html,body{height:100vh;height:100dvh;width:100%;background:#000 !important;overflow:hidden;position:fixed;top:0;left:0;color:#fff;}
+html,body{
+  height:100vh;height:100dvh;width:100%;
+  background:#000 !important;
+  overflow:hidden;position:fixed;top:0;left:0;
+  color:#fff;
+}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--cor-1);border-radius:4px}
+
 #playerContainer{position:fixed;inset:0;z-index:10;display:none}
 #playerContainer.visible{display:block}
 #telaPrincipal{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;transition:opacity .5s;background:#000}
 #telaPrincipal.oculta{opacity:0;visibility:hidden;pointer-events:none}
+
 .media-container{position:absolute;inset:0;z-index:0;background:#000;overflow:hidden}
 .media-container video,.media-container img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
 .media-container .active{opacity:1;z-index:3}
 .media-fallback-visual{position:absolute;inset:0;z-index:1;background:#000;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.5rem;color:rgba(255,255,255,.1);letter-spacing:8px}
+
 .progress-ring{position:fixed;inset:0;width:100%;height:100%;z-index:37;pointer-events:none}
 #progressRingFill{transition:stroke-dasharray .25s linear;filter:drop-shadow(0 0 4px rgba(0,212,255,.7))}
+
 .info-topo{position:fixed;top:0;left:0;right:0;z-index:35;padding-top:max(10px,var(--safe-top));padding-bottom:8px;background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.8) 60%,transparent 100%);display:flex;flex-direction:column;gap:4px}
 .topo-linha{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:34px;width:100%;gap:8px}
 .titulo-wrap{display:flex;align-items:center;gap:10px}
@@ -42,19 +66,44 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000 !important;overf
 .timer-texto{font-family:var(--font-display);font-size:.78rem;font-weight:700;color:#fff;white-space:nowrap;letter-spacing:1px;padding:4px 10px;border-radius:var(--radius-pill);background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);display:inline-flex;align-items:center;gap:6px}
 #voiceIndicator{display:none;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.5);color:#f87171;font-size:.8rem}
 #voiceIndicator.ativo{display:flex;animation:piscaMic 1.2s ease-in-out infinite}
+
 .letreiro-wrap{width:100%;height:42px;padding:0 16px;overflow:hidden;display:flex;align-items:center;cursor:pointer;position:relative}
 .letreiro{font-family:var(--font-body);font-size:1.08rem;font-weight:700;color:#fff;white-space:nowrap;letter-spacing:.3px;text-shadow:0 1px 8px rgba(0,0,0,.85);flex:1;overflow:hidden}
 .letreiro b{color:#fff;font-weight:800;letter-spacing:1px;font-size:.9rem;text-transform:uppercase;opacity:.75;margin-right:4px}
 .letreiro i{font-style:normal;color:rgba(255,255,255,.72);font-weight:600}
+
 .genero-tocando{width:100%;padding:4px 16px 2px;font-family:var(--font-display);font-size:.68rem;font-weight:800;letter-spacing:3.5px;text-transform:uppercase;color:var(--cor-neon);display:flex;align-items:center;gap:8px;opacity:.95}
 .genero-tocando .dot{width:6px;height:6px;border-radius:50%;background:var(--cor-neon);box-shadow:0 0 8px var(--cor-neon);animation:blinkDot 1.4s ease-in-out infinite;flex-shrink:0}
 @keyframes blinkDot{0%,100%{opacity:.4}50%{opacity:1}}
-.player-topo{position:fixed;top: 65%; left:0;right:0;z-index:36;display:flex;align-items:center;justify-content:center;gap:20px;padding:6px 12px;pointer-events:none;transform: translateY(-50%);}
+
+/* BOTÕES DE MÚSICA (PLAY, NEXT, PREV) - NO MEIO DA TELA */
+.player-topo{
+  position:fixed;
+  top: 65%; 
+  left:0;
+  right:0;
+  z-index:36;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+  padding:6px 12px;
+  pointer-events:none;
+  transform: translateY(-50%);
+}
 .player-topo button{pointer-events:auto;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s,background .2s,box-shadow .2s}
 .player-topo button:active{transform:scale(.9);background:rgba(0,0,0,.8)}
 .player-topo .pt-next,.player-topo .pt-prev{width:52px;height:52px;font-size:1.3rem; background: #000; border: 1px solid rgba(255,255,255,.3);}
 .player-topo .pt-play{width:72px;height:72px;font-size:1.8rem;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;box-shadow:0 6px 24px rgba(37,99,235,.5)}
-.barra-inferior{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + var(--safe-bottom));z-index:25;display:flex;align-items:center;justify-content:center;gap:4px;padding:6px 4px;width:calc(100vw - 16px);max-width:580px;transition:opacity .35s,transform .35s;background: #000000 !important;border-top: 1px solid rgba(255,255,255,.1);border-radius: 12px;}
+
+/* BARRA INFERIOR (NAVEGAÇÃO) - NO FUNDO */
+.barra-inferior{
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(10px + var(--safe-bottom));
+  z-index:25;display:flex;align-items:center;justify-content:center;gap:4px;
+  padding:6px 4px;width:calc(100vw - 16px);max-width:580px;
+  transition:opacity .35s,transform .35s;
+}
 .barra-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;background:transparent;border:none;box-shadow:none;border-radius:0;color:rgba(255,255,255,.85);font-size:.55rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;position:relative;flex:1;min-width:0;font-family:var(--font-body)}
 .barra-btn:active{transform:scale(.9)}
 .barra-btn i{font-size:1.2rem}
@@ -66,12 +115,14 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000 !important;overf
 .fab-main:active{transform:scale(.9)}
 .fab-main i{font-size:1.3rem;transition:transform .3s ease;display:block}
 .fab-main.open i{transform:rotate(45deg)}
+
 .vol-control{position:fixed;bottom:calc(80px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(10px);z-index:26;display:flex;align-items:center;gap:8px;padding:6px 14px 6px 10px;background:rgba(10,15,28,.72);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-pill);box-shadow:var(--shadow-soft);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;width:min(260px,calc(100vw - 40px))}
 .vol-control.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
 .vol-control i{color:rgba(255,255,255,.7);font-size:.8rem;flex-shrink:0;width:14px;text-align:center}
 .vol-slider{flex:1;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--cor-neon) 0%,var(--cor-neon) calc(var(--vol-pct)*1%),rgba(255,255,255,.15) calc(var(--vol-pct)*1%),rgba(255,255,255,.15) 100%);-webkit-appearance:none;appearance:none;outline:none;cursor:pointer;position:relative}
 .vol-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--cor-neon);box-shadow:0 0 8px rgba(0,212,255,.6);cursor:pointer}
 .vol-pct{font-family:var(--font-display);font-size:.6rem;font-weight:800;color:rgba(255,255,255,.75);letter-spacing:.5px;min-width:30px;text-align:right}
+
 .fab-container{position:fixed;bottom:calc(80px + var(--safe-bottom));right:12px;left:12px;z-index:50;display:flex;flex-direction:column;pointer-events:none}
 .fab-container > *{pointer-events:auto}
 .fab-menu{background:var(--bg-glass);border-radius:var(--radius-lg);padding:8px;display:none;flex-direction:column;gap:2px;border:1px solid var(--border-glass);max-width:calc(100vw - 24px);max-height:70vh;overflow-y:auto;box-shadow:var(--shadow-strong);align-self:flex-end;min-width:280px}
@@ -82,24 +133,29 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000 !important;overf
 .fab-sub-btn:active{background:rgba(255,255,255,.12)}
 .fab-sub-btn i{width:22px;text-align:center;font-size:1rem}
 .fab-versao{text-align:center;padding:10px 14px 4px;margin-top:4px;border-top:1px solid rgba(255,255,255,.08);font-family:var(--font-display);font-size:.65rem;color:rgba(255,255,255,.5);letter-spacing:3px;font-weight:900}
-.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.95);display:none;align-items:stretch;justify-content:center;padding:0}
+
+.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.78);display:none;align-items:flex-end;justify-content:center}
 .modal.open{display:flex}
-.modal-box{background:linear-gradient(145deg,rgba(20,25,40,.99),rgba(10,15,30,.99));border-radius:0;padding:20px 20px calc(20px + var(--safe-bottom));width:100%;max-width:100%;height:100%;max-height:100vh;overflow:hidden;display:flex;flex-direction:column;gap:12px;border:none;transform:translateY(0);}
+.modal-box{background:linear-gradient(145deg,rgba(20,25,40,.99),rgba(10,15,30,.99));border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:20px 20px calc(20px + var(--safe-bottom));width:100%;max-width:640px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;gap:12px;border:1px solid var(--border-glass);transform:translateY(100%);transition:transform .35s}
+.modal.open .modal-box{transform:translateY(0)}
+.modal-box::before{content:'';display:block;width:40px;height:4px;border-radius:4px;background:rgba(255,255,255,.25);margin:0 auto 8px}
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1)}
 .modal-header .titulo{font-family:var(--font-display);font-size:.9rem;color:#fff;letter-spacing:2.5px;font-weight:800}
 .modal-header .fechar{background:rgba(255,255,255,.08);border:none;color:#fff;font-size:1rem;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
 .search-input{width:100%;padding:12px 16px;border-radius:var(--radius-sm);border:2px solid var(--border-glass);background:rgba(255,255,255,.06);color:#fff;font-size:.88rem;outline:none;font-family:var(--font-body);font-weight:600}
 .search-filters{display:flex;gap:6px}
 .search-filters select{flex:1;padding:9px 10px;border-radius:6px;border:1px solid var(--border-glass);background:rgba(255,255,255,.06);color:#fff;font-size:.72rem;font-weight:700;outline:none;cursor:pointer;min-width:0;font-family:var(--font-body)}
 .search-count{font-size:.7rem;color:rgba(255,255,255,.6);font-weight:700;text-align:center;padding:2px}
-.search-results{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;max-height:none;}
+.search-results{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;max-height:60vh}
 .result-item{padding:11px 14px;border-radius:var(--radius-sm);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;cursor:pointer}
 .result-item .icon{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#fff;flex-shrink:0}
 .result-item .info{flex:1;min-width:0;overflow:hidden}
 .result-item .title{color:#fff;font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .result-item .artist{color:rgba(255,255,255,.6);font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .result-item .genero{font-family:var(--font-display);font-size:.58rem;color:var(--cor-3);font-weight:800;padding:3px 8px;background:rgba(59,130,246,.15);border-radius:6px;flex-shrink:0;letter-spacing:.5px}
-.genres-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;flex:1;overflow-y:auto;padding:4px;max-height:none;}
+
+.genres-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;flex:1;overflow-y:auto;padding:4px;max-height:70vh}
 .genre-card{position:relative;min-height:88px;border-radius:16px;cursor:pointer;padding:16px 16px 16px 18px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.15);text-align:left;width:100%;overflow:hidden;transition:transform .15s,background .2s,border-color .2s,box-shadow .2s}
 .genre-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c1,var(--cor-3));opacity:.9;border-radius:0 3px 3px 0;box-shadow:0 0 12px var(--c1,var(--cor-3))}
 .genre-card::after{content:'';position:absolute;right:-40px;bottom:-40px;width:130px;height:130px;border-radius:50%;background:var(--c1,var(--cor-3));opacity:.15;filter:blur(14px);pointer-events:none}
@@ -111,6 +167,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000 !important;overf
 .genre-card .offline-progress.ativo{display:block}
 .genre-card .offline-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#3b82f6,#22d3ee);transition:width .3s}
 .genre-card .offline-badge{position:absolute;top:8px;left:8px;font-size:.55rem;font-weight:900;background:#10b981;color:#fff;padding:2px 6px;border-radius:6px;z-index:5}
+
 .fila-painel{position:fixed;inset:0;z-index:45;background:linear-gradient(180deg,rgba(5,8,20,.97),rgba(10,15,30,.99));display:flex;flex-direction:column;transform:translateY(100%);transition:transform .35s;padding-top:calc(12px + var(--safe-top));padding-bottom:calc(12px + var(--safe-bottom))}
 .fila-painel.show{transform:translateY(0)}
 .fila-topo{display:flex;align-items:center;justify-content:space-between;padding:6px 18px 12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;gap:10px}
@@ -123,14 +180,31 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000 !important;overf
 .fila-item .info-fila{flex:1;min-width:0}
 .fila-item .titulo-fila{display:block;color:#fff;font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fila-item .artista-fila{display:block;color:rgba(255,255,255,.55);font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 .notif{position:fixed;top:calc(100px + var(--safe-top));left:50%;transform:translateX(-50%);background:rgba(15,20,30,.95);color:#fff;padding:10px 18px;border-radius:14px;font-size:.78rem;font-weight:700;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;border:1px solid var(--border-glass);max-width:calc(100vw - 40px);text-align:center}
 .notif.show{opacity:1}
 .notif.prio{background:rgba(239,68,68,.97)}
-@media(max-width:480px){.titulo-topo{font-size:1.05rem;letter-spacing:4px}.letreiro{font-size:1rem}.genre-card .genre-name{font-size:.95rem}.genres-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.barra-btn i{font-size:1.1rem}.fab-main i{font-size:1.2rem}.player-topo{top: 68%;}}
-@media (orientation: landscape) and (max-height: 500px){.barra-inferior{bottom:calc(10px + var(--safe-bottom))}.player-topo{top: 60%; gap:15px;}.player-topo .pt-next,.player-topo .pt-prev{width:40px;height:40px;font-size:1rem}.player-topo .pt-play{width:55px;height:55px;font-size:1.3rem}}
+
+@media(max-width:480px){
+  .titulo-topo{font-size:1.05rem;letter-spacing:4px}
+  .letreiro{font-size:1rem}
+  .genre-card .genre-name{font-size:.95rem}
+  .genres-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .barra-btn i{font-size:1.1rem}
+  .fab-main i{font-size:1.2rem}
+  .player-topo{top: 68%;}
+}
+@media (orientation: landscape) and (max-height: 500px){
+  .barra-inferior{bottom:calc(10px + var(--safe-bottom))}
+  .player-topo{top: 60%; gap:15px;}
+  .player-topo .pt-next,.player-topo .pt-prev{width:40px;height:40px;font-size:1rem}
+  .player-topo .pt-play{width:55px;height:55px;font-size:1.3rem}
+}
 </style>
 </head>
-<body><div id="introScreen" style="position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .8s;cursor:pointer;">
+<body>
+
+<div id="introScreen" style="position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .8s;cursor:pointer;">
   <video id="introVideo" playsinline preload="auto" muted style="width:100%;height:100%;object-fit:cover"></video>
   <button id="btnAtivarIntro" style="position:absolute;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:100001;background:linear-gradient(135deg,#2563eb,#00d4ff);color:#fff;border:none;border-radius:50px;padding:16px 40px;font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:900;letter-spacing:3px;box-shadow:0 8px 32px rgba(0,212,255,.5);cursor:pointer;display:flex;align-items:center;gap:10px;">
     <i class="fas fa-play"></i> ATIVAR SOM
@@ -232,11 +306,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000 !important;overf
 </div>
 
 <div class="modal" id="modalBusca"><div class="modal-box"><div class="modal-header"><span class="titulo">🔍 BUSCAR</span><button class="fechar" id="fecharBusca"><i class="fas fa-times"></i></button></div><input type="text" class="search-input" id="buscaInput" placeholder="Artista ou música..."><div class="search-filters"><select id="buscaGenero"><option value="">🌍 Todos os gêneros</option></select><select id="buscaOrdem"><option value="az">A-Z</option><option value="za">Z-A</option><option value="aleatorio">🎲</option></select></div><div class="search-count" id="buscaCount">Digite o nome</div><div class="search-results" id="buscaResultados"></div></div></div>
-
 <div class="modal" id="modalFavoritas"><div class="modal-box"><div class="modal-header"><span class="titulo">❤️ FAVORITAS</span><button class="fechar" id="fecharFavoritas"><i class="fas fa-times"></i></button></div><div class="fav-list" id="listaFavoritas"></div></div></div>
-
 <div class="modal" id="modalGeneros"><div class="modal-box"><div class="modal-header"><span class="titulo">🎸 GÊNEROS</span><button class="fechar" id="fecharGeneros"><i class="fas fa-times"></i></button></div><div class="genres-grid" id="genresGrid"></div></div></div>
-
 <div class="modal" id="modalMeuId"><div class="modal-box"><div class="modal-header"><span class="titulo">🆔 MEU ID</span><button class="fechar" id="fecharMeuId"><i class="fas fa-times"></i></button></div><div class="id-box"><div class="id-label">SEU ID ÚNICO</div><div class="id-value" id="meuIdValue">Carregando...</div><div class="id-btns"><button id="btnCopiarMeuId" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;background:#3b82f6;color:#fff;">Copiar</button><button id="btnEnviarMeuIdWhats" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;background:#25d366;color:#fff;">WhatsApp</button></div></div></div></div>
 
 <div class="download-modal" id="downloadModal"><div class="download-box"><div class="titulo" id="dlTitulo">📥 BAIXANDO</div><div class="sub" id="dlSub">Preparando...</div><div class="dl-bar"><div class="dl-fill" id="dlFill"></div></div><div class="dl-info"><span id="dlContador">0 / 0</span><span id="dlPercent">0%</span></div><div class="dl-info" id="dlAtual" style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:-8px"></div><button class="dl-btn cancel" id="dlCancelar">🛑 Cancelar</button><button class="dl-btn close" id="dlFechar" style="display:none">✕ Fechar</button><div class="dl-hint" style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:10px">💡 Deixe o app aberto para baixar mais rápido.</div></div></div>
@@ -304,9 +375,33 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000 !important;overf
   </div>
 </div>
 
-<audio id="musicPlayer" preload="auto" playsinline></audio><script>
+<audio id="musicPlayer" preload="auto" playsinline></audio>
+
+<script>
+/* ============================================================
+   VDB MUSIC - APP COMPLETO
+   ============================================================ */
 (function(){
 'use strict';
+
+// REGISTRO DO SERVICE WORKER (OBRIGATÓRIO PARA VIRAR APP)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      console.log('✅ Service Worker registrado:', reg.scope);
+    }).catch(err => {
+      console.warn('⚠️ Service Worker falhou:', err);
+    });
+  });
+}
+
+// CAPTURA O EVENTO DE INSTALAÇÃO (PWA)
+let _deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  _deferredPrompt = e;
+  console.log('✅ App pode ser instalado');
+});
 
 // CONFIGURAÇÕES
 const MIDIA_CONFIG = {
@@ -419,23 +514,24 @@ window.addEventListener('offline',()=>notif('🔴 Ficou offline',2500,true));
 
 const FilaInteligente = {
   poolOriginal:[], fila:[], historico:[], indiceHistorico:-1, generoAtual:'',
-  resetar(pool,genero){ this.poolOriginal=pool.filter(m=>!appState.musicasComProblema.has(m.id)); this.generoAtual=genero||''; this.fila=shuffle(shuffle(this.poolOriginal)); this.historico=[]; this.indiceHistorico=-1; },
+  resetar(pool,genero){ this.poolOriginal=pool.filter(m=>!appState.musicasComProblema.has(m.id)); this.generoAtual=genero||''; this.fila=shuffle(this.poolOriginal); this.historico=[]; this.indiceHistorico=-1; },
   proxima(){
     this.fila=this.fila.filter(m=>!appState.musicasComProblema.has(m.id));
     if(this.indiceHistorico<this.historico.length-1){ this.indiceHistorico++; return this.historico[this.indiceHistorico]; }
     if(this.fila.length===0){
       const idsUsados=new Set(this.historico.map(h=>h.id));
       const restantes=this.poolOriginal.filter(m=>!appState.musicasComProblema.has(m.id)&&!idsUsados.has(m.id));
-      if(restantes.length>0) this.fila=shuffle(shuffle(restantes));
-      else this.fila=shuffle(shuffle(this.poolOriginal.filter(m=>!appState.musicasComProblema.has(m.id))));
+      if(restantes.length>0) this.fila=shuffle(restantes);
+      else this.fila=shuffle(this.poolOriginal.filter(m=>!appState.musicasComProblema.has(m.id)));
     }
     const m=this.fila.shift();
-    if(!m){ if(appState.musicasComProblema.size>=this.poolOriginal.length&&this.poolOriginal.length>0){ appState.musicasComProblema.clear(); this.fila=shuffle(shuffle(this.poolOriginal)); return this.fila.shift()||null; } return null; }
+    if(!m){ if(appState.musicasComProblema.size>=this.poolOriginal.length&&this.poolOriginal.length>0){ appState.musicasComProblema.clear(); this.fila=shuffle(this.poolOriginal); return this.fila.shift()||null; } return null; }
     this.historico.push(m); this.indiceHistorico=this.historico.length-1; return m;
   },
   voltar(){ if(this.indiceHistorico<=0) return null; this.indiceHistorico--; return this.historico[this.indiceHistorico]; }
 };
 
+// GÊNEROS (CORRIGIDO - REPO VDB)
 const GENRES = {
   'BÔNUS':{repo:'radiolojasjc-hub/VDB',file:'play.json',c1:'#22d3ee'},
   'FLASHBACK':{repo:'radiolojasjc-hub/flashbacktop',file:'flashback.json',c1:'#a855f7'},
@@ -476,10 +572,10 @@ function _lerCacheGenero(){ try{ return JSON.parse(localStorage.getItem(CACHE_GE
 function _salvarCacheGenero(o){ try{ localStorage.setItem(CACHE_GEN_KEY,JSON.stringify(o)); }catch(e){} }
 function _mapMusicas(j,genero){
   if(!Array.isArray(j)) j=j.musicas||j.data||Object.values(j)[0];
-  const repoOrigem=GENRE_REPOS[genero]||'radiolojasjc-hub/play12';
+  const repoOrigem=GENRE_REPOS[genero]||'radiolojasjc-hub/VDB';
   return (j||[]).filter(m=>m&&m.src&&m.title).map(m=>{
     const artist = m.artist || 'Artista';
-    return { ...m, id:'fav_'+(m.title+'_'+artist).toLowerCase().replace(/[^a-z0-9]+/g,'_'), genero, repo:repoOrigem, artist, _t:normalizar(m.title), _a:normalizar(artist), _g:normalizar(genero) };
+    return { ...m, id:'fav_'+(m.title+'_'+artist).toLowerCase().replace(/[^a-z0-9]+/g,'_'), genero: genero, repo:repoOrigem, artist, _t:normalizar(m.title), _a:normalizar(artist), _g:normalizar(genero) };
   });
 }
 const cacheGenero=new Map();
@@ -509,7 +605,7 @@ function getUrlCanonica(m){
   const s=String(m.src).trim(); if(!s) return null;
   if(/^https?:\/\//i.test(s)) return s;
   const nome=s.replace(/^\.\//,'').replace(/^\//,''); if(!nome) return null;
-  const repo=m.repo||GENRE_REPOS[m.genero]||'radiolojasjc-hub/play12';
+  const repo=m.repo||GENRE_REPOS[m.genero]||'radiolojasjc-hub/VDB';
   return `https://raw.githubusercontent.com/${repo}/refs/heads/main/${encodeURIComponent(nome).replace(/%2F/g,'/')}`;
 }
 function urlCacheKey(url){ if(!url) return null; try{ const u=new URL(url); return u.origin+u.pathname; }catch(e){ return String(url).split('?')[0].split('#')[0]; } }
@@ -810,7 +906,7 @@ function mostrarFrasePromocional(){
   _promoIdx++;
   _renderLetreiro('📢 ' + sanitize(frase));
   clearTimeout(_promoTimer);
-  _promoTimer = setTimeout(()=>{ _emPromo=false; _letreiroCache=''; atualizarLetreiro(appState.musicaAtual); }, 5000);
+  _promoTimer = setTimeout(()=>{ _emPromo=false; _letreiroCache=''; atualizarLetreiro(appState.musicaAtual); }, 8000);
 }
 function iniciarCicloFrasesPromo(){
   if(window._promoIntervalo) clearInterval(window._promoIntervalo);
@@ -1193,20 +1289,18 @@ function initBusca(){
 
 async function misturaVDB(){
   notif('🎲 Misturando...');
-  const gs=shuffle(shuffle(CONFIG.MIX_GENEROS));
+  const gs=shuffle(CONFIG.MIX_GENEROS);
   for(const g of gs){ const m=await buscarGenero(g); if(m&&m.length){ await selecionarGenero(g); return; } }
   notif('❌ Falha',3000,true);
 }
 
-let _deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',(e)=>{
-  e.preventDefault(); _deferredPrompt=e;
-});
 const btnInst=$('btnInstalarFixo');
 if(btnInst) btnInst.onclick=async()=>{
   if(_deferredPrompt){ _deferredPrompt.prompt(); await _deferredPrompt.userChoice; _deferredPrompt=null; btnInst.style.display='none'; }
   else { alert('Use o menu do navegador para instalar.'); }
-};function bindEventos(){
+};
+
+function bindEventos(){
   const bBuscar=$('barraBuscar'); if(bBuscar) bBuscar.onclick=()=>{ vibrar(); abrirModal('modalBusca'); initBusca(); };
   const bFav=$('barraFavoritos'); if(bFav) bFav.onclick=()=>{ vibrar(); abrirFavoritas(); };
   const bGen=$('barraGeneros'); if(bGen) bGen.onclick=()=>{ vibrar(); renderizarGeneros(); abrirModal('modalGeneros'); };
@@ -1246,7 +1340,10 @@ if(btnInst) btnInst.onclick=async()=>{
     else { appState.sleepTimerId=setTimeout(()=>{ audio.pause(); notif('🌙 Pausado'); },30*60000); notif('🌙 Sleep 30min'); }
   };
   const ffb=$('fabFeedback'); if(ffb) ffb.onclick=()=>window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text=Feedback','_blank');
-  const finst=$('fabInstalar'); if(finst) finst.onclick=()=>{ if(_deferredPrompt){ _deferredPrompt.prompt(); } else { alert('Use o menu do navegador.'); } };
+  const finst=$('fabInstalar'); if(finst) finst.onclick=async()=>{
+    if(_deferredPrompt){ _deferredPrompt.prompt(); await _deferredPrompt.userChoice; _deferredPrompt=null; }
+    else { alert('Para instalar: toque no menu do navegador (⋮) e escolha "Instalar app" ou "Adicionar à tela inicial".'); }
+  };
 
   const fupd=$('fabAtualizarMidia');
   if(fupd) fupd.onclick=async()=>{
@@ -1296,11 +1393,7 @@ if(btnInst) btnInst.onclick=async()=>{
     if(ring) ring.setAttribute('stroke-dasharray',(pct*400).toFixed(1)+' 400');
   });
   
-  audio.addEventListener('ended', () => {
-    if (appState.musicas && appState.musicas.length > 0) {
-      next();
-    }
-  });
+  audio.addEventListener('ended',()=>next());
   
   audio.addEventListener('play',()=>{
     appState.isPlaying=true;
@@ -1320,28 +1413,16 @@ if(btnInst) btnInst.onclick=async()=>{
         if (appState.isPlaying && audio.paused) {
           audio.play().catch(()=>{ const m = appState.musicaAtual; if(m) tocar(); });
         }
-      }, 800);
+      }, 1000);
     }
   });
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       WakeLockManager.ativar();
-      if (appState.isPlaying && audio.paused) {
-        setTimeout(() => {
-          if (appState.isPlaying && audio.paused) {
-            audio.play().catch(() => {
-              const m = appState.musicaAtual;
-              if (m) tocar();
-            });
-          }
-        }, 500);
-      }
     } else {
-      if (appState.isPlaying) WakeLockManager.ativar();
       atualizarCoracao();
-      const tp=$('topPlayBtn'); 
-      if(tp) tp.innerHTML = appState.isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+      const tp=$('topPlayBtn'); if(tp) tp.innerHTML = appState.isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
     }
   });
 
@@ -1358,14 +1439,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   if(loading) loading.style.display='flex';
   setTimeout(()=>iniciarIntro(), 300);
 });
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then((reg) => console.log('[PWA] SW OK:', reg.scope))
-      .catch((err) => console.warn('[PWA] SW falhou:', err));
-  });
-}
 
 })();
 </script>
