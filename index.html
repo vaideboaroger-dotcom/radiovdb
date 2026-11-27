@@ -40,6 +40,7 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .letreiro i{font-style:normal;color:rgba(255,255,255,.72);font-weight:600}
 .genero-tocando{width:100%;padding:4px 16px 2px;font-family:var(--font-display);font-size:.68rem;font-weight:800;letter-spacing:3.5px;text-transform:uppercase;color:var(--cor-neon);display:flex;align-items:center;gap:8px;opacity:.95}
 .genero-tocando .dot{width:6px;height:6px;border-radius:50%;background:var(--cor-neon);box-shadow:0 0 8px var(--cor-neon);animation:blinkDot 1.4s ease-in-out infinite;flex-shrink:0}
+@keyframes blinkDot{0%,100%{opacity:.35}50%{opacity:1}}
 .timer-texto{font-family:var(--font-display);font-size:.78rem;font-weight:700;color:#fff;white-space:nowrap;letter-spacing:1px;padding:4px 10px;border-radius:var(--radius-pill);background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:inline-flex;align-items:center;gap:6px}
 .timer-texto i{font-size:.72rem;opacity:.85}
 .genre-card{position:relative;min-height:88px;border-radius:16px;cursor:pointer;padding:16px 16px 16px 18px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);text-align:left;width:100%;overflow:hidden;transition:transform .15s,background .2s,border-color .2s,box-shadow .2s}
@@ -76,7 +77,6 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 .media-fallback-visual{position:absolute;inset:0;z-index:1;background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.5rem;color:rgba(255,255,255,.1);letter-spacing:8px}
 .progress-ring{position:fixed;inset:0;width:100%;height:100%;z-index:37;pointer-events:none}
 #progressRingFill{transition:stroke-dasharray .25s linear;filter:drop-shadow(0 0 4px rgba(0,212,255,.7))}
-.mini-progresso,.mini-progresso-fill{display:none !important}
 .info-topo{position:fixed;top:0;left:0;right:0;z-index:35;padding-top:max(10px,var(--safe-top));padding-bottom:8px;background:linear-gradient(180deg,rgba(0,0,0,.75) 0%,rgba(0,0,0,.35) 60%,transparent 100%);display:flex;flex-direction:column;gap:4px}
 .topo-linha{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:34px;width:100%;gap:8px}
 .titulo-wrap{display:flex;align-items:center;gap:10px}
@@ -556,6 +556,9 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 <audio id="backgroundAudio" preload="auto" playsinline loop style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;left:-9999px;"></audio><script>(function(){
 'use strict';
 
+/* ============================================================
+   CONFIG
+   ============================================================ */
 const MIDIA_CONFIG = {
   INTRO_URL: 'https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/vdb.mp4',
   FUNDO_VIDEOS: ['https://raw.githubusercontent.com/vaideboaroger-dotcom/radiovdb/main/fita.mp4'],
@@ -563,9 +566,7 @@ const MIDIA_CONFIG = {
 };
 const VERSAO = 'v011';
 
-/* ============================================================
-   URLs do LARA (bônus) — sincronizados vídeo + áudio
-   ============================================================ */
+/* URLs do LARA (bônus) — sincronizados vídeo + áudio */
 const LARA_MP4_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/lara.mp4';
 const LARA_MP3_URL = 'https://raw.githubusercontent.com/radiolojasjc-hub/play12/refs/heads/main/lara.mp3';
 const LARA_TITLE   = 'lara';
@@ -573,13 +574,12 @@ const LARA_TITLE   = 'lara';
 const CONFIG = {
   WHATSAPP:'5512988461978',
   TEMPO_TESTE_SEGUNDOS:86400,
-  INTRO_DURACAO_MS:5000,        // ← 5s (você pediu)
+  INTRO_DURACAO_MS:5000,
   INTRO_START_SEG:0,
   LOADING_MIN_MS:1200,
   MIDIA_MAX_SEGURANCA_MS:60000,
   CICLO_PLAYER_MS:60000,
-  CICLO_BANNER_MS:5000,         // ← banner fica 5s
-  BANNER_DURACAO_MS:5000,       // ← 5s na tela
+  BANNER_DURACAO_MS:5000,
   VOLUME_PADRAO:1.0,
   DOWNLOAD_TIMEOUT_MS:30000,
   DOWNLOAD_RETRY:3,
@@ -686,7 +686,7 @@ const GENRES = {
   'FORRÓ RAIZ':{repo:'radiolojasjc-hub/forroraiz',file:'forroraiz.json',c1:'#ea580c'},
   'CHORINHO':{repo:'radiolojasjc-hub/chorinho',file:'chorinho.json',c1:'#e879f9'},
   'TESTE':{repo:'radiolojasjc-hub/testemidias',file:'teste.json',c1:'#94a3b8'},
-  'BOLEROS':{repo:'musicmpb-afk/mpba',file:'boleros.json',c1:'#94a3b8'}
+  'BOLEROS':{repo:'musicmpb-afk/mpba/refs/heads/main/boleros.json',file:'boleros.json',c1:'#94a3b8'}
 };
 const GENRE_ORDEM_BASE = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','DISCO MUSIC','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','MISTURA BRASIL','CHORINHO','TESTE','BOLEROS'];
 const GENRE_ORDEM = (()=>{ const ordem=GENRE_ORDEM_BASE.filter(g=>GENRES[g]); const faltando=Object.keys(GENRES).filter(g=>!ordem.includes(g)); return [...ordem,...faltando]; })();
@@ -716,7 +716,7 @@ const _revalEmAndamento=new Set();
 async function _revalidarGenero(g){ if(_revalEmAndamento.has(g)) return; const url=GENRE_URLS[g]; if(!url) return; _revalEmAndamento.add(g); try{ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) return; const j=await r.json(); const ms=_mapMusicas(j,g); if(ms.length){ cacheGenero.set(g,ms); const pp=_lerCacheGenero(); pp[g]={musicas:ms,data:Date.now()}; _salvarCacheGenero(pp); } }catch(e){} finally{ _revalEmAndamento.delete(g); } }
 function getUrlCanonica(m){ if(!m||!m.src) return null; const s=String(m.src).trim(); if(!s) return null; if(/^https?:\/\//i.test(s)) return s; const nome=s.replace(/^\.\//,'').replace(/^\//,''); if(!nome) return null; const repo=m.repo||GENRE_REPOS[m.genero]||'radiolojasjc-hub/play12'; return `https://raw.githubusercontent.com/${repo}/refs/heads/main/${encodeURIComponent(nome).replace(/%2F/g,'/')}`; }
 function urlCacheKey(url){ if(!url) return null; try{ const u=new URL(url); return u.origin+u.pathname; }catch(e){ return String(url).split('?')[0].split('#')[0]; } }/* ============================================================
-   DOWNLOAD OFFLINE (mantido do original)
+   DOWNLOAD OFFLINE
    ============================================================ */
 let downloadEmAndamento=false, downloadGeneroAtual='', downloadCancelado=false;
 const CACHE_OFFLINE_NAME='vdb-offline-v1';
@@ -876,7 +876,6 @@ const audio=$('musicPlayer');
 let mediaSessionRegistrado=false, _tocarToken=0;
 function revogarBlobUrlAnterior(){ if(appState._lastBlobUrl){ try{ URL.revokeObjectURL(appState._lastBlobUrl); }catch(e){} appState._lastBlobUrl=null; } }
 
-/* --- Detecta se a música atual é o LARA --- */
 function ehLara(m){
   if(!m) return false;
   const t = (m.title||'').toLowerCase().trim();
@@ -885,7 +884,6 @@ function ehLara(m){
   return t === LARA_TITLE || a === 'lara.mp3' || a === 'lara.mp4' || s === 'lara.mp3' || s === 'lara.mp4';
 }
 
-/* --- Elementos do LARA (criados uma vez) --- */
 let laraVideoEl = null;
 let laraAudioEl = null;
 let laraSincronizando = false;
@@ -894,7 +892,7 @@ function obterLaraVideo(){
   if(laraVideoEl) return laraVideoEl;
   laraVideoEl = document.createElement('video');
   laraVideoEl.src = LARA_MP4_URL;
-  laraVideoEl.muted = true;         // vídeo MUDO — áudio vem do lara.mp3
+  laraVideoEl.muted = true;
   laraVideoEl.playsInline = true;
   laraVideoEl.setAttribute('playsinline','');
   laraVideoEl.setAttribute('muted','');
@@ -912,40 +910,27 @@ function obterLaraAudio(){
   return laraAudioEl;
 }
 
-/* --- Sincroniza play/pause/seek/ended do vídeo com o áudio --- */
 function sincronizarLara(){
   if(laraSincronizando) return;
   laraSincronizando = true;
   const v = obterLaraVideo();
   const a = obterLaraAudio();
-
-  const sync = () => {
-    if(Math.abs(v.currentTime - a.currentTime) > 0.3){
-      try{ a.currentTime = v.currentTime; }catch(_){}
-    }
-  };
-
+  const sync = () => { if(Math.abs(v.currentTime - a.currentTime) > 0.3){ try{ a.currentTime = v.currentTime; }catch(_){} } };
   v.addEventListener('play',  () => { a.play().catch(()=>{}); });
   v.addEventListener('pause', () => { a.pause(); });
   v.addEventListener('seeked',() => { try{ a.currentTime = v.currentTime; }catch(_){} });
   v.addEventListener('timeupdate', sync);
   v.addEventListener('ended', () => { a.pause(); });
-
   laraSincronizando = false;
 }
 
-/* --- Toca o LARA (vídeo + áudio sincronizados) --- */
 async function tocarLara(){
   const v = obterLaraVideo();
   const a = obterLaraAudio();
   sincronizarLara();
-  try{
-    v.currentTime = 0;
-    a.currentTime = 0;
-  }catch(_){}
+  try{ v.currentTime = 0; a.currentTime = 0; }catch(_){}
   v.style.opacity = '1';
   v.classList.add('active');
-  // esconde os vídeos de fundo
   document.querySelectorAll('#mediaContainer > video:not(:last-child)').forEach(el=>{ el.style.opacity='0'; el.classList.remove('active'); try{ el.pause(); }catch(_){} });
   try{
     await v.play();
@@ -955,14 +940,10 @@ async function tocarLara(){
     $('playBtn').innerHTML='<i class="fas fa-pause"></i>';
     atualizarLetreiro({title:'LARA (BÔNUS)',artist:'VDB Music'});
     atualizarGenero('BÔNUS');
-  }catch(e){
-    notif('⚠️ Lara não tocou (autoplay bloqueado)', 2500, true);
-  }
-  // espera terminar o vídeo
+  }catch(e){ notif('⚠️ Lara não tocou (autoplay bloqueado)', 2500, true); }
   return new Promise(resolve => {
     const fim = () => { v.removeEventListener('ended', fim); resolve(); };
     v.addEventListener('ended', fim, {once:true});
-    // segurança: se o vídeo travar, resolve em 5min
     setTimeout(() => { v.removeEventListener('ended', fim); resolve(); }, 300000);
   });
 }
@@ -976,7 +957,6 @@ function pararLara(){
   appState.laraAtiva = false;
 }
 
-/* --- TOCAR MÚSICA NORMAL (com detecção de LARA) --- */
 async function tocar(){
   if(!appState.isBackgroundActive||appState.carregando||!appState.musicas.length) return;
   const meuToken=++_tocarToken; appState.carregando=true;
@@ -989,12 +969,9 @@ async function tocar(){
     appState.musicaAtual=m;
     atualizarLetreiro(m); atualizarInfoMusica(m); atualizarCoracao();
     if(typeof filaAberta!=='undefined'&&filaAberta) renderizarFila();
-
-    // >>> SE FOR O LARA, TOCA SINCRONIZADO <<<
     if(ehLara(m)){
       appState.carregando=false;
       await tocarLara();
-      // ao terminar o lara, segue o ciclo: banner 5s → próxima
       await trocarTela('banner');
       setTimeout(async () => {
         await trocarTela('principal');
@@ -1003,10 +980,7 @@ async function tocar(){
       }, CONFIG.BANNER_DURACAO_MS);
       return;
     }
-
-    // Se estava tocando lara, para
     if(appState.laraAtiva) pararLara();
-
     if('mediaSession' in navigator){ try{ navigator.mediaSession.metadata=new MediaMetadata({title:m.title||'VDB',artist:m.artist||'Artista',album:m.genero||'Música',artwork:[{src:'favicon512.png',sizes:'512x512',type:'image/png'}]}); }catch(e){} }
     try{ audio.pause(); }catch(e){}
     audio.removeAttribute('src'); audio.load(); revogarBlobUrlAnterior();
@@ -1082,7 +1056,7 @@ function registrarMediaSessionHandlers(){
 }
 
 /* ============================================================
-   INTRO 5s + CICLO NOVO
+   INTRO 5s + LARA APÓS INTRO + CICLO
    ============================================================ */
 async function rodarIntro(){
   const intro=$('introScreen'), video=$('introVideo');
@@ -1098,7 +1072,7 @@ async function rodarIntro(){
     if(falhou) throw new Error('intro error');
     await video.play();
   }catch(e){ intro.style.display='none'; appState.introAtiva=false; return false; }
-  await sleep(CONFIG.INTRO_DURACAO_MS);   // 5s
+  await sleep(CONFIG.INTRO_DURACAO_MS);
   intro.classList.add('hide');
   setTimeout(()=>{ intro.style.display='none'; },800);
   appState.introAtiva=false; return true;
@@ -1142,7 +1116,6 @@ async function carregarMidiasPadrao(){ await carregarListaMidias($('mediaContain
 
 let cicloTimer=null, bannerTimerFill=null;
 
-/* Ciclo novo: principal → banner → principal → ... */
 function agendarCiclo(){
   clearTimeout(cicloTimer);
   const t = appState.telaAtual==='principal' ? CONFIG.CICLO_PLAYER_MS : CONFIG.BANNER_DURACAO_MS;
@@ -1190,7 +1163,6 @@ async function togglePlay(){
   forcarFullscreen();
   if(!appState.isBackgroundActive){ ativarPlayer(); return; }
   if(!appState.musicas.length){ notif('⚠️ Escolha um gênero primeiro'); return; }
-  // Se está tocando lara, pausa/retoma os dois
   if(appState.laraAtiva){
     const v = obterLaraVideo(); const a = obterLaraAudio();
     if(v.paused){ v.play().catch(()=>{}); a.play().catch(()=>{}); appState.isPlaying=true; $('playBtn').innerHTML='<i class="fas fa-pause"></i>'; }
@@ -1292,7 +1264,6 @@ function initVolume(){
     if(pct) pct.textContent=Math.round(v*100)+'%';
     if(icon){ icon.className='fas '+(v===0?'fa-volume-xmark':v<0.4?'fa-volume-low':v<0.8?'fa-volume-low':'fa-volume-high'); }
     if(btn) btn.classList.toggle('ativo', ctrl && ctrl.classList.contains('show'));
-    // aplica no audio normal E no lara
     audio.volume=appState.volume;
     if(laraAudioEl) laraAudioEl.volume=appState.volume;
   }
@@ -1917,7 +1888,8 @@ async function iniciar(){
     if(r.liberado){ $('blockOverlay').classList.remove('active'); }
     else{ $('idUsuarioBloqueio').textContent=appState.fingerprint; $('blockOverlay').classList.add('active'); }
 
-    const introPromessa=rodarIntro();  // 5s
+    // INTRO 5s → LARA (toda vez que a intro rodar)
+    const introPromessa=rodarIntro();
     const [_,m]=await Promise.all([carregarMidiasPadrao(), buscarGenero('BÔNUS')]);
     if(m&&m.length){ appState.musicas=m; appState.modoAtual='BÔNUS'; appState.musicasComProblema.clear(); FilaInteligente.resetar(m,'BÔNUS'); appState.musicaAtual=null; const mm=FilaInteligente.proxima(); if(mm){ appState.musicaAtual=mm; atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); } }
     renderizarGeneros(true);
@@ -2004,8 +1976,44 @@ async function iniciar(){
     setTimeout(mostrarBotaoInstalar,2500);
     setTimeout(agendarCiclo,5000);
 
-    if(!appState.introAtiva){ setTimeout(ativarPlayer,800); }
-    else{ const check=setInterval(()=>{ if(!appState.introAtiva){ clearInterval(check); setTimeout(ativarPlayer,500); } },200); }
+    if(!appState.introAtiva){
+      setTimeout(async ()=>{
+        await ativarPlayer();
+        // LARA logo após a intro (toda vez que a intro rodar)
+        setTimeout(async ()=>{
+          try{
+            await tocarLara();
+            await trocarTela('banner');
+            setTimeout(async ()=>{
+              await trocarTela('principal');
+              pararLara();
+              tocar();
+            }, CONFIG.BANNER_DURACAO_MS);
+          }catch(_){}
+        }, 400);
+      }, 300);
+    } else {
+      const check=setInterval(()=>{
+        if(!appState.introAtiva){
+          clearInterval(check);
+          setTimeout(async ()=>{
+            await ativarPlayer();
+            // LARA logo após a intro (toda vez que a intro rodar)
+            setTimeout(async ()=>{
+              try{
+                await tocarLara();
+                await trocarTela('banner');
+                setTimeout(async ()=>{
+                  await trocarTela('principal');
+                  pararLara();
+                  tocar();
+                }, CONFIG.BANNER_DURACAO_MS);
+              }catch(_){}
+            }, 400);
+          }, 500);
+        }
+      },200);
+    }
 
     window.addEventListener('beforeunload',()=>{ if(keepAliveInterval) clearInterval(keepAliveInterval); if(fsRetryTimer) clearInterval(fsRetryTimer); if(silentUrl){ try{ URL.revokeObjectURL(silentUrl); }catch(_){} silentUrl=null; } if(VoiceControl.ativo) VoiceControl.parar(); });
   }catch(e){
