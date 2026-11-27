@@ -273,6 +273,84 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
 @media (prefers-reduced-motion: reduce){.letreiro{animation:none!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.genero-tocando .dot{animation:none!important}.btn-fav-vdb,.btn-fav-vdb.ativo{animation:none!important;opacity:.9}#voiceIndicator.ativo{animation:none!important;opacity:1}*{transition-duration:.01ms!important}}
 @media(max-width:480px){.titulo-topo{font-size:1.05rem;letter-spacing:4px}.btn-fav-vdb{font-size:1.15rem}.letreiro{font-size:1rem}.letreiro-wrap{height:38px}.timer-texto{font-size:.72rem;padding:3px 8px}.genero-tocando{font-size:.62rem;letter-spacing:2.5px}.genre-card .genre-name{font-size:.95rem}.genres-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.barra-btn{padding:5px 3px;font-size:.5rem}.barra-btn i{font-size:1.1rem}.fab-main{padding:5px 4px}.fab-main i{font-size:1.2rem}.id-value{font-size:1.05rem}.loading-text{font-size:1.5rem;letter-spacing:6px}.loading-logo{width:100px;height:100px}.block-logo{width:110px;height:110px}#btnInstalarFixo{bottom:calc(160px + var(--safe-bottom));right:12px;padding:7px 11px;font-size:.62rem}#voiceIndicator{width:24px;height:24px;font-size:.72rem}.vol-control{bottom:calc(70px + var(--safe-bottom))}}
 @media (orientation: landscape) and (max-height: 500px){.info-topo{padding-top:4px}.topo-linha{height:28px}.titulo-topo{font-size:.95rem;letter-spacing:3px}.btn-fav-vdb{font-size:1rem}.letreiro-wrap{height:30px}.letreiro{font-size:.85rem}.genero-tocando{font-size:.58rem;padding-top:0}.barra-inferior{bottom:4px;padding:4px 6px;width:calc(100vw - 8px)}.barra-btn{padding:3px 2px;font-size:.45rem}.barra-btn i{font-size:.95rem}.fab-main{padding:3px 2px}.fab-main i{font-size:1rem}#bgDownloadBanner{bottom:calc(56px + var(--safe-bottom))}.fab-container{bottom:calc(56px + var(--safe-bottom))}#btnInstalarFixo{bottom:calc(70px + var(--safe-bottom));right:8px;padding:5px 9px;font-size:.55rem}.vol-control{bottom:calc(52px + var(--safe-bottom))}}
+
+/* ===== NOVO: BOTÕES EM VOLTA DO ANEL DE PROGRESSO ===== */
+.player-controls-ring{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  z-index:9995;
+  width:min(280px,78vw);
+  height:min(280px,78vw);
+  pointer-events:none;
+}
+.player-controls-ring .ring-btn{
+  position:absolute;
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  background:rgba(15,20,35,.88);
+  border:2px solid rgba(0,212,255,.5);
+  color:#fff;
+  font-size:1.5rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  pointer-events:auto;
+  box-shadow:0 6px 24px rgba(0,0,0,.55),0 0 14px rgba(0,212,255,.25);
+  transition:transform .15s,background .2s,border-color .2s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.player-controls-ring .ring-btn:active{
+  transform:scale(.88);
+  background:rgba(37,99,235,.95);
+  border-color:rgba(0,212,255,.9);
+}
+.player-controls-ring .ring-btn.play{
+  width:84px;
+  height:84px;
+  font-size:2.1rem;
+  background:linear-gradient(135deg,rgba(37,99,235,.95),rgba(0,212,255,.95));
+  border-color:rgba(255,255,255,.45);
+  box-shadow:0 8px 32px rgba(0,212,255,.5),0 0 0 0 rgba(0,212,255,.6);
+  animation:pulsarRingPlay 2s ease-in-out infinite;
+}
+.player-controls-ring .ring-btn.play:active{
+  transform:scale(.9);
+  animation:none;
+}
+.player-controls-ring .ring-btn.prev{
+  left:0;
+  top:50%;
+  transform:translateY(-50%);
+}
+.player-controls-ring .ring-btn.play{
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+}
+.player-controls-ring .ring-btn.next{
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+}
+@keyframes pulsarRingPlay{
+  0%,100%{box-shadow:0 8px 32px rgba(0,212,255,.5),0 0 0 0 rgba(0,212,255,.6)}
+  50%{box-shadow:0 8px 32px rgba(0,212,255,.7),0 0 0 16px rgba(0,212,255,0)}
+}
+.player-controls-ring.hidden{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s;
+}
+@media(max-width:480px){
+  .player-controls-ring{width:min(240px,72vw);height:min(240px,72vw)}
+  .player-controls-ring .ring-btn{width:56px;height:56px;font-size:1.3rem}
+  .player-controls-ring .ring-btn.play{width:74px;height:74px;font-size:1.9rem}
+}
 </style></head>
 <body>
 
@@ -300,6 +378,13 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
         </linearGradient>
       </defs>
     </svg>
+
+    <!-- NOVO: botões em volta do anel de progresso -->
+    <div class="player-controls-ring" id="playerControlsRing">
+      <button class="ring-btn prev" id="ringPrevBtn" aria-label="Anterior"><i class="fas fa-backward-step"></i></button>
+      <button class="ring-btn play" id="ringPlayBtn" aria-label="Play/Pause"><i class="fas fa-play"></i></button>
+      <button class="ring-btn next" id="ringNextBtn" aria-label="Próxima"><i class="fas fa-forward-step"></i></button>
+    </div>
 
     <div class="info-topo" id="infoTopo">
       <div class="topo-linha">
@@ -867,7 +952,8 @@ async function tocar(){
   const meuToken=++_tocarToken; appState.carregando=true;
   try{
     $('playBtn').innerHTML='<i class="fas fa-spinner"></i>';
-    audio.loop=false; /* CORREÇÃO: evita loop residual */
+    $('ringPlayBtn').innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+    audio.loop=false;
     let m;
     if(appState._forcarMusica){ m=appState._forcarMusica; appState._forcarMusica=null; } else m=FilaInteligente.proxima();
     if(!m){ appState.carregando=false; return; }
@@ -922,9 +1008,11 @@ async function tocar(){
         if(meuToken!==_tocarToken) return;
         appState.isPlaying=true; appState.falhasConsecutivas=0;
         $('playBtn').innerHTML='<i class="fas fa-pause"></i>';
+        $('ringPlayBtn').innerHTML='<i class="fas fa-pause"></i>';
         agendarPrefetch();
       }catch(e){
         $('playBtn').innerHTML='<i class="fas fa-play"></i>';
+        $('ringPlayBtn').innerHTML='<i class="fas fa-play"></i>';
         setTimeout(next,200);
       }
     }else{
@@ -933,6 +1021,7 @@ async function tocar(){
         notif('⚠️ '+(m.title||'').slice(0,25), 1200);
       }
       $('playBtn').innerHTML='<i class="fas fa-play"></i>';
+      $('ringPlayBtn').innerHTML='<i class="fas fa-play"></i>';
       appState.falhasConsecutivas++;
       if(appState.falhasConsecutivas>=CONFIG.MAX_FALHAS_CONSECUTIVAS){
         notif('🔁 Repetindo (rede instável)', 2500, true);
@@ -953,6 +1042,7 @@ async function tocar(){
                   await audio.play().catch(()=>{});
                   appState.isPlaying=true;
                   $('playBtn').innerHTML='<i class="fas fa-pause"></i>';
+                  $('ringPlayBtn').innerHTML='<i class="fas fa-pause"></i>';
                   appState.carregando=false;
                   return;
                 }
@@ -975,7 +1065,7 @@ function registrarMediaSessionHandlers(){
     navigator.mediaSession.setActionHandler('pause',()=>{ if(!audio.paused) togglePlay(); });
     navigator.mediaSession.setActionHandler('previoustrack',()=>prev());
     navigator.mediaSession.setActionHandler('nexttrack',()=>next());
-    navigator.mediaSession.setActionHandler('stop',()=>{ audio.pause(); appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>'; });
+    navigator.mediaSession.setActionHandler('stop',()=>{ audio.pause(); appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>'; $('ringPlayBtn').innerHTML='<i class="fas fa-play"></i>'; });
   }catch(_){}
 }async function togglePlay(){
   vibrar();
@@ -991,7 +1081,7 @@ function registrarMediaSessionHandlers(){
   }
   if(!appState.musicas.length){ notif('⚠️ Escolha um gênero primeiro'); return; }
   if(audio.paused){ await tocar(); WakeLockManager.ativar(); }
-  else { audio.pause(); appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>'; WakeLockManager.desativar(); }
+  else { audio.pause(); appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>'; $('ringPlayBtn').innerHTML='<i class="fas fa-play"></i>'; WakeLockManager.desativar(); }
 }
 
 function next(){
@@ -1148,7 +1238,7 @@ async function selecionarGenero(g){
   vibrar(); if(typeof fecharFila==='function') fecharFila(); notif('⏳ Carregando '+g);
   const m=await buscarGenero(g);
   if(!m||!m.length){ notif('❌ Erro ao carregar "'+g+'"',3000,true); return; }
-  audio.pause(); audio.loop=false; appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>';
+  audio.pause(); audio.loop=false; appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>'; $('ringPlayBtn').innerHTML='<i class="fas fa-play"></i>';
   appState.musicas=m; appState.modoAtual=g; appState.isRadio=false; appState.musicasComProblema.clear(); appState.falhasConsecutivas=0;
   FilaInteligente.resetar(m,g); appState.musicaAtual=null;
   const mm=FilaInteligente.proxima(); if(mm){ appState.musicaAtual=mm; atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
@@ -1299,7 +1389,7 @@ async function iniciarTimer(){
 async function bloquear(){
   $('idUsuarioBloqueio').textContent=appState.fingerprint||'Carregando...';
   $('blockOverlay').classList.add('active');
-  audio.pause(); appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>';
+  audio.pause(); appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>'; $('ringPlayBtn').innerHTML='<i class="fas fa-play"></i>';
   const bg=$('backgroundAudio'); if(bg){ try{ bg.pause(); bg.removeAttribute('src'); bg.load(); }catch(_){} }
   if(typeof keepAliveInterval!=='undefined'&&keepAliveInterval){ clearInterval(keepAliveInterval); keepAliveInterval=null; }
   await SecureTimer.bloquearPermanente();
@@ -1473,69 +1563,10 @@ function iniciarTimerBanner(){
   bannerTimerFill=setInterval(()=>{ const pct=Math.min(100,((Date.now()-inicio)/CONFIG.CICLO_BANNER_MS)*100); fill.style.width=pct+'%'; if(pct>=100) clearInterval(bannerTimerFill); },100);
 }
 
-let _tapSwipeAtivo=false;
-function initTapControls(){
-  let tapCount=0, tapTimer=null;
-  let startX=0, startY=0, startTime=0, moved=false;
-  function mostrarTapFeedback(icone, texto){
-    const el=$('tapFeedback'); if(!el) return;
-    el.innerHTML='<i class="fas '+icone+'"></i><span>'+texto+'</span>';
-    el.classList.add('show');
-    clearTimeout(el._hideTimer);
-    el._hideTimer=setTimeout(()=>el.classList.remove('show'),700);
-  }
-  function ehIgnorado(target){
-    if(!target) return true;
-    const t=target;
-    if(['INPUT','TEXTAREA','SELECT','BUTTON','A'].includes(t.tagName)) return true;
-    if(t.closest('.modal,.fab-menu,.fab-container,.barra-inferior,.vol-control,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.bf-cta,#tapFeedback,.progress-bar,.letreiro-wrap,.info-topo,.btn-fav-vdb,.titulo-wrap')) return true;
-    return false;
-  }
-  document.addEventListener('touchstart',e=>{
-    if(e.touches.length!==1) return;
-    if(ehIgnorado(e.target)) return;
-    startX=e.touches[0].clientX; startY=e.touches[0].clientY; startTime=Date.now(); moved=false;
-  },{passive:true});
-  document.addEventListener('touchmove',e=>{
-    if(e.touches.length!==1) return;
-    const dx=Math.abs(e.touches[0].clientX-startX), dy=Math.abs(e.touches[0].clientY-startY);
-    if(dx>15||dy>15) moved=true;
-  },{passive:true});
-  document.addEventListener('touchend',e=>{
-    if(e.changedTouches.length!==1) return;
-    if(ehIgnorado(e.target)) return;
-    if(moved) return;
-    if(Date.now()-startTime>500) return;
-    if(appState.telaAtual!=='principal') return;
-    tapCount++;
-    clearTimeout(tapTimer);
-    tapTimer=setTimeout(()=>{
-      const n=tapCount; tapCount=0;
-      if(n===1){
-        vibrar(15);
-        if(audio.paused){ mostrarTapFeedback('fa-play','Play'); togglePlay(); }
-        else{ mostrarTapFeedback('fa-pause','Pause'); togglePlay(); }
-      } else if(n===2){
-        vibrar([15,30,15]); mostrarTapFeedback('fa-forward-step','Próxima'); next();
-      } else if(n>=3){
-        vibrar([15,30,15,30,15]); mostrarTapFeedback('fa-backward-step','Anterior'); prev();
-      }
-    }, 280);
-  },{passive:true});
-  document.addEventListener('click',e=>{
-    if(ehIgnorado(e.target)) return;
-    if(appState.telaAtual!=='principal') return;
-    if('ontouchstart' in window) return;
-    vibrar(15);
-    if(audio.paused){ mostrarTapFeedback('fa-play','Play'); togglePlay(); }
-    else{ mostrarTapFeedback('fa-pause','Pause'); togglePlay(); }
-  });
-}
-
 const SwipeManager = {
   startX:0, startY:0, startTime:0, tracking:false, limiarX:60, limiarTempo:600, ignorar:false,
   init(){ document.addEventListener('touchstart',e=>this.onStart(e),{passive:true}); document.addEventListener('touchend',e=>this.onEnd(e),{passive:true}); document.addEventListener('touchcancel',()=>this.reset(),{passive:true}); },
-  onStart(e){ if(!appState.playerAtivado) return; if(e.touches.length!==1) return; const t=e.target; if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(t.tagName)){ this.ignorar=true; return; } if(t.closest('.modal,.fab-menu,.progress-bar,.vol-control,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.bf-cta,.btn-fav-vdb,.titulo-wrap')){ this.ignorar=true; return; } this.ignorar=false; this.startX=e.touches[0].clientX; this.startY=e.touches[0].clientY; this.startTime=Date.now(); this.tracking=true; },
+  onStart(e){ if(!appState.playerAtivado) return; if(e.touches.length!==1) return; const t=e.target; if(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(t.tagName)){ this.ignorar=true; return; } if(t.closest('.modal,.fab-menu,.progress-bar,.vol-control,#adminPanel,#vdbDialogOverlay,#qrCodeModal,#downloadModal,.genre-card,.result-item,.fav-item,.fila-painel,.bf-cta,.btn-fav-vdb,.titulo-wrap,.player-controls-ring')){ this.ignorar=true; return; } this.ignorar=false; this.startX=e.touches[0].clientX; this.startY=e.touches[0].clientY; this.startTime=Date.now(); this.tracking=true; },
   onEnd(e){ if(!this.tracking||this.ignorar){ this.reset(); return; } const t=e.changedTouches[0]; const dx=t.clientX-this.startX; const dy=t.clientY-this.startY; const dt=Date.now()-this.startTime; this.reset(); if(dt>this.limiarTempo) return; if(Math.abs(dx)<this.limiarX) return; if(Math.abs(dx)<Math.abs(dy)*1.2) return; if(dx<0) this.onSwipeLeft(); else this.onSwipeRight(); },
   onSwipeLeft(){ vibrar(15); if(appState.telaAtual==='banner'){ trocarTela('principal'); } else { next(); } },
   onSwipeRight(){ vibrar(15); if(appState.telaAtual==='banner'){ return; } if(audio.currentTime>3){ audio.currentTime=0; } else { prev(); } },
@@ -1791,7 +1822,7 @@ function initFab(){
   $('fabGerenciarOffline').onclick=()=>{ fecharFab(); abrirGerenciadorOffline(); };
   $('fabTemas').onclick=()=>{ fecharFab(); trocarTema(); };
   $('fabFullscreen').onclick=()=>{ fecharFab(); forcarFullscreen(); notif('🖥️ Tela cheia'); };
-  $('fabSleep').onclick=async()=>{ fecharFab(); const m=await vdbDialog({title:'⏰ SLEEP TIMER',msg:'Desligar em quantos minutos?',input:'number',placeholder:'15',okText:'Ativar'}); const mins=parseInt(m); if(mins>0){ clearTimeout(appState.sleepTimerId); appState.sleepTimerId=setTimeout(()=>{ audio.pause(); appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>'; notif('💤 Sleep timer',4000); },mins*60000); notif('⏰ Sleep: '+mins+' min'); } };
+  $('fabSleep').onclick=async()=>{ fecharFab(); const m=await vdbDialog({title:'⏰ SLEEP TIMER',msg:'Desligar em quantos minutos?',input:'number',placeholder:'15',okText:'Ativar'}); const mins=parseInt(m); if(mins>0){ clearTimeout(appState.sleepTimerId); appState.sleepTimerId=setTimeout(()=>{ audio.pause(); appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>'; $('ringPlayBtn').innerHTML='<i class="fas fa-play"></i>'; notif('💤 Sleep timer',4000); },mins*60000); notif('⏰ Sleep: '+mins+' min'); } };
   $('fabRecarregar').onclick=()=>{ fecharFab(); location.reload(); };
   $('fabAtualizarMidia').onclick=async()=>{ fecharFab(); notif('🔄 Atualizando...'); await carregarMidiasPadrao(); notif('✅ Atualizado!'); };
   $('fabAtualizarApp').onclick=()=>{ fecharFab(); atualizarAppMagico(); };
@@ -1882,13 +1913,20 @@ async function iniciar(){
     setupCliques();
     SwipeManager.init();
     setupProgressBar();
-    initTapControls();
     initVolume();
     VoiceControl.init();
 
-    $('playBtn').onclick=togglePlay;
-    $('prevBtn').onclick=prev;
-    $('nextBtn').onclick=next;
+    /* ===== BOTÕES DO ANEL (em volta do progresso) ===== */
+    const ringPlay=$('ringPlayBtn'), ringPrev=$('ringPrevBtn'), ringNext=$('ringNextBtn');
+    if(ringPlay) ringPlay.addEventListener('click',(e)=>{ e.stopPropagation(); e.preventDefault(); togglePlay(); });
+    if(ringPrev) ringPrev.addEventListener('click',(e)=>{ e.stopPropagation(); e.preventDefault(); prev(); });
+    if(ringNext) ringNext.addEventListener('click',(e)=>{ e.stopPropagation(); e.preventDefault(); next(); });
+
+    /* ===== BOTÕES ANTIGOS (playBtn, prevBtn, nextBtn) — manter se existirem ===== */
+    if($('playBtn')) $('playBtn').onclick=togglePlay;
+    if($('prevBtn')) $('prevBtn').onclick=prev;
+    if($('nextBtn')) $('nextBtn').onclick=next;
+
     $('btnCoracaoInfo').onclick=e=>{ e.stopPropagation(); vibrar(20); toggleFavAtual(); };
     $('btnFavVDB').onclick=e=>{ e.stopPropagation(); vibrar(20); toggleFavAtual(); };
     $('letreiroClick').onclick=e=>{ e.stopPropagation(); vibrar(); SearchManager.abrir(); };
@@ -1927,8 +1965,8 @@ async function iniciar(){
         $('totalTime').textContent=fmt(audio.duration);
       }
     };
-    audio.onplay=()=>{ appState.falhasConsecutivas=0; if('mediaSession' in navigator) navigator.mediaSession.playbackState='playing'; };
-    audio.onpause=()=>{ if('mediaSession' in navigator) navigator.mediaSession.playbackState='paused'; };
+    audio.onplay=()=>{ appState.falhasConsecutivas=0; if('mediaSession' in navigator) navigator.mediaSession.playbackState='playing'; if($('ringPlayBtn')) $('ringPlayBtn').innerHTML='<i class="fas fa-pause"></i>'; };
+    audio.onpause=()=>{ if('mediaSession' in navigator) navigator.mediaSession.playbackState='paused'; if($('ringPlayBtn')) $('ringPlayBtn').innerHTML='<i class="fas fa-play"></i>'; };
 
     audio.onended=()=>{
       if(appState.carregando) return;
