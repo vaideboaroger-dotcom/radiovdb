@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -373,8 +374,8 @@ html,body{height:100vh;height:100dvh;width:100%;background:#000;overflow:hidden;
       <div class="bf-beneficio"><i class="fas fa-download"></i> Modo offline</div>
       <div class="bf-beneficio"><i class="fas fa-music"></i> +10.000 músicas</div>
     </div>
-    <div class="bf-preco-antigo">De R$ 49,90 por</div>
-    <div class="bf-preco">R$ 32,90</div>
+    <div class="bf-preco-antigo">De R$ 97,00 por</div>
+    <div class="bf-preco">R$ 39,90</div>
     <div class="bf-parcela">💳 Pagamento único</div>
     <a href="https://wa.me/5512988461978?text=Ol%C3%A1!%20Quero%20comprar%20o%20plano%20vital%C3%ADcio%20do%20VDB%20Music%20por%20R%24%2039%2C90" target="_blank" rel="noopener" class="bf-cta"><i class="fab fa-whatsapp"></i> COMPRAR AGORA</a>
     <div class="bf-timer"><span>⏳ Fechando em</span><div class="bf-timer-bar"><div class="bf-timer-fill" id="bfTimerFill"></div></div></div>
@@ -573,8 +574,7 @@ const CONFIG = {
   LOADING_MIN_MS:1200,
   MIDIA_MAX_SEGURANCA_MS:60000,
   CICLO_PLAYER_MS:60000,
-  CICLO_BANNER_MS:180000,        // ← 3 minutos
-  BANNER_DURACAO_MS:1000,        // ← NOVO: banner fica 5s na tela
+  CICLO_BANNER_MS:10000,
   VOLUME_PADRAO:1.0,
   DOWNLOAD_TIMEOUT_MS:30000,
   DOWNLOAD_RETRY:3,
@@ -641,6 +641,7 @@ const FilaInteligente = {
   resetar(pool,genero){ this.poolOriginal=pool.filter(m=>!appState.musicasComProblema.has(m.id)); this.generoAtual=genero||''; this.fila=shuffle(this.poolOriginal); this.historico=[]; this.indiceHistorico=-1; },
   proxima(){ this.fila=this.fila.filter(m=>!appState.musicasComProblema.has(m.id)); if(this.indiceHistorico<this.historico.length-1){ this.indiceHistorico++; return this.historico[this.indiceHistorico]; } if(this.fila.length===0){ const idsUsados=new Set(this.historico.map(h=>h.id)); const restantes=this.poolOriginal.filter(m=>!appState.musicasComProblema.has(m.id)&&!idsUsados.has(m.id)); if(restantes.length>0) this.fila=shuffle(restantes); else this.fila=shuffle(this.poolOriginal.filter(m=>!appState.musicasComProblema.has(m.id))); } const m=this.fila.shift(); if(!m){ if(appState.musicasComProblema.size>=this.poolOriginal.length&&this.poolOriginal.length>0){ appState.musicasComProblema.clear(); this.fila=shuffle(this.poolOriginal); return this.fila.shift()||null; } return null; } this.historico.push(m); this.indiceHistorico=this.historico.length-1; return m; },
   voltar(){ if(this.indiceHistorico<=0) return null; this.indiceHistorico--; return this.historico[this.indiceHistorico]; },
+  /* NOVO: só olha a próxima SEM consumir da fila (usado no prefetch) */
   peek(){ const backupFila=[...this.fila]; const backupHist=this.indiceHistorico; const m=this.proxima(); this.fila=backupFila; this.indiceHistorico=backupHist; return m; }
 };
 
@@ -670,10 +671,9 @@ const GENRES = {
   'BAILÃO':{repo:'radiolojasjc-hub/forrodez',file:'bailão.json',c1:'#f97316'},
   'FORRÓ RAIZ':{repo:'radiolojasjc-hub/forroraiz',file:'forroraiz.json',c1:'#ea580c'},
   'CHORINHO':{repo:'radiolojasjc-hub/chorinho',file:'chorinho.json',c1:'#e879f9'},
-  'TESTE':{repo:'radiolojasjc-hub/testemidias',file:'teste.json',c1:'#94a3b8'},
-   'BOLEROS':{repo:'musicmpb-afk/mpba/refs/heads/main/boleros.json',file:'boleros.json',c1:'#94a3b8'}
+  'TESTE':{repo:'radiolojasjc-hub/testemidias',file:'teste.json',c1:'#94a3b8'}
 };
-const GENRE_ORDEM_BASE = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','DISCO MUSIC','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','MISTURA BRASIL','CHORINHO','TESTE','BOLEROS'];
+const GENRE_ORDEM_BASE = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNTICA','FLASHBACK','PAGODE','MODÃO SERTANEJO','ROCK','SERESTA','MPB 2','MODA RAIZ','DISCO MUSIC','FORRÓ RAIZ','BAILÃO','SAMBA','NOVIDADES','BREGA','REGGAE','HIP HOP','RELIGIOSA','FUNK','MISTURA BRASIL','CHORINHO','TESTE'];
 const GENRE_ORDEM = (()=>{ const ordem=GENRE_ORDEM_BASE.filter(g=>GENRES[g]); const faltando=Object.keys(GENRES).filter(g=>!ordem.includes(g)); return [...ordem,...faltando]; })();
 const GENRE_URLS = Object.fromEntries(Object.entries(GENRES).map(([g,c])=>[g,`https://raw.githubusercontent.com/${c.repo}/refs/heads/main/${c.file}`]));
 const GENRE_REPOS = Object.fromEntries(Object.entries(GENRES).map(([g,c])=>[g,c.repo]));
@@ -738,6 +738,9 @@ async function _baixarUma(cache, url, key){
   return false;
 }
 
+/* ============ PREFETCH AUTOMÁTICO (NOVO) ============
+   Popula o cache com as próximas músicas em background
+   para que a troca com tela fechada seja instantânea. */
 let _prefetchTimer=null, _prefetchEmAndamento=false;
 function agendarPrefetch(){
   clearTimeout(_prefetchTimer);
@@ -924,12 +927,14 @@ async function tocar(){
         if(meuToken!==_tocarToken) return;
         appState.isPlaying=true; appState.falhasConsecutivas=0;
         $('playBtn').innerHTML='<i class="fas fa-pause"></i>';
+        /* NOVO: agenda prefetch das próximas em background */
         agendarPrefetch();
       }catch(e){
         $('playBtn').innerHTML='<i class="fas fa-play"></i>';
         setTimeout(next,200);
       }
     }else{
+      /* Só marca como problema se for erro real (não de rede instável) */
       if(navigator.onLine){
         appState.musicasComProblema.add(m.id);
         notif('⚠️ '+(m.title||'').slice(0,25), 1200);
@@ -937,8 +942,10 @@ async function tocar(){
       $('playBtn').innerHTML='<i class="fas fa-play"></i>';
       appState.falhasConsecutivas++;
       if(appState.falhasConsecutivas>=CONFIG.MAX_FALHAS_CONSECUTIVAS){
+        /* Fallback: loop na música em cache (não para de tocar) */
         notif('🔁 Repetindo (rede instável)', 2500, true);
         appState.falhasConsecutivas=0;
+        /* Tenta tocar a mesma em loop */
         if(key){
           try{
             const c=await abrirCache();
@@ -991,11 +998,15 @@ async function togglePlay(){
   else { audio.pause(); appState.isPlaying=false; $('playBtn').innerHTML='<i class="fas fa-play"></i>'; WakeLockManager.desativar(); }
 }
 
+/* FIX PRINCIPAL: next() chama tocar() direto, SEM setTimeout */
 function next(){
   vibrar();
   if(typeof fecharFila==='function') fecharFila();
   if(!appState.musicas.length) return;
-  if(appState.carregando){ return; }
+  if(appState.carregando){
+    /* Se já está carregando, marca para tocar assim que liberar */
+    return;
+  }
   if(appState.isBackgroundActive) tocar();
 }
 function prev(){
@@ -1561,6 +1572,7 @@ function iniciarFullscreenRetry(){
 document.addEventListener('fullscreenchange',()=>{ fsEmAndamento=false; });
 document.addEventListener('webkitfullscreenchange',()=>{ fsEmAndamento=false; });
 
+/* ============ SILENT AUDIO + KEEP ALIVE REFORÇADO ============ */
 let silentUrl=null;
 function criarSilentAudio(){
   const sr=44100, ns=sr*2;
@@ -1605,6 +1617,7 @@ async function ativarPlayer(){
     const bg=$('backgroundAudio');
     bg.src=getSilentUrl();
     bg.loop=true;
+    /* volume 0.01 — NÃO mutado (mutado é pausado em background) */
     bg.volume=0.01;
     bg.setAttribute('playsinline','');
     bg.preload='auto';
@@ -1929,10 +1942,14 @@ async function iniciar(){
     audio.onplay=()=>{ appState.falhasConsecutivas=0; if('mediaSession' in navigator) navigator.mediaSession.playbackState='playing'; };
     audio.onpause=()=>{ if('mediaSession' in navigator) navigator.mediaSession.playbackState='paused'; };
 
+    /* FIX PRINCIPAL: onended chama next() DIRETO, sem setTimeout.
+       Isso evita que o throttling do background atrase/impeça a troca. */
     audio.onended=()=>{
       if(appState.carregando) return;
       appState.isPlaying=false;
+      /* Se estava em loop fallback, sai do loop */
       if(audio.loop){ audio.loop=false; }
+      /* Chama next() direto — sem setTimeout */
       next();
     };
 
@@ -1942,11 +1959,13 @@ async function iniciar(){
       const m=appState.musicaAtual;
       if(m){
         const e=audio.error;
+        /* Só marca como problema se for erro de formato (code 4), NÃO de rede */
         if(e && e.code===4){
           appState.musicasComProblema.add(m.id);
           notif('⚠️ Não carregou: '+(m.title||'').slice(0,25), 1800);
         }
       }
+      /* Tenta próxima — sem delay longo (200ms é ok) */
       setTimeout(()=>{ if(!appState.carregando) next(); }, 200);
     };
 
