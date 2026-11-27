@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════
-   VDB MUSIC v005 — Service Worker
+   VDB MUSIC — Service Worker v63
    ═══════════════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'vdb-pwa-v62';           // Cache do app (HTML, CSS, JS)
-const CACHE_OFFLINE = 'vdb-offline-v1';     // Cache de áudio offline (NÃO DELETAR)
+const CACHE_NAME = 'vdb-pwa-v63';           // ← MUDOU (era v62)
+const CACHE_OFFLINE = 'vdb-offline-v1';     // ← NÃO MEXER
 
 const APP_SHELL = [
   './',
@@ -14,9 +14,7 @@ const APP_SHELL = [
   './favicon30.png'
 ];
 
-/* ═══════════════════════════════════════════
-   INSTALL — cacheia o app shell
-   ═══════════════════════════════════════════ */
+/* INSTALL */
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -26,47 +24,31 @@ self.addEventListener('install', (event) => {
   );
 });
 
-/* ═══════════════════════════════════════════
-   ACTIVATE — limpa caches antigos
-   ⚠️ PRESERVA: vdb-offline-v1 (áudios baixados)
-   ═══════════════════════════════════════════ */
+/* ACTIVATE */
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then(keys => Promise.all(
       keys
-        .filter(k => k !== CACHE_NAME && k !== CACHE_OFFLINE)  // 👈 preserva offline
+        .filter(k => k !== CACHE_NAME && k !== CACHE_OFFLINE)
         .map(k => caches.delete(k))
     )).then(() => self.clients.claim())
   );
 });
 
-/* ═══════════════════════════════════════════
-   FETCH — estratégia mista
-   ═══════════════════════════════════════════ */
+/* FETCH */
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   const url = event.request.url;
 
-  /* 🔇 Ignora (não intercepta):
-     - JSONs do GitHub (gêneros/mídias)
-     - Áudios (.mp3, .m4a, .opus, etc)
-     - Vídeos (.mp4, .webm)
-     - QR Code API
-     O HTML cuida do cache desses */
   if (
     url.includes('raw.githubusercontent.com') ||
-    url.includes('.mp3') ||
-    url.includes('.mp4') ||
-    url.includes('.m4a') ||
-    url.includes('.opus') ||
-    url.includes('.webm') ||
-    url.includes('.ogg') ||
-    url.includes('.wav') ||
-    url.includes('qrserver.com')
+    url.includes('.mp3') || url.includes('.mp4') ||
+    url.includes('.m4a') || url.includes('.opus') ||
+    url.includes('.webm') || url.includes('.ogg') ||
+    url.includes('.wav') || url.includes('qrserver.com')
   ) return;
 
-  /* 🌐 Estratégia: network-first com fallback pro cache */
   event.respondWith(
     fetch(event.request)
       .then((response) => {
@@ -85,9 +67,7 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-/* ═══════════════════════════════════════════
-   MESSAGE — permite forçar update pelo app
-   ═══════════════════════════════════════════ */
+/* MESSAGE */
 self.addEventListener('message', (event) => {
   if (event.data && event.data.action === 'skipWaiting') {
     self.skipWaiting();
