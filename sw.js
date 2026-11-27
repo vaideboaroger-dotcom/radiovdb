@@ -1,95 +1,105 @@
-/* ═══════════════════════════════════════════════════════════
-   VDB MUSIC v005 — Service Worker
-   ═══════════════════════════════════════════════════════════ */
+/* ============================================================
+   VDB MUSIC — Service Worker (sw.js)
+   Versão: v1
+   ============================================================ */
 
-const CACHE_NAME = 'vdb-pwa-v62';           // Cache do app (HTML, CSS, JS)
-const CACHE_OFFLINE = 'vdb-offline-v1';     // Cache de áudio offline (NÃO DELETAR)
+const CACHE_NAME = 'vdb-app-v1';
+const CACHE_OFFLINE = 'vdb-offline-v1';
 
-const APP_SHELL = [
+// Arquivos essenciais do app (pré-cache na instalação)
+const PRECACHE_URLS = [
   './',
   './index.html',
   './manifest.json',
   './favicon192.png',
-  './favicon512.png',
-  './favicon30.png'
+  './favicon512.png'
 ];
 
-/* ═══════════════════════════════════════════
-   INSTALL — cacheia o app shell
-   ═══════════════════════════════════════════ */
+/* ---------- INSTALL ---------- */
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
-      .catch(err => console.warn('[SW] Erro no install:', err))
-      .then(() => self.skipWaiting())
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      for (const url of PRECACHE_URLS) {
+        try {
+          await cache.add(url);
+        } catch (e) {
+          console.warn('[SW] Falhou pré-cache:', url, e);
+        }
+      }
+      await self.skipWaiting();
+    })()
   );
 });
 
-/* ═══════════════════════════════════════════
-   ACTIVATE — limpa caches antigos
-   ⚠️ PRESERVA: vdb-offline-v1 (áudios baixados)
-   ═══════════════════════════════════════════ */
+/* ---------- ACTIVATE ---------- */
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys
-        .filter(k => k !== CACHE_NAME && k !== CACHE_OFFLINE)  // 👈 preserva offline
-        .map(k => caches.delete(k))
-    )).then(() => self.clients.claim())
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME && key !== CACHE_OFFLINE) {
+            return caches.delete(key);
+          }
+        })
+      );
+      await self.clients.claim();
+    })()
   );
 });
 
-/* ═══════════════════════════════════════════
-   FETCH — estratégia mista
-   ═══════════════════════════════════════════ */
+/* ---------- FETCH ---------- */
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+  const req = event.request;
 
-  const url = event.request.url;
+  // Só intercepta GET
+  if (req.method !== 'GET') return;
 
-  /* 🔇 Ignora (não intercepta):
-     - JSONs do GitHub (gêneros/mídias)
-     - Áudios (.mp3, .m4a, .opus, etc)
-     - Vídeos (.mp4, .webm)
-     - QR Code API
-     O HTML cuida do cache desses */
-  if (
-    url.includes('raw.githubusercontent.com') ||
-    url.includes('.mp3') ||
-    url.includes('.mp4') ||
-    url.includes('.m4a') ||
-    url.includes('.opus') ||
-    url.includes('.webm') ||
-    url.includes('.ogg') ||
-    url.includes('.wav') ||
-    url.includes('qrserver.com')
-  ) return;
+  let url;
+  try {
+    url = new URL(req.url);
+  } catch (e) {
+    return;
+  }
 
-  /* 🌐 Estratégia: network-first com fallback pro cache */
+  // Só intercepta o próprio domínio (não mexe em áudio do GitHub, fontes CDN, etc.)
+  if (url.origin !== self.location.origin) return;
+
+  // Navegação (HTML) → network-first com fallback pro cache
+  if (req.mode === 'navigate' || req.destination === 'document') {
+    event.respondWith(
+      fetch(req)
+        .then((resp) => {
+          const clone = resp.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(req, clone));
+          return resp;
+        })
+        .catch(() =>
+          caches.match(req).then((r) => r || caches.match('./index.html'))
+        )
+    );
+    return;
+  }
+
+  // Outros arquivos do mesmo domínio → cache-first
   event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        if (response && response.status === 200) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME)
-            .then(cache => cache.put(event.request, clone).catch(() => {}))
-            .catch(() => {});
-        }
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request)
-          .then(cached => cached || caches.match('./index.html'));
-      })
+    caches.match(req).then((cached) => {
+      if (cached) return cached;
+      return fetch(req)
+        .then((resp) => {
+          if (resp && resp.ok) {
+            const clone = resp.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(req, clone));
+          }
+          return resp;
+        })
+        .catch(() => cached);
+    })
   );
 });
 
-/* ═══════════════════════════════════════════
-   MESSAGE — permite forçar update pelo app
-   ═══════════════════════════════════════════ */
+/* ---------- MESSAGE (opcional) ---------- */
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.action === 'skipWaiting') {
-    self.skipWaiting();
-  }
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
