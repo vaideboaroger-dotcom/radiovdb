@@ -12,148 +12,8 @@
 <link rel="manifest" href="./manifest.json">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&family=Orbitron:wght@600;700;900&display=swap" rel="stylesheet">
-
-<!-- PARTE 2: CSS (Vai aqui dentro do <style>) -->
 <style>
-/* O CSS VAI NA PARTE 2 */
-</style>
-</head>
-<body>
-
-<!-- ================= TELAS DE ABERTURA ================= -->
-<div id="introScreen" style="position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .8s;cursor:pointer;">
-  <video id="introVideo" playsinline preload="auto" muted style="width:100%;height:100%;object-fit:cover"></video>
-  <button id="btnAtivarIntro" style="position:absolute;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:100001;background:linear-gradient(135deg,#2563eb,#00d4ff);color:#fff;border:none;border-radius:50px;padding:16px 40px;font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:900;letter-spacing:3px;box-shadow:0 8px 32px rgba(0,212,255,.5);cursor:pointer;display:flex;align-items:center;gap:10px;">
-    <i class="fas fa-play"></i> ATIVAR SOM
-  </button>
-</div>
-
-<div id="loadingScreen" style="position:fixed;inset:0;z-index:99998;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;text-align:center;transition:opacity .8s;">
-  <img src="favicon192.png" style="width:120px;height:120px;border-radius:50%;object-fit:contain;background:#000;padding:12px;border:2px solid rgba(0,212,255,.35);box-shadow:0 0 24px rgba(0,212,255,.35);" onerror="this.style.display='none'">
-  <span style="font-family:'Orbitron',sans-serif;font-size:1.8rem;color:#fff;letter-spacing:8px;font-weight:900;">VDB</span>
-  <span style="font-family:'Orbitron',sans-serif;font-size:.65rem;color:#00d4ff;letter-spacing:6px;font-weight:700;">🎵 CARREGANDO 🎵</span>
-</div>
-
-<!-- ================= PLAYER PRINCIPAL ================= -->
-<div id="playerContainer">
-  <div id="telaPrincipal">
-    <div class="media-container" id="mediaContainer"><div class="media-fallback-visual">VDB MUSIC</div></div>
-    
-    <svg id="progressRing" class="progress-ring" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <rect x="0.5" y="0.5" width="99" height="99" rx="2" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="1"/>
-      <rect id="progressRingFill" x="0.5" y="0.5" width="99" height="99" rx="2" fill="none" stroke="url(#ringGrad)" stroke-width="1.2" stroke-dasharray="0 400" stroke-linecap="round"/>
-      <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="50%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#00d4ff"/></linearGradient></defs>
-    </svg>
-
-    <div class="info-topo">
-      <div class="topo-linha">
-        <div class="titulo-wrap">
-          <div class="titulo-topo" id="tituloGrande">VDB</div>
-          <button class="btn-fav-vdb" id="btnFavVDB"><i class="far fa-heart"></i></button>
-        </div>
-        <div class="timer-wrap">
-          <div id="voiceIndicator"><i class="fas fa-microphone"></i></div>
-          <span class="timer-texto" id="timerLib"><i class="fas fa-clock"></i> 24:00:00</span>
-        </div>
-      </div>
-      <div class="letreiro-wrap" id="letreiroClick"><p class="letreiro" id="scrollText">🎵 VDB MUSIC</p></div>
-      <div class="genero-tocando"><span class="dot"></span><i class="fas fa-guitar"></i><span id="generoTocandoNome">BÔNUS</span></div>
-    </div>
-
-    <div class="player-topo">
-      <button class="pt-prev" id="topPrevBtn"><i class="fas fa-backward-step"></i></button>
-      <button class="pt-play" id="topPlayBtn"><i class="fas fa-play"></i></button>
-      <button class="pt-next" id="topNextBtn"><i class="fas fa-forward-step"></i></button>
-    </div>
-
-    <div class="vol-control" id="volControl">
-      <i class="fas fa-volume-low" id="volIcon"></i>
-      <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="100">
-      <span class="vol-pct" id="volPct">100%</span>
-    </div>
-
-    <div class="barra-inferior" id="barraInferior">
-      <button class="barra-btn" id="barraBuscar"><i class="fas fa-magnifying-glass"></i><span>Buscar</span></button>
-      <button class="barra-btn fav" id="barraFavoritos"><i class="fas fa-heart"></i><span>Favoritas</span><span class="badge" id="barraBadgeFav" style="display:none">0</span></button>
-      <button class="barra-btn" id="barraGeneros"><i class="fas fa-guitar"></i><span>Gêneros</span></button>
-      <button class="barra-btn" id="barraVolume"><i class="fas fa-volume-high"></i><span>Volume</span></button>
-      <button class="barra-btn ytm" id="barraYTMusic"><i class="fab fa-youtube"></i><span>YT Music</span></button>
-      <button class="barra-btn" id="barraFila"><i class="fas fa-list-ol"></i><span>Fila</span></button>
-      <button class="fab-main" id="fabMain"><i class="fas fa-plus"></i></button>
-    </div>
-
-    <div class="fab-container" id="fabContainer">
-      <div class="fab-menu" id="fabMenu">
-        <div class="fab-secao">🎵 Reprodução</div>
-        <button class="fab-sub-btn" id="fabMix"><i class="fas fa-shuffle" style="color:#f59e0b"></i>Mistura VDB</button>
-        <button class="fab-sub-btn" id="fabSite"><i class="fas fa-globe" style="color:#22d3ee"></i>Abrir Site VDB</button>
-        <button class="fab-sub-btn" id="fabYTMusic"><i class="fab fa-youtube" style="color:#ff0000"></i>Abrir YouTube Music</button>
-        <div class="fab-secao">🎤 Voz</div>
-        <button class="fab-sub-btn" id="fabVoice"><i class="fas fa-microphone" style="color:#ef4444"></i>Buscar por Voz</button>
-        <div class="fab-secao">📥 Offline</div>
-        <button class="fab-sub-btn" id="fabBaixarAtual"><i class="fas fa-download" style="color:#fbbf24"></i>Baixar Gênero Atual</button>
-        <button class="fab-sub-btn" id="fabGerenciarOffline"><i class="fas fa-hdd" style="color:#10b981"></i>Gerenciar Offline</button>
-        <div class="fab-secao">📱 App</div>
-        <button class="fab-sub-btn" id="fabInstalar"><i class="fas fa-mobile-alt" style="color:#22d3ee"></i>Instalar como App</button>
-        <button class="fab-sub-btn" id="fabTemas"><i class="fas fa-palette" style="color:#fbbf24"></i>Cores do App</button>
-        <button class="fab-sub-btn" id="fabFullscreen"><i class="fas fa-expand" style="color:#10b981"></i>Tela Cheia</button>
-        <button class="fab-sub-btn" id="fabSleep"><i class="fas fa-moon" style="color:#a855f7"></i>Sleep Timer</button>
-        <button class="fab-sub-btn" id="fabRecarregar"><i class="fas fa-sync" style="color:#3b82f6"></i>Recarregar</button>
-        <button class="fab-sub-btn" id="fabAtualizarMidia"><i class="fas fa-sync-alt" style="color:#22d3ee"></i>Atualizar Mídias</button>
-        <button class="fab-sub-btn" id="fabAtualizarApp"><i class="fas fa-magic" style="color:#fbbf24"></i>🪄 Atualizar App</button>
-        <div class="fab-secao">👤 Conta</div>
-        <button class="fab-sub-btn" id="fabMeuId"><i class="fas fa-id-card" style="color:#3b82f6"></i>Ver Meu ID</button>
-        <button class="fab-sub-btn" id="fabLiberar"><i class="fas fa-unlock" style="color:#10b981"></i>Liberar Agora</button>
-        <button class="fab-sub-btn" id="fabQrCode"><i class="fas fa-qrcode" style="color:#22d3ee"></i>QR Code</button>
-        <button class="fab-sub-btn" id="fabShare"><i class="fas fa-share-alt" style="color:#a855f7"></i>Compartilhar</button>
-        <button class="fab-sub-btn" id="fabFeedback"><i class="fas fa-star" style="color:#fbbf24"></i>Feedback</button>
-        <div class="fab-versao" id="fabVersao">v012</div>
-      </div>
-    </div>
-
-    <!-- FILA EM TELA CHEIA -->
-    <div class="fila-painel" id="filaPainel">
-      <div class="fila-topo">
-        <div class="fila-topo-titulo"><i class="fas fa-list-ol"></i><span>FILA</span></div>
-        <div id="filaInfo" style="color:rgba(255,255,255,.6);font-size:.72rem;font-weight:700;background:rgba(255,255,255,.06);padding:4px 10px;border-radius:10px;">0 músicas</div>
-        <button id="filaFecharBtn" style="background:rgba(255,255,255,.08);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="fila-lista" id="filaLista"></div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ================= MODAIS (TELA CHEIA) ================= -->
-<div class="modal" id="modalBusca"><div class="modal-box"><div class="modal-header"><span class="titulo">🔍 BUSCAR</span><button class="fechar" id="fecharBusca"><i class="fas fa-times"></i></button></div><input type="text" class="search-input" id="buscaInput" placeholder="Artista ou música..."><div class="search-filters"><select id="buscaGenero"><option value="">🌍 Todos os gêneros</option></select><select id="buscaOrdem"><option value="az">A-Z</option><option value="za">Z-A</option><option value="aleatorio">🎲</option></select></div><div class="search-count" id="buscaCount">Digite o nome</div><div class="search-results" id="buscaResultados"></div></div></div>
-
-<div class="modal" id="modalFavoritas"><div class="modal-box"><div class="modal-header"><span class="titulo">❤️ FAVORITAS</span><button class="fechar" id="fecharFavoritas"><i class="fas fa-times"></i></button></div><div class="fav-list" id="listaFavoritas"></div></div></div>
-
-<div class="modal" id="modalGeneros"><div class="modal-box"><div class="modal-header"><span class="titulo">🎸 GÊNEROS</span><button class="fechar" id="fecharGeneros"><i class="fas fa-times"></i></button></div><div class="genres-grid" id="genresGrid"></div></div></div>
-
-<div class="modal" id="modalMeuId"><div class="modal-box"><div class="modal-header"><span class="titulo">🆔 MEU ID</span><button class="fechar" id="fecharMeuId"><i class="fas fa-times"></i></button></div><div class="id-box"><div class="id-label">SEU ID ÚNICO</div><div class="id-value" id="meuIdValue">Carregando...</div><div class="id-btns"><button id="btnCopiarMeuId" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;background:#3b82f6;color:#fff;">Copiar</button><button id="btnEnviarMeuIdWhats" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;background:#25d366;color:#fff;">WhatsApp</button></div></div></div></div>
-
-<div class="download-modal" id="downloadModal"><div class="download-box"><div class="titulo" id="dlTitulo">📥 BAIXANDO</div><div class="sub" id="dlSub">Preparando...</div><div class="dl-bar"><div class="dl-fill" id="dlFill"></div></div><div class="dl-info"><span id="dlContador">0 / 0</span><span id="dlPercent">0%</span></div><div class="dl-info" id="dlAtual" style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:-8px"></div><button class="dl-btn cancel" id="dlCancelar">🛑 Cancelar</button><button class="dl-btn close" id="dlFechar" style="display:none">✕ Fechar</button><div class="dl-hint" style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:10px">💡 Deixe o app aberto para baixar mais rápido.</div></div></div>
-
-<div id="qrCodeModal" style="position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;"><div style="background:rgba(15,20,35,.98);border-radius:14px;padding:24px;text-align:center;max-width:360px;width:100%;border:1px solid var(--border-glass);"><h3 style="color:#fff;font-size:1.2rem;font-weight:900;margin-bottom:12px;font-family:var(--font-display);">📱 QR CODE</h3><div style="background:#fff;border-radius:10px;padding:12px;display:inline-block;margin:12px 0;"><img id="qrCodeImage" src="" alt="QR" style="width:220px;height:220px;display:block;border-radius:6px;"></div><button id="qrCloseBtn" style="background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;padding:14px;border-radius:8px;color:#fff;font-weight:900;font-size:.9rem;cursor:pointer;width:100%;margin-top:12px;">✕ Fechar</button></div></div>
-
-<div id="blockOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.98);z-index:10000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;"><div style="max-width:440px;width:100%;"><img src="favicon512.png" style="width:140px;height:140px;border-radius:50%;margin-bottom:14px;"><h1 style="font-family:'Orbitron',sans-serif;font-size:2.2rem;color:#fff;letter-spacing:5px;margin-bottom:6px;">VDB</h1><div style="color:rgba(255,255,255,.75);font-size:.95rem;font-weight:700;margin-bottom:22px;">🔒 DIGITE SUA SENHA</div><div style="background:rgba(59,130,246,.1);border:2px solid rgba(59,130,246,.4);border-radius:10px;padding:18px 16px;margin-bottom:14px;"><div style="font-size:.65rem;color:rgba(255,255,255,.6);letter-spacing:3px;font-weight:800;text-transform:uppercase;margin-bottom:8px;">SEU ID ÚNICO</div><div id="idUsuarioBloqueio" style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:#fff;background:rgba(0,0,0,.4);padding:12px;border-radius:8px;word-break:break-all;margin-bottom:12px;border:1px dashed rgba(255,255,255,.2);">Carregando...</div><div style="display:flex;gap:8px;"><button id="btnCopiarIdBloqueio" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;background:#3b82f6;color:#fff;">Copiar ID</button><button id="btnEnviarIdWhats" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;background:#25d366;color:#fff;">Enviar</button></div></div><input type="password" id="senhaInput" placeholder="Cole sua senha aqui" style="width:100%;padding:16px 18px;border-radius:8px;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;text-align:center;margin-bottom:12px;outline:none;letter-spacing:2px;font-weight:700;"><button id="btnLiberar" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;border-radius:8px;color:#fff;font-weight:900;font-size:1rem;cursor:pointer;letter-spacing:2px;margin-bottom:8px;">LIBERAR ACESSO</button><div id="erroSenha" style="color:#ec4899;font-size:.85rem;min-height:30px;padding:6px 0;font-weight:700;"></div></div></div>
-
-<div class="notif" id="notification"></div>
-
-<!-- ADMIN PANEL -->
-<div id="adminPanel" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,10,.99);border-radius:12px;padding:20px;z-index:99999;width:94%;max-width:480px;border:2px solid #fbbf24;max-height:92vh;overflow-y:auto;"><button id="adminCloseTopBtn" style="position:absolute;top:10px;right:14px;background:transparent;border:none;color:#888;font-size:1.3rem;cursor:pointer;">✕</button><h2 style="text-align:center;font-size:1.15rem;color:#fbbf24;margin-bottom:12px;font-weight:900;">👑 GERENCIADOR DE SENHAS</h2><label>🆔 ID do Cliente:</label><input type="text" id="adminFingerprintInput" placeholder="Cole o fingerprint do cliente" style="width:100%;padding:13px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:.85rem;font-family:monospace;outline:none;margin-bottom:10px;"><div style="display:flex;gap:6px;margin:12px 0;flex-wrap:wrap;"><button class="validade-btn active" data-dias="7" style="flex:1;padding:10px;border-radius:6px;background:#fbbf24;border:none;font-weight:800;color:#000;">7 dias</button><button class="validade-btn" data-dias="30" style="flex:1;padding:10px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;">30 dias</button><button class="validade-btn" data-dias="90" style="flex:1;padding:10px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;">90 dias</button><button class="validade-btn" data-dias="0" style="flex:1;padding:10px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;">∞</button></div><div style="display:flex;gap:6px;margin-bottom:12px;"><button id="adminGerarBtn" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;background:#fbbf24;color:#000;">📱 DEVICE</button><button id="adminGerarUniversalBtn" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;background:#10b981;color:#fff;">🌍 UNIVERSAL</button></div><div style="background:rgba(255,255,255,.05);border-radius:8px;padding:14px;margin:12px 0;"><label style="color:#fbbf24;">🔑 SENHA GERADA:</label><input type="text" id="adminSenhaGerada" readonly placeholder="Clique em gerar" style="width:100%;padding:13px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:.85rem;margin-top:8px;"><div style="display:flex;gap:6px;margin-top:8px;"><button id="btnCopiarSenha" style="flex:1;padding:11px;border-radius:8px;border:none;background:#3b82f6;color:#fff;font-weight:800;">📋 Copiar</button><button id="adminEnviarWhatsBtn" style="flex:1;padding:11px;border-radius:8px;border:none;background:#25d366;color:#fff;font-weight:800;">📱 WhatsApp</button></div></div><button id="adminCloseBtn" style="background:rgba(255,255,255,.06);border:none;padding:12px;border-radius:8px;color:#aaa;cursor:pointer;width:100%;margin-top:10px;font-weight:900;">✕ Fechar</button></div>
-
-<div class="vdb-dialog-overlay" id="vdbDialogOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:100004;display:none;align-items:center;justify-content:center;padding:20px;"><div style="background:rgba(15,20,35,.98);border-radius:14px;padding:24px 20px;max-width:400px;width:100%;border:1px solid var(--border-glass);"><h3 id="vdbDialogTitle" style="color:#fff;font-size:1.05rem;text-align:center;margin-bottom:12px;font-weight:800;">Título</h3><p id="vdbDialogMsg" style="color:rgba(255,255,255,.7);font-size:.88rem;text-align:center;margin-bottom:16px;">Mensagem</p><div style="display:flex;gap:8px;"><button id="vdbDialogCancel" style="flex:1;padding:13px;border-radius:8px;border:none;font-weight:800;background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);">Cancelar</button><button id="vdbDialogOk" style="flex:1;padding:13px;border-radius:8px;border:none;font-weight:800;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));color:#fff;">OK</button></div></div></div>
-
-<audio id="musicPlayer" preload="auto" playsinline></audio>
-
-<!-- PARTE 3: JAVASCRIPT -->
-<script>
-// O JAVASCRIPT VAI NA PARTE 3 E 4
-</script>
-</body>
-</html>:root{
+:root{
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bottom:env(safe-area-inset-bottom,0px);
   --cor-1:#2563eb;--cor-2:#1e40af;--cor-3:#3b82f6;--cor-neon:#00d4ff;
@@ -237,14 +97,14 @@ html,body{
 .player-topo .pt-next,.player-topo .pt-prev{width:52px;height:52px;font-size:1.3rem; background: #000; border: 1px solid rgba(255,255,255,.3);}
 .player-topo .pt-play{width:72px;height:72px;font-size:1.8rem;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;box-shadow:0 6px 24px rgba(37,99,235,.5)}
 
-/* BARRA INFERIOR - TOTALMENTE PRETA */
+/* BARRA INFERIOR - 100% PRETA */
 .barra-inferior{
   position:fixed;left:50%;transform:translateX(-50%);
-  bottom:calc(10px + var(--safe-bottom)); 
+  bottom:calc(10px + var(--safe-bottom));
   z-index:25;display:flex;align-items:center;justify-content:center;gap:4px;
   padding:6px 4px;width:calc(100vw - 16px);max-width:580px;
   transition:opacity .35s,transform .35s;
-  background: #000 !important; /* FORÇA PRETO AQUI */
+  background: #000000 !important;
   border-top: 1px solid rgba(255,255,255,.1);
   border-radius: 12px;
 }
@@ -281,7 +141,7 @@ html,body{
 .fab-versao{text-align:center;padding:10px 14px 4px;margin-top:4px;border-top:1px solid rgba(255,255,255,.08);font-family:var(--font-display);font-size:.65rem;color:rgba(255,255,255,.5);letter-spacing:3px;font-weight:900}
 
 /* MODAIS EM TELA CHEIA */
-.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.78);display:none;align-items:stretch;justify-content:center;padding:0;}
+.modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.95);display:none;align-items:stretch;justify-content:center;padding:0}
 .modal.open{display:flex}
 .modal-box{background:linear-gradient(145deg,rgba(20,25,40,.99),rgba(10,15,30,.99));border-radius:0;padding:20px 20px calc(20px + var(--safe-bottom));width:100%;max-width:100%;height:100%;max-height:100vh;overflow:hidden;display:flex;flex-direction:column;gap:12px;border:none;transform:translateY(0);}
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1)}
@@ -348,7 +208,185 @@ html,body{
   .player-topo{top: 60%; gap:15px;}
   .player-topo .pt-next,.player-topo .pt-prev{width:40px;height:40px;font-size:1rem}
   .player-topo .pt-play{width:55px;height:55px;font-size:1.3rem}
-}(function(){
+}
+</style>
+</head>
+<body><div id="introScreen" style="position:fixed;inset:0;z-index:100000;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity .8s;cursor:pointer;">
+  <video id="introVideo" playsinline preload="auto" muted style="width:100%;height:100%;object-fit:cover"></video>
+  <button id="btnAtivarIntro" style="position:absolute;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:100001;background:linear-gradient(135deg,#2563eb,#00d4ff);color:#fff;border:none;border-radius:50px;padding:16px 40px;font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:900;letter-spacing:3px;box-shadow:0 8px 32px rgba(0,212,255,.5);cursor:pointer;display:flex;align-items:center;gap:10px;">
+    <i class="fas fa-play"></i> ATIVAR SOM
+  </button>
+</div>
+
+<div id="loadingScreen" style="position:fixed;inset:0;z-index:99998;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;text-align:center;transition:opacity .8s;">
+  <img src="favicon192.png" style="width:120px;height:120px;border-radius:50%;object-fit:contain;background:#000;padding:12px;border:2px solid rgba(0,212,255,.35);box-shadow:0 0 24px rgba(0,212,255,.35);" onerror="this.style.display='none'">
+  <span style="font-family:'Orbitron',sans-serif;font-size:1.8rem;color:#fff;letter-spacing:8px;font-weight:900;">VDB</span>
+  <span style="font-family:'Orbitron',sans-serif;font-size:.65rem;color:#00d4ff;letter-spacing:6px;font-weight:700;">🎵 CARREGANDO 🎵</span>
+</div>
+
+<div id="playerContainer">
+  <div id="telaPrincipal">
+    <div class="media-container" id="mediaContainer"><div class="media-fallback-visual">VDB MUSIC</div></div>
+    
+    <svg id="progressRing" class="progress-ring" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <rect x="0.5" y="0.5" width="99" height="99" rx="2" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="1"/>
+      <rect id="progressRingFill" x="0.5" y="0.5" width="99" height="99" rx="2" fill="none" stroke="url(#ringGrad)" stroke-width="1.2" stroke-dasharray="0 400" stroke-linecap="round"/>
+      <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="50%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#00d4ff"/></linearGradient></defs>
+    </svg>
+
+    <div class="info-topo">
+      <div class="topo-linha">
+        <div class="titulo-wrap">
+          <div class="titulo-topo" id="tituloGrande">VDB</div>
+          <button class="btn-fav-vdb" id="btnFavVDB"><i class="far fa-heart"></i></button>
+        </div>
+        <div class="timer-wrap">
+          <div id="voiceIndicator"><i class="fas fa-microphone"></i></div>
+          <span class="timer-texto" id="timerLib"><i class="fas fa-clock"></i> 24:00:00</span>
+        </div>
+      </div>
+      <div class="letreiro-wrap" id="letreiroClick"><p class="letreiro" id="scrollText">🎵 VDB MUSIC</p></div>
+      <div class="genero-tocando"><span class="dot"></span><i class="fas fa-guitar"></i><span id="generoTocandoNome">BÔNUS</span></div>
+    </div>
+
+    <div class="player-topo">
+      <button class="pt-prev" id="topPrevBtn"><i class="fas fa-backward-step"></i></button>
+      <button class="pt-play" id="topPlayBtn"><i class="fas fa-play"></i></button>
+      <button class="pt-next" id="topNextBtn"><i class="fas fa-forward-step"></i></button>
+    </div>
+
+    <div class="vol-control" id="volControl">
+      <i class="fas fa-volume-low" id="volIcon"></i>
+      <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="100">
+      <span class="vol-pct" id="volPct">100%</span>
+    </div>
+
+    <div class="barra-inferior" id="barraInferior">
+      <button class="barra-btn" id="barraBuscar"><i class="fas fa-magnifying-glass"></i><span>Buscar</span></button>
+      <button class="barra-btn fav" id="barraFavoritos"><i class="fas fa-heart"></i><span>Favoritas</span><span class="badge" id="barraBadgeFav" style="display:none">0</span></button>
+      <button class="barra-btn" id="barraGeneros"><i class="fas fa-guitar"></i><span>Gêneros</span></button>
+      <button class="barra-btn" id="barraVolume"><i class="fas fa-volume-high"></i><span>Volume</span></button>
+      <button class="barra-btn ytm" id="barraYTMusic"><i class="fab fa-youtube"></i><span>YT Music</span></button>
+      <button class="barra-btn" id="barraFila"><i class="fas fa-list-ol"></i><span>Fila</span></button>
+      <button class="fab-main" id="fabMain"><i class="fas fa-plus"></i></button>
+    </div>
+
+    <div class="fab-container" id="fabContainer">
+      <div class="fab-menu" id="fabMenu">
+        <div class="fab-secao">🎵 Reprodução</div>
+        <button class="fab-sub-btn" id="fabMix"><i class="fas fa-shuffle" style="color:#f59e0b"></i>Mistura VDB</button>
+        <button class="fab-sub-btn" id="fabSite"><i class="fas fa-globe" style="color:#22d3ee"></i>Abrir Site VDB</button>
+        <button class="fab-sub-btn" id="fabYTMusic"><i class="fab fa-youtube" style="color:#ff0000"></i>Abrir YouTube Music</button>
+        <div class="fab-secao">🎤 Voz</div>
+        <button class="fab-sub-btn" id="fabVoice"><i class="fas fa-microphone" style="color:#ef4444"></i>Buscar por Voz</button>
+        <div class="fab-secao">📥 Offline</div>
+        <button class="fab-sub-btn" id="fabBaixarAtual"><i class="fas fa-download" style="color:#fbbf24"></i>Baixar Gênero Atual</button>
+        <button class="fab-sub-btn" id="fabGerenciarOffline"><i class="fas fa-hdd" style="color:#10b981"></i>Gerenciar Offline</button>
+        <div class="fab-secao">📱 App</div>
+        <button class="fab-sub-btn" id="fabInstalar"><i class="fas fa-mobile-alt" style="color:#22d3ee"></i>Instalar como App</button>
+        <button class="fab-sub-btn" id="fabTemas"><i class="fas fa-palette" style="color:#fbbf24"></i>Cores do App</button>
+        <button class="fab-sub-btn" id="fabFullscreen"><i class="fas fa-expand" style="color:#10b981"></i>Tela Cheia</button>
+        <button class="fab-sub-btn" id="fabSleep"><i class="fas fa-moon" style="color:#a855f7"></i>Sleep Timer</button>
+        <button class="fab-sub-btn" id="fabRecarregar"><i class="fas fa-sync" style="color:#3b82f6"></i>Recarregar</button>
+        <button class="fab-sub-btn" id="fabAtualizarMidia"><i class="fas fa-sync-alt" style="color:#22d3ee"></i>Atualizar Mídias</button>
+        <button class="fab-sub-btn" id="fabAtualizarApp"><i class="fas fa-magic" style="color:#fbbf24"></i>🪄 Atualizar App</button>
+        <div class="fab-secao">👤 Conta</div>
+        <button class="fab-sub-btn" id="fabMeuId"><i class="fas fa-id-card" style="color:#3b82f6"></i>Ver Meu ID</button>
+        <button class="fab-sub-btn" id="fabLiberar"><i class="fas fa-unlock" style="color:#10b981"></i>Liberar Agora</button>
+        <button class="fab-sub-btn" id="fabQrCode"><i class="fas fa-qrcode" style="color:#22d3ee"></i>QR Code</button>
+        <button class="fab-sub-btn" id="fabShare"><i class="fas fa-share-alt" style="color:#a855f7"></i>Compartilhar</button>
+        <button class="fab-sub-btn" id="fabFeedback"><i class="fas fa-star" style="color:#fbbf24"></i>Feedback</button>
+        <div class="fab-versao" id="fabVersao">v012</div>
+      </div>
+    </div>
+
+    <div class="fila-painel" id="filaPainel">
+      <div class="fila-topo">
+        <div class="fila-topo-titulo"><i class="fas fa-list-ol"></i><span>FILA</span></div>
+        <div id="filaInfo" style="color:rgba(255,255,255,.6);font-size:.72rem;font-weight:700;background:rgba(255,255,255,.06);padding:4px 10px;border-radius:10px;">0 músicas</div>
+        <button id="filaFecharBtn" style="background:rgba(255,255,255,.08);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="fila-lista" id="filaLista"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal" id="modalBusca"><div class="modal-box"><div class="modal-header"><span class="titulo">🔍 BUSCAR</span><button class="fechar" id="fecharBusca"><i class="fas fa-times"></i></button></div><input type="text" class="search-input" id="buscaInput" placeholder="Artista ou música..."><div class="search-filters"><select id="buscaGenero"><option value="">🌍 Todos os gêneros</option></select><select id="buscaOrdem"><option value="az">A-Z</option><option value="za">Z-A</option><option value="aleatorio">🎲</option></select></div><div class="search-count" id="buscaCount">Digite o nome</div><div class="search-results" id="buscaResultados"></div></div></div>
+
+<div class="modal" id="modalFavoritas"><div class="modal-box"><div class="modal-header"><span class="titulo">❤️ FAVORITAS</span><button class="fechar" id="fecharFavoritas"><i class="fas fa-times"></i></button></div><div class="fav-list" id="listaFavoritas"></div></div></div>
+
+<div class="modal" id="modalGeneros"><div class="modal-box"><div class="modal-header"><span class="titulo">🎸 GÊNEROS</span><button class="fechar" id="fecharGeneros"><i class="fas fa-times"></i></button></div><div class="genres-grid" id="genresGrid"></div></div></div>
+
+<div class="modal" id="modalMeuId"><div class="modal-box"><div class="modal-header"><span class="titulo">🆔 MEU ID</span><button class="fechar" id="fecharMeuId"><i class="fas fa-times"></i></button></div><div class="id-box"><div class="id-label">SEU ID ÚNICO</div><div class="id-value" id="meuIdValue">Carregando...</div><div class="id-btns"><button id="btnCopiarMeuId" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;background:#3b82f6;color:#fff;">Copiar</button><button id="btnEnviarMeuIdWhats" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;background:#25d366;color:#fff;">WhatsApp</button></div></div></div></div>
+
+<div class="download-modal" id="downloadModal"><div class="download-box"><div class="titulo" id="dlTitulo">📥 BAIXANDO</div><div class="sub" id="dlSub">Preparando...</div><div class="dl-bar"><div class="dl-fill" id="dlFill"></div></div><div class="dl-info"><span id="dlContador">0 / 0</span><span id="dlPercent">0%</span></div><div class="dl-info" id="dlAtual" style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:-8px"></div><button class="dl-btn cancel" id="dlCancelar">🛑 Cancelar</button><button class="dl-btn close" id="dlFechar" style="display:none">✕ Fechar</button><div class="dl-hint" style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:10px">💡 Deixe o app aberto para baixar mais rápido.</div></div></div>
+
+<div id="qrCodeModal" style="position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:rgba(15,20,35,.98);border-radius:14px;padding:24px;text-align:center;max-width:360px;width:100%;border:1px solid var(--border-glass);">
+    <h3 style="color:#fff;font-size:1.2rem;font-weight:900;margin-bottom:12px;font-family:var(--font-display);">📱 QR CODE</h3>
+    <div style="background:#fff;border-radius:10px;padding:12px;display:inline-block;margin:12px 0;"><img id="qrCodeImage" src="" alt="QR" style="width:220px;height:220px;display:block;border-radius:6px;"></div>
+    <button id="qrCloseBtn" style="background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;padding:14px;border-radius:8px;color:#fff;font-weight:900;font-size:.9rem;cursor:pointer;width:100%;margin-top:12px;">✕ Fechar</button>
+  </div>
+</div>
+
+<div id="blockOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.98);z-index:10000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;">
+  <div style="max-width:440px;width:100%;">
+    <img src="favicon512.png" style="width:140px;height:140px;border-radius:50%;margin-bottom:14px;">
+    <h1 style="font-family:'Orbitron',sans-serif;font-size:2.2rem;color:#fff;letter-spacing:5px;margin-bottom:6px;">VDB</h1>
+    <div style="color:rgba(255,255,255,.75);font-size:.95rem;font-weight:700;margin-bottom:22px;">🔒 DIGITE SUA SENHA</div>
+    <div style="background:rgba(59,130,246,.1);border:2px solid rgba(59,130,246,.4);border-radius:10px;padding:18px 16px;margin-bottom:14px;">
+      <div style="font-size:.65rem;color:rgba(255,255,255,.6);letter-spacing:3px;font-weight:800;text-transform:uppercase;margin-bottom:8px;">SEU ID ÚNICO</div>
+      <div id="idUsuarioBloqueio" style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:#fff;background:rgba(0,0,0,.4);padding:12px;border-radius:8px;word-break:break-all;margin-bottom:12px;border:1px dashed rgba(255,255,255,.2);">Carregando...</div>
+      <div style="display:flex;gap:8px;"><button id="btnCopiarIdBloqueio" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;background:#3b82f6;color:#fff;">Copiar ID</button><button id="btnEnviarIdWhats" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;font-size:.78rem;background:#25d366;color:#fff;">Enviar</button></div>
+    </div>
+    <input type="password" id="senhaInput" placeholder="Cole sua senha aqui" style="width:100%;padding:16px 18px;border-radius:8px;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;text-align:center;margin-bottom:12px;outline:none;letter-spacing:2px;font-weight:700;">
+    <button id="btnLiberar" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));border:none;border-radius:8px;color:#fff;font-weight:900;font-size:1rem;cursor:pointer;letter-spacing:2px;margin-bottom:8px;">LIBERAR ACESSO</button>
+    <div id="erroSenha" style="color:#ec4899;font-size:.85rem;min-height:30px;padding:6px 0;font-weight:700;"></div>
+  </div>
+</div>
+
+<div class="notif" id="notification"></div>
+
+<div id="adminPanel" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,10,.99);border-radius:12px;padding:20px;z-index:99999;width:94%;max-width:480px;border:2px solid #fbbf24;max-height:92vh;overflow-y:auto;">
+  <button id="adminCloseTopBtn" style="position:absolute;top:10px;right:14px;background:transparent;border:none;color:#888;font-size:1.3rem;cursor:pointer;">✕</button>
+  <h2 style="text-align:center;font-size:1.15rem;color:#fbbf24;margin-bottom:12px;font-weight:900;">👑 GERENCIADOR DE SENHAS</h2>
+  <label>🆔 ID do Cliente:</label>
+  <input type="text" id="adminFingerprintInput" placeholder="Cole o fingerprint do cliente" style="width:100%;padding:13px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:.85rem;font-family:monospace;outline:none;margin-bottom:10px;">
+  <div style="display:flex;gap:6px;margin:12px 0;flex-wrap:wrap;">
+    <button class="validade-btn active" data-dias="7" style="flex:1;padding:10px;border-radius:6px;background:#fbbf24;border:none;font-weight:800;color:#000;">7 dias</button>
+    <button class="validade-btn" data-dias="30" style="flex:1;padding:10px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;">30 dias</button>
+    <button class="validade-btn" data-dias="90" style="flex:1;padding:10px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;">90 dias</button>
+    <button class="validade-btn" data-dias="0" style="flex:1;padding:10px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;">∞</button>
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:12px;">
+    <button id="adminGerarBtn" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;background:#fbbf24;color:#000;">📱 DEVICE</button>
+    <button id="adminGerarUniversalBtn" style="flex:1;padding:12px;border-radius:8px;border:none;font-weight:900;background:#10b981;color:#fff;">🌍 UNIVERSAL</button>
+  </div>
+  <div style="background:rgba(255,255,255,.05);border-radius:8px;padding:14px;margin:12px 0;">
+    <label style="color:#fbbf24;">🔑 SENHA GERADA:</label>
+    <input type="text" id="adminSenhaGerada" readonly placeholder="Clique em gerar" style="width:100%;padding:13px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:.85rem;margin-top:8px;">
+    <div style="display:flex;gap:6px;margin-top:8px;">
+      <button id="btnCopiarSenha" style="flex:1;padding:11px;border-radius:8px;border:none;background:#3b82f6;color:#fff;font-weight:800;">📋 Copiar</button>
+      <button id="adminEnviarWhatsBtn" style="flex:1;padding:11px;border-radius:8px;border:none;background:#25d366;color:#fff;font-weight:800;">📱 WhatsApp</button>
+    </div>
+  </div>
+  <button id="adminCloseBtn" style="background:rgba(255,255,255,.06);border:none;padding:12px;border-radius:8px;color:#aaa;cursor:pointer;width:100%;margin-top:10px;font-weight:900;">✕ Fechar</button>
+</div>
+
+<div class="vdb-dialog-overlay" id="vdbDialogOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:100004;display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:rgba(15,20,35,.98);border-radius:14px;padding:24px 20px;max-width:400px;width:100%;border:1px solid var(--border-glass);">
+    <h3 id="vdbDialogTitle" style="color:#fff;font-size:1.05rem;text-align:center;margin-bottom:12px;font-weight:800;">Título</h3>
+    <p id="vdbDialogMsg" style="color:rgba(255,255,255,.7);font-size:.88rem;text-align:center;margin-bottom:16px;">Mensagem</p>
+    <div style="display:flex;gap:8px;">
+      <button id="vdbDialogCancel" style="flex:1;padding:13px;border-radius:8px;border:none;font-weight:800;background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);">Cancelar</button>
+      <button id="vdbDialogOk" style="flex:1;padding:13px;border-radius:8px;border:none;font-weight:800;background:linear-gradient(135deg,var(--cor-1),var(--cor-3));color:#fff;">OK</button>
+    </div>
+  </div>
+</div>
+
+<audio id="musicPlayer" preload="auto" playsinline></audio><script>
+(function(){
 'use strict';
 
 // CONFIGURAÇÕES
@@ -370,7 +408,7 @@ const CONFIG = {
   PREFETCH_QTD:3,
   PREFETCH_DELAY_MS:1500,
   CICLO_BANNER_MS:900000,
-  BANNER_DURACAO_MS:5000, // 👈 BANNER REDUZIDO PARA 5 SEGUNDOS
+  BANNER_DURACAO_MS:5000,
   INTERVALO_FRASE_PROMO_MS:30000
 };
 const FRASES_LETREIRO = [
@@ -445,7 +483,7 @@ const appState = {
   modoAtual:'BÔNUS', carregando:false, playerAtivado:false,
   isBackgroundActive:false, musicasComProblema:new Set(),
   sleepTimerId:null, fingerprint:'', _forcarMusica:null,
-  falhasConsecutivas:0, volume:1.0, _lastBlobUrl:null, _modoLoopInfinito:true // LOOP INFINITO
+  falhasConsecutivas:0, volume:1.0, _lastBlobUrl:null
 };
 try{ const fav=JSON.parse(localStorage.getItem('vdb_fav')||'[]'); appState.favorites=Array.isArray(fav)?fav:[]; }catch(e){ appState.favorites=[]; }
 try{ const v=parseFloat(localStorage.getItem('vdb_vol')); if(!isNaN(v)&&v>=0&&v<=1) appState.volume=v; }catch(e){}
@@ -460,24 +498,16 @@ const WakeLockManager = {
 window.addEventListener('online',()=>notif('🟢 Voltou online',1800));
 window.addEventListener('offline',()=>notif('🔴 Ficou offline',2500,true));
 
-// FILA INTELIGENTE COM MISTURA REFORÇADA
 const FilaInteligente = {
   poolOriginal:[], fila:[], historico:[], indiceHistorico:-1, generoAtual:'',
-  resetar(pool,genero){ 
-    this.poolOriginal=pool.filter(m=>!appState.musicasComProblema.has(m.id)); 
-    this.generoAtual=genero||''; 
-    // MISTURA REFORÇADA: 2 passes de shuffle
-    this.fila=shuffle(shuffle(this.poolOriginal)); 
-    this.historico=[]; 
-    this.indiceHistorico=-1; 
-  },
+  resetar(pool,genero){ this.poolOriginal=pool.filter(m=>!appState.musicasComProblema.has(m.id)); this.generoAtual=genero||''; this.fila=shuffle(shuffle(this.poolOriginal)); this.historico=[]; this.indiceHistorico=-1; },
   proxima(){
     this.fila=this.fila.filter(m=>!appState.musicasComProblema.has(m.id));
     if(this.indiceHistorico<this.historico.length-1){ this.indiceHistorico++; return this.historico[this.indiceHistorico]; }
     if(this.fila.length===0){
       const idsUsados=new Set(this.historico.map(h=>h.id));
       const restantes=this.poolOriginal.filter(m=>!appState.musicasComProblema.has(m.id)&&!idsUsados.has(m.id));
-      if(restantes.length>0) this.fila=shuffle(shuffle(restantes)); // MISTURA REFORÇADA
+      if(restantes.length>0) this.fila=shuffle(shuffle(restantes));
       else this.fila=shuffle(shuffle(this.poolOriginal.filter(m=>!appState.musicasComProblema.has(m.id))));
     }
     const m=this.fila.shift();
@@ -487,7 +517,6 @@ const FilaInteligente = {
   voltar(){ if(this.indiceHistorico<=0) return null; this.indiceHistorico--; return this.historico[this.indiceHistorico]; }
 };
 
-// GÊNEROS
 const GENRES = {
   'BÔNUS':{repo:'radiolojasjc-hub/VDB',file:'play.json',c1:'#22d3ee'},
   'FLASHBACK':{repo:'radiolojasjc-hub/flashbacktop',file:'flashback.json',c1:'#a855f7'},
@@ -521,156 +550,886 @@ const GENRE_ORDEM_BASE = ['BÔNUS','POP/MIX','MPB','FORRÓ','SERTANEJO','ROMÂNT
 const GENRE_ORDEM = (()=>{ const ordem=GENRE_ORDEM_BASE.filter(g=>GENRES[g]); const faltando=Object.keys(GENRES).filter(g=>!ordem.includes(g)); return [...ordem,...faltando]; })();
 const GENRE_URLS = Object.fromEntries(Object.entries(GENRES).map(([g,c])=>[g,`https://raw.githubusercontent.com/${c.repo}/refs/heads/main/${c.file}`]));
 const GENRE_REPOS = Object.fromEntries(Object.entries(GENRES).map(([g,c])=>[g,c.repo]));
-const GENRE_COLORS = Object.fromEntries(Object.entries(GENRES).map(([g,c])=>[g,{c1:c.c1}]));
+const GENRE_COLORS = Object.fromEntries(Object.entries(GENRES).map(([g,c])=>[g,{c1:c.c1}]));let _letreiroCache='';
+let letreiroRAF=null, letreiroX=0, letreiroVel=0, letreiroLargura=0, letreiroContainerLargura=0;
+let _promoTimer=null, _promoIdx=0, _emPromo=false;
+const REDUCE_MOTION = (()=>{ try{ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } })();
 
-// ... CONTINUA NA PARTE 4 ...const CACHE_GEN_KEY='vdb_genero_cache_v2';
-function _lerCacheGenero(){ try{ return JSON.parse(localStorage.getItem(CACHE_GEN_KEY)||'{}'); }catch(e){ return {}; } }
-function _salvarCacheGenero(o){ try{ localStorage.setItem(CACHE_GEN_KEY,JSON.stringify(o)); }catch(e){} }
-function _mapMusicas(j,genero){
-  if(!Array.isArray(j)) j=j.musicas||j.data||Object.values(j)[0];
-  const repoOrigem=GENRE_REPOS[genero]||'radiolojasjc-hub/play12';
-  return (j||[]).filter(m=>m&&m.src&&m.title).map(m=>{
-    const artist = m.artist || 'Artista';
-    return { ...m, id:'fav_'+(m.title+'_'+artist).toLowerCase().replace(/[^a-z0-9]+/g,'_'), genero, repo:repoOrigem, artist, _t:normalizar(m.title), _a:normalizar(artist), _g:normalizar(genero) };
+function iniciarLetreiroAnimacao(el, container){
+  cancelAnimationFrame(letreiroRAF);
+  if(REDUCE_MOTION){ el.style.transform='translateX(0)'; return; }
+  letreiroX = container.clientWidth;
+  letreiroVel = 55;
+  letreiroLargura = el.scrollWidth;
+  letreiroContainerLargura = container.clientWidth;
+  let ultimoTempo = performance.now();
+  function passo(agora){
+    const dt = (agora - ultimoTempo) / 1000;
+    ultimoTempo = agora;
+    letreiroX -= letreiroVel * dt;
+    if(letreiroX < -letreiroLargura) letreiroX = letreiroContainerLargura;
+    el.style.transform = `translateX(${letreiroX}px)`;
+    letreiroRAF = requestAnimationFrame(passo);
+  }
+  letreiroRAF = requestAnimationFrame(passo);
+}
+function _renderLetreiro(textoHTML){
+  const el=$('scrollText'); if(!el) return;
+  const container = el.parentElement;
+  el.innerHTML = textoHTML;
+  requestAnimationFrame(() => { if(container) iniciarLetreiroAnimacao(el, container); });
+}
+function atualizarLetreiro(m){
+  if(_emPromo) return;
+  const txt = m && m.title ? (m.title + ' — ' + (m.artist||'Artista')) : ('VDB MUSIC');
+  if(_letreiroCache===txt) return;
+  _letreiroCache=txt;
+  let html='🎵 ';
+  if(m && m.title){ html += '<b>TOCANDO:</b> ' + sanitize(m.title) + ' — <i>' + sanitize(m.artist||'Artista') + '</i>'; }
+  else { html += 'VDB MUSIC 🎵'; }
+  _renderLetreiro(html);
+}
+function mostrarFrasePromocional(){
+  if(!FRASES_LETREIRO.length) return;
+  _emPromo = true;
+  const frase = FRASES_LETREIRO[_promoIdx % FRASES_LETREIRO.length];
+  _promoIdx++;
+  _renderLetreiro('📢 ' + sanitize(frase));
+  clearTimeout(_promoTimer);
+  _promoTimer = setTimeout(()=>{ _emPromo=false; _letreiroCache=''; atualizarLetreiro(appState.musicaAtual); }, 8000);
+}
+function iniciarCicloFrasesPromo(){
+  if(window._promoIntervalo) clearInterval(window._promoIntervalo);
+  window._promoIntervalo = setInterval(()=>{ if(!appState.isPlaying) return; mostrarFrasePromocional(); }, CONFIG.INTERVALO_FRASE_PROMO_MS);
+}
+function atualizarGenero(g){ const el=$('generoTocandoNome'); if(el) el.textContent=(g||'VDB').toUpperCase(); }
+function atualizarInfoMusica(m){ if(m) atualizarGenero(m.genero||appState.modoAtual||''); }
+
+function atualizarCoracao(){
+  const atual=appState.musicaAtual;
+  const bFav=$('barraFavoritos'), bVDB=$('btnFavVDB');
+  if(!atual){ if(bFav) bFav.classList.remove('ativo'); if(bVDB){ bVDB.classList.remove('ativo'); bVDB.innerHTML='<i class="far fa-heart"></i>'; } return; }
+  const f=appState.favorites.some(x=>x.id===atual.id);
+  if(f){ if(bFav) bFav.classList.add('ativo'); if(bVDB){ bVDB.classList.add('ativo'); bVDB.innerHTML='<i class="fas fa-heart"></i>'; } }
+  else { if(bFav) bFav.classList.remove('ativo'); if(bVDB){ bVDB.classList.remove('ativo'); bVDB.innerHTML='<i class="far fa-heart"></i>'; } }
+}
+function atualizarBadgeFav(){ const n=appState.favorites.length; const b=$('barraBadgeFav'); if(b){ b.textContent=n; b.style.display=n>0?'block':'none'; } atualizarCoracao(); }
+function toggleFav(m){
+  if(!m) return; vibrar(20);
+  const i=appState.favorites.findIndex(f=>f.id===m.id);
+  if(i>-1){ appState.favorites.splice(i,1); notif('💔 Removido'); }
+  else { appState.favorites.push({id:m.id,title:m.title,artist:m.artist,src:m.src,genero:m.genero,repo:m.repo}); notif('❤️ Adicionado'); }
+  salvarFav(); atualizarBadgeFav();
+}
+
+function initVolume(){
+  const slider=$('volSlider'), pct=$('volPct'), icon=$('volIcon'), ctrl=$('volControl'), btn=$('barraVolume');
+  if(!slider) return;
+  function upd(){
+    const v=appState.volume;
+    slider.value=Math.round(v*100);
+    slider.style.setProperty('--vol-pct',(v*100));
+    if(pct) pct.textContent=Math.round(v*100)+'%';
+    if(icon) icon.className='fas '+(v===0?'fa-volume-xmark':v<0.4?'fa-volume-low':v<0.8?'fa-volume-low':'fa-volume-high');
+  }
+  slider.addEventListener('input',()=>{
+    appState.volume=parseInt(slider.value)/100;
+    audio.volume=appState.volume;
+    try{ localStorage.setItem('vdb_vol',String(appState.volume)); }catch(e){}
+    upd();
+  });
+  if(btn) btn.onclick=()=>{ vibrar(); ctrl.classList.toggle('show'); };
+  upd(); audio.volume=appState.volume;
+}
+
+let _generosRenderizados=false;
+function atualizarCardGenero(g){
+  const cards = document.querySelectorAll('.genre-card');
+  let card = null;
+  cards.forEach(c=>{ if(c.dataset.genero === g) card = c; });
+  if(!card) return;
+  const btn=card.querySelector('.btn-offline'); if(!btn) return;
+  const off=generoOffline(g);
+  const baixando=downloadEmAndamento&&downloadGeneroAtual===g;
+  let cls='btn-offline', html='';
+  if(baixando){ cls+=' baixando'; html='<i class="fas fa-spinner fa-spin"></i>'; }
+  else if(off){ cls+=' remover'; html='<i class="fas fa-trash"></i>'; }
+  else { html='<i class="fas fa-download"></i>'; }
+  btn.className=cls; btn.innerHTML=html;
+  btn.onclick=(e)=>{
+    e.stopPropagation();
+    if(baixando){ notif('⏳ Já está baixando'); return; }
+    if(off){
+      vdbDialog({title:'🗑️ REMOVER',msg:'Remover "'+g+'" do offline?',okText:'Remover'}).then(ok=>{
+        if(ok){ limparGeneroOffline(g).then(()=>{ notif('🗑️ '+g); atualizarCardGenero(g); }); }
+      });
+    } else { iniciarDownloadGenero(g); }
+  };
+  let badge=card.querySelector('.offline-badge');
+  if(off&&!badge){ badge=document.createElement('div'); badge.className='offline-badge'; badge.textContent='✓ OFF'; card.appendChild(badge); }
+  else if(!off&&badge){ badge.remove(); }
+}
+function renderizarGeneros(forcar){
+  if(_generosRenderizados&&!forcar) return;
+  const grid=$('genresGrid'); if(!grid) return;
+  grid.innerHTML='';
+  const frag=document.createDocumentFragment();
+  GENRE_ORDEM.forEach(g=>{
+    const c=GENRE_COLORS[g]||{c1:'#22d3ee'};
+    const card=document.createElement('div');
+    card.className='genre-card'; card.style.setProperty('--c1',c.c1); card.dataset.genero=g;
+    const nome=document.createElement('div'); nome.className='genre-name'; nome.textContent=g; card.appendChild(nome);
+    const btn=document.createElement('button'); btn.className='btn-offline'; card.appendChild(btn);
+    const pid=g.replace(/[^a-z0-9]/gi,'_');
+    const prog=document.createElement('div'); prog.className='offline-progress'; prog.id='prog-'+pid;
+    prog.innerHTML='<div class="offline-progress-fill" id="progfill-'+pid+'"></div>';
+    card.appendChild(prog);
+    card.onclick=()=>{ if(downloadEmAndamento&&downloadGeneroAtual===g){ notif('⏳ Aguarde o download'); return; } selecionarGenero(g); };
+    frag.appendChild(card);
+  });
+  grid.appendChild(frag); _generosRenderizados=true;
+  GENRE_ORDEM.forEach(g=>atualizarCardGenero(g));
+}
+async function selecionarGenero(g){
+  vibrar(); notif('⏳ Carregando '+g);
+  const m=await buscarGenero(g);
+  if(!m||!m.length){ notif('❌ Erro "'+g+'"',3000,true); return; }
+  audio.pause(); appState.isPlaying=false;
+  appState.musicas=m; appState.modoAtual=g;
+  appState.musicasComProblema.clear(); appState.falhasConsecutivas=0;
+  FilaInteligente.resetar(m,g);
+  const mm=FilaInteligente.proxima();
+  if(mm){ appState.musicaAtual=mm; atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
+  if(typeof filaAberta!=='undefined'&&filaAberta) renderizarFila();
+  notif('🎵 '+g+' ('+m.length+')');
+  if(appState.isBackgroundActive) tocar();
+  fecharModal('modalGeneros');
+}
+
+function abrirModal(id){ const el=$(id); if(el) el.classList.add('open'); }
+function fecharModal(id){ const el=$(id); if(el) el.classList.remove('open'); }
+
+let filaAberta=false;
+function renderizarFila(){
+  const lista=$('filaLista'), info=$('filaInfo'); if(!lista) return;
+  lista.innerHTML='';
+  if(!appState.musicas.length){ lista.innerHTML='<div class="fila-vazio">📭 Fila vazia</div>'; if(info) info.textContent='0 músicas'; return; }
+  if(info) info.textContent=FilaInteligente.fila.length+' na fila';
+  FilaInteligente.fila.slice(0,100).forEach((m,idx)=>{
+    const item=document.createElement('div');
+    item.className='fila-item'+(appState.musicaAtual&&appState.musicaAtual.id===m.id?' tocando':'');
+    item.innerHTML='<div class="num">'+(appState.musicaAtual&&appState.musicaAtual.id===m.id?'▶':(idx+1))+'</div><div class="info-fila"><span class="titulo-fila">'+sanitize(m.title||'')+'</span><span class="artista-fila">'+sanitize(m.artist||'')+'</span></div>';
+    item.onclick=()=>{ appState._forcarMusica=m; if(!appState.isBackgroundActive) appState.isBackgroundActive=true; tocar(); fecharFila(); };
+    lista.appendChild(item);
   });
 }
-const cacheGenero=new Map();
-async function buscarGenero(g,tentativa){
-  tentativa=tentativa||0;
-  if(cacheGenero.has(g)) return cacheGenero.get(g);
-  const p=_lerCacheGenero();
-  if(p[g]&&Array.isArray(p[g].musicas)){ cacheGenero.set(g,p[g].musicas); return p[g].musicas; }
-  const url=GENRE_URLS[g]; if(!url) return null;
+function abrirFila(){ filaAberta=true; renderizarFila(); const p=$('filaPainel'); if(p) p.classList.add('show'); }
+function fecharFila(){ filaAberta=false; const p=$('filaPainel'); if(p) p.classList.remove('show'); }
+
+function ativarPlayer(){
+  appState.playerAtivado=true; appState.isBackgroundActive=true;
+  const pc=$('playerContainer'); if(pc) pc.classList.add('visible');
+  const tp=$('telaPrincipal'); if(tp) tp.classList.remove('oculta');
+}
+function forcarFullscreen(){
   try{
-    const ctrl=new AbortController(); const tid=setTimeout(()=>ctrl.abort(),9000);
-    const r=await fetch(url,{signal:ctrl.signal}); clearTimeout(tid);
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    const j=await r.json(); const ms=_mapMusicas(j,g);
-    cacheGenero.set(g,ms);
-    const pp=_lerCacheGenero(); pp[g]={musicas:ms,data:Date.now()}; _salvarCacheGenero(pp);
-    return ms;
-  }catch(e){
-    const pp=_lerCacheGenero();
-    if(pp[g]&&Array.isArray(pp[g].musicas)){ cacheGenero.set(g,pp[g].musicas); return pp[g].musicas; }
-    if(tentativa<2&&navigator.onLine){ await sleep(800*(tentativa+1)); return buscarGenero(g,tentativa+1); }
-    return null;
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else if(document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen().catch(()=>{}); }
+    else if(document.documentElement.webkitRequestFullscreen){ document.documentElement.webkitRequestFullscreen(); }
+  }catch(e){}
+}
+
+function abrirFavoritas(){
+  const lista=$('listaFavoritas'); if(!lista) return;
+  lista.innerHTML='';
+  if(!appState.favorites.length){ lista.innerHTML='<div class="fila-vazio">💔 Nenhuma favorita</div>'; abrirModal('modalFavoritas'); return; }
+  appState.favorites.forEach(f=>{
+    const item=document.createElement('div'); item.className='fav-item';
+    item.innerHTML='<div class="info"><span class="title">'+sanitize(f.title||'')+'</span><span class="artist">'+sanitize(f.artist||'')+'</span></div><button class="remove"><i class="fas fa-times"></i></button>';
+    item.querySelector('.info').onclick=()=>{ appState._forcarMusica=f; if(!appState.isBackgroundActive) appState.isBackgroundActive=true; tocar(); fecharModal('modalFavoritas'); };
+    item.querySelector('.remove').onclick=(e)=>{ e.stopPropagation(); toggleFav(f); abrirFavoritas(); };
+    lista.appendChild(item);
+  });
+  abrirModal('modalFavoritas');
+}
+
+function vdbDialog({title='Aviso',msg='',okText='OK',cancelText='Cancelar'}={}){
+  return new Promise(resolve=>{
+    const ov=$('vdbDialogOverlay'); if(!ov){ resolve(false); return; }
+    const t=$('vdbDialogTitle'), m=$('vdbDialogMsg'), ok=$('vdbDialogOk'), cancel=$('vdbDialogCancel');
+    if(t) t.textContent=title; if(m) m.textContent=msg;
+    if(ok) ok.textContent=okText; if(cancel) cancel.textContent=cancelText;
+    ov.style.display='flex';
+    const clean=()=>{ ov.style.display='none'; ok.onclick=null; cancel.onclick=null; };
+    ok.onclick=()=>{ clean(); resolve(true); };
+    cancel.onclick=()=>{ clean(); resolve(false); };
+  });
+}
+
+async function tentarLiberarSenha(){
+  const inp=$('senhaInput'), erro=$('erroSenha');
+  const senha=inp?inp.value.trim():'';
+  if(!senha){ if(erro) erro.textContent='Digite a senha'; return; }
+  const r=await validarSenha(senha,appState.fingerprint);
+  if(r.valida){
+    await SecureTimer.desbloquearPermanente();
+    const ov=$('blockOverlay'); if(ov) ov.style.display='none';
+    notif(r.msg||'✅ Liberado!'); atualizarTimerLib();
+  } else {
+    if(erro) erro.textContent='❌ Senha inválida ('+(r.motivo||'')+')';
+    vibrar([80,40,80]);
   }
 }
-function getUrlCanonica(m){
-  if(!m||!m.src) return null;
-  const s=String(m.src).trim(); if(!s) return null;
-  if(/^https?:\/\//i.test(s)) return s;
-  const nome=s.replace(/^\.\//,'').replace(/^\//,''); if(!nome) return null;
-  const repo=m.repo||GENRE_REPOS[m.genero]||'radiolojasjc-hub/play12';
-  return `https://raw.githubusercontent.com/${repo}/refs/heads/main/${encodeURIComponent(nome).replace(/%2F/g,'/')}`;
+async function atualizarTimerLib(){
+  const s = await SecureTimer.tempoRestante();
+  const el=$('timerLib'); if(!el) return;
+  if(s<=0){ el.innerHTML='<i class="fas fa-lock"></i> EXPIRADO'; el.style.color='#ef4444'; }
+  else { el.innerHTML='<i class="fas fa-clock"></i> '+fmtTempo(s); el.style.color='#fff'; }
 }
-function urlCacheKey(url){ if(!url) return null; try{ const u=new URL(url); return u.origin+u.pathname; }catch(e){ return String(url).split('?')[0].split('#')[0]; } }
 
-const CACHE_OFFLINE_NAME='vdb-offline-v1';
-function getOfflineMeta(){ try{ return JSON.parse(localStorage.getItem('vdb_offline')||'{}'); }catch(e){ return {}; } }
-function setOfflineMeta(m){ try{ localStorage.setItem('vdb_offline',JSON.stringify(m)); }catch(e){} }
-function generoOffline(g){ const m=getOfflineMeta(); return !!(m[g]&&m[g].completo); }
-async function abrirCache(){ if(!('caches' in window)) return null; try{ return await caches.open(CACHE_OFFLINE_NAME); }catch(e){ return null; } }
+let adminDiasSel=7;
+function initAdmin(){
+  document.querySelectorAll('.validade-btn').forEach(b=>{
+    b.onclick=()=>{ document.querySelectorAll('.validade-btn').forEach(x=>{ x.classList.remove('active'); x.style.background='rgba(255,255,255,.05)'; x.style.color='#fff'; }); b.classList.add('active'); b.style.background='#fbbf24'; b.style.color='#000'; adminDiasSel=parseInt(b.dataset.dias)||0; };
+  });
+  const gd=$('adminGerarBtn'); if(gd) gd.onclick=async()=>{ const fp=($('adminFingerprintInput')||{}).value||''; if(!fp.trim()) return notif('⚠️ Cole o ID'); const s=await gerarSenhaDispositivo(fp.trim(),adminDiasSel); if($('adminSenhaGerada')) $('adminSenhaGerada').value=s; notif('📱 DEVICE gerado'); };
+  const gu=$('adminGerarUniversalBtn'); if(gu) gu.onclick=async()=>{ const s=await gerarSenhaUniversal(adminDiasSel); if($('adminSenhaGerada')) $('adminSenhaGerada').value=s; notif('🌍 UNIVERSAL gerada'); };
+  const lim=$('adminLimparBtn'); if(lim) lim.onclick=()=>{ if($('adminSenhaGerada')) $('adminSenhaGerada').value=''; if($('adminFingerprintInput')) $('adminFingerprintInput').value=''; };
+  const cp=$('btnCopiarSenha'); if(cp) cp.onclick=()=>copiarTexto(($('adminSenhaGerada')||{}).value);
+  const wa=$('adminEnviarWhatsBtn'); if(wa) wa.onclick=()=>{ const s=($('adminSenhaGerada')||{}).value; if(!s) return notif('⚠️ Gere'); window.open('https://wa.me/?text='+encodeURIComponent(s),'_blank'); };
+  const fc1=$('adminCloseBtn'); if(fc1) fc1.onclick=()=>{ const p=$('adminPanel'); if(p) p.style.display='none'; };
+  const fc2=$('adminCloseTopBtn'); if(fc2) fc2.onclick=()=>{ const p=$('adminPanel'); if(p) p.style.display='none'; };
+}
+let _toquesTitulo=0, _toqueTimer=null;
+function initAtalhoAdmin(){
+  const t=$('tituloGrande'); if(!t) return;
+  t.addEventListener('click',()=>{
+    _toquesTitulo++; clearTimeout(_toqueTimer);
+    _toqueTimer=setTimeout(()=>_toquesTitulo=0,2000);
+    if(_toquesTitulo>=5){ _toquesTitulo=0; const p=$('adminPanel'); if(p) p.style.display='block'; }
+  });
+}
 
-// ... (Restante das funções: Download, Temas, Áudio, UI, etc. mantidas iguais) ...
-// 🎵 ÁUDIO - AJUSTE PARA LOOP INFINITO COM TELA BLOQUEADA
-const audio=$('musicPlayer');
-let _tocarToken=0;
+let bannerTimer=null, bannerCicloTimer=null, _bannerMostrado=false;
+function abrirBanner(){ if(_bannerMostrado) return; _bannerMostrado=true; }
+function fecharBanner(){ cancelAnimationFrame(bannerTimer); }
+function agendarBanner(){}
 
-async function tocar(){
-  if(!appState.isBackgroundActive||appState.carregando||!appState.musicas.length) return;
-  const meuToken=++_tocarToken; appState.carregando=true;
-  audio.pause(); audio.removeAttribute('src'); audio.load();
+function abrirSeletorTema(){
+  let modal=$('modalTemas');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='modalTemas'; modal.className='modal';
+    modal.innerHTML='<div class="modal-box"><div class="modal-header"><span class="titulo">🎨 CORES DO APP</span><button class="fechar" id="fecharTemas"><i class="fas fa-times"></i></button></div><div id="listaTemas" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:8px"></div></div>';
+    document.body.appendChild(modal);
+  }
+  const lista=modal.querySelector('#listaTemas'); lista.innerHTML='';
+  Object.entries(TEMAS).forEach(([key,t])=>{
+    const btn=document.createElement('button');
+    btn.style.cssText=`padding:16px;border-radius:12px;border:2px solid ${t.cor3};background:linear-gradient(135deg,${t.cor1},${t.cor3});color:#fff;font-weight:800;font-size:.85rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-family:inherit;`;
+    btn.innerHTML=`<span style="font-size:1.6rem">🎨</span><span>${t.nome}</span>`;
+    btn.onclick=()=>{ aplicarTema(key); fecharModal('modalTemas'); };
+    lista.appendChild(btn);
+  });
+  modal.querySelector('#fecharTemas').onclick=()=>fecharModal('modalTemas');
+  modal.onclick=e=>{ if(elet _letreiroCache='';
+let letreiroRAF=null, letreiroX=0, letreiroVel=0, letreiroLargura=0, letreiroContainerLargura=0;
+let _promoTimer=null, _promoIdx=0, _emPromo=false;
+const REDUCE_MOTION = (()=>{ try{ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } })();
 
-  try{
-    const pb=$('topPlayBtn'); if(pb) pb.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
-    let m = appState._forcarMusica || FilaInteligente.proxima();
-    appState._forcarMusica=null;
-    if(!m){ appState.carregando=false; return; }
-    if(meuToken!==_tocarToken) return;
-    
-    appState.musicaAtual=m;
-    atualizarLetreiro(m); atualizarInfoMusica(m); atualizarCoracao();
-    if(typeof filaAberta!=='undefined'&&filaAberta) renderizarFila();
-    
-    if('mediaSession' in navigator){
-      try{
-        navigator.mediaSession.metadata=new MediaMetadata({
-          title:m.title||'VDB', artist:m.artist||'Artista', album:m.genero||'',
-          artwork:[{src:'favicon512.png',sizes:'512x512',type:'image/png'}]
-        });
-        registrarMediaSessionHandlers();
-      }catch(e){}
-    }
-    
-    const url=getUrlCanonica(m);
-    if(!url){ appState.carregando=false; setTimeout(next,300); return; }
+function iniciarLetreiroAnimacao(el, container){
+  cancelAnimationFrame(letreiroRAF);
+  if(REDUCE_MOTION){ el.style.transform='translateX(0)'; return; }
+  letreiroX = container.clientWidth;
+  letreiroVel = 55;
+  letreiroLargura = el.scrollWidth;
+  letreiroContainerLargura = container.clientWidth;
+  let ultimoTempo = performance.now();
+  function passo(agora){
+    const dt = (agora - ultimoTempo) / 1000;
+    ultimoTempo = agora;
+    letreiroX -= letreiroVel * dt;
+    if(letreiroX < -letreiroLargura) letreiroX = letreiroContainerLargura;
+    el.style.transform = `translateX(${letreiroX}px)`;
+    letreiroRAF = requestAnimationFrame(passo);
+  }
+  letreiroRAF = requestAnimationFrame(passo);
+}
+function _renderLetreiro(textoHTML){
+  const el=$('scrollText'); if(!el) return;
+  const container = el.parentElement;
+  el.innerHTML = textoHTML;
+  requestAnimationFrame(() => { if(container) iniciarLetreiroAnimacao(el, container); });
+}
+function atualizarLetreiro(m){
+  if(_emPromo) return;
+  const txt = m && m.title ? (m.title + ' — ' + (m.artist||'Artista')) : ('VDB MUSIC');
+  if(_letreiroCache===txt) return;
+  _letreiroCache=txt;
+  let html='🎵 ';
+  if(m && m.title){ html += '<b>TOCANDO:</b> ' + sanitize(m.title) + ' — <i>' + sanitize(m.artist||'Artista') + '</i>'; }
+  else { html += 'VDB MUSIC 🎵'; }
+  _renderLetreiro(html);
+}
+function mostrarFrasePromocional(){
+  if(!FRASES_LETREIRO.length) return;
+  _emPromo = true;
+  const frase = FRASES_LETREIRO[_promoIdx % FRASES_LETREIRO.length];
+  _promoIdx++;
+  _renderLetreiro('📢 ' + sanitize(frase));
+  clearTimeout(_promoTimer);
+  _promoTimer = setTimeout(()=>{ _emPromo=false; _letreiroCache=''; atualizarLetreiro(appState.musicaAtual); }, 5000); // ALTERADO PARA 5 SEGUNDOS
+}
+function iniciarCicloFrasesPromo(){
+  if(window._promoIntervalo) clearInterval(window._promoIntervalo);
+  window._promoIntervalo = setInterval(()=>{ if(!appState.isPlaying) return; mostrarFrasePromocional(); }, CONFIG.INTERVALO_FRASE_PROMO_MS);
+}
+function atualizarGenero(g){ const el=$('generoTocandoNome'); if(el) el.textContent=(g||'VDB').toUpperCase(); }
+function atualizarInfoMusica(m){ if(m) atualizarGenero(m.genero||appState.modoAtual||''); }
 
-    if(appState._lastBlobUrl){ try{ URL.revokeObjectURL(appState._lastBlobUrl); }catch(e){} appState._lastBlobUrl=null; }
-    const blobUrl=await carregarAudioDoCache(m);
-    let tocandoDoCache=false;
-    if(blobUrl){ appState._lastBlobUrl=blobUrl; audio.src=blobUrl; tocandoDoCache=true; }
-    else { audio.src=url; }
-    audio.load();
+function atualizarCoracao(){
+  const atual=appState.musicaAtual;
+  const bFav=$('barraFavoritos'), bVDB=$('btnFavVDB');
+  if(!atual){ if(bFav) bFav.classList.remove('ativo'); if(bVDB){ bVDB.classList.remove('ativo'); bVDB.innerHTML='<i class="far fa-heart"></i>'; } return; }
+  const f=appState.favorites.some(x=>x.id===atual.id);
+  if(f){ if(bFav) bFav.classList.add('ativo'); if(bVDB){ bVDB.classList.add('ativo'); bVDB.innerHTML='<i class="fas fa-heart"></i>'; } }
+  else { if(bFav) bFav.classList.remove('ativo'); if(bVDB){ bVDB.classList.remove('ativo'); bVDB.innerHTML='<i class="far fa-heart"></i>'; } }
+}
+function atualizarBadgeFav(){ const n=appState.favorites.length; const b=$('barraBadgeFav'); if(b){ b.textContent=n; b.style.display=n>0?'block':'none'; } atualizarCoracao(); }
+function toggleFav(m){
+  if(!m) return; vibrar(20);
+  const i=appState.favorites.findIndex(f=>f.id===m.id);
+  if(i>-1){ appState.favorites.splice(i,1); notif('💔 Removido'); }
+  else { appState.favorites.push({id:m.id,title:m.title,artist:m.artist,src:m.src,genero:m.genero,repo:m.repo}); notif('❤️ Adicionado'); }
+  salvarFav(); atualizarBadgeFav();
+}
+
+function initVolume(){
+  const slider=$('volSlider'), pct=$('volPct'), icon=$('volIcon'), ctrl=$('volControl'), btn=$('barraVolume');
+  if(!slider) return;
+  function upd(){
+    const v=appState.volume;
+    slider.value=Math.round(v*100);
+    slider.style.setProperty('--vol-pct',(v*100));
+    if(pct) pct.textContent=Math.round(v*100)+'%';
+    if(icon) icon.className='fas '+(v===0?'fa-volume-xmark':v<0.4?'fa-volume-low':v<0.8?'fa-volume-low':'fa-volume-high');
+  }
+  slider.addEventListener('input',()=>{
+    appState.volume=parseInt(slider.value)/100;
     audio.volume=appState.volume;
-
-    try{
-      await audio.play();
-    }catch(e){
-      if(!tocandoDoCache){
-        const b2=await carregarAudioDoCache(m);
-        if(b2){ appState._lastBlobUrl=b2; audio.src=b2; audio.load(); await audio.play(); }
-        else { throw e; }
-      } else { throw e; }
-    }
-
-    appState.isPlaying=true; appState.falhasConsecutivas=0;
-    const tp=$('topPlayBtn'); if(tp) tp.innerHTML='<i class="fas fa-pause"></i>';
-    
-    setTimeout(()=>{
-      const prox=FilaInteligente.fila.slice(0,CONFIG.PREFETCH_QTD);
-      prox.forEach(pm=>{ const u=getUrlCanonica(pm); if(u){ const a=new Audio(); a.src=u; a.preload='auto'; a.load(); } });
-    }, CONFIG.PREFETCH_DELAY_MS);
-
-  }catch(e){
-    appState.falhasConsecutivas++;
-    const tp=$('topPlayBtn'); if(tp) tp.innerHTML='<i class="fas fa-play"></i>';
-    if(appState.falhasConsecutivas>=CONFIG.MAX_FALHAS_CONSECUTIVAS){
-      notif('⚠️ Muitas falhas — verifique a rede',3000,true);
-      appState.falhasConsecutivas=0;
-    } else { setTimeout(next,400); }
-  }
-  finally{ if(meuToken===_tocarToken) appState.carregando=false; }
+    try{ localStorage.setItem('vdb_vol',String(appState.volume)); }catch(e){}
+    upd();
+  });
+  if(btn) btn.onclick=()=>{ vibrar(); ctrl.classList.toggle('show'); };
+  upd(); audio.volume=appState.volume;
 }
 
-// LOOP INFINITO QUANDO MÚSICA ACABA
-audio.addEventListener('ended', () => {
-  // Se estiver tocando e no modo loop infinito, tenta a próxima música
-  if (appState._modoLoopInfinito && appState.musicas.length > 0) {
-    next();
-  }
-});
+let _generosRenderizados=false;
+function atualizarCardGenero(g){
+  const cards = document.querySelectorAll('.genre-card');
+  let card = null;
+  cards.forEach(c=>{ if(c.dataset.genero === g) card = c; });
+  if(!card) return;
+  const btn=card.querySelector('.btn-offline'); if(!btn) return;
+  const off=generoOffline(g);
+  const baixando=downloadEmAndamento&&downloadGeneroAtual===g;
+  let cls='btn-offline', html='';
+  if(baixando){ cls+=' baixando'; html='<i class="fas fa-spinner fa-spin"></i>'; }
+  else if(off){ cls+=' remover'; html='<i class="fas fa-trash"></i>'; }
+  else { html='<i class="fas fa-download"></i>'; }
+  btn.className=cls; btn.innerHTML=html;
+  btn.onclick=(e)=>{
+    e.stopPropagation();
+    if(baixando){ notif('⏳ Já está baixando'); return; }
+    if(off){
+      vdbDialog({title:'🗑️ REMOVER',msg:'Remover "'+g+'" do offline?',okText:'Remover'}).then(ok=>{
+        if(ok){ limparGeneroOffline(g).then(()=>{ notif('🗑️ '+g); atualizarCardGenero(g); }); }
+      });
+    } else { iniciarDownloadGenero(g); }
+  };
+  let badge=card.querySelector('.offline-badge');
+  if(off&&!badge){ badge=document.createElement('div'); badge.className='offline-badge'; badge.textContent='✓ OFF'; card.appendChild(badge); }
+  else if(!off&&badge){ badge.remove(); }
+}
+function renderizarGeneros(forcar){
+  if(_generosRenderizados&&!forcar) return;
+  const grid=$('genresGrid'); if(!grid) return;
+  grid.innerHTML='';
+  const frag=document.createDocumentFragment();
+  GENRE_ORDEM.forEach(g=>{
+    const c=GENRE_COLORS[g]||{c1:'#22d3ee'};
+    const card=document.createElement('div');
+    card.className='genre-card'; card.style.setProperty('--c1',c.c1); card.dataset.genero=g;
+    const nome=document.createElement('div'); nome.className='genre-name'; nome.textContent=g; card.appendChild(nome);
+    const btn=document.createElement('button'); btn.className='btn-offline'; card.appendChild(btn);
+    const pid=g.replace(/[^a-z0-9]/gi,'_');
+    const prog=document.createElement('div'); prog.className='offline-progress'; prog.id='prog-'+pid;
+    prog.innerHTML='<div class="offline-progress-fill" id="progfill-'+pid+'"></div>';
+    card.appendChild(prog);
+    card.onclick=()=>{ if(downloadEmAndamento&&downloadGeneroAtual===g){ notif('⏳ Aguarde o download'); return; } selecionarGenero(g); };
+    frag.appendChild(card);
+  });
+  grid.appendChild(frag); _generosRenderizados=true;
+  GENRE_ORDEM.forEach(g=>atualizarCardGenero(g));
+}
+async function selecionarGenero(g){
+  vibrar(); notif('⏳ Carregando '+g);
+  const m=await buscarGenero(g);
+  if(!m||!m.length){ notif('❌ Erro "'+g+'"',3000,true); return; }
+  audio.pause(); appState.isPlaying=false;
+  appState.musicas=m; appState.modoAtual=g;
+  appState.musicasComProblema.clear(); appState.falhasConsecutivas=0;
+  FilaInteligente.resetar(m,g);
+  const mm=FilaInteligente.proxima();
+  if(mm){ appState.musicaAtual=mm; atualizarLetreiro(mm); atualizarInfoMusica(mm); atualizarCoracao(); }
+  if(typeof filaAberta!=='undefined'&&filaAberta) renderizarFila();
+  notif('🎵 '+g+' ('+m.length+')');
+  if(appState.isBackgroundActive) tocar();
+  fecharModal('modalGeneros');
+}
 
-// TENTAR MANTER ÁUDIO ATIVO QUANDO TELA BLOQUEADA
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    // Tenta manter o áudio tocando
-    if (appState.isPlaying && audio.paused) {
-      setTimeout(() => {
-        if (appState.isPlaying && audio.paused) {
-          audio.play().catch(() => {
-            const m = appState.musicaAtual;
-            if (m) tocar();
-          });
-        }
-      }, 1000);
+function abrirModal(id){ const el=$(id); if(el) el.classList.add('open'); }
+function fecharModal(id){ const el=$(id); if(el) el.classList.remove('open'); }
+
+let filaAberta=false;
+function renderizarFila(){
+  const lista=$('filaLista'), info=$('filaInfo'); if(!lista) return;
+  lista.innerHTML='';
+  if(!appState.musicas.length){ lista.innerHTML='<div class="fila-vazio">📭 Fila vazia</div>'; if(info) info.textContent='0 músicas'; return; }
+  if(info) info.textContent=FilaInteligente.fila.length+' na fila';
+  FilaInteligente.fila.slice(0,100).forEach((m,idx)=>{
+    const item=document.createElement('div');
+    item.className='fila-item'+(appState.musicaAtual&&appState.musicaAtual.id===m.id?' tocando':'');
+    item.innerHTML='<div class="num">'+(appState.musicaAtual&&appState.musicaAtual.id===m.id?'▶':(idx+1))+'</div><div class="info-fila"><span class="titulo-fila">'+sanitize(m.title||'')+'</span><span class="artista-fila">'+sanitize(m.artist||'')+'</span></div>';
+    item.onclick=()=>{ appState._forcarMusica=m; if(!appState.isBackgroundActive) appState.isBackgroundActive=true; tocar(); fecharFila(); };
+    lista.appendChild(item);
+  });
+}
+function abrirFila(){ filaAberta=true; renderizarFila(); const p=$('filaPainel'); if(p) p.classList.add('show'); }
+function fecharFila(){ filaAberta=false; const p=$('filaPainel'); if(p) p.classList.remove('show'); }
+
+function ativarPlayer(){
+  appState.playerAtivado=true; appState.isBackgroundActive=true;
+  const pc=$('playerContainer'); if(pc) pc.classList.add('visible');
+  const tp=$('telaPrincipal'); if(tp) tp.classList.remove('oculta');
+}
+function forcarFullscreen(){
+  try{
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else if(document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen().catch(()=>{}); }
+    else if(document.documentElement.webkitRequestFullscreen){ document.documentElement.webkitRequestFullscreen(); }
+  }catch(e){}
+}
+
+function abrirFavoritas(){
+  const lista=$('listaFavoritas'); if(!lista) return;
+  lista.innerHTML='';
+  if(!appState.favorites.length){ lista.innerHTML='<div class="fila-vazio">💔 Nenhuma favorita</div>'; abrirModal('modalFavoritas'); return; }
+  appState.favorites.forEach(f=>{
+    const item=document.createElement('div'); item.className='fav-item';
+    item.innerHTML='<div class="info"><span class="title">'+sanitize(f.title||'')+'</span><span class="artist">'+sanitize(f.artist||'')+'</span></div><button class="remove"><i class="fas fa-times"></i></button>';
+    item.querySelector('.info').onclick=()=>{ appState._forcarMusica=f; if(!appState.isBackgroundActive) appState.isBackgroundActive=true; tocar(); fecharModal('modalFavoritas'); };
+    item.querySelector('.remove').onclick=(e)=>{ e.stopPropagation(); toggleFav(f); abrirFavoritas(); };
+    lista.appendChild(item);
+  });
+  abrirModal('modalFavoritas');
+}
+
+function vdbDialog({title='Aviso',msg='',okText='OK',cancelText='Cancelar'}={}){
+  return new Promise(resolve=>{
+    const ov=$('vdbDialogOverlay'); if(!ov){ resolve(false); return; }
+    const t=$('vdbDialogTitle'), m=$('vdbDialogMsg'), ok=$('vdbDialogOk'), cancel=$('vdbDialogCancel');
+    if(t) t.textContent=title; if(m) m.textContent=msg;
+    if(ok) ok.textContent=okText; if(cancel) cancel.textContent=cancelText;
+    ov.style.display='flex';
+    const clean=()=>{ ov.style.display='none'; ok.onclick=null; cancel.onclick=null; };
+    ok.onclick=()=>{ clean(); resolve(true); };
+    cancel.onclick=()=>{ clean(); resolve(false); };
+  });
+}
+
+async function tentarLiberarSenha(){
+  const inp=$('senhaInput'), erro=$('erroSenha');
+  const senha=inp?inp.value.trim():'';
+  if(!senha){ if(erro) erro.textContent='Digite a senha'; return; }
+  const r=await validarSenha(senha,appState.fingerprint);
+  if(r.valida){
+    await SecureTimer.desbloquearPermanente();
+    const ov=$('blockOverlay'); if(ov) ov.style.display='none';
+    notif(r.msg||'✅ Liberado!'); atualizarTimerLib();
+  } else {
+    if(erro) erro.textContent='❌ Senha inválida ('+(r.motivo||'')+')';
+    vibrar([80,40,80]);
+  }
+}
+async function atualizarTimerLib(){
+  const s = await SecureTimer.tempoRestante();
+  const el=$('timerLib'); if(!el) return;
+  if(s<=0){ el.innerHTML='<i class="fas fa-lock"></i> EXPIRADO'; el.style.color='#ef4444'; }
+  else { el.innerHTML='<i class="fas fa-clock"></i> '+fmtTempo(s); el.style.color='#fff'; }
+}
+
+let adminDiasSel=7;
+function initAdmin(){
+  document.querySelectorAll('.validade-btn').forEach(b=>{
+    b.onclick=()=>{ document.querySelectorAll('.validade-btn').forEach(x=>{ x.classList.remove('active'); x.style.background='rgba(255,255,255,.05)'; x.style.color='#fff'; }); b.classList.add('active'); b.style.background='#fbbf24'; b.style.color='#000'; adminDiasSel=parseInt(b.dataset.dias)||0; };
+  });
+  const gd=$('adminGerarBtn'); if(gd) gd.onclick=async()=>{ const fp=($('adminFingerprintInput')||{}).value||''; if(!fp.trim()) return notif('⚠️ Cole o ID'); const s=await gerarSenhaDispositivo(fp.trim(),adminDiasSel); if($('adminSenhaGerada')) $('adminSenhaGerada').value=s; notif('📱 DEVICE gerado'); };
+  const gu=$('adminGerarUniversalBtn'); if(gu) gu.onclick=async()=>{ const s=await gerarSenhaUniversal(adminDiasSel); if($('adminSenhaGerada')) $('adminSenhaGerada').value=s; notif('🌍 UNIVERSAL gerada'); };
+  const lim=$('adminLimparBtn'); if(lim) lim.onclick=()=>{ if($('adminSenhaGerada')) $('adminSenhaGerada').value=''; if($('adminFingerprintInput')) $('adminFingerprintInput').value=''; };
+  const cp=$('btnCopiarSenha'); if(cp) cp.onclick=()=>copiarTexto(($('adminSenhaGerada')||{}).value);
+  const wa=$('adminEnviarWhatsBtn'); if(wa) wa.onclick=()=>{ const s=($('adminSenhaGerada')||{}).value; if(!s) return notif('⚠️ Gere'); window.open('https://wa.me/?text='+encodeURIComponent(s),'_blank'); };
+  const fc1=$('adminCloseBtn'); if(fc1) fc1.onclick=()=>{ const p=$('adminPanel'); if(p) p.style.display='none'; };
+  const fc2=$('adminCloseTopBtn'); if(fc2) fc2.onclick=()=>{ const p=$('adminPanel'); if(p) p.style.display='none'; };
+}
+let _toquesTitulo=0, _toqueTimer=null;
+function initAtalhoAdmin(){
+  const t=$('tituloGrande'); if(!t) return;
+  t.addEventListener('click',()=>{
+    _toquesTitulo++; clearTimeout(_toqueTimer);
+    _toqueTimer=setTimeout(()=>_toquesTitulo=0,2000);
+    if(_toquesTitulo>=5){ _toquesTitulo=0; const p=$('adminPanel'); if(p) p.style.display='block'; }
+  });
+}
+
+let bannerTimer=null, bannerCicloTimer=null, _bannerMostrado=false;
+function abrirBanner(){ if(_bannerMostrado) return; _bannerMostrado=true; }
+function fecharBanner(){ cancelAnimationFrame(bannerTimer); }
+function agendarBanner(){}
+
+function abrirSeletorTema(){
+  let modal=$('modalTemas');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='modalTemas'; modal.className='modal';
+    modal.innerHTML='<div class="modal-box"><div class="modal-header"><span class="titulo">🎨 CORES DO APP</span><button class="fechar" id="fecharTemas"><i class="fas fa-times"></i></button></div><div id="listaTemas" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:8px"></div></div>';
+    document.body.appendChild(modal);
+  }
+  const lista=modal.querySelector('#listaTemas'); lista.innerHTML='';
+  Object.entries(TEMAS).forEach(([key,t])=>{
+    const btn=document.createElement('button');
+    btn.style.cssText=`padding:16px;border-radius:12px;border:2px solid ${t.cor3};background:linear-gradient(135deg,${t.cor1},${t.cor3});color:#fff;font-weight:800;font-size:.85rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-family:inherit;`;
+    btn.innerHTML=`<span style="font-size:1.6rem">🎨</span><span>${t.nome}</span>`;
+    btn.onclick=()=>{ aplicarTema(key); fecharModal('modalTemas'); };
+    lista.appendChild(btn);
+  });
+  modal.querySelector('#fecharTemas').onclick=()=>fecharModal('modalTemas');
+  modal.onclick=e=>{ if(e.target===modal) fecharModal('modalTemas'); };
+  abrirModal('modalTemas');
+}
+
+const INTRO_DURACAO_MS = 10000;
+let _introTimer=null, _introFinalizada=false, _somAtivado=false;
+
+function finalizarIntro(){
+  if(_introFinalizada) return;
+  _introFinalizada=true;
+  clearTimeout(_introTimer);
+  const intro=$('introScreen'), video=$('introVideo');
+  if(video){ try{ video.pause(); }catch(e){} }
+  if(intro){ intro.style.opacity='0'; setTimeout(()=>{ intro.style.display='none'; iniciarAppAposIntro(); },800); }
+  else { iniciarAppAposIntro(); }
+}
+
+async function iniciarAppAposIntro(){
+  const loading=$('loadingScreen');
+  if(loading){ loading.style.opacity='0'; setTimeout(()=>{ loading.style.display='none'; },800); }
+
+  try{
+    const mediaContainer=$('mediaContainer');
+    if(mediaContainer){
+      const fb=mediaContainer.querySelector('.media-fallback-visual');
+      if(fb) fb.style.display='none';
+      mediaContainer.querySelectorAll('video').forEach(v=>v.remove());
+      const bgVideo=document.createElement('video');
+      bgVideo.src=MIDIA_CONFIG.FUNDO_VIDEOS[0];
+      bgVideo.muted=true; bgVideo.loop=true; bgVideo.playsInline=true; bgVideo.autoplay=true;
+      bgVideo.className='active';
+      mediaContainer.appendChild(bgVideo);
+      bgVideo.play().catch(()=>{});
     }
+  }catch(e){}
+
+  appState.isBackgroundActive=true;
+  ativarPlayer();
+  carregarTemaSalvo();
+
+  try{ registrarMediaSessionHandlers(); }catch(e){}
+  try{ initVolume(); }catch(e){}
+  try{ renderizarGeneros(); }catch(e){}
+  try{ atualizarBadgeFav(); }catch(e){}
+  try{ renderizarFila(); }catch(e){}
+  try{ initAdmin(); }catch(e){}
+  try{ initAtalhoAdmin(); }catch(e){}
+  try{ bindEventos(); }catch(e){}
+  try{ initBusca(); }catch(e){}
+
+  atualizarLetreiro(null);
+  setInterval(atualizarTimerLib, 1000);
+  iniciarCicloFrasesPromo();
+
+  notif('🎵 Iniciando...');
+  try{
+    const m=await buscarGenero('BÔNUS');
+    if(m&&m.length){
+      appState.musicas=m; appState.modoAtual='BÔNUS';
+      FilaInteligente.resetar(m,'BÔNUS');
+      await tocar();
+    } else {
+      const m2=await buscarGenero('SERTANEJO');
+      if(m2&&m2.length){ appState.musicas=m2; appState.modoAtual='SERTANEJO'; FilaInteligente.resetar(m2,'SERTANEJO'); await tocar(); }
+    }
+  }catch(e){ notif('❌ Falha ao iniciar',3000,true); }
+}
+
+async function iniciarIntro(){
+  const intro=$('introScreen'), video=$('introVideo'), btn=$('btnAtivarIntro');
+  if(!intro||!video){ iniciarAppAposIntro(); return; }
+  video.src=MIDIA_CONFIG.INTRO_URL;
+  video.muted=true; video.load();
+  video.play().catch(()=>{});
+  if(btn) btn.style.display='flex';
+
+  async function ativarSom(){
+    if(_somAtivado) return;
+    _somAtivado=true;
+    if(btn) btn.style.display='none';
+    try{ video.muted=false; video.volume=1; await video.play(); }catch(e){}
+    clearTimeout(_introTimer);
+    _introTimer=setTimeout(finalizarIntro, INTRO_DURACAO_MS);
   }
+
+  if(btn) btn.onclick=(e)=>{ e.stopPropagation(); vibrar(30); ativarSom(); };
+  intro.onclick=(e)=>{
+    if(e.target===btn) return;
+    if(_introFinalizada) return;
+    if(!_somAtivado){ ativarSom(); } else { finalizarIntro(); }
+  };
+  video.addEventListener('ended', finalizarIntro);
+}
+
+function buscarPorVoz(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ notif('⚠️ Voz não suportada'); return; }
+  try{
+    const rec=new SR();
+    rec.lang='pt-BR'; rec.interimResults=false; rec.maxAlternatives=1;
+    rec.onresult=(e)=>{ const txt=e.results[0][0].transcript; const inp=$('buscaInput'); if(inp){ inp.value=txt; } abrirModal('modalBusca'); initBusca(); notif('🎤 "'+txt+'"',2000); };
+    rec.onerror=()=>notif('❌ Voz falhou',2000);
+    rec.onstart=()=>{ const v=$('voiceIndicator'); if(v) v.classList.add('ativo'); notif('🎤 Ouvindo...',4000); };
+    rec.onend=()=>{ const v=$('voiceIndicator'); if(v) v.classList.remove('ativo'); };
+    rec.start();
+  }catch(e){ notif('❌ Erro de voz',2000); }
+}
+
+let _buscaInit=false;
+function initBusca(){
+  if(_buscaInit) return; _buscaInit=true;
+  const inp=$('buscaInput'), sg=$('buscaGenero'), so=$('buscaOrdem');
+  if(sg){ sg.innerHTML='<option value="">🌍 Todos</option>'; GENRE_ORDEM.forEach(g=>{ const o=document.createElement('option'); o.value=g; o.textContent=g; sg.appendChild(o); }); }
+  
+  const doBusca=async()=>{
+    const termo=normalizar(inp?inp.value:'');
+    const gen=sg?sg.value:''; const ord=so?so.value:'az';
+    const res=[];
+    for(const g of GENRE_ORDEM){
+      if(gen&&g!==gen) continue;
+      const ms=await buscarGenero(g);
+      if(ms) ms.forEach(m=>{ if(!termo||m._t.includes(termo)||m._a.includes(termo)) res.push(m); });
+    }
+    let final=res;
+    if(ord==='az') final.sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+    else if(ord==='za') final.sort((a,b)=>(b.title||'').localeCompare(a.title||''));
+    else final=shuffle(res);
+    const cont=$('buscaResultados'), cnt=$('buscaCount');
+    if(cnt) cnt.textContent=final.length?final.length+' resultado(s)':'Nada encontrado';
+    if(cont){
+      cont.innerHTML='';
+      final.slice(0,200).forEach(m=>{
+        const it=document.createElement('div');
+        it.className='result-item';
+        it.innerHTML='<div class="icon"><i class="fas fa-music"></i></div><div class="info"><span class="title">'+sanitize(m.title)+'</span><span class="artist">'+sanitize(m.artist||'')+'</span></div><span class="genero">'+(m.genero||'').toUpperCase()+'</span>';
+        it.onclick=()=>{ appState._forcarMusica=m; if(!appState.isBackgroundActive) appState.isBackgroundActive=true; tocar(); fecharModal('modalBusca'); };
+        cont.appendChild(it);
+      });
+    }
+  };
+  if(inp) inp.oninput=()=>{ clearTimeout(inp._t); inp._t=setTimeout(doBusca,300); };
+  if(sg) sg.onchange=doBusca;
+  if(so) so.onchange=doBusca;
+}
+
+async function misturaVDB(){
+  notif('🎲 Misturando...');
+  const gs=shuffle(shuffle(CONFIG.MIX_GENEROS));
+  for(const g of gs){ const m=await buscarGenero(g); if(m&&m.length){ await selecionarGenero(g); return; } }
+  notif('❌ Falha',3000,true);
+}let _deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault(); _deferredPrompt=e;
+});
+const btnInst=$('btnInstalarFixo');
+if(btnInst) btnInst.onclick=async()=>{
+  if(_deferredPrompt){ _deferredPrompt.prompt(); await _deferredPrompt.userChoice; _deferredPrompt=null; btnInst.style.display='none'; }
+  else { alert('Use o menu do navegador para instalar.'); }
+};
+
+function bindEventos(){
+  const bBuscar=$('barraBuscar'); if(bBuscar) bBuscar.onclick=()=>{ vibrar(); abrirModal('modalBusca'); initBusca(); };
+  const bFav=$('barraFavoritos'); if(bFav) bFav.onclick=()=>{ vibrar(); abrirFavoritas(); };
+  const bGen=$('barraGeneros'); if(bGen) bGen.onclick=()=>{ vibrar(); renderizarGeneros(); abrirModal('modalGeneros'); };
+  const bYtm=$('barraYTMusic'); if(bYtm) bYtm.onclick=()=>{ vibrar(); window.open('https://music.youtube.com','_blank'); };
+  const bFila=$('barraFila'); if(bFila) bFila.onclick=()=>{ vibrar(); abrirFila(); };
+  const fabMain=$('fabMain'); if(fabMain) fabMain.onclick=()=>{ vibrar(); const m=$('fabMenu'); if(m) m.classList.toggle('open'); fabMain.classList.toggle('open'); };
+
+  const tp=$('topPlayBtn'); if(tp) tp.onclick=()=>togglePlay();
+  const tn=$('topNextBtn'); if(tn) tn.onclick=()=>next();
+  const tv=$('topPrevBtn'); if(tv) tv.onclick=()=>prev();
+
+  const bfv=$('btnFavVDB'); if(bfv) bfv.onclick=()=>{ const m=appState.musicaAtual; if(m) toggleFav(m); };
+  const ffc=$('filaFecharBtn'); if(ffc) ffc.onclick=()=>fecharFila();
+  const fc=$('fecharGeneros'); if(fc) fc.onclick=()=>fecharModal('modalGeneros');
+  const ff=$('fecharFavoritas'); if(ff) ff.onclick=()=>fecharModal('modalFavoritas');
+  const fm=$('fecharMeuId'); if(fm) fm.onclick=()=>fecharModal('modalMeuId');
+  const bc=$('fecharBusca'); if(bc) bc.onclick=()=>fecharModal('modalBusca');
+
+  const lib=$('btnLiberar'); if(lib) lib.onclick=()=>tentarLiberarSenha();
+  const cpId=$('btnCopiarIdBloqueio'); if(cpId) cpId.onclick=()=>copiarTexto(appState.fingerprint,'🆔 ID copiado');
+  const wId=$('btnEnviarIdWhats'); if(wId) wId.onclick=()=>window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent('Meu ID VDB: '+appState.fingerprint),'_blank');
+  const cpMeu=$('btnCopiarMeuId'); if(cpMeu) cpMeu.onclick=()=>copiarTexto(appState.fingerprint,'🆔 ID copiado');
+  const wMeu=$('btnEnviarMeuIdWhats'); if(wMeu) wMeu.onclick=()=>window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text='+encodeURIComponent('Meu ID VDB: '+appState.fingerprint),'_blank');
+
+  const fmix=$('fabMix'); if(fmix) fmix.onclick=()=>{ vibrar(); misturaVDB(); };
+  const fsite=$('fabSite'); if(fsite) fsite.onclick=()=>window.open(MIDIA_CONFIG.LINK_SITE,'_blank');
+  const fytm=$('fabYTMusic'); if(fytm) fytm.onclick=()=>window.open('https://music.youtube.com','_blank');
+  const fvoice=$('fabVoice'); if(fvoice) fvoice.onclick=()=>{ vibrar(); buscarPorVoz(); };
+  const fmeu=$('fabMeuId'); if(fmeu) fmeu.onclick=()=>{ if($('meuIdValue')) $('meuIdValue').textContent=appState.fingerprint; abrirModal('modalMeuId'); };
+  const flib=$('fabLiberar'); if(flib) flib.onclick=()=>{ const ov=$('blockOverlay'); if(ov) ov.style.display='flex'; };
+  const fqr=$('fabQrCode'); if(fqr) fqr.onclick=()=>{ if($('qrCodeImage')) $('qrCodeImage').src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(location.href); if($('qrCodeModal')) $('qrCodeModal').style.display='flex'; };
+  const qrC=$('qrCloseBtn'); if(qrC) qrC.onclick=()=>{ if($('qrCodeModal')) $('qrCodeModal').style.display='none'; };
+  const frec=$('fabRecarregar'); if(frec) frec.onclick=()=>location.reload();
+  const ffull=$('fabFullscreen'); if(ffull) ffull.onclick=()=>{ vibrar(); forcarFullscreen(); };
+  const fsl=$('fabSleep'); if(fsl) fsl.onclick=()=>{
+    if(appState.sleepTimerId){ clearTimeout(appState.sleepTimerId); appState.sleepTimerId=null; notif('🌙 Cancelado'); }
+    else { appState.sleepTimerId=setTimeout(()=>{ audio.pause(); notif('🌙 Pausado'); },30*60000); notif('🌙 Sleep 30min'); }
+  };
+  const ffb=$('fabFeedback'); if(ffb) ffb.onclick=()=>window.open('https://wa.me/'+CONFIG.WHATSAPP+'?text=Feedback','_blank');
+  const finst=$('fabInstalar'); if(finst) finst.onclick=()=>{ if(_deferredPrompt){ _deferredPrompt.prompt(); } else { alert('Use o menu do navegador.'); } };
+
+  const fupd=$('fabAtualizarMidia');
+  if(fupd) fupd.onclick=async()=>{
+    vibrar(); notif('🔄 Atualizando mídias...', 2000);
+    try{
+      cacheGenero.clear();
+      localStorage.removeItem(CACHE_GEN_KEY);
+      if('caches' in window){ const ks=await caches.keys(); for(const k of ks){ if(k.includes('vdb-offline')||k.includes('genero')) await caches.delete(k); } }
+      notif('✅ Mídias atualizadas!', 2000);
+      renderizarGeneros(true);
+      if(appState.modoAtual){ const m=await buscarGenero(appState.modoAtual); if(m&&m.length){ appState.musicas=m; FilaInteligente.resetar(m,appState.modoAtual); } }
+    }catch(e){ notif('❌ Falha',3000,true); }
+  };
+
+  const fupa=$('fabAtualizarApp');
+  if(fupa) fupa.onclick=async()=>{
+    vibrar(); notif('🪄 Atualizando app...', 2000);
+    try{
+      if('caches' in window){ const ks=await caches.keys(); await Promise.all(ks.map(k=>caches.delete(k))); }
+      setTimeout(()=>{ const url=location.href.split('?')[0] + '?v=' + Date.now(); location.replace(url); }, 800);
+    }catch(e){ location.reload(true); }
+  };
+
+  const ftemas=$('fabTemas'); if(ftemas) ftemas.onclick=()=>{ vibrar(); abrirSeletorTema(); };
+  const fbai=$('fabBaixarAtual');
+  if(fbai) fbai.onclick=()=>{ vibrar(); if(!appState.modoAtual){ notif('⚠️ Escolha um gênero'); return; } iniciarDownloadGenero(appState.modoAtual); };
+
+  const fger=$('fabGerenciarOffline');
+  if(fger) fger.onclick=async()=>{
+    vibrar();
+    const meta=getOfflineMeta(); const gs=Object.keys(meta);
+    if(!gs.length){ notif('📥 Nada baixado'); return; }
+    let txt='📥 OFFLINE\n\n';
+    gs.forEach(g=>{ const i=meta[g]; txt+='• '+g+': '+i.baixadas+'/'+i.total+(i.completo?' ✅':' ⏳')+'\n'; });
+    const ok=await vdbDialog({title:'🗑️ LIMPAR OFFLINE',msg:txt+'\n\nApagar tudo?',okText:'Apagar'});
+    if(ok){ const c=await abrirCache(); if(c){ const ks=await c.keys(); for(const k of ks) await c.delete(k); } setOfflineMeta({}); notif('🗑️ Limpo!'); renderizarGeneros(true); }
+  };
+
+  const dlc=$('dlCancelar'); if(dlc) dlc.onclick=()=>{ downloadCancelado=true; notif('🛑 Cancelando...'); };
+
+  audio.addEventListener('timeupdate',()=>{
+    const cur=$('currentTime'), tot=$('totalTime'), fill=$('progressFill'), ring=$('progressRingFill');
+    const d=audio.duration||0, c=audio.currentTime||0;
+    if(cur) cur.textContent=fmt(c); if(tot) tot.textContent=fmt(d);
+    const pct=d?c/d:0;
+    if(fill) fill.style.width=(pct*100)+'%';
+    if(ring) ring.setAttribute('stroke-dasharray',(pct*400).toFixed(1)+' 400');
+  });
+  
+  // LOOP INFINITO: Quando a música termina, chama a próxima automaticamente
+  audio.addEventListener('ended', () => {
+    if (appState.musicas && appState.musicas.length > 0) {
+      next();
+    }
+  });
+  
+  audio.addEventListener('play',()=>{
+    appState.isPlaying=true;
+    const pb=$('playBtn'); if(pb) pb.innerHTML='<i class="fas fa-pause"></i>';
+    const tp=$('topPlayBtn'); if(tp) tp.innerHTML='<i class="fas fa-pause"></i>';
+  });
+  
+  audio.addEventListener('pause',()=>{
+    appState.isPlaying=false;
+    const pb=$('playBtn'); if(pb) pb.innerHTML='<i class="fas fa-play"></i>';
+    const tp=$('topPlayBtn'); if(tp) tp.innerHTML='<i class="fas fa-play"></i>';
+  });
+
+  // TELA BLOQUEADA: Tenta retomar o áudio se a tela apagar
+  audio.addEventListener('pause', () => {
+    if (document.hidden && appState.isPlaying) {
+      setTimeout(() => { 
+        if (appState.isPlaying && audio.paused) {
+          audio.play().catch(()=>{ const m = appState.musicaAtual; if(m) tocar(); });
+        }
+      }, 800);
+    }
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      WakeLockManager.ativar();
+      if (appState.isPlaying && audio.paused) {
+        setTimeout(() => {
+          if (appState.isPlaying && audio.paused) {
+            audio.play().catch(() => {
+              const m = appState.musicaAtual;
+              if (m) tocar();
+            });
+          }
+        }, 500);
+      }
+    } else {
+      if (appState.isPlaying) WakeLockManager.ativar();
+      atualizarCoracao();
+      const tp=$('topPlayBtn'); 
+      if(tp) tp.innerHTML = appState.isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+    }
+  });
+
+  window.addEventListener('beforeunload',()=>{
+    if(appState._lastBlobUrl){ try{ URL.revokeObjectURL(appState._lastBlobUrl); }catch(e){} }
+  });
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  try{ appState.fingerprint = await gerarFingerprintReal(); }catch(e){ appState.fingerprint='unknown'; }
+  if($('idUsuarioBloqueio')) $('idUsuarioBloqueio').textContent=appState.fingerprint;
+  if($('meuIdValue')) $('meuIdValue').textContent=appState.fingerprint;
+  const loading=$('loadingScreen');
+  if(loading) loading.style.display='flex';
+  setTimeout(()=>iniciarIntro(), 300);
 });
 
-// ... (Restante das funções como registrarMediaSessionHandlers, togglePlay, etc.) ...
-
-// REGISTRO DO SERVICE WORKER
+/* REGISTRO DO SERVICE WORKER (PWA) */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
